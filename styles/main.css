@@ -1,0 +1,507 @@
+@font-face {
+	font-family: 'VT323';
+	src: url('assets/VT323-Regular.ttf') format('truetype');
+}
+
+.header-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  padding: 0px 0px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'VT323', monospace !important;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  margin: 0;
+  /*padding-top: 10px; /* Adjust based on your header height */
+  /*padding-top: 77px; /* height of your fixed header */
+  box-sizing: border-box;
+}
+
+.header-container h1 {
+  flex-grow: 1;
+  text-align: center;
+  margin: 0;
+}
+
+/*.header-icons {
+  display: flex;
+  gap: 20px;
+}
+
+.blur {
+  filter: grayscale(100%) blur(2px);
+  opacity: 0.7;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+}
+
+.header-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+}
+
+.header-icon:hover {
+  transform: scale(1.15);
+}*/
+
+/* TEXT LINKS in Header */
+.header-text-link {
+  font-family: 'VT323', monospace;
+  font-size: 1.6rem;
+  color: #ffcc66;
+  text-decoration: none;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Prevent text from touching edges */
+  padding: 4px 10px;
+
+  /* Prevent wrapping/overflow */
+  white-space: nowrap;
+
+  /* Spacing — works with gap: 20px already in header-icons */
+  border-radius: 8px;
+
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+/* Hover enlarge (same as icons) */
+.header-text-link:hover {
+  transform: scale(1.15);
+  color: #ffffff;
+}
+
+
+h1 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Optional: adds "..." if text is cut off */
+  color: #009933;
+  text-align: center;
+  max-width: 100%;
+  /*font-size: 3.7em;*/
+  font-size: clamp(1rem, 3vw, 2.5rem);
+  z-index: 5;
+  position: relative;
+  margin-top: 0%;
+  text-shadow: 
+    -1px -1px 0 #fff, 
+     1px -1px 0 #fff,
+    -1px  1px 0 #fff,
+     1px  1px 0 #fff;
+}
+
+
+h2 {color: white;
+text-align: center;
+z-index: 5; /* Added z-index */
+}
+
+P {text-align: center;
+border: 4px solid powderblue; margin: 30px;
+z-index: 5; /* Added z-index */
+}
+
+P.blocktext {
+    margin-left: auto;
+    margin-right: auto;
+    width: 8em;
+    z-index: 5; /* Added z-index */
+    position: relative; /* Ensure it's positioned */
+}
+
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* Black background to prevent white flicker */
+    background-color: black;
+
+    /* optional: keep vertical scroll if needed */
+    overflow-y: visible;
+
+    /* font defaults etc. */
+    font-family: 'VT323', monospace;
+}
+
+
+/* Styles for the password modal */
+/*.modal {
+    display: none;
+    position: fixed;
+    z-index: 6;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: rgba(135, 206, 235, 0.8); /* Sky blue with 20% transparency */
+    /*margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 300px;
+    font-family: 'Ubuntu', sans-serif;
+    font-weight: bold;
+    text-align: center;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+}
+
+.flash {
+    animation: flash 1s infinite;
+}
+
+@keyframes flash {
+    0% { color: red; }
+    50% { color: transparent; }
+    100% { color: red; }
+}*/
+
+.hover-enlarge {
+    transition: transform 0.3s ease; /* Smooth transition */
+}
+
+.hover-enlarge:hover {
+    transform: scale(1.15); /* Enlarge by 10% */
+}
+
+/* for hover tooltip */
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    z-index: 10; /* Ensure tooltips are above other content */
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+ul.icon-grid li a, .selectbtn {
+    display: inline-block;
+    color: rgba(135, 206, 235, 0.6); /* Gray with 80% transparency */
+    text-align: center;
+    text-decoration: none;
+    z-index: 5; /* Added z-index */
+    position: relative; /* Ensure it's positioned */
+    border-radius: 20px; /* Add this line to round the edges */
+}
+
+/* --- ICON GRID BASE STYLES --- */
+ul.icon-grid {
+    display: flex;
+    justify-content: center;  /* center icons horizontally */
+    flex-wrap: wrap;          /* wrap only if needed */
+    list-style: none;
+    padding: 20px;
+    margin: 0 auto;
+}
+
+/* --- ICON GRID BASE STYLES --- */
+ul.icon-grid {
+    display: flex;                 /* use flex layout to line up icons horizontally */
+    justify-content: center;       /* center icons horizontally in the grid */
+    flex-wrap: wrap;               /* allow icons to wrap to next row if needed */
+    list-style: none;              /* remove bullets from list */
+    padding: 20px;                 /* spacing inside the grid */
+    margin: 0 auto;                /* center the grid horizontally */
+}
+
+ul.icon-grid li {
+    display: flex;                 /* flex layout inside each list item */
+    justify-content: center;       /* center the link/image horizontally */
+    align-items: center;           /* center the link/image vertically */
+    margin: 0 16px;                /* horizontal spacing between icons */
+}
+
+/* --- ICON IMAGE BASE STYLES --- */
+ul.icon-grid li a img,
+.selectbtn img {
+    width: 256px;                  /* default icon width */
+    height: auto;                  /* maintain aspect ratio */
+    border-radius: 20px;           /* rounded corners on the icons */
+    transition: transform 0.3s ease; /* smooth hover scaling */
+    object-fit: contain;           /* ensures image scales correctly without distortion */
+}
+
+/* --- ICON HOVER EFFECTS --- */
+ul.icon-grid li a:hover,
+.selectbtn:hover {
+    color: brown;                  /* change link color on hover (for text or fallback) */
+    background-color: rgba(135, 206, 235, 0.3); /* subtle semi-transparent background */
+    /* removed redundant border-radius and z-index — already applied in base styles */
+}
+
+/* --- HOVER IMAGE SCALE EFFECT --- */
+.hover-enlarge:hover {
+    transform: scale(1.15);        /* scale up icon slightly on hover */
+}
+
+/* --- RESPONSIVE ICON SIZE --- */
+@media (max-width: 960px) {
+    ul.icon-grid li a img {
+        width: 160px;              /* shrink icons on smaller screens */
+        height: auto;              /* keep aspect ratio */
+    }
+
+    /* optional: adjust hover scale for smaller icons */
+    .hover-enlarge:hover {
+        transform: scale(1.1);     /* smaller scale to match smaller icon */
+    }
+}
+
+
+/* --- RESPONSIVE TAB BAR WITH SMOOTH RESIZE ANIMATION --- */
+.tab-bar {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(140px, 1fr); /* buttons shrink smoothly */
+  justify-content: center;
+  gap: 16px;
+  padding: 12px 16px;
+
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 0px;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  backdrop-filter: blur(4px);
+
+  /* Smooth transitions for layout changes */
+  transition:
+    padding 0.3s ease,
+    gap 0.3s ease,
+    transform 0.3s ease,
+    background 0.3s ease,
+    grid-auto-columns 0.4s ease;  /* smooth column resizing */
+}
+
+.tab-bar.scrolled {
+  opacity: 0.85;
+  transform: scale(0.95);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Buttons inside tab-bar */
+/* --- TAB BUTTONS (WITH SMOOTH RESIZING + SHRINKING FONT) --- */
+.tab-bar button {
+  font-family: 'VT323', monospace !important;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+
+  /* Prevent long text from overflowing & allow smooth shrinking */
+  font-size: clamp(0.66rem, 1.2vw, 1.14rem);
+  /*white-space: nowrap;        /* keep text on one line */
+  overflow: hidden;           /* prevent text popping out */
+  /*text-overflow: ellipsis;    /* optional: shows "…" instead of overflow */
+
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid #ff5733;
+  color: #fff;
+
+  /* Slightly tighter padding to allow better shrinking */
+  padding: 8px 16px;
+
+  border-radius: 10px;
+  cursor: pointer;
+
+  transition:
+    background 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    padding 0.25s ease,
+    font-size 0.25s ease,
+    width 0.4s ease,
+    flex 0.4s ease;
+}
+
+
+/* Active tab glowing */
+.tab-bar button.active {
+  background: #ff5733;
+  color: #000;
+  box-shadow: 0 0 15px 4px rgba(184, 134, 11, 0.7);
+  text-shadow: 0 0 8px rgba(255, 180, 50, 0.8);
+  animation: pulseGlow 3s infinite ease-in-out;
+}
+
+/* Hover effect */
+.tab-bar button:hover {
+  transform: scale(1.06);
+  background: rgba(255, 87, 51, 0.8);
+  box-shadow: 0 0 10px 3px rgba(255, 87, 51, 0.6);
+}
+
+
+/* Mobile handling — wrap cleanly, NOT abruptly */
+@media (max-width: 700px) {
+  .tab-bar {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+
+    /* Smooth transform when switching layout */
+    transition: all 0.4s ease-in-out;
+  }
+
+  .tab-bar button {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+
+/* --- TAB CONTENT ANIMATION --- */
+section.tab-content {
+  display: none;
+}
+
+section.tab-content.active {
+  display: block;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* Initially hidden */
+.header-tab-content {
+  position: relative; /* same as icon grid sections */
+  z-index: 5;
+  display: none;
+  padding: 50px 20px;
+  text-align: center;
+}
+
+
+/* Centered large text */
+.header-tab-text {
+  font-family: 'VT323', monospace;
+  font-size: 3rem;
+  color: #ffd700; /* dark yellow */
+  text-align: center;
+  margin: 100px auto;
+  max-width: 800px;
+  line-height: 1.2;
+}
+
+
+/* Show active section */
+.header-tab-content.active {
+  display: block;
+  animation: fadeIn 0.4s ease;
+}
+
+/* Normal header links */
+.header-text-link {
+  display: inline-block;
+  padding: 8px 16px;
+  color: #fff;
+  text-decoration: none;
+  font-family: 'VT323', monospace;
+  font-size: 1.2rem;
+  transition: transform 0.25s ease, background 0.25s ease;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Hover effect */
+.header-text-link:hover {
+  transform: scale(1.1);
+  background: rgba(184, 134, 11, 0.8); /* dark yellow hover */
+  color: #000;
+}
+
+/* Active header link (highlighted like active tab) */
+.header-text-link.active {
+  background: #b8860b; /* dark yellow */
+  color: #000;
+  box-shadow: 0 0 15px 4px rgba(184, 134, 11, 0.7);
+  text-shadow: 0 0 8px rgba(220, 180, 50, 0.8);
+}
+
+
+
+#tooltip-display {
+  position: relative;  /* stays in normal flow */
+  z-index: 10;         /* above background-layer */
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4px 14px;
+  background: rgba(0,0,0,0.65);
+  color: #00ff88;
+  text-align: center;
+  font-family: 'VT323', monospace;
+  letter-spacing: 2px;
+  font-size: 1.3rem;
+  min-height: 34px;
+  border-radius: 0;
+      
+}
+
+.background-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+
+  pointer-events: none;
+  overflow: hidden;
+}
+
+
+.firefly-layer {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 1; /* above background but below UI */
+}

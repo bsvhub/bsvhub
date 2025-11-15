@@ -1,124 +1,332 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BSVHUB.APP</title>
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      background: #355070;
-      color: #222;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background: #132440;
-      color: #FFC900;
-      padding: 1.5rem;
-      text-align: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    header h1 {
-      margin: 0;
-      font-size: 2rem;
-    }
-    main {
-      max-width: 900px;
-      margin: 2rem auto;
-      padding: 0 1rem;
-    }
-    section {
-      background: #132440;
-      margin-bottom: 2rem;
-      padding: 1.5rem;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    }
-    section h2 {
-      border-bottom: 2px solid white;
-      padding-bottom: 0.5rem;
-      margin-top: 0;
-      color: white;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      color: white;
-    }
-    li {
-      margin: 0.5rem 0;
-    }
-    a {
-      color: #FFC900;
-      text-decoration: none;
-      font-weight: 500;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    footer {
-      text-align: center;
-      padding: 1rem;
-      background: #111;
-      color: #fff;
-      font-size: 0.9rem;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <title>BSVhub.app</title>
+
+  <link rel="preload" href="assets/facon.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/firefly.css">
 </head>
+
 <body>
-  <header>
-    <h1>BSVHUB.APP</h1>
-    <p>Your HUB to Bitcoin SV: this site is under construction, the links below are real</p>
-    <p>last updated: 11 Nov. 2025</p>
-  </header>
+<div class="background-layer"></div>
+<div class="firefly-layer"></div>
 
-  <main>
-    <section>
-      <h2>Explorers & Block Tools</h2>
-      <ul>
-        <li><a href="https://whatsonchain.com" target="_blank">Whatsonchain</a> – The main BSV blockchain explorer</li>
-        
-      </ul>
-    </section>
+<script>
+  const fireflyContainer = document.querySelector('.firefly-layer');
+  const quantity = 15;
+  for (let i = 0; i < quantity; i++) {
+    const firefly = document.createElement('div');
+    firefly.classList.add('firefly');
+    fireflyContainer.appendChild(firefly);
+  }
+</script>
 
-    <section>
-      <h2>Wallets & Identity</h2>
-      <ul>
-        <li><a href="https://electrumsv.io/" target="_blank">ElectrumSV</a> – A clasic Desktop wallet for Windows, Mac and Linux; also see next link below!</li>
-        <li><a href="https://docs.gorillapool.io/electrumsv/" target="_blank">ElectrumSV Server Details</a> – Using ElectrumSV with GorillaPool</li>
-        <li><a href="https://handcash.io" target="_blank">HandCash</a> – Mobile-friendly BSV wallet with Apps</li>
-        <li><a href="https://mybsv.io/" target="_blank">MyBSV.io</a> – On-Chain BSV wallet plus tools and links</li>
-        <li><a href="https://yours.org" target="_blank">Yours</a> – A Chromium/Chrome browser BSV Wallet extension</li>
-      </ul>
-    </section>
 
-    <section>
-      <h2>Social & Apps</h2>
-      <ul>
-        <li><a href="https://treechat.ai" target="_blank">Treechat</a> – Social network on BSV</li>
-        <li><a href="https://getmetanet.com/" target="_blank">Metanet Desktop</a> – New standardised BSV protocal for wallet to app interface</li>
-        <li><a href="https://metanetapps.com/" target="_blank">Metanet Apps</a> – Metanet App Catalog</li>
-      </ul>
-    </section>
+<!-- HEADER -->
+<div class="header-container">
+  <div class="header-icons header-icons-left">
+    <a href="#" data-target="about-section" class="header-text-link">About</a>
+    <a href="#" data-target="tip-section" class="header-text-link">Tip</a>
+  </div>
 
-    <section>
-      <h2>Developer Tools & Docs</h2>
-      <ul>
-        <li><a href="https://bsvblockchain.org" target="_blank">BSV Blockchain Official Site</a> – Docs, SDKs, and APIs</li>
-        <li><a href="https://bsvassociation.org/" target="_blank">BSV Association</a> – Guardians of the BSV protocal</li>
-        <li><a href="https://projectbabbage.com/" target="_blank">Project Babbage</a> – Developer of new BRC-100 wallet standard</li>  
-      </ul>
-    </section>
-  </main>
+  <h1 style="font-size: 3.5rem; color:#ff5733;">BSVhub.app</h1>
 
-  <footer>
-    © <span id="year"></span> BSV Resources Hub — Independent Directory of BSV Projects
-  </footer>
+  <div class="header-icons header-icons-right">
+    <a href="#" data-target="info-section" class="header-text-link">Info</a>
+    <a href="#" data-target="contact-section" class="header-text-link">Contact</a>
+  </div>
+</div>
 
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+  <button class="tab-btn active" data-target="explorers">Explorers & Block Tools</button>
+  <button class="tab-btn" data-target="wallets">Wallets & Identity</button>
+  <button class="tab-btn" data-target="social">Social & Apps</button>
+  <button class="tab-btn" data-target="devtools">Developer Tools & Docs</button>
+  <button class="tab-btn" data-target="mining">Mining</button>
+  <button class="tab-btn" data-target="new">New</button>
+</div>
+
+<div id="tooltip-display"></div>
+
+<!-- ================= TAB CONTENT ================= -->
+
+<!-- EXPLORERS -->
+<section id="explorers" class="tab-content active">
+  <ul class="icon-grid">
+    <li>
+      <a href="https://whatsonchain.com" target="_blank">
+        <div class="tooltip" data-tooltip="The main BSV blockchain explorer">
+          <img class="hover-enlarge" src="icon/bsv.png" width="160">
+        </div>
+      </a>
+    </li>
+  </ul>
+</section>
+
+<!-- WALLETS -->
+<section id="wallets" class="tab-content">
+  <ul class="icon-grid">
+    <li>
+      <a href="https://electrumsv.io/" target="_blank">
+        <div class="tooltip" data-tooltip="Classic desktop wallet for Windows/Mac/Linux">
+          <img class="hover-enlarge" src="icon/bsv.png" width="160">
+        </div>
+      </a>
+    </li>
+
+    <li>
+      <a href="https://docs.gorillapool.io/electrumsv/" target="_blank">
+        <div class="tooltip" data-tooltip="Using ElectrumSV with GorillaPool">
+          <img class="hover-enlarge" src="icon/bsv.png" width="160">
+        </div>
+      </a>
+    </li>
+
+    <li>
+      <a href="https://handcash.io" target="_blank">
+        <div class="tooltip" data-tooltip="Mobile-friendly BSV wallet with Apps">
+          <img class="hover-enlarge" src="icon/bsv.png" width="160">
+        </div>
+      </a>
+    </li>
+
+    <li>
+      <a href="https://mybsv.io/" target="_blank">
+        <div class="tooltip" data-tooltip="On-chain wallet with links and tools">
+          <img class="hover-enlarge" src="icon/bsv.png" width="160">
+        </div>
+      </a>
+    </li>
+
+    <li>
+      <a href="https://yours.org" target="_blank">
+        <div class="tooltip" data-tooltip="Chrome-based BSV wallet extension">
+          <img class="hover-enlarge" src="icon/bsv.png" width="160">
+        </div>
+      </a>
+    </li>
+  </ul>
+</section>
+
+<!-- SOCIAL -->
+<section id="social" class="tab-content">
+  <ul class="icon-grid">
+    <li>
+      <a href="https://treechat.ai" target="_blank">
+        <div class="tooltip" data-tooltip="Social network on BSV">
+          <img class="hover-enlarge" src="icon/bsv.png" width="160">
+        </div>
+      </a>
+    </li>
+
+    <li>
+      <a href="https://getmetanet.com/" target="_blank">
+        <div class="tooltip" data-tooltip="Metanet Desktop">
+          <img class="hover-enlarge" src="icon/bsv.png" width="160">
+        </div>
+      </a>
+    </li>
+
+    <li>
+      <a href="https://metanetapps.com/" target="_blank">
+        <div class="tooltip" data-tooltip="Metanet App Catalog">
+          <img class="hover-enlarge" src="icon/bsv.png" width="160">
+        </div>
+      </a>
+    </li>
+  </ul>
+</section>
+
+<!-- DEV TOOLS -->
+<section id="devtools" class="tab-content">
+  <ul class="icon-grid">
+    <li>
+      <a href="https://bsvblockchain.org" target="_blank">
+        <div class="tooltip" data-tooltip="Docs, SDKs, APIs">
+          <img class="hover-enlarge" src="icon/bsv.png" width="160">
+        </div>
+      </a>
+    </li>
+
+    <li>
+      <a href="https://bsvassociation.org/" target="_blank">
+        <div class="tooltip" data-tooltip="Guardians of the BSV protocol">
+          <img class="hover-enlarge" src="icon/bsv.png" width="160">
+        </div>
+      </a>
+    </li>
+
+    <li>
+      <a href="https://projectbabbage.com/" target="_blank">
+        <div class="tooltip" data-tooltip="Creators of BRC-100 Wallet Standard">
+          <img class="hover-enlarge" src="icon/bsv.png" width="160">
+        </div>
+      </a>
+    </li>
+  </ul>
+</section>
+
+<!-- MINING -->
+<section id="mining" class="tab-content">
+  <ul class="icon-grid">
+    <li>
+      <a href="https://gorillapool.com/" target="_blank">
+        <div class="tooltip" data-tooltip="GorillaPool Mining">
+          <img class="hover-enlarge" src="icon/bsv.png" width="160">
+        </div>
+      </a>
+    </li>
+
+    <li>
+      <a href="https://gorillapool.io/" target="_blank">
+        <div class="tooltip" data-tooltip="Join GorillaPool">
+          <img class="hover-enlarge" src="icon/bsv.png" width="160">
+        </div>
+      </a>
+    </li>
+  </ul>
+</section>
+
+<!-- NEW -->
+<section id="new" class="tab-content">
+  <ul class="icon-grid">
+    <li>
+      <a href="https://mybsv.io/" target="_blank">
+        <div class="tooltip" data-tooltip="On-chain wallet with links and tools">
+          <img class="hover-enlarge" src="icon/bsv.png" width="160">
+        </div>
+      </a>
+    </li>
+
+    <li>
+      <a href="https://getmetanet.com/" target="_blank">
+        <div class="tooltip" data-tooltip="Metanet Desktop">
+          <img class="hover-enlarge" src="icon/bsv.png" width="160">
+        </div>
+      </a>
+    </li>
+  </ul>
+</section>
+
+<!-- HEADER LINKS SECTIONS -->
+<section id="about-section" class="tab-content header-tab-content">
+  <div class="header-tab-text">Welcome to About</div>
+</section>
+
+<section id="tip-section" class="tab-content header-tab-content">
+  <div class="header-tab-text">Here are some useful tips</div>
+</section>
+
+<section id="info-section" class="tab-content header-tab-content">
+  <div class="header-tab-text">Information about BSVhub.app</div>
+</section>
+
+<section id="contact-section" class="tab-content header-tab-content">
+  <div class="header-tab-text">Contact us here</div>
+</section>
+
+
+
+
+<!-- ============ TAB SCRIPT ============ -->
+
+<script>
+const tooltipBox = document.getElementById("tooltip-display");
+
+document.querySelectorAll(".tooltip").forEach(tip => {
+    const text = tip.dataset.tooltip;
+
+    tip.addEventListener("mouseenter", () => {
+        tooltipBox.textContent = text;
+    });
+
+    tip.addEventListener("mouseleave", () => {
+        tooltipBox.textContent = "";
+    });
+});
+</script>
+
+<script>
+  // Your three colors
+  const colors = ["#555555", "#6a0dad", "#001f54"];
+
+  // Shuffle function
+  function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  // Shuffle colors and apply gradient
+  const shuffled = shuffleArray([...colors]);
+  const gradient = `linear-gradient(135deg, ${shuffled[0]} 0%, ${shuffled[1]} 45%, ${shuffled[2]} 100%)`;
+
+  document.querySelector('.background-layer').style.background = gradient;
+</script>
+
+<script>
+  // Automatically set body padding to header height
+  const header = document.querySelector('.header-container');
+  document.body.style.paddingTop = header.offsetHeight + 'px';
+
+  // Optional: update if window is resized
+  window.addEventListener('resize', () => {
+    document.body.style.paddingTop = header.offsetHeight + 'px';
+  });
+</script>
+
+<script>
+const tabButtons = document.querySelectorAll('.tab-btn');
+const headerLinks = document.querySelectorAll('.header-text-link');
+const tabContents = document.querySelectorAll('.tab-content');
+
+// Tab click sound
+const clickSound = new Audio('assets/sounds/tab-click.mp3');
+clickSound.volume = 0.3;
+
+// Function to activate a tab/section
+function activateTab(targetId, clickedElement = null) {
+  // Play click sound
+  clickSound.currentTime = 0;
+  clickSound.play().catch(()=>{});
+
+  // Remove active from all buttons and header links
+  tabButtons.forEach(btn => btn.classList.remove('active'));
+  headerLinks.forEach(link => link.classList.remove('active'));
+
+  // Add active to clicked element (tab or header link)
+  if (clickedElement) clickedElement.classList.add('active');
+
+  // Hide all tab contents
+  tabContents.forEach(content => content.classList.remove('active'));
+
+  // Show the targeted section
+  const target = document.getElementById(targetId);
+  if (target) target.classList.add('active');
+}
+
+// Event listeners for main tab buttons
+tabButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    activateTab(btn.dataset.target, btn);
+  });
+});
+
+// Event listeners for header links
+headerLinks.forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault(); // prevent default link
+    activateTab(link.dataset.target, link);
+  });
+});
+</script>
+
+
 </body>
 </html>
