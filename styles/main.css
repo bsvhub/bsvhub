@@ -198,13 +198,27 @@ html, body {
     100% { color: red; }
 }*/
 
+/* UNIVERSAL ICON STYLE (for all icons that enlarge on hover) */
 .hover-enlarge {
-    transition: transform 0.3s ease; /* Smooth transition */
+    width: 256px;                 /* keep your existing size */
+    height: auto;
+    object-fit: contain;
+
+    border: 4px solid #2b3a45;    /* dark blue-gray border */
+    border-radius: 20px;          /* rounded corners */
+
+    transition:
+        transform 0.3s ease,
+        border-color 0.25s ease;  /* smooth colour change */
 }
 
+/* HOVER EFFECT */
 .hover-enlarge:hover {
-    transform: scale(1.15); /* Enlarge by 10% */
+    transform: scale(1.15);       /* your enlarge effect */
+    border-color: #cc0022;        /* cherry red */
 }
+
+
 
 /* for hover tooltip */
 
@@ -228,66 +242,108 @@ ul.icon-grid li a, .selectbtn {
     border-radius: 20px; /* Add this line to round the edges */
 }
 
-/* --- ICON GRID BASE STYLES --- */
-ul.icon-grid {
-    display: flex;
-    justify-content: center;  /* center icons horizontally */
-    flex-wrap: wrap;          /* wrap only if needed */
-    list-style: none;
-    padding: 20px;
-    margin: 0 auto;
-}
-
-/* --- ICON GRID BASE STYLES --- */
-ul.icon-grid {
-    display: flex;                 /* use flex layout to line up icons horizontally */
-    justify-content: center;       /* center icons horizontally in the grid */
-    flex-wrap: wrap;               /* allow icons to wrap to next row if needed */
-    list-style: none;              /* remove bullets from list */
-    padding: 20px;                 /* spacing inside the grid */
-    margin: 0 auto;                /* center the grid horizontally */
-}
-
-ul.icon-grid li {
-    display: flex;                 /* flex layout inside each list item */
-    justify-content: center;       /* center the link/image horizontally */
-    align-items: center;           /* center the link/image vertically */
-    margin: 0 16px;                /* horizontal spacing between icons */
-}
-
 /* --- ICON IMAGE BASE STYLES --- */
+
 ul.icon-grid li a img,
 .selectbtn img {
     width: 256px;                  /* default icon width */
     height: auto;                  /* maintain aspect ratio */
-    border-radius: 20px;           /* rounded corners on the icons */
-    transition: transform 0.3s ease; /* smooth hover scaling */
+    /*border-radius: 20px;           /* rounded corners on the icons */
+    /*transition: transform 0.3s ease; /* smooth hover scaling */
     object-fit: contain;           /* ensures image scales correctly without distortion */
 }
 
-/* --- ICON HOVER EFFECTS --- */
-ul.icon-grid li a:hover,
-.selectbtn:hover {
-    color: brown;                  /* change link color on hover (for text or fallback) */
-    background-color: rgba(135, 206, 235, 0.3); /* subtle semi-transparent background */
-    /* removed redundant border-radius and z-index — already applied in base styles */
+/* ============================================================
+   UNIVERSAL IMAGE STYLE (NO BORDER HERE)
+   The image should never have a border — only scale animation.
+   ============================================================ */
+.hover-enlarge {
+    width: 256px;           /* base icon size */
+    height: auto;
+    object-fit: contain;
+
+    border: none;           /* removed border */
+    border-radius: 16px;    /* slightly inside the wrapper */
+
+    transition: transform 0.3s ease; /* smooth scale */
 }
 
-/* --- HOVER IMAGE SCALE EFFECT --- */
+/* Scale the image on hover */
 .hover-enlarge:hover {
-    transform: scale(1.15);        /* scale up icon slightly on hover */
+    transform: scale(1.1);
 }
 
-/* --- RESPONSIVE ICON SIZE --- */
+/* ============================================================
+   ICON WRAPPER (<a> ELEMENT)
+   This holds BOTH the background and the border.
+   ============================================================ */
+ul.icon-grid li a {
+    display: inline-block;
+
+    /* NEW: Add internal spacing so icons never collapse vertically */
+    padding: 12px;  /* works at both 256px and 160px */
+
+    background-color: rgba(135, 206, 235, 0.3);
+    border: 4px solid #2b3a45;
+    border-radius: 20px;
+
+    transition:
+        background-color 0.25s ease,
+        border-color 0.25s ease,
+        transform 0.25s ease;
+}
+
+@media (max-width: 960px) {
+    ul.icon-grid li a {
+        padding: 6px;  /* slightly smaller padding for 160px icons */
+    }
+}
+
+
+
+/* ============================================================
+   HOVER STATE — wrapper (<a>) becomes highlighted
+   ============================================================ */
+ul.icon-grid li a:hover {
+    background-color: rgba(135, 206, 235, 0.6); /* stronger blue on hover */
+    border-color: #cc0022;                      /* cherry red border */
+    transform: scale(1.04);                     /* small lift */
+}
+
+/* ============================================================
+   ICON GRID LAYOUT
+   (Cleaned of duplicates)
+   ============================================================ */
+ul.icon-grid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    list-style: none;
+    padding: 20px;
+    margin: 0;
+}
+
+ul.icon-grid li {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin: 16px 16px;   /* <-- added vertical margin */
+}
+
+
+
+/* ============================================================
+   RESPONSIVE ICON SIZE
+   ============================================================ */
 @media (max-width: 960px) {
     ul.icon-grid li a img {
-        width: 160px;              /* shrink icons on smaller screens */
-        height: auto;              /* keep aspect ratio */
+        width: 160px;  /* icon shrinks */
+        height: auto;
     }
 
-    /* optional: adjust hover scale for smaller icons */
     .hover-enlarge:hover {
-        transform: scale(1.1);     /* smaller scale to match smaller icon */
+        transform: scale(1.08); /* slightly smaller scale on small screens */
     }
 }
 
