@@ -75,12 +75,10 @@
 </div>
 
 <!-- JSON POPULATED CONTENT -->
-<div id="content-area"></div>
-
-
-<!-- ============================================================
-   EXISTING JS (MODIFIED ONLY WHEN REQUIRED)
-   ============================================================ -->
+<div id="content-area">
+	<!-- Unified Search Result Section -->
+	<section id="search-results" class="tab-content"></section>
+</div>
 <script>
 /* ============================================================
    1 — TOOLTIP SYSTEM (FIXED)
@@ -283,59 +281,86 @@ const excludedTabs = [
 
 searchBox.addEventListener("input", () => {
     const query = searchBox.value.toLowerCase();
+    const searchSection = document.getElementById("search-results");
 
-    // 🔹 If search is empty, reset all items to visible and activate default tab
+    // ALWAYS clear previous results
+    searchSection.innerHTML = "";
+
+    /* ------------------------------------------------------------
+       A — Empty search → restore normal tab view
+       ------------------------------------------------------------ */
     if (!query) {
-        document.querySelectorAll(".tab-content").forEach(section => {
-            section.querySelectorAll("li").forEach(li => li.style.display = "");
-            section.classList.remove("active");
-        });
 
-        // Reset to default tab
+        // Hide search result panel
+        searchSection.classList.remove("active");
+
+        // Restore default tab ("new")
         activateTab("new", document.querySelector('.tab-btn[data-target="new"]'));
-        return;
+
+        return; // END — nothing else happens when search is empty
     }
 
-    let firstVisibleTabId = null;
-    const seenTexts = new Set(); // 🔹 NEW: Keep track of already displayed item texts
+    /* ------------------------------------------------------------
+       B — Searching → disable all normal tabs
+       ------------------------------------------------------------ */
+    document.querySelectorAll(".tab-content").forEach(sec => {
+        if (sec !== searchSection) sec.classList.remove("active");
+    });
 
-    // 🔹 Filter all sections with icon-grid items
+    // Create the unified results grid
+    let resultGrid = document.createElement("ul");
+    resultGrid.className = "icon-grid";
+
+    let found = 0;
+    const seenTexts = new Set(); // prevent duplicates
+
+    /* ------------------------------------------------------------
+       C — Scan ALL sections (except excluded ones)
+       ------------------------------------------------------------ */
     document.querySelectorAll(".tab-content").forEach(section => {
         if (excludedTabs.includes(section.id)) return;
 
         const lis = section.querySelectorAll("li");
-        if (!lis.length) return;
-
         lis.forEach(li => {
+
             const wrapper = li.querySelector(".icon-wrapper");
+            if (!wrapper) return;
+
             const txt = wrapper.querySelector(".icon-text").textContent.toLowerCase();
             const tip = wrapper.dataset.tooltip.toLowerCase();
+
             const match = txt.includes(query) || tip.includes(query);
 
-            // 🔹 Only display if it matches AND hasn't been displayed yet
             if (match && !seenTexts.has(txt)) {
-                li.style.display = "";
-                seenTexts.add(txt); // 🔹 Mark this text as displayed
-            } else {
-                li.style.display = "none";
+                // Clone so we don't remove original from its tab
+                resultGrid.appendChild(li.cloneNode(true));
+                seenTexts.add(txt);
+                found++;
             }
         });
-
-        // 🔹 Section is active if it has at least one visible item
-        const anyVisible = Array.from(lis).some(li => li.style.display !== "none");
-        if (anyVisible) {
-            section.classList.add("active");
-            if (!firstVisibleTabId) firstVisibleTabId = section.id; // remember first visible section
-        } else {
-            section.classList.remove("active");
-        }
     });
 
-    // 🔹 Update tab button highlighting to match first visible section
-    if (firstVisibleTabId) {
-        tabButtons.forEach(btn => {
-            btn.classList.toggle("active", btn.dataset.target === firstVisibleTabId);
-        });
+    /* ------------------------------------------------------------
+       D — Display results or hide the search tab
+       ------------------------------------------------------------ */
+    if (found > 0) {
+
+        // Inject the unified results grid
+        searchSection.appendChild(resultGrid);
+
+        // 🔹 Re-bind tooltips for cloned search items (required!)
+        bindTooltips();
+
+        // Show search results section
+        searchSection.classList.add("active");
+
+        // Remove active highlight from all tabs
+        tabButtons.forEach(btn => btn.classList.remove("active"));
+
+    } else {
+
+        // No matches → hide search results section
+        searchSection.classList.remove("active");
     }
 });
 
