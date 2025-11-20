@@ -221,49 +221,45 @@ body {
    4 — TAB BAR SYSTEM
    ============================================================ */
 
-/* Main row of large tabs */
+/* Main row of large tabs — improved wrap for balanced rows (stretch disabled) */
 .tab-bar {
-    display: flex;                 /* horizontal flex layout */
-    flex-wrap: wrap;               /* wrap on small screens */
+    display: flex;
+    flex-wrap: wrap;               /* allow buttons to wrap */
     justify-content: center;       /* center tabs horizontally */
-    align-items: center;           /* vertically center tabs */
-    gap: 10px;                     /* spacing between tab buttons */
-    
-    width: 100%;                   /* full width */
-    padding: 12px 12px 16px;       /* top/right/bottom/left padding */
-    
-    background: rgba(0,0,0,0.65);  /* semi-transparent background */
-    backdrop-filter: blur(4px);     /* frosted effect */
+    align-items: center;           /* <-- changed: stop stretching, center vertically */
+    gap: 10px;
+
+    width: 100%;
+    padding: 12px 12px 16px;
+
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(4px);
     box-sizing: border-box;
+
+    /* vertical spacing between wrapped rows */
+    row-gap: 10px;
 }
 
-/* Shrinks when scrolling */
-.tab-bar.scrolled {
-    opacity: 0.85;                 /* slightly transparent */
-    transform: scale(0.95);        /* shrink slightly */
-    background: rgba(0,0,0,0.5);   /* darker semi-transparent */
-}
-
-/* Individual tab button */
+/* keep your button sizing rules — tabs adjust to fit text with NO truncation */
 .tab-bar button {
-    flex: 0 0 auto;                      /* size based on content, don't grow or shrink */
-    min-width: 80px;                      /* minimum tappable width */
-    max-width: 220px;                     /* optional: prevent extremely wide labels */
-    
-    padding: 12px 18px;                   /* taller buttons for mobile-friendly tapping */
-    
+    flex: 0 0 auto;               /* <-- prevents shrinking AND prevents forced expansion */
+    min-width: 100px;       	  /* <-- button must be wide enough for full text */
+    max-width: none;              /* <-- remove width cap so text never gets cut */
+
+    padding: 12px 18px;
     font-family: 'VT323', monospace;
-    font-size: clamp(0.9rem, 2.2vw, 1.3rem); /* responsive font size */
-    white-space: nowrap;                   /* keep one line if it fits */
-    overflow: hidden;                      /* truncate if really long */
-    text-overflow: ellipsis;               /* show ... if needed */
+    font-size: clamp(0.9rem, 2.2vw, 1.3rem);
+    white-space: nowrap;          /* one-line text, required */
     
+    /* REMOVE truncation */
+    overflow: visible;            /* allow full text */
+    text-overflow: clip;          /* neutral, no ellipsis */
+
     border-radius: 10px;
     border: 2px solid #ff5733;
     background: rgba(255,255,255,0.1);
     color: white;
-    
-    /* smooth transitions */
+
     transition: background 0.25s, transform 0.25s, font-size 0.25s;
 }
 
@@ -502,7 +498,7 @@ ul.icon-grid li a img {
 
     /* Smaller icons for smaller screens */
     ul.icon-grid li a img {
-        width: 150px;               /* reduce icon size */
+        width: 160px;               /* reduce icon size */
     }
 
     /* Reduced hover grow effect for smaller screens */
@@ -520,46 +516,28 @@ ul.icon-grid li a img {
    10 — SEARCH BAR — MATCH TAB BUTTON STYLE
    ============================================================ */
 
-/* Make search box match tab buttons */
-.search-box {
-    height: 50px;             /* match tab button height */
-    font-size: 14px;          /* match button font size */
-    padding: 0 12px;          /* horizontal padding */
-    border-radius: 5px;       /* same rounding as buttons if any */
-    border: 1px solid #ccc;   /* same or similar border */
-    box-sizing: border-box;   /* include padding in width calculation */
-}
-
+/* Make search box match tab buttons (cleaned, duplicates removed) */
 #search-box {
-    width: 70%;
-    padding: 10px 14px;
-	font-family: 'VT323', monospace;
-    font-size: 1.2rem;
-    letter-spacing: 2px;
-    
-    color: #ffcc66;
-
+    max-width: 155px;         		 /* search button max width */
+    padding: 12px 18px;              /* vertical and horizontal padding */
+    font-family: 'VT323', monospace;
+    font-size: 1.2rem; /* responsive font size same as tab buttons */
+    white-space: nowrap;                   /* keep one line if it fits */
+    line-height: 1.2;                 /* optional, ensures correct vertical spacing */
+    border-radius: 10px;              /* match tab buttons */
     background: rgba(255, 255, 255, 0.1);
     border: 2px solid rgba(255, 204, 102, 0.4);
-    border-radius: 14px;
-
     outline: none;
-
-    /* smooth animation (same as tab buttons) */
-    transition:
-        background 0.3s ease,
-        border-color 0.3s ease,
-        box-shadow 0.3s ease,
-        transform 0.2s ease;
+    color: white;   /* <-- adds your desired font color */
+    transition: background 0.25s, transform 0.25s, box-shadow 0.25s;
 }
 
-/* Hover effect (same glow as tab buttons) */
+/* hover & focus with original search colors */
 #search-box:hover {
+    transform: scale(1.06);                   /* same as tab buttons */
     background: rgba(255, 204, 102, 0.2);
     box-shadow: 0 0 12px rgba(255, 204, 102, 0.7);
 }
-
-/* Focus effect (typing glow) */
 #search-box:focus {
     background: rgba(255, 204, 102, 0.25);
     border-color: #ffcc66;
@@ -567,7 +545,7 @@ ul.icon-grid li a img {
     transform: scale(1.01);
 }
 
-/* Search placeholder text */
+/* placeholder */
 #search-box::placeholder {
-    color: rgba(255, 204, 102, 0.6);
+    color: rgba(200, 200, 200, 0.7); /* colour of "serch here" text*/   
 }

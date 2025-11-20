@@ -82,8 +82,8 @@
           "href": "https://www.slictionary.com/",
           "tooltip": "An on-chain Dictionary of unique terms/word",
           "img": "icon/slictionary.png",
-          "alt": "slictionary",
-          "text": "slictionary"
+          "alt": "Slictionary",
+          "text": "Slictionary"
         },
         {
           "href": "https://handcash.io/",
@@ -174,14 +174,14 @@
       "items": [
         {
           "href": "https://www.coinspot.com.au/",
-          "tooltip": "A majour, yet not well know Australian KYC exchange with high volue BSV trading",
+          "tooltip": "A majour, yet not well know Australian KYC exchange",
           "img": "icon/cs.png",
           "alt": "CoinSpot",
           "text": "CoinSpot"
         },
         {
           "href": "https://bsvblockchain.org/get-bsv/",
-          "tooltip": "Exchanges list provided by bsvblockchain.org; check as some wallets are enchanges no longer work or support BSV",
+          "tooltip": "Exchanges list provided by bsvblockchain.org; check as some wallets and exchanges no longer work or support BSV",
           "img": "icon/xlist.png",
           "alt": "Exchange List",
           "text": "Exchnage List"
@@ -211,7 +211,7 @@
 
     "about-section": {
       "class": "tab-content header-tab-content",
-      "html": "<div class=\"header-tab-text\">Last updat: 18th Nov. 2025</div>"
+      "html": "<div class=\"header-tab-text\">Last updat: 20th Nov. 2025</div>"
     },
 
     "tip-section": {
@@ -221,7 +221,7 @@
 
     "info-section": {
       "class": "tab-content header-tab-content",
-      "html": "<div class=\"header-tab-text\">Last updat: 17th Nov. 2025</div>"
+      "html": "<div class=\"header-tab-text\">Last updat: 20th Nov. 2025</div>"
     },
 
     "contact-section": {
