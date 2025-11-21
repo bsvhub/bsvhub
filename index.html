@@ -35,10 +35,7 @@
 	  <div class="header-icons header-icons-right">
 		<!--a href="#" data-target="info-section" class="header-text-link">Info</a-->
 		<a href="#" data-target="contact-section" class="header-text-link">Contact</a>
-		<!-- Visit Counter -->
-		<div id="visit-counter" style="pointer-events: none;">
-			<script type="text/javascript" src="https://counter.websiteout.com/js/6/6/0/0"></script>
-		</div>
+		
 	  </div>
 	</div>
 
@@ -76,9 +73,29 @@
 
 <!-- JSON POPULATED CONTENT -->
 <div id="content-area">
-	<!-- Unified Search Result Section -->
-	<section id="search-results" class="tab-content"></section>
+    
+    <!-- Unified Search Result Section -->
+    <section id="search-results" class="tab-content"></section>
+
+    <!-- STATIC ABOUT SECTION (now part of HTML) -->
+    <section id="about-section" class="tab-content header-tab-content">
+        <div class="header-tab-text">
+            Number of visitors:<br>
+            <div id="visit-counter"></div>
+            <br>
+            Last update: 20th Nov. 2025
+        </div>
+    </section>
+
 </div>
+
+<!-- Load visitor counter AFTER the about section exists -->
+<script>
+const script = document.createElement("script");
+script.src = "https://counter.websiteout.com/js/7/6/0/1";
+document.getElementById("visit-counter").appendChild(script);
+</script>
+
 <script>
 /* ============================================================
    1 — TOOLTIP SYSTEM (FIXED)
@@ -92,14 +109,15 @@ function bindTooltips() {
         const text = icon.dataset.tooltip;
 
         icon.addEventListener("mouseenter", () => {
-            tooltipBox.textContent = text;
-            positionContentBelowTooltip();
-        });
+			setTooltipText(text);
+			positionContentBelowTooltip();
+		});
 
-        icon.addEventListener("mouseleave", () => {
-            tooltipBox.textContent = "";
-            positionContentBelowTooltip();
-        });
+		icon.addEventListener("mouseleave", () => {
+			setTooltipText("");
+			positionContentBelowTooltip();
+		});
+
     });
 }
 
@@ -266,6 +284,52 @@ fetch("list.json")
         positionContentBelowTooltip();
     });
 
+// --- Inject visitor counter script AFTER about-section exists ---
+function loadVisitorCounter() {
+    const counterDiv = document.getElementById("visit-counter");
+    if (!counterDiv) return;
+
+    const script = document.createElement("script");
+	script.src = "https://counter.websiteout.com/js/7/6/0/1";
+
+    counterDiv.appendChild(script);
+}
+
+function loadVisitorCounter() {
+    const counterDiv = document.getElementById("visit-counter");
+    if (!counterDiv) {
+        // Try again in 200ms
+        return setTimeout(loadVisitorCounter, 200);
+    }
+
+    // If the script already exists, stop
+    if (counterDiv.querySelector("script")) return;
+
+    // Load actual counter script
+    const script = document.createElement("script");
+    script.src = "https://counter.websiteout.com/js/7/6/0/1";
+    counterDiv.appendChild(script);
+
+    console.log("Visitor counter loaded!");
+}
+
+// Keep trying until the element is ready
+loadVisitorCounter();
+
+
+// Copy tip address button
+document.addEventListener("click", (e) => {
+    if (e.target.id === "copy-tip-btn") {
+        const addr = document.getElementById("tip-address").textContent.trim();
+        navigator.clipboard.writeText(addr).then(() => {
+            e.target.textContent = "Copied!";
+            setTimeout(() => (e.target.textContent = "Copy"), 1200);
+        });
+    }
+});
+
+
+
 /* ============================================================
 7 — SEARCH SYSTEM (GLOBAL SEARCH WITH DYNAMIC TAB HIGHLIGHT)
 ============================================================ */
@@ -363,6 +427,30 @@ searchBox.addEventListener("input", () => {
         searchSection.classList.remove("active");
     }
 });
+
+/* ============================================================
+8 — TOOLTIP wrapping annimation
+============================================================ */
+
+const tooltip = document.getElementById("tooltip-display");
+
+function updateTooltipWrapAnimation() {
+    // If content is taller than one line → we are wrapping
+    if (tooltip.scrollHeight > 30) {
+        tooltip.classList.add("expanded");
+    } else {
+        tooltip.classList.remove("expanded");
+    }
+}
+
+// Recalculate on new tooltip text
+function setTooltipText(text) {
+    tooltip.innerHTML = text;
+    requestAnimationFrame(() => updateTooltipWrapAnimation());
+}
+
+// Optional: also recalc when window size changes
+window.addEventListener("resize", updateTooltipWrapAnimation);
 
 </script>
 

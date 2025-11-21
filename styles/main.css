@@ -23,7 +23,7 @@
 /* Set global box model */
 html {
     box-sizing: border-box;
-    background-color: black;   /* prevent white flash */
+    background-color: rgba(40, 30, 90);   /* prevent white flash */
     height: 100%;
 }
 
@@ -195,9 +195,9 @@ body {
     text-shadow: 0 0 8px rgba(220,180,50,0.8);
 }
 
-#visit-counter {
+/*#visit-counter {
     display: inline-flex;           /* like header-text-link */
-    align-items: center;
+  /*  align-items: center;
     justify-content: center;
     padding: 6px 14px;
     white-space: nowrap;
@@ -210,11 +210,19 @@ body {
     border-radius: 10px;
     cursor: pointer;                /* indicate interactivity */
 
-    transition: 
+    /*transition: 
         transform 0.3s,
         color 0.3s,
         background 0.3s;
+}*/
+
+#visit-counter {
+    display: inline-block;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
+
+
 
 /* ============================================================
    4 — TAB BAR SYSTEM
@@ -294,21 +302,24 @@ body {
 
 /* The horizontal tooltip bar under the tab bar */
 #tooltip-display {
+	overflow: hidden;                  /* required */
+    max-height: 24px;                  /* default height (one line) */
+    transition: max-height 0.45s ease, padding 0.45s ease;
     display: flex;                  /* horizontal layout for tooltip content */
     justify-content: center;        /* center text horizontally */
     flex-wrap: wrap;                /* allow wrapping for long text */
     
     width: 100%;                    /* full width */
-    padding: 4px 14px;              /* inner spacing */
-    min-height: 38px;               /* stable height for layout */
-    margin-bottom: 10px;            /* spacing before main content */
+    padding: 0px 14px;              /* inner spacing */
+    min-height: 24px;               /* stable height for layout */
+    margin-bottom: 0px;             /* spacing before main content */
 
     color: #00ff88;                 /* green text glow */
     text-align: center;             /* center text */
     letter-spacing: 2px;            /* spacing between letters */
-    font-size: 1.3rem;              /* tooltip text size */
+    font-size: 1.2rem;              /* tooltip text size */
 
-    background: rgba(25, 25, 25, 0); /* burple–navy blue + transparency */
+    background: rgba(25, 25, 25, 0.6); /* burple–navy blue + transparency */
     box-sizing: border-box;
     z-index: 10;                     /* above content */
 }
@@ -320,6 +331,12 @@ body {
     width: 100%;
 }
 
+/* When long text is added */
+#tooltip-display.expanded {
+    max-height: 100px;                 /* enough for multiple lines */
+    padding-top: 0px;                  /* optional – soft open */
+    padding-bottom: 0px;
+}
 /* ============================================================
    6 — CONTENT AREA LAYOUT
    ============================================================ */
@@ -340,7 +357,7 @@ body {
 /* Hidden tab sections */
 section.tab-content {
     display: none;                  /* hidden by default */
-    padding: 24px;                  /* spacing inside each tab content */
+    padding: 16px;                  /* spacing inside each tab content */
 }
 
 /* Visible tab section */
@@ -372,7 +389,7 @@ ul.icon-grid {
     flex-wrap: wrap;               /* allow wrapping to multiple rows */
     justify-content: center;       /* center icons horizontally */
     
-    padding: 20px;                 /* internal spacing */
+    padding: 5px;                 /* internal spacing */
     margin: 0 auto;                /* center container */
     max-width: 100vw;              /* prevent overflow */
     overflow-x: hidden;            /* prevent horizontal scroll */
@@ -476,7 +493,7 @@ ul.icon-grid li a img {
 
 /* Main big text inside the header sections */
 .header-tab-text {
-    font-size: 3rem;               /* large display text */
+    font-size: 2rem;               /* large display text */
     color: #ffd700;                /* yellow text */
     max-width: 800px;              /* limit width for readability */
     margin: 20px auto;             /* center block with vertical spacing */
@@ -548,3 +565,30 @@ ul.icon-grid li a img {
 #search-box::placeholder {
     color: rgba(200, 200, 200, 0.7); /* colour of "serch here" text*/   
 }
+
+/* ============================================================
+   11 — Copy Button inside Tip section
+   ============================================================ */
+.copy-btn {
+    margin-left: 12px;
+    padding: 8px 14px;
+    font-size: 1.4rem;
+    font-family: 'VT323', monospace;
+    color: #000;
+    background: #ffcc66;
+    border: 2px solid #b8860b;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.copy-btn:hover {
+    transform: scale(1.08);
+    background: #ffd98c;
+}
+
+.copy-btn:active {
+    transform: scale(0.96);
+}
+
+

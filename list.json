@@ -209,15 +209,12 @@
       ]
     },
 
-    "about-section": {
-      "class": "tab-content header-tab-content",
-      "html": "<div class=\"header-tab-text\">Last updat: 20th Nov. 2025</div>"
-    },
-
     "tip-section": {
-      "class": "tab-content header-tab-content",
-      "html": "<div class=\"header-tab-text\">14NJyZeKgbq5bXe7Hr5qd1BpWEGs2onJwX</div>"
-    },
+	  "class": "tab-content header-tab-content",
+	  "html": "<div class='header-tab-text'><span id='tip-address'>14NJyZeKgbq5bXe7Hr5qd1BpWEGs2onJwX</span> <button id='copy-tip-btn' class='copy-btn'>Copy</button></div>"
+	},
+
+
 
     "info-section": {
       "class": "tab-content header-tab-content",
