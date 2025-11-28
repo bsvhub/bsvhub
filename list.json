@@ -7,7 +7,6 @@
           "href": "https://whatsonchain.com",
           "tooltip": "The main BSV blockchain explorer",
           "img": "icon/whatsonchain.png",
-          "width": 240,
           "alt": "WhatsOnChain",
           "text": "whatsonchain"
         }
@@ -200,6 +199,13 @@
           "text": "Gateway Wallet"
         },
         {
+          "href": "https://app.reactonchain.com",
+          "tooltip": "React Onchain; curently in beta, helps with deployment of apps on the blockchan",
+          "img": "icon/bsv.png",
+          "alt": "React Onchain",
+          "text": "React Onchain"
+        },
+        {
           "href": "https://getmetanet.com/",
           "tooltip": "Metanet Desktop App",
           "img": "icon/metanet.png",
@@ -218,7 +224,7 @@
 
     "info-section": {
       "class": "tab-content header-tab-content",
-      "html": "<div class=\"header-tab-text\">Last updat: 20th Nov. 2025</div>"
+      "html": "<div class=\"header-tab-text\">Last updat: 29th Nov. 2025</div>"
     },
 
     "contact-section": {
