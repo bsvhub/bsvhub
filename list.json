@@ -217,7 +217,7 @@
 
     "tip-section": {
 	  "class": "tab-content header-tab-content",
-	  "html": "<div class='header-tab-text'><span id='tip-address'>14NJyZeKgbq5bXe7Hr5qd1BpWEGs2onJwX</span> <button id='copy-tip-btn' class='copy-btn'>Copy</button></div>"
+	  "html": "<div class='header-tab-text'><span id='tip-address'>1HK9fJFQ4ViawZvoPMqJpL2B6Z1P7f3XWd</span> <button id='copy-tip-btn' class='copy-btn'>Copy</button></div>"
 	},
 
 
@@ -229,7 +229,7 @@
 
     "contact-section": {
       "class": "tab-content header-tab-content",
-      "html": "<div class=\"header-tab-text\">Contact us here</div>"
+      "html": "<div class=\"header-tab-text\">If you spot any mistakes, or have some cool BSV related link that I can add, I can be contacted via TreeChat, user: BSVhub</div>"
     }
   }
 }

@@ -20,11 +20,28 @@
 <audio id="copy-sfx" src="styles/assets/copy.mp3"></audio>
 
 <script>
-/* Fireflies */
 const fireflyLayer = document.getElementById("firefly-layer");
-for (let i = 0; i < 15; i++) {
+const PARTICLE_COUNT = 33; // Number of particles
+
+for (let i = 0; i < PARTICLE_COUNT; i++) {
     const f = document.createElement("div");
     f.classList.add("firefly");
+
+    // Random horizontal position (0% - 100%)
+    f.style.setProperty('--x', Math.random() * 100);
+
+    // Random rise duration (8s - 18s)
+    f.style.setProperty('--duration', 8 + Math.random() * 10 + 's');
+
+    // Random fade duration (2s - 5s)
+    f.style.setProperty('--fade-duration', 2 + Math.random() * 3 + 's');
+
+    // Random animation delay (0s - 10s)
+    f.style.setProperty('--delay', Math.random() * 10 + 's');
+
+    // Random particle size (3px - 7px)
+    f.style.setProperty('--firefly-size', 3 + Math.random() * 4 + 'px');
+
     fireflyLayer.appendChild(f);
 }
 </script>
