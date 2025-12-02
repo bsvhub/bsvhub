@@ -231,6 +231,32 @@ body {
     max-height: 100px;
 }
 
+/* Marquee-style scrolling for default tooltip message */
+#tooltip-display.marquee {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+#tooltip-display.marquee span {
+    display: inline-block;
+    padding-left: 0;  /* start at left edge */
+    white-space: nowrap;
+    animation: scroll-text 60s linear infinite; /* slower, adjust 30s as needed */
+}
+
+#tooltip-display.marquee span::after {
+    content: "   •   "; /* separator between repeated messages */
+    margin-left: 2rem;
+    white-space: pre;
+}
+
+/* Repeat the message multiple times inside JS */
+
+
+@keyframes scroll-text {
+    0%   { transform: translateX(0%); }
+    100% { transform: translateX(-100%); }
+}
 
 
 /* ============================================================
@@ -344,10 +370,10 @@ ul.icon-grid li a:hover {
 }
 
 .header-tab-text {
+    margin: 0 auto;   /* <-- this centers the block horizontally */
     font-size: 2rem;
     color: #ffd700;
-    max-width: 800px;
-    margin: 0 auto;
+    text-align: center; /* <-- ensure inline text is centered */
 }
 
 

@@ -120,54 +120,93 @@ for (let i = 0; i < PARTICLE_COUNT; i++) {
 
 </main>
 
-
-
 <!-- ============================================================
-     1 — TOOLTIP SYSTEM (double-RAF + sticky-start)
-     - Ensures tooltip expansion has started before we measure.
-     - Triggers positionContent which now uses sticky rules.
-   ============================================================ -->
+     1 — TOOLTIP SYSTEM (scrolling default message + icon tooltips + 2s delay)
+============================================================ -->
 <script>
 const tooltipBox = document.getElementById("tooltip-display");
+let defaultTooltipMessage = "Loading...";
+let revertTimeout = null; // store the 2s timeout
 
+// Fetch default scroll message from text file
+fetch("tooltip-message.txt")
+  .then(response => response.text())
+  .then(text => {
+      defaultTooltipMessage = text.trim();
+      showDefaultTooltip();
+  })
+  .catch(() => showDefaultTooltip());
+
+// Display scrolling default message with repeated text
+function showDefaultTooltip() {
+    const repeated = Array(5).fill(defaultTooltipMessage).join("\u00A0\u00A0\u00A0•\u00A0\u00A0\u00A0"); // more spaces
+    tooltipBox.innerHTML = `<span>${repeated}</span>`;
+    tooltipBox.classList.add("marquee");
+}
+
+// Update tooltip expansion class
+function updateTooltipWrapAnimation() {
+    tooltipBox.classList.toggle("expanded", tooltipBox.scrollHeight > 28);
+}
+
+// Set tooltip text for icon hovers or revert to default scroll message
+function setTooltipText(text) {
+    // Clear any existing revert timeout
+    if (revertTimeout) {
+        clearTimeout(revertTimeout);
+        revertTimeout = null;
+    }
+
+    if (text) {
+        // Show icon tooltip immediately
+        tooltipBox.innerHTML = text;
+        tooltipBox.classList.remove("marquee");
+        updateTooltipWrapAnimation();
+    } else {
+        // Delay 2s before restoring scrolling message
+        revertTimeout = setTimeout(() => {
+			const repeated = Array(5).fill(defaultTooltipMessage).join("\u00A0\u00A0\u00A0•\u00A0\u00A0\u00A0");
+			tooltipBox.innerHTML = `<span>${repeated}</span>`;
+			tooltipBox.classList.add("marquee");
+			updateTooltipWrapAnimation();
+			revertTimeout = null;
+		}, 2000);
+
+    }
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            if (typeof positionContent === 'function') positionContent(null);
+        });
+    });
+}
+
+
+// Bind tooltips to icons
 function bindTooltips() {
     document.querySelectorAll(".icon-wrapper[data-tooltip]").forEach(wrapper => {
-
         const text = wrapper.dataset.tooltip;
 
         wrapper.addEventListener("mouseenter", () => {
-            // set tooltip text (starts CSS transition)
             setTooltipText(text);
-
-            // Double RAF to allow CSS transition to start and layout to update
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
-                    // compute and apply sticky shift (may increase existing sticky)
-                    positionContent(wrapper);
+                    if (typeof positionContent === "function") positionContent(wrapper);
                 });
             });
         });
 
         wrapper.addEventListener("mouseleave", () => {
-            // collapse tooltip
-            setTooltipText("");
-
-            // On collapse we wait until transition end to fully reset (handled in Section 8)
-            // but recalc layout after collapse animation starts so UI feels responsive
+            setTooltipText(""); // will revert to scrolling default after 2s
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
-                    positionContent(null);
+                    if (typeof positionContent === "function") positionContent(null);
                 });
             });
         });
     });
 }
-
-// Call after DOM injection of icons
-// bindTooltips();
 </script>
-
-
 
 
 
@@ -449,35 +488,6 @@ searchBox.addEventListener("input", () => {
 });
 
 </script>
-
-<!-- ============================================================
-     8 — TOOLTIP WRAP ANIMATION & TEXT SETTER (sync + double-RAF)
-     ============================================================ -->
-<script>
-const tooltip = document.getElementById("tooltip-display");
-
-function updateTooltipWrapAnimation() {
-    tooltip.classList.toggle("expanded", tooltip.scrollHeight > 28);
-}
-
-function setTooltipText(text) {
-    tooltip.innerHTML = text;
-
-    // Update class immediately so CSS transition starts
-    updateTooltipWrapAnimation();
-
-    // Double RAF before measuring to allow layout to settle after CSS change
-    requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-            // Let positioning logic run; it will use sticky rules
-            // We call with null so baseline is applied but sticky may persist
-            if (typeof positionContent === 'function') positionContent(null);
-        });
-    });
-}
-</script>
-
-
 
 
 <!-- ============================================================
