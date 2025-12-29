@@ -241,13 +241,7 @@ body {
     display: inline-block;
     padding-left: 0;  /* start at left edge */
     white-space: nowrap;
-    animation: scroll-text 60s linear infinite; /* slower, adjust 30s as needed */
-}
-
-#tooltip-display.marquee span::after {
-    content: "   •   "; /* separator between repeated messages */
-    margin-left: 2rem;
-    white-space: pre;
+    animation: scroll-text 600s linear infinite; /* slower, adjust 30s as needed */
 }
 
 /* Repeat the message multiple times inside JS */
