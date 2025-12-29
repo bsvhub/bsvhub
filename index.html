@@ -80,6 +80,7 @@ for (let i = 0; i < PARTICLE_COUNT; i++) {
         <button class="tab-btn" data-target="mining">Mining</button>
         <button class="tab-btn" data-target="exchange">Buy BSV</button>
         <button class="tab-btn" data-target="new">New</button>
+        <button class="tab-btn" data-target="videos">Videos</button>
 
         <div class="search-container">
             <input id="search-box" type="text" placeholder="search here">
@@ -139,7 +140,7 @@ fetch("tooltip-message.txt")
 
 // Display scrolling default message with repeated text
 function showDefaultTooltip() {
-    const repeated = Array(5).fill(defaultTooltipMessage).join("\u00A0\u00A0\u00A0•\u00A0\u00A0\u00A0"); // more spaces
+    const repeated = Array(50).fill(defaultTooltipMessage).join("\u00A0\u00A0\u00A0•\u00A0\u00A0\u00A0"); // more spaces
     tooltipBox.innerHTML = `<span>${repeated}</span>`;
     tooltipBox.classList.add("marquee");
 }
@@ -165,7 +166,7 @@ function setTooltipText(text) {
     } else {
         // Delay 2s before restoring scrolling message
         revertTimeout = setTimeout(() => {
-			const repeated = Array(5).fill(defaultTooltipMessage).join("\u00A0\u00A0\u00A0•\u00A0\u00A0\u00A0");
+			const repeated = Array(50).fill(defaultTooltipMessage).join("\u00A0\u00A0\u00A0•\u00A0\u00A0\u00A0");
 			tooltipBox.innerHTML = `<span>${repeated}</span>`;
 			tooltipBox.classList.add("marquee");
 			updateTooltipWrapAnimation();

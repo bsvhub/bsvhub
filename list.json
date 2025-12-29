@@ -38,7 +38,7 @@
           "text": "Handcash Wallet"
         },
         {
-          "href": "https://mybsv.io/",
+          "href": "https://mybsv.io/wallet.html",
           "tooltip": "Gateway Wallet; an on-chain wallet at MyBSV.io",
           "img": "icon/mybsv.png",
           "alt": "Gateway Wallet",
@@ -188,15 +188,15 @@
       ]
     },
 
-    "new": {
+        "new": {
       "class": "tab-content",
       "items": [
         {
-          "href": "https://mybsv.io/",
-          "tooltip": "Gateway Wallet; an on-chain wallet at MyBSV.io",
-          "img": "icon/mybsv.png",
-          "alt": "Gateway Wallet",
-          "text": "Gateway Wallet"
+          "href": "https://mybsv.io",
+          "tooltip": "MyBSV.io: an on-chain wallet and more",
+          "img": "icon/bsv.png",
+          "alt": "MyBSV.io",
+          "text": "MyBSV.io"
         },
         {
           "href": "https://app.reactonchain.com",
@@ -214,6 +214,61 @@
         }
       ]
     },
+    
+	"videos": {
+      "class": "tab-content",
+      "items": [
+        {
+          "href": "https://www.youtube.com/@bsvbitcoin/videos",
+          "tooltip": "SirToshi: Defender of Bitcoin.",
+          "img": "icon/bsv.png",
+          "alt": "SirToshi on YouTube",
+          "text": "SirToshi on YouTube"
+        },
+        {
+          "href": "https://www.youtube.com/@Cryptoismyretirement/videos",
+          "tooltip": "Just some guy on YouTube that talks a lot about BSV and makes some valid points.",
+          "img": "icon/bsv.png",
+          "alt": "Cryptoismyretirement on YouTube",
+          "text": "Cryptoismyretirement on YouTube"
+        },
+        {
+          "href": "https://www.youtube.com/@Satoshi_VisionTv/videos",
+          "tooltip": "Another youtuber providing sove BSV related content.",
+          "img": "icon/bsv.png",
+          "alt": "Satoshi Vision on YouTube",
+          "text": "Satoshi Vision on YouTube"
+        },
+        {
+          "href": "https://www.youtube.com/@CoinGeek/videos",
+          "tooltip": "CoinGeek Youtube channel, all about Bitcoin and blockchain technologies.",
+          "img": "icon/bsv.png",
+          "alt": "CoinGeek on Youtube",
+          "text": "CoinGeek on Youtube"
+        },
+        {
+          "href": "https://www.youtube.com/@CoinGeek/streams",
+          "tooltip": "Kurt Wuckert Jr streams at CoinGeek, all about Bitcoin and blockchain tech..",
+          "img": "icon/bsv.png",
+          "alt": "Kurt Wuckert Jr streams",
+          "text": "Kurt Wuckert Jr streams"
+        },
+        {
+          "href": "https://www.youtube.com/@BSVsearch/videos",
+          "tooltip": "Info on how to use BSV in business, everyday life; try out BSV apps, wallets, websites; discuss BSV news and stories, and more...",
+          "img": "icon/bsv.png",
+          "alt": "BSV Search on YouTube",
+          "text": "BSV Search on YouTube"
+        },
+        {
+          "href": "https://www.youtube.com/@GavinMehl/videos",
+          "tooltip": "Gavin Mehl talks about Bitcoin SV, health and law",
+          "img": "icon/bsv.png",
+          "alt": "Gavin Mehl on YouTube",
+          "text": "Gavin Mehl on YouTube"
+        }
+      ]
+    },
 
     "tip-section": {
 	  "class": "tab-content header-tab-content",
@@ -224,7 +279,7 @@
 
     "info-section": {
       "class": "tab-content header-tab-content",
-      "html": "<div class=\"header-tab-text\">Last updat: 29th Nov. 2025</div>"
+      "html": "<div class=\"header-tab-text\">Last updat: 28th Dec. 2025</div>"
     },
 
     "contact-section": {
