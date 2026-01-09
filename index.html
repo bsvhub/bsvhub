@@ -451,7 +451,7 @@ fetch("list.json")
 <script>
 const searchBox = document.getElementById("search-box");
 const resultSec = document.getElementById("search-results");
-const excludedTabs = ["about-section","tip-section","info-section","contact-section"];
+const excludedTabs = ["about-section", "tip-section", "info-section", "contact-section"];
 
 searchBox.addEventListener("input", () => {
     const q = searchBox.value.toLowerCase();
@@ -477,22 +477,27 @@ searchBox.addEventListener("input", () => {
     grid.className = "icon-grid";
     const found = new Set();
 
-    const excludedTabs = ["about-section","tip-section","info-section","contact-section"];
-
+    // The excludedTabs array prevents searching these sections
     document.querySelectorAll('.tab-content').forEach(sec => {
-        if (excludedTabs.includes(sec.id)) return;
+        if (excludedTabs.includes(sec.id)) return;  // Skip excluded sections
 
         sec.querySelectorAll('.icon-wrapper').forEach(icon => {
+            // Get text content (icon-text) and tooltip (data-tooltip) for each icon
             const txt = icon.querySelector('.icon-text').textContent.toLowerCase();
             const tip = (icon.dataset.tooltip || "").toLowerCase();
+            
+            // New check to search the href attribute of each item
+            const href = (icon.closest('a') ? icon.closest('a').getAttribute('href') : "").toLowerCase();
 
-            if ((txt.includes(q) || tip.includes(q)) && !found.has(txt)) {
-                grid.appendChild(icon.closest("li").cloneNode(true));
-                found.add(txt);
+            // Check if the query matches the text, tooltip, or href
+            if ((txt.includes(q) || tip.includes(q) || href.includes(q)) && !found.has(txt)) {
+                grid.appendChild(icon.closest("li").cloneNode(true));  // Add matching item to results
+                found.add(txt);  // Ensure the same item is not added multiple times
             }
         });
     });
 
+    // If any matches are found, display the results
     if (found.size > 0) {
         resultSec.appendChild(grid);
         bindTooltips();
@@ -501,7 +506,6 @@ searchBox.addEventListener("input", () => {
         resultSec.classList.remove("active");
     }
 });
-
 </script>
 
 
