@@ -235,49 +235,63 @@
         {
           "href": "https://www.youtube.com/@bsvbitcoin/videos",
           "tooltip": "SirToshi: Defender of Bitcoin.",
-          "img": "icon/bsv.png",
+          "img": "icon/video.png",
           "alt": "SirToshi on YouTube",
           "text": "SirToshi on YouTube"
         },
         {
           "href": "https://www.youtube.com/@Cryptoismyretirement/videos",
           "tooltip": "Just some guy on YouTube that talks a lot about BSV and makes some valid points.",
-          "img": "icon/bsv.png",
+          "img": "icon/video.png",
           "alt": "Cryptoismyretirement on YouTube",
           "text": "Cryptoismyretirement on YouTube"
         },
         {
           "href": "https://www.youtube.com/@Satoshi_VisionTv/videos",
           "tooltip": "Another youtuber providing sove BSV related content.",
-          "img": "icon/bsv.png",
+          "img": "icon/video.png",
           "alt": "Satoshi Vision on YouTube",
           "text": "Satoshi Vision on YouTube"
         },
         {
           "href": "https://www.youtube.com/@CoinGeek/videos",
           "tooltip": "CoinGeek Youtube channel, all about Bitcoin and blockchain technologies.",
-          "img": "icon/bsv.png",
+          "img": "icon/video.png",
           "alt": "CoinGeek on Youtube",
           "text": "CoinGeek on Youtube"
         },
         {
           "href": "https://www.youtube.com/@CoinGeek/streams",
           "tooltip": "Kurt Wuckert Jr streams at CoinGeek, all about Bitcoin and blockchain tech..",
-          "img": "icon/bsv.png",
+          "img": "icon/video.png",
           "alt": "Kurt Wuckert Jr streams",
           "text": "Kurt Wuckert Jr streams"
         },
         {
           "href": "https://www.youtube.com/@BSVsearch/videos",
           "tooltip": "Info on how to use BSV in business, everyday life; try out BSV apps, wallets, websites; discuss BSV news and stories, and more...",
-          "img": "icon/bsv.png",
+          "img": "icon/video.png",
           "alt": "BSV Search on YouTube",
           "text": "BSV Search on YouTube"
         },
         {
+          "href": "https://www.youtube.com/@Kate_L_Mosso/videos",
+          "tooltip": "Kate Mosso providing content about Crypto and BSV",
+          "img": "icon/video.png",
+          "alt": "Kate Mosso on YouTube",
+          "text": "Kate Mosso on YouTube"
+        },
+        {
+          "href": "https://www.youtube.com/@bbbVetteTitans/videos",
+          "tooltip": "Some guy that talks about BSV and cars",
+          "img": "icon/video.png",
+          "alt": "bbb Vette Titans on YouTube",
+          "text": "bbb Vette Titans on YouTube"
+        },
+        {
           "href": "https://www.youtube.com/@GavinMehl/videos",
           "tooltip": "Gavin Mehl talks about Bitcoin SV, health and law",
-          "img": "icon/bsv.png",
+          "img": "icon/video.png",
           "alt": "Gavin Mehl on YouTube",
           "text": "Gavin Mehl on YouTube"
         }
