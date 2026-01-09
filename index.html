@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-
+	<title>₿SVhub.app</title>
     <!-- MAIN STYLES -->
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/firefly.css">
@@ -60,7 +60,7 @@ for (let i = 0; i < PARTICLE_COUNT; i++) {
             <a href="#" data-target="tip-section" class="header-text-link">Tip</a>
         </div>
 
-        <h1 class="header-title">BSVhub.app</h1>
+        <h1 class="header-title">₿SVhub.app</h1>
 
         <div class="header-icons header-icons-right">
             <a href="#" data-target="contact-section" class="header-text-link">Contact</a>
@@ -106,20 +106,34 @@ for (let i = 0; i < PARTICLE_COUNT; i++) {
 
     <!-- STATIC ABOUT SECTION -->
     <section id="about-section" class="tab-content header-tab-content">
-        <div class="header-tab-text">
-            Number of visitors:
-            <br><br>
+		<div class="header-tab-text">
+			Number of visitors: 
+			<span id="visit-counter" style="pointer-events:none;">
+				<script src="https://counter.websiteout.com/js/7/6/0/0"></script>
+			</span>
+		</div>
 
-            <div id="visit-counter" style="pointer-events:none;">
-                <script src="https://counter.websiteout.com/js/7/6/0/0"></script>
-            </div>
+		<div>Last update: <span id="last-update-date"></span></div>
+	</section>
 
-            <br><br>
-            Last update: 29th Nov. 2025
-        </div>
-    </section>
+
 
 </main>
+
+<script>
+function loadLastUpdate() {
+  fetch("list.json")
+    .then(r => r.json())
+    .then(data => {
+      const date = data.sections?.["info-section"]?.lastUpdate;
+      const el = document.getElementById("last-update-date");
+      if (date && el) el.textContent = date;
+    })
+    .catch(err => console.error("Failed to load update date:", err));
+}
+
+loadLastUpdate();
+</script>
 
 <!-- ============================================================
      1 — TOOLTIP SYSTEM (scrolling default message + icon tooltips + 2s delay)

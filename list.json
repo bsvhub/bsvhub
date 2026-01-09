@@ -179,6 +179,13 @@
           "text": "CoinSpot"
         },
         {
+          "href": "https://swaplobby.com/",
+          "tooltip": "Atomics Swaps BTC <--> BSV",
+          "img": "icon/atomic.png",
+          "alt": "Atomics Swaps",
+          "text": "Atomics Swaps"
+        },
+        {
           "href": "https://bsvblockchain.org/get-bsv/",
           "tooltip": "Exchanges list provided by bsvblockchain.org; check as some wallets and exchanges no longer work or support BSV",
           "img": "icon/xlist.png",
@@ -197,6 +204,13 @@
           "img": "icon/bsv.png",
           "alt": "MyBSV.io",
           "text": "MyBSV.io"
+        },
+        {
+          "href": "https://swaplobby.com/",
+          "tooltip": "Atomics Swaps BTC <--> BSV",
+          "img": "icon/atomic.png",
+          "alt": "Atomics Swaps",
+          "text": "Atomics Swaps"
         },
         {
           "href": "https://app.reactonchain.com",
@@ -279,7 +293,7 @@
 
     "info-section": {
       "class": "tab-content header-tab-content",
-      "html": "<div class=\"header-tab-text\">Last updat: 28th Dec. 2025</div>"
+      "lastUpdate": "9th Jan. 2026"
     },
 
     "contact-section": {

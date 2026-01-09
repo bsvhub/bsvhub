@@ -1,1 +1,1 @@
-This site is to provide usefull links to everything related to Bitcoun SV.
+Atomics swaps for BTC to BSV and BSV to BTC are now live at https://swaplobby.com/.
