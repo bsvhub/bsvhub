@@ -443,11 +443,12 @@ ul.icon-grid li a:hover {
 /* =====================================================
    TAB BUTTONS — MOBILE SIZE ADJUSTMENT
 ===================================================== */
-@media (max-width: 2400px) {  /* trigger for tablets / mobile */
-    .tab-bar button {
-        min-width: 140px;         /* wider buttons */
-        padding: 18px 24px;       /* taller and more tappable */
-        font-size: clamp(1.1rem, 4vw, 1.6rem); /* bigger text for readability */
-        border-radius: 12px;      /* slightly rounder for touch */
-    }
+body {
+    transform: scale(2); /* 30% larger */
+    transform-origin: top left; /* ensures scaling starts from top-left corner */
 }
+body {
+    transform-origin: top left;
+    width: 50%; /* roughly 1/1.3 to fit scaled content in viewport */
+}
+
