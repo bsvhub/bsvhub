@@ -596,10 +596,12 @@ searchBox.addEventListener("input", () => {
 
     // If any matches are found, display the results
     if (found.size > 0) {
-        resultSec.appendChild(grid);
-        bindTooltips();
-        resultSec.classList.add("active");
-    } else {
+		resultSec.appendChild(grid);
+		bindAllUI(); // correct unified binder
+		resultSec.classList.add("active");
+	}
+
+    else {
         resultSec.classList.remove("active");
     }
 });
