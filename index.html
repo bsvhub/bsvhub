@@ -34,33 +34,6 @@
 
 <audio id="copy-sfx" src="styles/assets/copy.mp3"></audio>
 
-<script>
-const fireflyLayer = document.getElementById("firefly-layer");
-const PARTICLE_COUNT = 33; // Number of particles
-
-for (let i = 0; i < PARTICLE_COUNT; i++) {
-    const f = document.createElement("div");
-    f.classList.add("firefly");
-
-    // Random horizontal position (0% - 100%)
-    f.style.setProperty('--x', Math.random() * 100);
-
-    // Random rise duration (8s - 18s)
-    f.style.setProperty('--duration', 8 + Math.random() * 10 + 's');
-
-    // Random fade duration (2s - 5s)
-    f.style.setProperty('--fade-duration', 2 + Math.random() * 3 + 's');
-
-    // Random animation delay (0s - 10s)
-    f.style.setProperty('--delay', Math.random() * 10 + 's');
-
-    // Random particle size (3px - 7px)
-    f.style.setProperty('--firefly-size', 3 + Math.random() * 4 + 'px');
-
-    fireflyLayer.appendChild(f);
-}
-</script>
-
 
 <!-- ============================================================
      LAYER 1 — TOP UI (HEADER + TAB BAR + TOOLTIP)
@@ -152,93 +125,160 @@ loadLastUpdate();
 </script>
 
 <!-- ============================================================
-     1 — TOOLTIP SYSTEM (scrolling default message + icon tooltips + 2s delay)
+     JS SECTION 1 — TOOLTIPS + MOBILE DOUBLE-TAP (FINAL, CORRECTED)
+     ------------------------------------------------------------
+     Desktop:
+       - Hover tooltips
+       - Single-click links
+     Mobile (mobile.css):
+       - Hover tooltips DISABLED
+       - First tap = tooltip
+       - Second tap = navigate
 ============================================================ -->
 <script>
+/* ------------------------------------------------------------
+   STATE
+------------------------------------------------------------ */
 const tooltipBox = document.getElementById("tooltip-display");
 let defaultTooltipMessage = "Loading...";
-let revertTimeout = null; // store the 2s timeout
+let revertTimeout = null;
+let lastTappedLink = null;
 
-// Fetch default scroll message from text file
+/* ------------------------------------------------------------
+   MOBILE MODE DETECTION
+------------------------------------------------------------ */
+function isMobileMode() {
+    const css = document.getElementById("mobile-css");
+    return !!(css && css.href && css.href.includes("mobile.css"));
+}
+
+/* ------------------------------------------------------------
+   DEFAULT TOOLTIP
+------------------------------------------------------------ */
 fetch("tooltip-message.txt")
-  .then(response => response.text())
-  .then(text => {
-      defaultTooltipMessage = text.trim();
-      showDefaultTooltip();
-  })
-  .catch(() => showDefaultTooltip());
+    .then(r => r.text())
+    .then(t => {
+        defaultTooltipMessage = t.trim();
+        showDefaultTooltip();
+    })
+    .catch(showDefaultTooltip);
 
-// Display scrolling default message with repeated text
 function showDefaultTooltip() {
-    const repeated = Array(50).fill(defaultTooltipMessage).join("\u00A0\u00A0\u00A0•\u00A0\u00A0\u00A0"); // more spaces
+    const repeated = Array(40).fill(defaultTooltipMessage)
+        .join("\u00A0\u00A0\u00A0•\u00A0\u00A0\u00A0");
     tooltipBox.innerHTML = `<span>${repeated}</span>`;
     tooltipBox.classList.add("marquee");
 }
 
-// Update tooltip expansion class
-function updateTooltipWrapAnimation() {
-    tooltipBox.classList.toggle("expanded", tooltipBox.scrollHeight > 28);
-}
-
-// Set tooltip text for icon hovers or revert to default scroll message
+/* ------------------------------------------------------------
+   SET TOOLTIP TEXT
+------------------------------------------------------------ */
 function setTooltipText(text) {
-    // Clear any existing revert timeout
-    if (revertTimeout) {
-        clearTimeout(revertTimeout);
-        revertTimeout = null;
-    }
+    if (revertTimeout) clearTimeout(revertTimeout);
 
     if (text) {
-        // Show icon tooltip immediately
         tooltipBox.innerHTML = text;
         tooltipBox.classList.remove("marquee");
-        updateTooltipWrapAnimation();
     } else {
-        // Delay 2s before restoring scrolling message
-        revertTimeout = setTimeout(() => {
-			const repeated = Array(50).fill(defaultTooltipMessage).join("\u00A0\u00A0\u00A0•\u00A0\u00A0\u00A0");
-			tooltipBox.innerHTML = `<span>${repeated}</span>`;
-			tooltipBox.classList.add("marquee");
-			updateTooltipWrapAnimation();
-			revertTimeout = null;
-		}, 2000);
-
+        revertTimeout = setTimeout(showDefaultTooltip, 2000);
     }
 
     requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-            if (typeof positionContent === 'function') positionContent(null);
+        if (typeof positionContent === "function") positionContent();
+    });
+}
+
+/* ------------------------------------------------------------
+   DESKTOP HOVER TOOLTIPS
+   - Bound once
+   - HARD DISABLED when mobile.css active
+------------------------------------------------------------ */
+function bindDesktopTooltips() {
+    document.querySelectorAll(".icon-wrapper[data-tooltip]").forEach(wrap => {
+        if (wrap.dataset.hoverBound === "true") return;
+        wrap.dataset.hoverBound = "true";
+
+        wrap.addEventListener("mouseenter", () => {
+            if (isMobileMode()) return; // <- HARD STOP
+            setTooltipText(wrap.dataset.tooltip);
+        });
+
+        wrap.addEventListener("mouseleave", () => {
+            if (isMobileMode()) return;
+            setTooltipText("");
         });
     });
 }
 
+/* ------------------------------------------------------------
+   MOBILE DOUBLE-TAP (CORRECT SELECTOR)
+------------------------------------------------------------ */
+function bindMobileDoubleTap() {
+    document.querySelectorAll(".tab-content a > .icon-wrapper").forEach(wrap => {
+        const link = wrap.parentElement;
 
-// Bind tooltips to icons
-function bindTooltips() {
-    document.querySelectorAll(".icon-wrapper[data-tooltip]").forEach(wrapper => {
-        const text = wrapper.dataset.tooltip;
+        if (link.dataset.doubleTapBound === "true") return;
+        link.dataset.doubleTapBound = "true";
 
-        wrapper.addEventListener("mouseenter", () => {
-            setTooltipText(text);
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    if (typeof positionContent === "function") positionContent(wrapper);
-                });
-            });
-        });
+        link.addEventListener("click", e => {
+            if (!isMobileMode()) return;
 
-        wrapper.addEventListener("mouseleave", () => {
-            setTooltipText(""); // will revert to scrolling default after 2s
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    if (typeof positionContent === "function") positionContent(null);
-                });
-            });
-        });
+            if (lastTappedLink && lastTappedLink !== link) {
+                lastTappedLink.dataset.doubleTapped = "false";
+                lastTappedLink = null;
+            }
+
+            if (link.dataset.doubleTapped !== "true") {
+                e.preventDefault();
+                link.dataset.doubleTapped = "true";
+                lastTappedLink = link;
+
+                setTooltipText(
+                    wrap.dataset.tooltip ||
+                    wrap.textContent ||
+                    "Tap again to open"
+                );
+                return;
+            }
+
+            // second tap
+            link.dataset.doubleTapped = "false";
+            lastTappedLink = null;
+        }, { passive: false });
     });
 }
+
+/* ------------------------------------------------------------
+   MASTER BIND
+------------------------------------------------------------ */
+function bindAllUI() {
+    bindDesktopTooltips();
+    bindMobileDoubleTap();
+}
+
+/* ------------------------------------------------------------
+   DEFER INITIAL BIND (REDUCES LOAD LAG)
+------------------------------------------------------------ */
+window.addEventListener("load", () => {
+    requestAnimationFrame(bindAllUI);
+});
+
+/* ------------------------------------------------------------
+   SAFE MUTATION OBSERVER
+------------------------------------------------------------ */
+const contentArea = document.getElementById("content-area");
+
+const observer = new MutationObserver(muts => {
+    for (const m of muts) {
+        if (m.addedNodes && m.addedNodes.length) {
+            bindAllUI();
+            break;
+        }
+    }
+});
+
+observer.observe(contentArea, { childList: true, subtree: true });
 </script>
-
 
 
 <!-- ============================================================
@@ -439,24 +479,25 @@ fetch("list.json")
       container.appendChild(sec);
     });
 
-    // Bind behaviors
-    bindTooltips();
-    // adjustIconTextSmart(); // optional
+    // Bind behaviors (CORRECT FUNCTION)
+	bindAllUI();
 
-    // Ensure tab buttons exist
-    const tabButtons = document.querySelectorAll('.tab-btn');
+	// Activate "new" tab AFTER sections exist and layout is stable
+	requestAnimationFrame(() => {
+		requestAnimationFrame(() => {
+			const newBtn = document.querySelector('.tab-btn[data-target="new"]');
+			const firstBtn = document.querySelector('.tab-btn');
+			const targetBtn = newBtn || firstBtn;
 
-    // Activate "new" tab or first tab
-    const newBtn = document.querySelector('.tab-btn[data-target="new"]');
-    const firstBtn = tabButtons[0];
-    const targetBtn = newBtn || firstBtn;
+			if (targetBtn) {
+				activateTab(targetBtn.dataset.target, targetBtn);
+			}
 
-    if (targetBtn) {
-      // Use requestAnimationFrame to wait until DOM fully painted
-      requestAnimationFrame(() => {
-        activateTab(targetBtn.dataset.target, targetBtn);
-      });
-    }
+			// Ensure layout is correct
+			if (typeof positionContent === "function") positionContent();
+		});
+	});
+
   })
   .catch(err => console.error(err));
 
@@ -706,6 +747,46 @@ window.addEventListener("load", () => {
     }
 });
 
+</script>
+<!-- ============================================================
+     DEFERRED FIREFLY BACKGROUND LOADER
+     ------------------------------------------------------------
+     - Runs AFTER page is fully loaded
+     - Uses idle time when possible
+     - Zero impact on interactivity
+============================================================ -->
+<script>
+(function () {
+    const PARTICLE_COUNT = 33;
+
+    function createFireflies() {
+        const fireflyLayer = document.getElementById("firefly-layer");
+        if (!fireflyLayer) return;
+
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+            const f = document.createElement("div");
+            f.className = "firefly";
+
+            f.style.setProperty("--x", Math.random() * 100);
+            f.style.setProperty("--duration", 8 + Math.random() * 10 + "s");
+            f.style.setProperty("--fade-duration", 2 + Math.random() * 3 + "s");
+            f.style.setProperty("--delay", Math.random() * 10 + "s");
+            f.style.setProperty("--firefly-size", 3 + Math.random() * 4 + "px");
+
+            fireflyLayer.appendChild(f);
+        }
+    }
+
+    function deferFireflies() {
+        if ("requestIdleCallback" in window) {
+            requestIdleCallback(createFireflies, { timeout: 1500 });
+        } else {
+            setTimeout(createFireflies, 800);
+        }
+    }
+
+    window.addEventListener("load", deferFireflies);
+})();
 </script>
 
 </div>
