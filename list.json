@@ -78,6 +78,13 @@
       "class": "tab-content",
       "items": [
         {
+          "href": "https://3dordi.io/",
+          "tooltip": "Cutting-edge web3 application for exploring, managing and inscribing Ordinals (NFTs) on BSV blockchain",
+          "img": "icon/3d.png",
+          "alt": "3D Ordinals",
+          "text": "3D Ordinals at 3dordi.io"
+        },
+        {
           "href": "https://www.slictionary.com/",
           "tooltip": "An on-chain Dictionary of unique terms/word",
           "img": "icon/slictionary.png",
