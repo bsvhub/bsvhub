@@ -361,7 +361,8 @@
 
     "contact-section": {
       "class": "tab-content header-tab-content",
-      "html": "<div class=\"header-tab-text\">If you spot any mistakes, or have some cool BSV related link that I can add, I can be contacted via TreeChat, user: BSVhub</div>"
+      "html": "<div class=\"header-tab-text\">If you spot any mistakes, or have some cool BSV related link that I can add, I can be contacted via TreeChat, user: <a href=\"https://app.treechat.com/user/bsvhub-d50efaa8-f342-4b88-8e85-de15a2a06629\" target=\"_blank\">BSVhub</a></div>"
+
     }
   }
 }
