@@ -216,9 +216,16 @@
         {
           "href": "https://changenow.io/",
           "tooltip": "Crypto Swap Exchange, no KYC or account required under certain ammount",
-          "img": "icon/atomic.png",
+          "img": "icon/changenow.png",
           "alt": "Buy Swap",
           "text": "ChangeNow: swap crypto"
+        },
+        {
+          "href": "https://ghostswap.io/",
+          "tooltip": "Crypto Swap Exchange, no KYC or account required, has ammount limits",
+          "img": "icon/ghostswap.png",
+          "alt": "Buy Swap",
+          "text": "GhostSwap: swap crypto"
         },
         {
           "href": "https://bsvblockchain.org/get-bsv/",
