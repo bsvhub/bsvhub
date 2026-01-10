@@ -9,7 +9,8 @@
    7 — HEADER-TAB TEXT SECTIONS
    8 — SEARCH BAR (MATCHES TAB STYLE)
    9 — COPY BUTTON (TIP SECTION)
-   10 — MEDIA QUERIES
+   10 — LINK STYLE (inside Contact; "BSVhub")
+   11 — MOBILE SIZE ADJUSTMENT
 ------------------------------------------------------------ */
 
 /* ============================================================
@@ -420,9 +421,38 @@ ul.icon-grid li a:hover {
     transform: scale(0.96);
 }
 
+/* ------------------------------------------------------------
+   10 — LINK STYLE (inside Contact; "BSVhub")
+   - Terminal green
+   - Bold text
+   - 30% transparent black background
+   - Subtle hover feedback
+------------------------------------------------------------ */
+.header-tab-text a {
+    color: #00ff88;                  /* terminal green */
+    font-weight: bold;               /* make link stand out */
+    text-decoration: none;           /* no underline */
+
+    background: rgba(0, 0, 0, 0.3);   /* 30% transparent black */
+    padding: 4px 10px;               /* clickable hit area */
+    border-radius: 6px;              /* soft edges */
+
+    transition:
+        color 0.25s ease,
+        background 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+/* Hover / focus feedback (desktop & keyboard users) */
+.header-tab-text a:hover,
+.header-tab-text a:focus {
+    color: #ffffff;                  /* brighten text */
+    background: rgba(0, 0, 0, 0.45);  /* slightly darker on hover */
+    box-shadow: 0 0 8px rgba(0, 255, 136, 0.6); /* soft green glow */
+}
 
 /* =====================================================
-   TAB BUTTONS — MOBILE SIZE ADJUSTMENT
+   11 — MOBILE SIZE ADJUSTMENT
 ===================================================== */
 body {
     transform: scale(1.6); /* 60% larger */
