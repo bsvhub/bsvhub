@@ -89,71 +89,77 @@ body {
     pointer-events: auto;
 }
 
+/* ==============================
+   MOBILE HEADER RESPONSIVE WRAP
+============================== */
 
-
-/* ------------------------------------------------------------
-   HEADER BAR
------------------------------------------------------------- */
+/* 1. Make header a flex container with wrapping allowed */
 .header-container {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-
-    padding: 0 12px;
-    background: rgba(25, 25, 25, 0.6); /* MATCHES TAB & TOOLTIP */
-
-    /*box-shadow: 0 2px 10px var(--top-ui-shadow);*/
+    display: flex;
+    flex-wrap: wrap;          /* allows items to wrap to next line */
+    align-items: center;      /* vertically center items when on same row */
+    justify-content: space-between; /* left-right alignment of left/right buttons */
+    gap: 0.5rem;              /* small horizontal/vertical gap */
 }
 
-.header-title {
-    font-size: clamp(1rem, 5vw, 3.2rem);
-    justify-self: center;
-    white-space: nowrap;
-    margin: 0;
-
-    color: #111;
-    text-shadow:
-        0 0 2px #00ff88,
-        0 0 5px #00ff88,
-        0 0 10px #00ff88,
-        0 0 20px #00ff88;
-}
-
+/* 2. Ensure left and right groups are flex containers */
 .header-icons {
     display: flex;
-    gap: 10px;
+    flex-wrap: wrap;         /* allows buttons to wrap if necessary */
+    gap: 0.5rem;
 }
 
-.header-icons-left {
-    justify-content: flex-start;
-}
-.header-icons-right {
-    justify-content: flex-end;
-}
-
-.header-text-link {
-    display: inline-flex;
-    align-items: center;
-    padding: 6px 14px;
-    font-size: 1.4rem;
-    color: #ffcc66;
-    background: rgba(255,255,255,0.1);
-    border-radius: 10px;
-    text-decoration: none;
-
-    transition: background 0.3s, transform 0.3s;
-}
-.header-text-link:hover {
-    background: rgba(255,204,102,0.8);
-    color: black;
-    transform: scale(1.1);
-}
-.header-text-link.active {
-    background: #b8860b;
-    color: black;
-    box-shadow: 0 0 15px rgba(184,134,11,0.7);
+/* 3. Center the title horizontally */
+.header-title {
+    flex-shrink: 0;           /* prevent title from shrinking */
+    text-align: center;
+    margin: 0 auto;           /* centers between left/right */
 }
 
+/* ==============================
+   RESPONSIVE WRAPPING LOGIC
+============================== */
+
+/* Stage 2: Medium screens
+   - Tip wraps under About
+   - Mobile wraps under Contact
+   - Title stays centered
+*/
+@media (max-width: 480px) {
+    .header-icons-left a:nth-child(2),   /* Tip */
+    .header-icons-right a:nth-child(1) { /* Mobile */
+        flex-basis: 100%;               /* forces to next line */
+    }
+}
+
+/* Stage 3: Very small screens
+   - Title moves to top
+   - All 4 buttons move under it
+*/
+@media (max-width: 320px) {
+    .header-container {
+        flex-direction: column;         /* stack everything vertically */
+        align-items: center;            /* center horizontally */
+    }
+
+    .header-title {
+        order: 0;                        /* keep title first */
+        margin-bottom: 0.5rem;
+    }
+
+    .header-icons-left,
+    .header-icons-right {
+        width: 100%;                     /* full width buttons */
+        justify-content: center;         /* center the buttons */
+        margin-bottom: 0.25rem;
+    }
+
+    .header-icons-left a,
+    .header-icons-right a {
+        flex-basis: auto;                /* default width for buttons */
+        margin: 0 0.25rem;               /* small spacing */
+    }
+}
 
 
 /* ------------------------------------------------------------
@@ -407,8 +413,6 @@ ul.icon-grid li a:hover {
 #search-box::placeholder {
     color: rgba(200,200,200,0.7);
 }
-
-
 
 /* ============================================================
    9 — COPY BUTTON (TIP SECTION)
