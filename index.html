@@ -4,12 +4,27 @@
     <meta charset="UTF-8">
 	<title>₿SVhub.app</title>
     <!-- MAIN STYLES -->
-    <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/firefly.css">
+    <!-- ============================================================
+     BASE DESKTOP STYLES (ALWAYS LOADED)
+	============================================================ -->
+	<link rel="stylesheet" href="styles/main.css">
+
+	<!-- ============================================================
+		 MOBILE OVERRIDES (DYNAMICALLY ENABLED)
+		 - Empty by default
+		 - JS will set href to styles/mobile.css when needed
+	============================================================ -->
+	<link id="mobile-css" rel="stylesheet" href="">
+
+	<!-- ============================================================
+		 BACKGROUND / EFFECT STYLES
+	============================================================ -->
+	<link rel="stylesheet" href="styles/firefly.css">
+
 </head>
 
 <body>
-
+<div id="page-wrapper">
 <!-- ============================================================
      LAYER 0 — BACKGROUND LAYERS
 ============================================================ -->
@@ -63,6 +78,7 @@ for (let i = 0; i < PARTICLE_COUNT; i++) {
         <h1 class="header-title">₿SVhub.app</h1>
 
         <div class="header-icons header-icons-right">
+            <a href="#" id="mobile-toggle" class="header-text-link">mobile</a>
             <a href="#" data-target="contact-section" class="header-text-link">Contact</a>
         </div>
     </header>
@@ -248,7 +264,8 @@ document.getElementById("background-layer").style.background =
 ============================================================ -->
 <script>
 const tabButtons = document.querySelectorAll('.tab-btn');
-const headerLinks = document.querySelectorAll('.header-text-link');
+const headerLinks = document.querySelectorAll('.header-text-link:not(#mobile-toggle)');
+
 
 /* ------------------------------------------------------------
    RESET SEARCH
@@ -482,19 +499,58 @@ searchBox.addEventListener("input", () => {
         if (excludedTabs.includes(sec.id)) return;  // Skip excluded sections
 
         sec.querySelectorAll('.icon-wrapper').forEach(icon => {
-            // Get text content (icon-text) and tooltip (data-tooltip) for each icon
-            const txt = icon.querySelector('.icon-text').textContent.toLowerCase();
-            const tip = (icon.dataset.tooltip || "").toLowerCase();
-            
-            // New check to search the href attribute of each item
-            const href = (icon.closest('a') ? icon.closest('a').getAttribute('href') : "").toLowerCase();
 
-            // Check if the query matches the text, tooltip, or href
-            if ((txt.includes(q) || tip.includes(q) || href.includes(q)) && !found.has(txt)) {
-                grid.appendChild(icon.closest("li").cloneNode(true));  // Add matching item to results
-                found.add(txt);  // Ensure the same item is not added multiple times
-            }
-        });
+			// ------------------------------------------------------------
+			// 1. ICON VISIBLE TEXT
+			//    This is the label shown under each icon
+			// ------------------------------------------------------------
+			const txt =
+				icon.querySelector('.icon-text')?.textContent.toLowerCase() || "";
+
+			// ------------------------------------------------------------
+			// 2. TOOLTIP TEXT
+			//    Pulled from data-tooltip attribute (if present)
+			// ------------------------------------------------------------
+			const tip =
+				(icon.dataset.tooltip || "").toLowerCase();
+
+			// ------------------------------------------------------------
+			// 3. LINK URL (href)
+			//    Allows searching by domain or partial URL
+			// ------------------------------------------------------------
+			const link = icon.closest('a');
+			const href =
+				link ? (link.getAttribute('href') || "").toLowerCase() : "";
+
+			// ------------------------------------------------------------
+			// 4. IMAGE ALT TEXT  ← NEW
+			//    Uses <img alt=""> from your list.json
+			// ------------------------------------------------------------
+			const img = icon.querySelector('img');
+			const alt =
+				img ? (img.getAttribute('alt') || "").toLowerCase() : "";
+
+			// ------------------------------------------------------------
+			// 5. MATCH LOGIC
+			//    Matches if query appears in ANY searchable field
+			// ------------------------------------------------------------
+			if (
+				(txt.includes(q) ||
+				 tip.includes(q) ||
+				 href.includes(q) ||
+				 alt.includes(q)) &&
+
+				// Prevent duplicate entries in search results
+				!found.has(txt)
+			) {
+				// Clone the original <li> so layout + links remain intact
+				grid.appendChild(icon.closest("li").cloneNode(true));
+
+				// Track this item as already added
+				found.add(txt);
+			}
+		});
+
     });
 
     // If any matches are found, display the results
@@ -521,7 +577,137 @@ document.addEventListener("click", (e) => {
 });
 </script>
 
+<!-- ============================================================
+   JS SECTION 10 — MOBILE / DESKTOP MODE TOGGLE (STATE-PRESERVING + FADE TRANSITION)
+   ------------------------------------------------------------
+   - Switches CSS only
+   - Preserves active tab + content
+   - Adds lightweight fade transition
+   - Minimal GPU usage, snappy
+============================================================ -->
+<script>
 
+/* ------------------------------------------------------------
+   DOM REFERENCES
+------------------------------------------------------------ */
+const mobileToggle = document.getElementById("mobile-toggle");
+const mobileCSS = document.getElementById("mobile-css");
+const wrapper = document.getElementById("page-wrapper"); // wrap everything in HTML
 
+/* ------------------------------------------------------------
+   CAPTURE CURRENT UI STATE
+   - Active tab button (if any)
+   - Active header link (if any)
+   - Active content section
+------------------------------------------------------------ */
+function captureUIState() {
+    return {
+        activeTabBtn: document.querySelector(".tab-btn.active"),
+        activeHeaderLink: document.querySelector(".header-text-link.active"),
+        activeSection: document.querySelector(".tab-content.active")
+    };
+}
+
+/* ------------------------------------------------------------
+   RESTORE UI STATE
+   - Reapply .active classes without triggering tab logic
+------------------------------------------------------------ */
+function restoreUIState(state) {
+    document.querySelectorAll(".tab-btn, .header-text-link")
+        .forEach(el => el.classList.remove("active"));
+
+    document.querySelectorAll(".tab-content")
+        .forEach(sec => sec.classList.remove("active"));
+
+    if (state.activeTabBtn) state.activeTabBtn.classList.add("active");
+    if (state.activeHeaderLink) state.activeHeaderLink.classList.add("active");
+    if (state.activeSection) state.activeSection.classList.add("active");
+}
+
+/* ------------------------------------------------------------
+   ENABLE / DISABLE MOBILE MODE
+   - Only switches CSS and updates toggle text
+   - Does NOT trigger tab logic
+------------------------------------------------------------ */
+function enableMobileMode(state) {
+    mobileCSS.href = "styles/mobile.css";
+    mobileToggle.textContent = "desktop";
+    localStorage.setItem("ui-mode", "mobile");
+
+    requestAnimationFrame(() => {
+        restoreUIState(state);
+        if (typeof positionContent === "function") positionContent();
+    });
+}
+
+function disableMobileMode(state) {
+    mobileCSS.href = "";
+    mobileToggle.textContent = "mobile";
+    localStorage.setItem("ui-mode", "desktop");
+
+    requestAnimationFrame(() => {
+        restoreUIState(state);
+        if (typeof positionContent === "function") positionContent();
+    });
+}
+
+/* ------------------------------------------------------------
+   LIGHTWEIGHT FADE TRANSITION FOR CSS SWITCH
+   - fade out wrapper → swap CSS → fade back in
+------------------------------------------------------------ */
+function swapModeWithFade(enableMobile) {
+    wrapper.classList.add("fading"); // fade out
+
+    // Swap CSS almost immediately (tiny overlap with fade)
+    setTimeout(() => {
+        const state = captureUIState();
+        if (enableMobile) enableMobileMode(state);
+        else disableMobileMode(state);
+    }, 50); // 50ms allows fade start
+
+    // Fade back in after total duration
+    setTimeout(() => {
+        wrapper.classList.remove("fading");
+    }, 200); // match CSS transition duration
+}
+
+/* ------------------------------------------------------------
+   MOBILE TOGGLE CLICK HANDLER
+   - Blink feedback
+   - State capture
+   - Fade + CSS swap
+------------------------------------------------------------ */
+mobileToggle.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation(); // prevent tab logic
+
+    // Visual feedback blink
+    mobileToggle.classList.add("blink");
+    setTimeout(() => mobileToggle.classList.remove("blink"), 150);
+
+    // Ensure toggle never stays active
+    mobileToggle.classList.remove("active");
+
+    // Determine mode to switch to
+    const enableMobile = localStorage.getItem("ui-mode") !== "mobile";
+
+    // Perform fade + mode swap
+    swapModeWithFade(enableMobile);
+});
+
+/* ------------------------------------------------------------
+   RESTORE MODE ON PAGE LOAD
+   - safe, after all tabs + content have initialized
+------------------------------------------------------------ */
+window.addEventListener("load", () => {
+    if (localStorage.getItem("ui-mode") === "mobile") {
+        const state = captureUIState();
+        enableMobileMode(state);
+    }
+});
+
+</script>
+
+</div>
 </body>
 </html>
