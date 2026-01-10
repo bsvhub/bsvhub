@@ -1,6 +1,5 @@
 /*index*/
 /* ------------------------------------------------------------
-   0 — MOBILE / DESKTOP TOGGLE BLINK FEEDBACK
    1 — GLOBAL / RESET / BASE FONTS
    2 — BACKGROUND LAYERS (LAYER 0)
    3 — TOP-UI (HEADER + TAB BAR + TOOLTIP)  [LAYER 1]
@@ -12,32 +11,6 @@
    9 — COPY BUTTON (TIP SECTION)
    10 — MEDIA QUERIES
 ------------------------------------------------------------ */
-
-/* =====================================================
-   0 — MOBILE / DESKTOP TOGGLE BLINK FEEDBACK
-===================================================== */
-@keyframes toggle-blink {
-    0%   { opacity: 1; }
-    50%  { opacity: 0.3; }
-    100% { opacity: 1; }
-}
-
-.blink {
-    animation: toggle-blink 0.15s linear;
-}
-
-/* =====================================================
-   1 — PAGE WRAPPER FADE TRANSITION FOR MOBILE/DESKTOP
-===================================================== */
-#page-wrapper {
-    transition: opacity 0.2s ease; /* fast, smooth fade */
-    opacity: 1;                     /* default fully visible */
-}
-
-#page-wrapper.fading {
-    opacity: 0.2; /* semi-transparent fade during CSS swap */
-}
-
 
 /* ============================================================
    1 — GLOBAL / RESET / BASE FONTS
@@ -67,7 +40,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'VT323', monospace;
-    font-size: 1.2rem;
+    font-size: 2rem;
     letter-spacing: 2px;
     overflow-x: hidden;
     min-height: 100%;
@@ -391,7 +364,7 @@ ul.icon-grid li a:hover {
 
 .header-tab-text {
     margin: 0 auto;   /* <-- this centers the block horizontally */
-    font-size: 2rem;
+    font-size: 1.4rem;
     color: #ffd700;
     text-align: center; /* <-- ensure inline text is centered */
 }
@@ -466,3 +439,15 @@ ul.icon-grid li a:hover {
     transform: scale(0.96);
 }
 
+
+/* =====================================================
+   TAB BUTTONS — MOBILE SIZE ADJUSTMENT
+===================================================== */
+@media (max-width: 2400px) {  /* trigger for tablets / mobile */
+    .tab-bar button {
+        min-width: 140px;         /* wider buttons */
+        padding: 18px 24px;       /* taller and more tappable */
+        font-size: clamp(1.1rem, 4vw, 1.6rem); /* bigger text for readability */
+        border-radius: 12px;      /* slightly rounder for touch */
+    }
+}
