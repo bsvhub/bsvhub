@@ -90,75 +90,40 @@ body {
 }
 
 /* ==============================
-   MOBILE HEADER RESPONSIVE WRAP
+   MOBILE HEADER — INITIAL STAGE ONLY
 ============================== */
 
-/* 1. Make header a flex container with wrapping allowed */
+/* 1️⃣ Header container: main flex wrapper */
 .header-container {
-    display: flex;
-    flex-wrap: wrap;          /* allows items to wrap to next line */
-    align-items: center;      /* vertically center items when on same row */
-    justify-content: space-between; /* left-right alignment of left/right buttons */
-    gap: 0.5rem;              /* small horizontal/vertical gap */
+    display: flex;                 /* horizontal layout */
+    flex-wrap: nowrap;             /* don’t wrap yet */
+    align-items: center;           /* vertical centering */
+    justify-content: space-between; /* left/right groups pushed apart */
+    gap: 16px;                     /* min space between columns and heading */
+    padding: 8px 12px;
 }
 
-/* 2. Ensure left and right groups are flex containers */
-.header-icons {
+/* 2️⃣ Left button group */
+.header-icons-left {
     display: flex;
-    flex-wrap: wrap;         /* allows buttons to wrap if necessary */
-    gap: 0.5rem;
+    flex-direction: column;        /* About on top, Tip under */
+    gap: 8px;                      /* vertical spacing */
 }
 
-/* 3. Center the title horizontally */
+/* 3️⃣ Right button group */
+.header-icons-right {
+    display: flex;
+    flex-direction: column;        /* Contact on top, Mobile under */
+    gap: 8px;
+}
+
+/* 4️⃣ Heading */
 .header-title {
-    flex-shrink: 0;           /* prevent title from shrinking */
+    flex-shrink: 0;                /* do not shrink */
     text-align: center;
-    margin: 0 auto;           /* centers between left/right */
-}
-
-/* ==============================
-   RESPONSIVE WRAPPING LOGIC
-============================== */
-
-/* Stage 2: Medium screens
-   - Tip wraps under About
-   - Mobile wraps under Contact
-   - Title stays centered
-*/
-@media (max-width: 480px) {
-    .header-icons-left a:nth-child(2),   /* Tip */
-    .header-icons-right a:nth-child(1) { /* Mobile */
-        flex-basis: 100%;               /* forces to next line */
-    }
-}
-
-/* Stage 3: Very small screens
-   - Title moves to top
-   - All 4 buttons move under it
-*/
-@media (max-width: 320px) {
-    .header-container {
-        flex-direction: column;         /* stack everything vertically */
-        align-items: center;            /* center horizontally */
-    }
-
-    .header-title {
-        order: 0;                        /* keep title first */
-        margin-bottom: 0.5rem;
-    }
-
-    .header-icons-left,
-    .header-icons-right {
-        width: 100%;                     /* full width buttons */
-        justify-content: center;         /* center the buttons */
-        margin-bottom: 0.25rem;
-    }
-
-    .header-icons-left a,
-    .header-icons-right a {
-        flex-basis: auto;                /* default width for buttons */
-        margin: 0 0.25rem;               /* small spacing */
-    }
+    font-size: 2.4rem;             /* larger heading */
+    white-space: nowrap;
+    margin: 0 16px;                /* ensures min 16px gap to button groups */
 }
 
 
