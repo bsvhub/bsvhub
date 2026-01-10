@@ -187,10 +187,10 @@
         },
         {
           "href": "https://swaplobby.com/",
-          "tooltip": "Atomics Swaps BTC <--> BSV",
+          "tooltip": "Atomic Swaps BTC <--> BSV",
           "img": "icon/atomic.png",
-          "alt": "Atomics Swaps",
-          "text": "Atomics Swaps"
+          "alt": "SwapLobby: Atomic Swaps",
+          "text": "Atomic Swaps"
         },
         {
           "href": "https://bsvblockchain.org/get-bsv/",
@@ -214,10 +214,10 @@
         },
         {
           "href": "https://swaplobby.com/",
-          "tooltip": "Atomics Swaps BTC <--> BSV",
+          "tooltip": "Atomic Swaps BTC <--> BSV",
           "img": "icon/atomic.png",
-          "alt": "Atomics Swaps",
-          "text": "Atomics Swaps"
+          "alt": "SwapLobby: Atomic Swaps",
+          "text": "Atomic Swaps"
         },
         {
           "href": "https://app.reactonchain.com",
@@ -287,13 +287,6 @@
           "img": "icon/video.png",
           "alt": "Kate Mosso on YouTube",
           "text": "Kate Mosso on YouTube"
-        },
-        {
-          "href": "https://www.youtube.com/@bbbVetteTitans/videos",
-          "tooltip": "Some guy that talks about BSV and cars",
-          "img": "icon/video.png",
-          "alt": "bbb Vette Titans on YouTube",
-          "text": "bbb Vette Titans on YouTube"
         },
         {
           "href": "https://www.youtube.com/@GavinMehl/videos",
