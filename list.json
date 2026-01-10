@@ -173,7 +173,7 @@
       "items": [
         {
           "href": "https://www.coinspot.com.au/",
-          "tooltip": "A majour, yet not well know Australian KYC exchange",
+          "tooltip": "A major, yet not well know Australian KYC exchange",
           "img": "icon/cs.png",
           "alt": "CoinSpot",
           "text": "CoinSpot"
@@ -214,7 +214,7 @@
         },
         {
           "href": "https://app.reactonchain.com",
-          "tooltip": "React Onchain; curently in beta, helps with deployment of apps on the blockchan",
+          "tooltip": "React Onchain; currently in beta, helps with deployment of apps on the blockchan",
           "img": "icon/bsv.png",
           "alt": "React Onchain",
           "text": "React Onchain"
@@ -248,17 +248,17 @@
         },
         {
           "href": "https://www.youtube.com/@Satoshi_VisionTv/videos",
-          "tooltip": "Another youtuber providing sove BSV related content.",
+          "tooltip": "Another Youtuber providing some BSV related content.",
           "img": "icon/video.png",
           "alt": "Satoshi Vision on YouTube",
           "text": "Satoshi Vision on YouTube"
         },
         {
           "href": "https://www.youtube.com/@CoinGeek/videos",
-          "tooltip": "CoinGeek Youtube channel, all about Bitcoin and blockchain technologies.",
+          "tooltip": "CoinGeek YouTube channel, all about Bitcoin and blockchain technologies.",
           "img": "icon/video.png",
-          "alt": "CoinGeek on Youtube",
-          "text": "CoinGeek on Youtube"
+          "alt": "CoinGeek on YouTube",
+          "text": "CoinGeek on YouTube"
         },
         {
           "href": "https://www.youtube.com/@CoinGeek/streams",
