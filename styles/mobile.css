@@ -310,20 +310,32 @@ ul.icon-grid li a:hover {
     object-fit: contain;   /* keeps image inside wrapper without cropping */
 }
 
+/* ==============================
+   ICON GRID — TERMINAL GREEN TEXT (wrap + centered)
+============================== */
 .icon-text {
     position: absolute;
     bottom: 0px;
-    left: 0;
-    width: 100%;
+    left: 50%;                     /* center horizontally */
+    transform: translateX(-50%);   /* exact horizontal center */
+    padding: 4px 12px;             /* top/bottom 4px, left/right 12px */
+
+    background: rgba(0, 0, 0, 0.6); /* black with 40% transparency */
+    border-radius: 12px;           /* rounded ends */
+
+    color: #00ff00;                /* terminal green text */
+    font-family: 'VT323', monospace;
+    font-size: 1.4rem;
     text-align: center;
 
-    white-space: normal;
-    overflow-wrap: break-word;
-    word-break: break-word;
+    white-space: normal;            /* allow wrapping */
+    word-break: break-word;         /* break long words if needed */
+    overflow-wrap: break-word;      /* ensures wrapping inside the box */
 
-    color: #eee;
-    pointer-events: none;
+    pointer-events: none;           /* clicks pass through */
+    max-width: 90%;                 /* optional: prevent box from overflowing icon */
 }
+
 
 /* ============================================================
    7 — HEADER-TAB TEXT SECTIONS (About / Tip / Contact)
