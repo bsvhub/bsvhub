@@ -214,6 +214,13 @@
           "text": "SwapLobby: Atomic Swaps"
         },
         {
+          "href": "https://changenow.io/",
+          "tooltip": "Crypto Swap Exchange, no KYC or account required under certain ammount",
+          "img": "icon/atomic.png",
+          "alt": "Buy Swap",
+          "text": "ChangeNow: swap crypto"
+        },
+        {
           "href": "https://bsvblockchain.org/get-bsv/",
           "tooltip": "Exchanges list provided by bsvblockchain.org; check as some wallets and exchanges no longer work or support BSV",
           "img": "icon/xlist.png",
