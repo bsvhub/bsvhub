@@ -413,25 +413,21 @@ headerLinks.forEach(link =>
    Keeps content-area placed directly below #top-ui.
    ============================================================ */
 
+
+// index.html — reuse your existing positionContent function to also set a CSS var
 (function () {
-    const content = document.getElementById("content-area");
-    const topUI = document.getElementById("top-ui");
-
-    // Reposition content-area directly under top UI (header + tabs + tooltip)
-    function positionContent() {
-        const baseTop = topUI.offsetHeight;
-        content.style.top = `${baseTop}px`;
-    }
-
-    // Expose globally
-    window.positionContent = positionContent;
-
-    // Re-run on resize
-    window.addEventListener("resize", positionContent);
-
-    // Run once at load
-    requestAnimationFrame(positionContent);
+  const content = document.getElementById("content-area");
+  const topUI = document.getElementById("top-ui");
+  function positionContent() {
+    const baseTop = topUI.offsetHeight;
+    content.style.top = `${baseTop}px`;
+    document.documentElement.style.setProperty('--top-ui-height', `${baseTop}px`);
+  }
+  window.positionContent = positionContent;
+  window.addEventListener("resize", positionContent);
+  requestAnimationFrame(positionContent);
 })();
+
 </script>
 
 
