@@ -224,15 +224,25 @@ function bindMobileDoubleTap() {
         link.addEventListener("click", e => {
             if (!isMobileMode()) return;
 
+            /* ------------------------------------------------------------
+               CLEAR PREVIOUS SELECTION (if different icon)
+            ------------------------------------------------------------ */
             if (lastTappedLink && lastTappedLink !== link) {
                 lastTappedLink.dataset.doubleTapped = "false";
+                lastTappedLink.classList.remove("mobile-selected"); /* 🔥 */
                 lastTappedLink = null;
             }
 
+            /* ------------------------------------------------------------
+               FIRST TAP — TOOLTIP MODE
+            ------------------------------------------------------------ */
             if (link.dataset.doubleTapped !== "true") {
                 e.preventDefault();
+
                 link.dataset.doubleTapped = "true";
                 lastTappedLink = link;
+
+                link.classList.add("mobile-selected"); /* 🔥 keep hover look */
 
                 setTooltipText(
                     wrap.dataset.tooltip ||
@@ -242,12 +252,16 @@ function bindMobileDoubleTap() {
                 return;
             }
 
-            // second tap
+            /* ------------------------------------------------------------
+               SECOND TAP — NAVIGATE
+            ------------------------------------------------------------ */
             link.dataset.doubleTapped = "false";
+            link.classList.remove("mobile-selected"); /* 🔥 clear state */
             lastTappedLink = null;
         }, { passive: false });
     });
 }
+
 
 /* ------------------------------------------------------------
    MASTER BIND
@@ -504,8 +518,37 @@ fetch("list.json")
 
 </script>
 
+<script>
+	
+/* ============================================================
+   JS SECTION 7 BACKGROUND HEIGHT SYNC — HANDLE LATE CONTENT GROWTH
+   ------------------------------------------------------------
+   Fixes background stopping short when images load
+============================================================ */
+
+(function () {
+    const wrapper = document.getElementById("page-wrapper");
+    const bg = document.getElementById("background-layer");
+    const fireflies = document.getElementById("firefly-layer");
+
+    if (!wrapper || !bg || !fireflies || !("ResizeObserver" in window)) return;
+
+    const ro = new ResizeObserver(() => {
+        const h = wrapper.scrollHeight + "px";
+
+        /* Force background layers to match full page height */
+        bg.style.height = h;
+        fireflies.style.height = h;
+    });
+
+    ro.observe(wrapper);
+})();
+</script>
+
+
+
 <!-- ============================================================
-     JS SECTION 7 — SEARCH SYSTEM (SLIMMED & WORKING)
+     JS SECTION 8 — SEARCH SYSTEM (SLIMMED & WORKING)
 ============================================================ -->
 <script>
 const searchBox = document.getElementById("search-box");
@@ -674,13 +717,26 @@ function restoreUIState(state) {
    - Does NOT trigger tab logic
 ------------------------------------------------------------ */
 function enableMobileMode(state) {
-    mobileCSS.href = "styles/mobile.css";
+    mobileCSS.href = "styles/mobile.css";        /* load mobile stylesheet */
     mobileToggle.textContent = "desktop";
     localStorage.setItem("ui-mode", "mobile");
 
+    /* ------------------------------------------------------------
+       FORCE STYLE + LAYOUT COMMIT
+       - reading offsetHeight flushes the layout queue
+    ------------------------------------------------------------ */
+    void document.body.offsetHeight;              /* 🔥 critical line */
+
+    /* ------------------------------------------------------------
+       WAIT FOR FINAL LAYOUT, THEN POSITION
+    ------------------------------------------------------------ */
     requestAnimationFrame(() => {
-        restoreUIState(state);
-        if (typeof positionContent === "function") positionContent();
+        requestAnimationFrame(() => {             /* double rAF = layout stable */
+            restoreUIState(state);
+            if (typeof positionContent === "function") {
+                positionContent();
+            }
+        });
     });
 }
 
@@ -689,11 +745,19 @@ function disableMobileMode(state) {
     mobileToggle.textContent = "mobile";
     localStorage.setItem("ui-mode", "desktop");
 
+    /* FORCE LAYOUT FLUSH */
+    void document.body.offsetHeight;              /* 🔥 critical line */
+
     requestAnimationFrame(() => {
-        restoreUIState(state);
-        if (typeof positionContent === "function") positionContent();
+        requestAnimationFrame(() => {
+            restoreUIState(state);
+            if (typeof positionContent === "function") {
+                positionContent();
+            }
+        });
     });
 }
+
 
 /* ------------------------------------------------------------
    LIGHTWEIGHT FADE TRANSITION FOR CSS SWITCH
@@ -751,8 +815,9 @@ window.addEventListener("load", () => {
 });
 
 </script>
+
 <!-- ============================================================
-     DEFERRED FIREFLY BACKGROUND LOADER
+     JS SECTION 11 — DEFERRED FIREFLY BACKGROUND LOADER
      ------------------------------------------------------------
      - Runs AFTER page is fully loaded
      - Uses idle time when possible
