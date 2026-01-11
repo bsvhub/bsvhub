@@ -296,6 +296,22 @@ observer.observe(contentArea, { childList: true, subtree: true });
 </script>
 
 
+<script>
+// -------------------------------------------------------------
+// JS SECTION 1.5 OPTIONAL: Re-measure when tooltip completes height transition.
+// Place this right after JS SECTION 1 (where tooltipBox exists).
+// -------------------------------------------------------------
+const _tooltipBox = document.getElementById("tooltip-display");
+if (_tooltipBox) {
+  _tooltipBox.addEventListener("transitionend", (e) => {
+    // Only react to height-affecting properties
+    if (e.propertyName === "max-height" || e.propertyName === "padding") {
+      if (typeof positionContent === "function") positionContent();
+    }
+  });
+}
+</script>
+
 <!-- ============================================================
      JS SECTION 2 — BACKGROUND GRADIENT
 ============================================================ -->
@@ -616,157 +632,146 @@ document.addEventListener("click", (e) => {
 });
 </script>
 
-<!-- ============================================================
-   JS SECTION 8 — MOBILE / DESKTOP MODE TOGGLE (STATE-PRESERVING + FADE TRANSITION)
-   ------------------------------------------------------------
-   - Switches CSS only
-   - Preserves active tab + content
-   - Adds lightweight fade transition
-   - Minimal GPU usage, snappy
-============================================================ -->
+
 <script>
+/* ============================================================
+ JS SECTION 8 — MOBILE / DESKTOP MODE TOGGLE (STATE-PRESERVING + FADE)
+ - Switches CSS only
+ - Preserves active tab + content
+ - Waits for CSS + fonts before measuring
+============================================================ */
 
-/* ------------------------------------------------------------
-   DOM REFERENCES
------------------------------------------------------------- */
+// DOM references from your original code
 const mobileToggle = document.getElementById("mobile-toggle");
-const mobileCSS = document.getElementById("mobile-css");
-const wrapper = document.getElementById("page-wrapper"); // wrap everything in HTML
+const mobileCSS    = document.getElementById("mobile-css");
+const wrapper      = document.getElementById("page-wrapper");
 
-/* ------------------------------------------------------------
-   CAPTURE CURRENT UI STATE
-   - Active tab button (if any)
-   - Active header link (if any)
-   - Active content section
------------------------------------------------------------- */
+// ---------------------
+// [NEW] readiness utils
+// ---------------------
+function waitForCss(linkEl) {
+  return new Promise((resolve, reject) => {
+    if (linkEl.sheet) return resolve();   // already loaded (cache)
+    linkEl.addEventListener('load', resolve, { once: true });
+    linkEl.addEventListener('error', () => reject(new Error('Failed to load CSS')), { once: true });
+  });
+}
+
+function waitForFonts() {
+  if (document.fonts && document.fonts.ready) {
+    return document.fonts.ready.catch(() => {});
+  }
+  return Promise.resolve();
+}
+
+// ---------------------
+// State capture/restore
+// ---------------------
 function captureUIState() {
-    return {
-        activeTabBtn: document.querySelector(".tab-btn.active"),
-        activeHeaderLink: document.querySelector(".header-text-link.active"),
-        activeSection: document.querySelector(".tab-content.active")
-    };
+  return {
+    activeTabBtn: document.querySelector(".tab-btn.active"),
+    activeHeaderLink: document.querySelector(".header-text-link.active"),
+    activeSection: document.querySelector(".tab-content.active")
+  };
 }
 
-/* ------------------------------------------------------------
-   RESTORE UI STATE
-   - Reapply .active classes without triggering tab logic
------------------------------------------------------------- */
 function restoreUIState(state) {
-    document.querySelectorAll(".tab-btn, .header-text-link")
-        .forEach(el => el.classList.remove("active"));
-
-    document.querySelectorAll(".tab-content")
-        .forEach(sec => sec.classList.remove("active"));
-
-    if (state.activeTabBtn) state.activeTabBtn.classList.add("active");
-    if (state.activeHeaderLink) state.activeHeaderLink.classList.add("active");
-    if (state.activeSection) state.activeSection.classList.add("active");
+  document.querySelectorAll(".tab-btn, .header-text-link")
+    .forEach(el => el.classList.remove("active"));
+  document.querySelectorAll(".tab-content")
+    .forEach(sec => sec.classList.remove("active"));
+  if (state.activeTabBtn)     state.activeTabBtn.classList.add("active");
+  if (state.activeHeaderLink) state.activeHeaderLink.classList.add("active");
+  if (state.activeSection)    state.activeSection.classList.add("active");
 }
 
-/* ------------------------------------------------------------
-   ENABLE / DISABLE MOBILE MODE
-   - Only switches CSS and updates toggle text
-   - Does NOT trigger tab logic
------------------------------------------------------------- */
+// ---------------------
+// [REPLACED] Enablers
+// ---------------------
 function enableMobileMode(state) {
-    mobileCSS.href = "styles/mobile.css";        /* load mobile stylesheet */
-    mobileToggle.textContent = "desktop";
-    localStorage.setItem("ui-mode", "mobile");
+  mobileCSS.href = "styles/mobile.css";        // begin loading mobile CSS
+  mobileToggle.textContent = "desktop";
+  localStorage.setItem("ui-mode", "mobile");
 
-    /* ------------------------------------------------------------
-       FORCE STYLE + LAYOUT COMMIT
-       - reading offsetHeight flushes the layout queue
-    ------------------------------------------------------------ */
-    void document.body.offsetHeight;              /* 🔥 critical line */
+  // Flush layout queue
+  void document.body.offsetHeight;
 
-    /* ------------------------------------------------------------
-       WAIT FOR FINAL LAYOUT, THEN POSITION
-    ------------------------------------------------------------ */
+  // Wait for stylesheet + fonts (prevents first-paint mis-measure)
+  Promise.all([waitForCss(mobileCSS), waitForFonts()]).then(() => {
+    // Double rAF to ensure final style/layout commit
     requestAnimationFrame(() => {
-        requestAnimationFrame(() => {             /* double rAF = layout stable */
-            restoreUIState(state);
-            if (typeof positionContent === "function") {
-                positionContent();
-            }
-        });
+      requestAnimationFrame(() => {
+        restoreUIState(state);
+        if (typeof positionContent === "function") positionContent();
+      });
     });
+  });
 }
 
 function disableMobileMode(state) {
-    mobileCSS.href = "";
-    mobileToggle.textContent = "mobile";
-    localStorage.setItem("ui-mode", "desktop");
+  mobileCSS.href = "";                         // remove mobile CSS
+  mobileToggle.textContent = "mobile";
+  localStorage.setItem("ui-mode", "desktop");
 
-    /* FORCE LAYOUT FLUSH */
-    void document.body.offsetHeight;              /* 🔥 critical line */
+  void document.body.offsetHeight;
 
+  requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-            restoreUIState(state);
-            if (typeof positionContent === "function") {
-                positionContent();
-            }
-        });
+      restoreUIState(state);
+      if (typeof positionContent === "function") positionContent();
     });
+  });
 }
 
-
-/* ------------------------------------------------------------
-   LIGHTWEIGHT FADE TRANSITION FOR CSS SWITCH
-   - fade out wrapper → swap CSS → fade back in
------------------------------------------------------------- */
+// ---------------------
+// Fade transition (keep)
+// ---------------------
 function swapModeWithFade(enableMobile) {
-    wrapper.classList.add("fading"); // fade out
-
-    // Swap CSS almost immediately (tiny overlap with fade)
-    setTimeout(() => {
-        const state = captureUIState();
-        if (enableMobile) enableMobileMode(state);
-        else disableMobileMode(state);
-    }, 50); // 50ms allows fade start
-
-    // Fade back in after total duration
-    setTimeout(() => {
-        wrapper.classList.remove("fading");
-    }, 200); // match CSS transition duration
+  wrapper.classList.add("fading");        // fade out
+  setTimeout(() => {
+    const state = captureUIState();
+    if (enableMobile) enableMobileMode(state);
+    else              disableMobileMode(state);
+  }, 50);
+  setTimeout(() => {
+    wrapper.classList.remove("fading");   // fade back in
+  }, 200);
 }
 
-/* ------------------------------------------------------------
-   MOBILE TOGGLE CLICK HANDLER
-   - Blink feedback
-   - State capture
-   - Fade + CSS swap
------------------------------------------------------------- */
+// Toggle handler (keep)
 mobileToggle.addEventListener("click", (e) => {
-    e.preventDefault();
-    e.stopPropagation(); // prevent tab logic
-
-    // Visual feedback blink
-    mobileToggle.classList.add("blink");
-    setTimeout(() => mobileToggle.classList.remove("blink"), 150);
-
-    // Ensure toggle never stays active
-    mobileToggle.classList.remove("active");
-
-    // Determine mode to switch to
-    const enableMobile = localStorage.getItem("ui-mode") !== "mobile";
-
-    // Perform fade + mode swap
-    swapModeWithFade(enableMobile);
+  e.preventDefault();
+  e.stopPropagation();                // prevent tab logic
+  mobileToggle.classList.add("blink");
+  setTimeout(() => mobileToggle.classList.remove("blink"), 150);
+  mobileToggle.classList.remove("active");
+  const enableMobile = localStorage.getItem("ui-mode") !== "mobile";
+  swapModeWithFade(enableMobile);
 });
 
-/* ------------------------------------------------------------
-   RESTORE MODE ON PAGE LOAD
-   - safe, after all tabs + content have initialized
------------------------------------------------------------- */
+// Restore mode on page load (keep)
 window.addEventListener("load", () => {
-    if (localStorage.getItem("ui-mode") === "mobile") {
-        const state = captureUIState();
-        enableMobileMode(state);
-    }
+  if (localStorage.getItem("ui-mode") === "mobile") {
+    const state = captureUIState();
+    enableMobileMode(state);
+  }
 });
 
+// [OPTIONAL] One-time re-measure after fonts become ready
+window.addEventListener("load", () => {
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => {
+      if (typeof positionContent === "function") positionContent();
+    });
+  }
+});
+
+// [OPTIONAL] Re-measure after BFCache restore (history navigation)
+window.addEventListener("pageshow", () => {
+  if (typeof positionContent === "function") positionContent();
+});
 </script>
+
 
 <!-- ============================================================
      JS SECTION 9 — DEFERRED FIREFLY BACKGROUND LOADER
