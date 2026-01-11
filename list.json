@@ -76,7 +76,8 @@
           "tooltip": "Cutting-edge web3 application for exploring, managing and inscribing Ordinals (NFTs) on BSV blockchain",
           "img": "icon/3d.png",
           "alt": "nft tool app",
-          "text": "3D Ordinals at 3dordi.io"
+          "text": "3D Ordinals at 3dordi.io",
+          "age": "new"
         },
         {
           "href": "https://www.slictionary.com/",
@@ -97,7 +98,8 @@
           "tooltip": "Metanet App Catalog",
           "img": "icon/metanetapps.png",
           "alt": "Metanet Apps",
-          "text": "Metanet Apps"
+          "text": "Metanet Apps",
+          "age": "new"
         }
       ]
     },
@@ -131,7 +133,8 @@
           "tooltip": "Creators of BRC-100 Wallet Standard",
           "img": "icon/pbabbage.png",
           "alt": "Project Babbage",
-          "text": "Project Babbage"
+          "text": "Project Babbage",
+          "age": "new"
         },
         {
           "href": "https://bsvdevs.com/",
@@ -159,6 +162,13 @@
           "img": "icon/babbagedoc.png",
           "alt": "Project Babbage Docs",
           "text": "Project Babbage Docs"
+        },
+        {
+          "href": "https://gorillapool.io/",
+          "tooltip": "BSV Hub Unified Knowledge Bases of BSV resources",
+          "img": "icon/bsv.png",
+          "alt": "documents resources links code skills",
+          "text": "Gorilla Miner"
         },
         {
           "href": "https://gorillapool.io/",

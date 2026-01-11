@@ -457,30 +457,46 @@ fetch("list.json")
         const ul = document.createElement("ul");
         ul.className = "icon-grid";
 
-        section.items.forEach(item => {
-          const li = document.createElement("li");
-          const a = document.createElement("a");
-          a.href = item.href || "#";
-          a.target = "_blank";
+        
+		section.items.forEach(item => {
+		  const li = document.createElement("li");
 
-          const wrap = document.createElement("div");
-          wrap.className = "icon-wrapper";
-          if (item.tooltip) wrap.dataset.tooltip = item.tooltip;
+		  const a = document.createElement("a");
+		  a.href = item.href || "#";
+		  a.target = "_blank";
 
-          const img = document.createElement("img");
-          img.src = item.img || "";
-          img.alt = item.alt || "";
+		  const wrap = document.createElement("div");
+		  wrap.className = "icon-wrapper";
+		  if (item.tooltip) wrap.dataset.tooltip = item.tooltip;
 
-          const txt = document.createElement("div");
-          txt.className = "icon-text";
-          txt.textContent = item.text || "";
+		  // Base icon image
+		  const img = document.createElement("img");
+		  img.src = item.img || "";
+		  img.alt = item.alt || "";
 
-          wrap.appendChild(img);
-          wrap.appendChild(txt);
-          a.appendChild(wrap);
-          li.appendChild(a);
-          ul.appendChild(li);
-        });
+		  // ----- NEW: conditional "new" badge -----
+		  if (item.age === "new") {
+			const badge = document.createElement("img");
+			badge.src = "icon/new.png";   // your badge file
+			badge.alt = "New";
+			badge.className = "icon-badge-new";
+			wrap.appendChild(badge);
+		  }
+		  // ---------------------------------------
+
+		  // Existing label under the icon
+		  const txt = document.createElement("div");
+		  txt.className = "icon-text";
+		  txt.textContent = item.text || "";
+
+		  // Assemble
+		  wrap.appendChild(img);
+		  wrap.appendChild(txt);
+		  a.appendChild(wrap);
+		  li.appendChild(a);
+		  ul.appendChild(li);
+		});
+
 
         sec.appendChild(ul);
       }
