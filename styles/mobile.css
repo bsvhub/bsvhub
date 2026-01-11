@@ -37,51 +37,57 @@ html {
     box-sizing: inherit;
 }
 
+
+/* Base body styling */
 body {
-    margin: 0;
-    padding: 0;
-    font-family: 'VT323', monospace;
-    font-size: 2rem;
-    letter-spacing: 2px;
-    overflow-x: hidden;
-    min-height: 100%;
-    color: white;
+  margin: 0;
+  padding: 0;
+  font-family: 'VT323', monospace;
+  font-size: 2rem;
+  letter-spacing: 2px;
+  overflow-x: hidden;
+  color: white;
 }
 
-
-/* mobile.css */
-
+/* 1) Document sizing — keep */
 html, body {
-  min-height: 100svh;          /* instead of 100dvh */
+  min-height: 100svh;
   overflow-x: hidden;
 }
 
-/* Wrapper still clips transformed overshoot */
+/* page wrapper: no transform */
 #page-wrapper {
-    overflow: hidden;
-    transform: scale(1.6);              /* visually enlarge entire UI by 60% */
-    transform-origin: top left;         /* scale outward from top-left corner */
-    width: 62.5%;                       /* inverse of 1.6 so layout still fits viewport */
-}
-/* Content: fill what's left under the fixed top UI */
-#content-area {
-  min-height: calc(100svh - var(--top-ui-height, 0px));
+  overflow-x: hidden;     /* keep horizontal clipping only */
+  /* transform: none;     /* nothing here */
 }
 
-/* ============================================================
-   2 — BACKGROUND LAYERS - PAGE HEIGHT AWARE [LAYER 0] 
-   ============================================================ */
+/* move the scale to the inner wrapper */
+#ui-scale {
+  transform: scale(1.6);
+  transform-origin: top left;
+  width: 62.5%;           /* inverse of 1.6 */
+}
 
-
+/* backgrounds: fixed to viewport, now truly decoupled */
 #background-layer,
 #firefly-layer {
-  position: absolute;
-  inset: 0;              /* top:0; right:0; bottom:0; left:0; */
+  position: fixed;
+  inset: 0;
   overflow: hidden;
   contain: layout paint;
   pointer-events: none;
+  z-index: 0;
 }
 
+/* content area — keep your current setup */
+#content-area {
+  position: relative;
+  z-index: 200;
+  width: 100%;
+  padding-bottom: 40px;
+  transition: top var(--tooltip-speed) ease;
+  min-height: calc(100svh - var(--top-ui-height, 0px));
+}
 
 
 /* ============================================================
