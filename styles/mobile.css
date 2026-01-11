@@ -49,17 +49,6 @@ body {
 }
 
 /* ============================================================
-   PAGE WRAPPER — ALLOW FULL DOCUMENT HEIGHT
-   ------------------------------------------------------------
-   Required for absolute-positioned background layers
-============================================================ */
-
-#page-wrapper {
-    position: relative;      /* anchor for absolute backgrounds */
-    min-height: 100vh;       /* grows with content */
-}
-
-/* ============================================================
    2 — BACKGROUND LAYERS — TRUE FULL PAGE HEIGHT
    ------------------------------------------------------------
    Uses top + bottom instead of height:100%
@@ -71,8 +60,6 @@ body {
     top: 0;                  /* start at top of page */
     left: 0;
     right: 0;                /* stretch full width */
-    bottom: 0;               /* 🔥 stretch to bottom of page */
-    z-index: 0;
     pointer-events: none;
 }
 
@@ -81,8 +68,6 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    bottom: 0;               /* 🔥 critical for scroll growth */
-    z-index: 1;
     pointer-events: none;
 }
 
