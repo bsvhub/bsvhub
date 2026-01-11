@@ -132,6 +132,13 @@
           "img": "icon/pbabbage.png",
           "alt": "Project Babbage",
           "text": "Project Babbage"
+        },
+        {
+          "href": "https://bsvdevs.com/",
+          "tooltip": "A directory for devs and users alike. Enabling a one stop shop for great Bitcoin SV projects, tools, and resources.",
+          "img": "icon/bsv.png",
+          "alt": "documents script source code",
+          "text": "bsvdevs.com"
         }
       ]
     },
@@ -159,6 +166,13 @@
           "img": "icon/gorillaminer.png",
           "alt": "Gorilla Miner",
           "text": "Gorilla Miner"
+        },
+        {
+          "href": "https://bsvdevs.com/",
+          "tooltip": "A directory for devs and users alike. Enabling a one stop shop for great Bitcoin SV projects, tools, and resources.",
+          "img": "icon/bsv.png",
+          "alt": "documents script source code",
+          "text": "bsvdevs.com"
         }
       ]
     },
@@ -356,7 +370,7 @@
 
     "info-section": {
       "class": "tab-content header-tab-content",
-      "lastUpdate": "10th Jan. 2026"
+      "lastUpdate": "11th Jan. 2026"
     },
 
     "contact-section": {
