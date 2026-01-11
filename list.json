@@ -184,11 +184,11 @@
           "text": "Project Babbage Docs"
         },
         {
-          "href": "https://gorillapool.io/",
-          "tooltip": "BSV Hub Unified Knowledge Bases of BSV resources",
+          "href": "https://hub.bsvblockchain.org/",
+          "tooltip": "BSV Hub: wide array of resources to meet diverse needs, from technical details to real-world uses.",
           "img": "icon/bsv.png",
           "alt": "documents resources links code skills",
-          "text": "Gorilla Miner"
+          "text": "BSV Hub"
         },
         {
           "href": "https://gorillapool.io/",
@@ -363,7 +363,7 @@
 
     "info-section": {
       "class": "tab-content header-tab-content",
-      "lastUpdate": "11th Jan. 2026"
+      "lastUpdate": "12th Jan. 2026"
     },
 
     "contact-section": {
