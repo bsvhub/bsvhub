@@ -54,9 +54,9 @@ body {
    Required for absolute-positioned background layers
 ============================================================ */
 
+/* mobile.css */
 #page-wrapper {
-    position: relative;      /* anchor for absolute backgrounds */
-    min-height: 100vh;       /* grows with content */
+  min-height: 100dvh; /* or 100svh for "small" viewport height */
 }
 
 /* ============================================================
