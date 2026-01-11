@@ -15,7 +15,16 @@
           "tooltip": "Cutting-edge web3 application for exploring, managing and inscribing Ordinals (NFTs) on BSV blockchain",
           "img": "icon/3d.png",
           "alt": "nft tool app",
-          "text": "3D Ordinals at 3dordi.io"
+          "text": "3D Ordinals at 3dordi.io",
+          "age": "new"
+        },
+         {
+          "href": "https://app.reactonchain.com",
+          "tooltip": "React Onchain; currently in beta, helps with deployment of apps on the blockchan",
+          "img": "icon/bsv.png",
+          "alt": "code onchan coding programming",
+          "text": "React Onchain",
+          "age": "new"
         }
       ]
     },
@@ -48,15 +57,18 @@
           "href": "https://mybsv.io/wallet.html",
           "tooltip": "Gateway Wallet; an on-chain wallet at MyBSV.io",
           "img": "icon/mybsv.png",
-          "alt": "Gateway Wallet",
-          "text": "Gateway Wallet"
+          "alt": "on block chain",
+          "text": "Gateway Wallet",
+          "age": "new"
         },
+        
         {
           "href": "https://getmetanet.com/",
           "tooltip": "Metanet wallet; setting the BRC-100 standard created by Project Babbage",
           "img": "icon/metanet.png",
           "alt": "apps wallet",
-          "text": "Metanet Wallet"
+          "text": "Metanet Wallet",
+          "age": "new"
         },
         {
           "href": "https://yours.org",
@@ -107,6 +119,14 @@
     "bsv": {
       "class": "tab-content",
       "items": [
+      	{
+          "href": "https://mybsv.io",
+          "tooltip": "MyBSV.io: an on-chain wallet and more",
+          "img": "icon/bsv.png",
+          "alt": "MyBSV.io",
+          "text": "MyBSV.io",
+          "age": "new"
+        },
       	{
           "href": "https://bsvblockchain.org/",
           "tooltip": "Official BSV pages",
@@ -222,7 +242,8 @@
           "tooltip": "Atomic Swaps BTC <--> BSV",
           "img": "icon/atomic.png",
           "alt": "Atomic Swaps buy",
-          "text": "SwapLobby: Atomic Swaps"
+          "text": "SwapLobby: Atomic Swaps",
+          "age": "new"
         },
         {
           "href": "https://changenow.io/",
@@ -248,46 +269,6 @@
       ]
     },
 
-        "new": {
-      "class": "tab-content",
-      "items": [
-        {
-          "href": "https://3dordi.io/",
-          "tooltip": "Cutting-edge web3 application for exploring, managing and inscribing Ordinals (NFTs) on BSV blockchain",
-          "img": "icon/3d.png",
-          "alt": "3D Ordinals",
-          "text": "3D Ordinals at 3dordi.io"
-        },
-        {
-          "href": "https://mybsv.io",
-          "tooltip": "MyBSV.io: an on-chain wallet and more",
-          "img": "icon/bsv.png",
-          "alt": "MyBSV.io",
-          "text": "MyBSV.io"
-        },
-        {
-          "href": "https://swaplobby.com/",
-          "tooltip": "Atomic Swaps BTC <--> BSV",
-          "img": "icon/atomic.png",
-          "alt": "Atomic Swaps",
-          "text": "SwapLobby: Atomic Swaps"
-        },
-        {
-          "href": "https://app.reactonchain.com",
-          "tooltip": "React Onchain; currently in beta, helps with deployment of apps on the blockchan",
-          "img": "icon/bsv.png",
-          "alt": "React Onchain",
-          "text": "React Onchain"
-        },
-        {
-          "href": "https://getmetanet.com/",
-          "tooltip": "Metanet wallet; setting the BRC-100 standard created by Project Babbage",
-          "img": "icon/metanet.png",
-          "alt": "apps wallet",
-          "text": "Metanet Wallet"
-        }
-      ]
-    },
     
     "social": {
       "class": "tab-content",
@@ -304,7 +285,8 @@
           "tooltip": "Metanet Desktop App",
           "img": "icon/metanet.png",
           "alt": "Metanet",
-          "text": "Metanet"
+          "text": "Metanet",
+          "age": "new"
         }
       ]
     },
