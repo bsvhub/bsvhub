@@ -671,15 +671,24 @@ function captureUIState() {
   };
 }
 
+
 function restoreUIState(state) {
-  document.querySelectorAll(".tab-btn, .header-text-link")
-    .forEach(el => el.classList.remove("active"));
-  document.querySelectorAll(".tab-content")
-    .forEach(sec => sec.classList.remove("active"));
-  if (state.activeTabBtn)     state.activeTabBtn.classList.add("active");
-  if (state.activeHeaderLink) state.activeHeaderLink.classList.add("active");
-  if (state.activeSection)    state.activeSection.classList.add("active");
+  const hasSomething =
+    state.activeTabBtn || state.activeHeaderLink || state.activeSection;
+
+  // Only clear if we actually have a saved state to restore
+  if (hasSomething) {
+    document.querySelectorAll(".tab-btn, .header-text-link")
+      .forEach(el => el.classList.remove("active"));
+    document.querySelectorAll(".tab-content")
+      .forEach(sec => sec.classList.remove("active"));
+
+    if (state.activeTabBtn) state.activeTabBtn.classList.add("active");
+    if (state.activeHeaderLink) state.activeHeaderLink.classList.add("active");
+    if (state.activeSection) state.activeSection.classList.add("active");
+  }
 }
+
 
 // ---------------------
 // [REPLACED] Enablers
