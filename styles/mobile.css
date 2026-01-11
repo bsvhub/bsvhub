@@ -48,15 +48,8 @@ body {
     color: white;
 }
 
-/* ============================================================
-   PAGE WRAPPER — ALLOW FULL DOCUMENT HEIGHT
-   ------------------------------------------------------------
-   Required for absolute-positioned background layers
-============================================================ */
-
-/* mobile.css */
-#page-wrapper {
-  min-height: 100dvh; /* or 100svh for "small" viewport height */
+#content-area {
+  min-height: calc(100dvh - var(--top-ui-height, 0px));
 }
 
 /* ============================================================
