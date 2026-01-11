@@ -38,6 +38,9 @@
 <!-- ============================================================
      LAYER 1 — TOP UI (HEADER + TAB BAR + TOOLTIP)
 ============================================================ -->
+<!-- NEW inner wrapper; put UI content inside -->
+<div id="ui-scale">
+
 
 <div id="top-ui">
 
@@ -109,7 +112,7 @@
 
 
 </main>
-
+</div>
 <script>
 function loadLastUpdate() {
   fetch("list.json")
