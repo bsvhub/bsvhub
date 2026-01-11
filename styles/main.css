@@ -74,31 +74,40 @@ body {
     color: white;
 }
 
+/* ============================================================
+   PAGE WRAPPER — ALLOW FULL DOCUMENT HEIGHT
+   ------------------------------------------------------------
+   Required for absolute-positioned background layers
+============================================================ */
 
+#page-wrapper {
+    position: relative;      /* anchor for absolute backgrounds */
+    min-height: 100vh;       /* grows with content */
+}
 
 /* ============================================================
-   2 — BACKGROUND LAYERS (LAYER 0)
+   2 — BACKGROUND LAYERS - PAGE HEIGHT AWARE [LAYER 0] 
    ============================================================ */
 
 #background-layer {
-    position: fixed;
-    inset: 0;
+    position: absolute;      /* ✅ grows with page height */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;            /* fills parent (page-wrapper) */
     z-index: 0;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
     pointer-events: none;
 }
 
 #firefly-layer {
-    position: fixed;
-    inset: 0;
+    position: absolute;      /* ✅ grows with page height */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     z-index: 1;
     pointer-events: none;
-    overflow: hidden;
 }
-
-
 
 /* ============================================================
    3 — TOP-UI (HEADER + TAB BAR + TOOLTIP)  [LAYER 1]
@@ -317,7 +326,7 @@ ul.icon-grid {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 12px;
+    gap: 20px;
     margin: 0 auto;
     padding: 10px;
 }
