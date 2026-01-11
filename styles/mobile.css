@@ -48,33 +48,40 @@ body {
     color: white;
 }
 
+
+/* mobile.css */
+
+html, body {
+  min-height: 100svh;          /* instead of 100dvh */
+  overflow-x: hidden;
+}
+
+/* Wrapper still clips transformed overshoot */
+#page-wrapper {
+    overflow: hidden;
+    transform: scale(1.6);              /* visually enlarge entire UI by 60% */
+    transform-origin: top left;         /* scale outward from top-left corner */
+    width: 62.5%;                       /* inverse of 1.6 so layout still fits viewport */
+}
+/* Content: fill what's left under the fixed top UI */
 #content-area {
-  min-height: calc(100dvh - var(--top-ui-height, 0px));
+  min-height: calc(100svh - var(--top-ui-height, 0px));
 }
 
 /* ============================================================
    2 — BACKGROUND LAYERS - PAGE HEIGHT AWARE [LAYER 0] 
    ============================================================ */
 
-#background-layer {
-    position: absolute;      /* ✅ grows with page height */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;            /* fills parent (page-wrapper) */
-    z-index: 0;
-    pointer-events: none;
+
+#background-layer,
+#firefly-layer {
+  position: absolute;
+  inset: 0;              /* top:0; right:0; bottom:0; left:0; */
+  overflow: hidden;
+  contain: layout paint;
+  pointer-events: none;
 }
 
-#firefly-layer {
-    position: absolute;      /* ✅ grows with page height */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    pointer-events: none;
-}
 
 
 /* ============================================================
@@ -476,10 +483,6 @@ ul.icon-grid li a.mobile-selected {
    - Prevents content from sliding under tooltip / tabs
 ============================================================ */
 
-#page-wrapper {
-    transform: scale(1.6);              /* visually enlarge entire UI by 60% */
-    transform-origin: top left;         /* scale outward from top-left corner */
-    width: 62.5%;                       /* inverse of 1.6 so layout still fits viewport */
-}
+
 
 
