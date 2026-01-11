@@ -341,7 +341,9 @@ ul.icon-grid li a.mobile-selected {
     overflow: hidden;      /* prevents image overflow */
 }
 
-.icon-wrapper img {
+
+/* Apply global sizing only to base icon images, not to the badge */
+.icon-wrapper img:not(.icon-badge-new) {
     max-width: 100%;       /* scale down to fit container */
     max-height: 100%;
     width: auto;           /* maintain original ratio */
@@ -349,6 +351,19 @@ ul.icon-grid li a.mobile-selected {
     display: block;
     object-fit: contain;   /* keeps image inside wrapper without cropping */
 }
+
+
+/* Badge rules (no need for !important now) */
+.icon-wrapper .icon-badge-new {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20%;
+  height: auto;
+  pointer-events: none;
+  z-index: 2;
+}
+
 
 /* ==============================
    ICON GRID — TERMINAL GREEN TEXT (wrap + centered)
@@ -375,7 +390,6 @@ ul.icon-grid li a.mobile-selected {
     pointer-events: none;           /* clicks pass through */
     max-width: 90%;                 /* optional: prevent box from overflowing icon */
 }
-
 
 /* ============================================================
    7 — HEADER-TAB TEXT SECTIONS (About / Tip / Contact)
