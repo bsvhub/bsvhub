@@ -48,30 +48,43 @@ body {
     color: white;
 }
 
+/* ============================================================
+   PAGE WRAPPER — ALLOW FULL DOCUMENT HEIGHT
+   ------------------------------------------------------------
+   Required for absolute-positioned background layers
+============================================================ */
 
+#page-wrapper {
+    position: relative;      /* anchor for absolute backgrounds */
+    min-height: 100vh;       /* grows with content */
+}
 
 /* ============================================================
-   2 — BACKGROUND LAYERS (LAYER 0)
-   ============================================================ */
+   2 — BACKGROUND LAYERS — TRUE FULL PAGE HEIGHT
+   ------------------------------------------------------------
+   Uses top + bottom instead of height:100%
+   This allows the background to grow with scrolling content
+============================================================ */
 
 #background-layer {
-    position: fixed;
-    inset: 0;
+    position: absolute;      /* positioned relative to #page-wrapper */
+    top: 0;                  /* start at top of page */
+    left: 0;
+    right: 0;                /* stretch full width */
+    bottom: 0;               /* 🔥 stretch to bottom of page */
     z-index: 0;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
     pointer-events: none;
 }
 
 #firefly-layer {
-    position: fixed;
-    inset: 0;
+    position: absolute;      /* same logic as background */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;               /* 🔥 critical for scroll growth */
     z-index: 1;
     pointer-events: none;
-    overflow: hidden;
 }
-
 
 
 /* ============================================================
@@ -262,7 +275,7 @@ ul.icon-grid {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 12px;
+    gap: 20px;
     margin: 0 auto;
     padding: 10px;
 }
@@ -289,6 +302,20 @@ ul.icon-grid li a:hover {
     border-color: #cc0022;
     transform: scale(1.04);
 }
+
+/* ============================================================
+   ICON — MOBILE FIRST-TAP SELECTED STATE
+   ------------------------------------------------------------
+   - Visually identical to hover
+   - Applied during first tap (tooltip mode)
+============================================================ */
+
+ul.icon-grid li a.mobile-selected {
+    background: rgba(135,206,235,0.6);  /* same as :hover */
+    border-color: #00ff00;              /* same as :hover */
+    transform: scale(1.04);             /* same as :hover */
+}
+
 
 /* icon wrapper is always a square */
 .icon-wrapper {
@@ -451,13 +478,18 @@ ul.icon-grid li a:hover {
     box-shadow: 0 0 8px rgba(0, 255, 136, 0.6); /* soft green glow */
 }
 
-/* =====================================================
-   11 — MOBILE SIZE ADJUSTMENT
-===================================================== */
-html {
-    transform: scale(1.6); /* 60% larger */
-    transform-origin: top left; /* ensures scaling starts from top-left corner */
-    width: 62.5%; /* 1/1.6 to fit scaled content in viewport */
+/* ============================================================
+   11 — MOBILE VISUAL SCALE (SAFE — DOES NOT BREAK JS LAYOUT)
+   ------------------------------------------------------------
+   - Scales only the page wrapper, not the document root
+   - Keeps JS offsetHeight / positioning logic correct
+   - Prevents content from sliding under tooltip / tabs
+============================================================ */
+
+#page-wrapper {
+    transform: scale(1.6);              /* visually enlarge entire UI by 60% */
+    transform-origin: top left;         /* scale outward from top-left corner */
+    width: 62.5%;                       /* inverse of 1.6 so layout still fits viewport */
 }
 
 
