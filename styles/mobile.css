@@ -454,12 +454,10 @@ ul.icon-grid li a:hover {
 /* =====================================================
    11 — MOBILE SIZE ADJUSTMENT
 ===================================================== */
-body {
+html {
     transform: scale(1.6); /* 60% larger */
     transform-origin: top left; /* ensures scaling starts from top-left corner */
-}
-body {
-    transform-origin: top left;
     width: 62.5%; /* 1/1.6 to fit scaled content in viewport */
 }
+
 
