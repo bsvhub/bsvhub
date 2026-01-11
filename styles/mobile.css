@@ -270,6 +270,15 @@ html, body {
     to   { opacity: 1; transform: translateY(0); }
 }
 
+
+/* Improve tap behavior on mobile Chromium:
+   - Removes 300ms delay
+   - Prevents double-tap zoom
+   - Makes pointer events more predictable */
+.tab-content a {
+  touch-action: manipulation;
+}
+
 /* ============================================================
    6 — ICON GRID MODULE (Fixed Aspect Ratio & Centered Images)
    ============================================================ */
