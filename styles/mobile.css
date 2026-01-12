@@ -226,7 +226,6 @@ html, body {
 
 /* Placeholder fits: single line, clipped or ellipsis */
 #search-box::placeholder {
-  font-size: inherit;        /* same size as input */
   letter-spacing: inherit;   /* 0, from #search-box */
   white-space: nowrap;       /* never wrap */
   overflow: hidden;          /* hide overflow */
