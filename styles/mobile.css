@@ -201,15 +201,15 @@ html, body {
   padding: 0 14px;
 
   /* collapsed baseline: one-line rail */
-  min-height: 30px;
-  max-height: 30px;
+  min-height: 32px;
+  max-height: 32px;
 
   /* allow wrapping by default (non-marquee) */
   white-space: normal;           /* <-- NEW: permit multi-line */
   word-break: break-word;        /* <-- NEW: break long words if needed */
   overflow-wrap: anywhere;       /* <-- NEW: wrap long sequences */
 
-  font-size: 1.6rem;
+  font-size: 2rem;
   color: #00ff88;
   text-align: center;
   background: rgba(25, 25, 25, 0.6);
