@@ -281,11 +281,11 @@
           "text": "TreeChat"
         },
         {
-          "href": "https://getmetanet.com/",
-          "tooltip": "Metanet Desktop App",
-          "img": "icon/metanet.png",
-          "alt": "Metanet",
-          "text": "Metanet",
+          "href": "https://metanetapps.com/",
+          "tooltip": "Metanet App Catalog",
+          "img": "icon/metanetapps.png",
+          "alt": "Metanet Apps",
+          "text": "Metanet Apps",
           "age": "new"
         }
       ]
