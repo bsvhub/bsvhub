@@ -7,8 +7,8 @@
    5 — CONTENT AREA (LAYER 2)
    6 — ICON GRID MODULE
    7 — HEADER-TAB TEXT SECTIONS
-   8 — SEARCH BAR (MATCHES TAB STYLE)
-   9 — COPY BUTTON (TIP SECTION)
+   ? — SEARCH BAR (MATCHES TAB STYLE)
+   8 — COPY BUTTON (TIP SECTION)
    10 — LINK STYLE (inside Contact; "BSVhub")
    11 — MOBILE SIZE ADJUSTMENT
 ------------------------------------------------------------ */
@@ -22,10 +22,6 @@
     src: url('assets/VT323-Regular.ttf') format('truetype');
 }
 
-:root {
-    --tooltip-speed: 0.45s;      /* tooltip + content sync speed */
-    --top-ui-shadow: rgba(0,0,0,0.7);
-}
 
 html {
     box-sizing: border-box;
@@ -144,48 +140,100 @@ html, body {
 }
 
 
-/* ------------------------------------------------------------
-   TAB BAR
------------------------------------------------------------- */
-.tab-bar {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    row-gap: 10px;
-    gap: 10px;
-    padding: 12px;
 
-    background-color: rgba(25, 25, 25, 0.6); /* match tooltip background exactly */
-    box-shadow: none;/*0 2px 6px var(--top-ui-shadow); /* optional for depth */
+/* ------------------------------------------------------------
+   TAB BAR + SEARCH — unified sizing
+   ------------------------------------------------------------ */
+:root {
+    --tooltip-speed: 0.45s;      /* tooltip + content sync speed */
+    --top-ui-shadow: rgba(0,0,0,0.7);
+    --ui-font-size: clamp(1.2rem, 2.8vw, 1.8rem);
+    --ui-element-width: clamp(140px, 20vw, 240px);
+    --ui-hpad: 18px;           /* horizontal padding*/
+	--ui-vpad: 12px;           /* vertical padding*/
 }
 
+/* TAB BAR container */
+.tab-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  row-gap: 10px;
+  gap: 10px;
+  padding: 12px;
+  background-color: rgba(25, 25, 25, 0.6);
+  box-shadow: none; /* optional depth was disabled */
+}
 
+/* Shared typography + padding for TAB buttons and SEARCH input */
+.tab-bar button,
+#search-box {
+  font-family: 'VT323';
+  font-size: var(--ui-font-size);
+  padding: var(--ui-vpad) var(--ui-hpad);
+}
+
+/* ------------------------------------------------------------
+   TAB BUTTONS
+   ------------------------------------------------------------ */
 .tab-bar button {
-    flex: 0 0 auto;
-    min-width: 100px;
-
-    padding: 12px 18px;
-    font-family: 'VT323';
-    font-size: clamp(0.9rem, 2.2vw, 1.3rem);
-    white-space: nowrap;
-
-    color: white;
-    background: rgba(255,255,255,0.1);
-
-    border: 2px solid #ff5733;
-    border-radius: 10px;
-
-    transition: background 0.25s, transform 0.25s;
+  flex: 0 0 auto;
+  min-width: 100px;
+  white-space: nowrap;
+  color: white;
+  background: rgba(255,255,255,0.1);
+  border: 2px solid #ff5733;
+  border-radius: 10px;
+  transition: background 0.25s, transform 0.25s;
 }
 .tab-bar button:hover {
-    transform: scale(1.06);
-    background: rgba(255,87,51,0.8);
+  transform: scale(1.06);
+  background: rgba(255,87,51,0.8);
 }
 .tab-bar button.active {
-    background: #ff5733;
-    color: black;
-    box-shadow: 0 0 12px rgba(255,87,51,0.6);
+  background: #ff5733;
+  color: black;
+  box-shadow: 0 0 12px rgba(255,87,51,0.6);
 }
+
+/* ------------------------------------------------------------
+   SEARCH BOX (matches tab style, fixed width)
+   ------------------------------------------------------------ */
+#search-box {
+  max-width: 200px;
+  box-sizing: border-box;       /* padding stays inside the fixed width */
+  width: var(--ui-element-width); /* set once, input won't resize when typing */
+  border-radius: 10px;
+  background: rgba(255,255,255,0.1);
+  border: 2px solid rgba(255,204,102,0.4);
+  color: white;
+  outline: none;
+  transition: background 0.25s, transform 0.25s, box-shadow 0.25s;
+
+  /* prevent wide tracking from body */
+  letter-spacing: 0;
+}
+#search-box:hover {
+  transform: scale(1.06);
+  background: rgba(255,204,102,0.2);
+  box-shadow: 0 0 12px rgba(255,204,102,0.7);
+}
+#search-box:focus {
+  background: rgba(255,204,102,0.25);
+  border-color: #ffcc66;
+  box-shadow: 0 0 18px rgba(255,204,102,0.9);
+}
+
+/* Placeholder fits: single line, clipped or ellipsis */
+#search-box::placeholder {
+  font-size: inherit;        /* same size as input */
+  letter-spacing: inherit;   /* 0, from #search-box */
+  white-space: nowrap;       /* never wrap */
+  overflow: hidden;          /* hide overflow */
+  text-overflow: ellipsis;   /* show … if still tight */
+  color: rgba(200,200,200,0.7);
+}
+
 
 /* ============================================================
  4 — TOOLTIP BAR (inside top-ui)
@@ -209,7 +257,7 @@ html, body {
   word-break: break-word;        /* <-- NEW: break long words if needed */
   overflow-wrap: anywhere;       /* <-- NEW: wrap long sequences */
 
-  font-size: 2rem;
+  font-size: 1.8rem;
   color: #00ff88;
   text-align: center;
   background: rgba(25, 25, 25, 0.6);
@@ -413,47 +461,8 @@ ul.icon-grid li a.mobile-selected {
     text-align: center; /* <-- ensure inline text is centered */
 }
 
-
-
 /* ============================================================
-   8 — SEARCH BAR (MATCH TAB STYLE)
-   ============================================================ */
-
-#search-box {
-    max-width: 155px;
-    padding: 12px 18px;
-
-    font-family: 'VT323';
-    font-size: 1.2rem;
-    border-radius: 10px;
-
-    background: rgba(255,255,255,0.1);
-    border: 2px solid rgba(255,204,102,0.4);
-
-    color: white;
-    outline: none;
-
-    transition: background 0.25s, transform 0.25s, box-shadow 0.25s;
-}
-
-#search-box:hover {
-    transform: scale(1.06);
-    background: rgba(255,204,102,0.2);
-    box-shadow: 0 0 12px rgba(255,204,102,0.7);
-}
-
-#search-box:focus {
-    background: rgba(255,204,102,0.25);
-    border-color: #ffcc66;
-    box-shadow: 0 0 18px rgba(255,204,102,0.9);
-}
-
-#search-box::placeholder {
-    color: rgba(200,200,200,0.7);
-}
-
-/* ============================================================
-   9 — COPY BUTTON (TIP SECTION)
+   8 — COPY BUTTON (TIP SECTION)
    ============================================================ */
 
 .copy-btn {
