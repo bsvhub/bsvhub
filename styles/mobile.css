@@ -187,53 +187,60 @@ html, body {
     box-shadow: 0 0 12px rgba(255,87,51,0.6);
 }
 
-
-
-
 /* ============================================================
-   4 — TOOLTIP BAR (inside top-ui)
-   ============================================================ */
-
+ 4 — TOOLTIP BAR (inside top-ui)
+   - Default: single line height (collapsed)
+   - Expanded: taller, wraps lines, smooth transition
+============================================================ */
 #tooltip-display {
-    overflow: hidden;
+  /* existing */
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 0 14px;
 
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
+  /* collapsed baseline: one-line rail */
+  min-height: 30px;
+  max-height: 30px;
 
-    padding: 0 14px;
-    min-height: 24px;
-    max-height: 24px;
+  /* allow wrapping by default (non-marquee) */
+  white-space: normal;           /* <-- NEW: permit multi-line */
+  word-break: break-word;        /* <-- NEW: break long words if needed */
+  overflow-wrap: anywhere;       /* <-- NEW: wrap long sequences */
 
-    font-size: 1.2rem;
-    color: #00ff88;
-    text-align: center;
+  font-size: 1.6rem;
+  color: #00ff88;
+  text-align: center;
+  background: rgba(25, 25, 25, 0.6);
 
-    background: rgba(25, 25, 25, 0.6);
-    transition: max-height var(--tooltip-speed) ease,
-                padding var(--tooltip-speed) ease;
+  /* smooth animation for height & padding */
+  transition:
+    max-height var(--tooltip-speed) ease,
+    padding var(--tooltip-speed) ease;
 }
 
+/* Expanded state: room for multi-line messages */
 #tooltip-display.expanded {
-    max-height: 100px;
+  /* grow rail height for multi-line; adjust to your needs */
+  max-height: 180px;             /* <-- NEW: taller cap for long tooltips */
+  padding: 6px 14px;             /* <-- NEW: small vertical padding for readability */
 }
 
-/* Marquee-style scrolling for default tooltip message */
+/* Marquee-style scrolling (default message only) */
 #tooltip-display.marquee {
-    overflow: hidden;
-    white-space: nowrap;
+  overflow: hidden;
+  white-space: nowrap;           /* <-- Override to single-line for marquee */
+}
+#tooltip-display.marquee span {
+  display: inline-block;
+  padding-left: 0;
+  white-space: nowrap;
+  animation: scroll-text 600s linear infinite;
 }
 
-#tooltip-display.marquee span {
-    display: inline-block;
-    padding-left: 0;  /* start at left edge */
-    white-space: nowrap;
-    animation: scroll-text 600s linear infinite; /* slower, adjust 30s as needed */
-}
 
 /* Repeat the message multiple times inside JS */
-
-
 @keyframes scroll-text {
     0%   { transform: translateX(0%); }
     100% { transform: translateX(-100%); }
