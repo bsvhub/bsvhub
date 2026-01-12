@@ -146,6 +146,25 @@ let defaultTooltipMessage = "Loading...";
 let revertTimeout = null;
 let lastTappedLink = null;
 
+
+/* ============================================================
+   MOBILE DOUBLE-TAP — CLEAR HELPER
+   - Releases selection from the previously armed icon
+   - Resets dataset + class + tooltip
+   ============================================================ */
+function clearDoubleTapSelection() {
+  if (lastTappedLink) {
+    // release state memory
+    lastTappedLink.dataset.doubleTapped = "false";
+    // drop the visual selected style (mobile.css)
+    lastTappedLink.classList.remove("mobile-selected");
+    lastTappedLink = null;
+    // revert tooltip back to default (delayed)
+    setTooltipText(""); // will schedule default in 2s
+  }
+}
+
+
 /* ------------------------------------------------------------
    MOBILE MODE DETECTION
 ------------------------------------------------------------ */
@@ -175,20 +194,25 @@ function showDefaultTooltip() {
 /* ------------------------------------------------------------
    SET TOOLTIP TEXT
 ------------------------------------------------------------ */
+
 function setTooltipText(text) {
-    if (revertTimeout) clearTimeout(revertTimeout);
+  if (revertTimeout) clearTimeout(revertTimeout);
 
-    if (text) {
-        tooltipBox.innerHTML = text;
-        tooltipBox.classList.remove("marquee");
-    } else {
-        revertTimeout = setTimeout(showDefaultTooltip, 2000);
-    }
+  if (text) {
+    tooltipBox.innerHTML = text;
+    tooltipBox.classList.remove("marquee");  // leaving marquee mode
+    tooltipBox.classList.add("expanded");    // <-- NEW: allow multi-line & height growth
+  } else {
+    // Schedule default marquee; collapse happens in showDefaultTooltip()
+    revertTimeout = setTimeout(showDefaultTooltip, 2000);
+  }
 
-    requestAnimationFrame(() => {
-        if (typeof positionContent === "function") positionContent();
-    });
+  // Re-measure for top animation
+  requestAnimationFrame(() => {
+    if (typeof positionContent === "function") positionContent();
+  });
 }
+
 
 /* ------------------------------------------------------------
    DESKTOP HOVER TOOLTIPS
@@ -388,6 +412,7 @@ function activateTab(targetId, source) {
 ------------------------------------------------------------ */
 tabButtons.forEach(btn =>
     btn.addEventListener("click", () => {
+        clearDoubleTapSelection(); // <-- NEW: release any armed icon
         resetSearch();  // <-- NEW
         activateTab(btn.dataset.target, btn);
     })
@@ -399,6 +424,7 @@ tabButtons.forEach(btn =>
 headerLinks.forEach(link =>
     link.addEventListener("click", (e) => {
         e.preventDefault();
+        clearDoubleTapSelection(); // <-- NEW: release any armed icon
         resetSearch();  // <-- NEW
         activateTab(link.dataset.target, link);
     })
@@ -537,6 +563,7 @@ const resultSec = document.getElementById("search-results");
 const excludedTabs = ["about-section", "tip-section", "info-section", "contact-section"];
 
 searchBox.addEventListener("input", () => {
+    clearDoubleTapSelection(); // <-- NEW: releasing armed icon on search input
     const q = searchBox.value.toLowerCase();
 
     // Clear previous search results
@@ -764,6 +791,7 @@ function swapModeWithFade(enableMobile) {
 mobileToggle.addEventListener("click", (e) => {
   e.preventDefault();
   e.stopPropagation();                // prevent tab logic
+  clearDoubleTapSelection();      // <-- NEW: release armed icon on mode toggle
   mobileToggle.classList.add("blink");
   setTimeout(() => mobileToggle.classList.remove("blink"), 150);
   mobileToggle.classList.remove("active");
@@ -834,6 +862,76 @@ window.addEventListener("pageshow", () => {
 
     window.addEventListener("load", deferFireflies);
 })();
+</script>
+
+<!-- ============================================================
+     JS SECTION 10 — O	OPTIONAL TWEAKS
+     ------------------------------------------------------------
+     - Runs AFTER page is fully loaded
+     - Uses idle time when possible
+     - Zero impact on interactivity
+============================================================ -->
+
+
+<script>
+/* ============================================================
+   GLOBAL OUTSIDE-CLICK CANCELLER (mobile only)
+   - If the pointer goes down outside an icon wrapper, release
+   - Uses capture to run before inner handlers
+   ============================================================ */
+document.addEventListener('pointerdown', (e) => {
+  if (!isMobileMode()) return; // only apply to mobile mode
+  const isIconArea = e.target.closest('.tab-content a > .icon-wrapper');
+  if (!isIconArea) {
+    clearDoubleTapSelection();
+  }
+}, { capture: true });
+</script>
+
+<script>
+/* ============================================================
+   OPTIONAL: ESC KEY CANCEL
+   - Pressing Escape releases the armed icon
+   - Works on both mobile and desktop, harmless elsewhere
+   ============================================================ */
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    clearDoubleTapSelection();
+  }
+});
+</script>
+
+<script>
+/* ============================================================
+   OPTIONAL: WINDOW BLUR / TAB SWITCH
+   - If the window loses focus (ALT+TAB, app switch),
+     release the armed icon to avoid stale state
+   ============================================================ */
+window.addEventListener('blur', clearDoubleTapSelection);
+</script>
+
+<script>
+/* ============================================================
+   OPTIONAL: PAGE VISIBILITY
+   - When the page becomes hidden (user switches tabs),
+     clear selection; restores clean state on return
+   ============================================================ */
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    clearDoubleTapSelection();
+  }
+});
+</script>
+
+<script>
+/* ============================================================
+   OPTIONAL: RELEASE ON SEARCH FOCUS
+   - As soon as search is focused, drop the armed icon
+   ============================================================ */
+const searchBox = document.getElementById("search-box");
+if (searchBox) {
+  searchBox.addEventListener("focus", clearDoubleTapSelection);
+}
 </script>
 
 </div>
