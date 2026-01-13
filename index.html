@@ -107,7 +107,7 @@
 
 
 </main>
-
+ 
 <script>
 function loadLastUpdate() {
   fetch("list.json")
@@ -723,6 +723,10 @@ function swapModeWithFade(enableMobile) {
     const state = captureUIState();
     if (enableMobile) enableMobileMode(state);
     else              disableMobileMode(state);
+    // ==================== NEW ====================
+    // Reveal page after mode is applied
+    wrapper.style.visibility = "visible"; // NEW
+    // ==================== END NEW ====================
   }, 50);
   setTimeout(() => {
     wrapper.classList.remove("fading");   // fade back in
@@ -762,6 +766,18 @@ window.addEventListener("load", () => {
 window.addEventListener("pageshow", () => {
   if (typeof positionContent === "function") positionContent();
 });
+    
+// Auto-enable mobile mode on smartphones
+(function() {
+    const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    // Only enable if no previous choice was stored
+    if (isMobileDevice && localStorage.getItem("ui-mode") !== "mobile") {
+        const state = captureUIState?.() || {};
+        enableMobileMode(state);
+    }
+})();
+    
 </script>
 
 
