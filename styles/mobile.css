@@ -25,8 +25,8 @@
 :root {
     --tooltip-speed: 0.45s;
     --top-ui-shadow: rgba(0,0,0,0.7);
-    --ui-font-size: clamp(1.2rem, 2.8vw, 1.8rem);
-    --ui-element-width: clamp(140px, 20vw, 240px);
+    --ui-font-size: clamp(2.2rem, 3vw, 4rem);
+    --ui-element-width: clamp(200px, 20vw, 280px);
     --ui-hpad: 18px;           /* horizontal padding*/
     --ui-vpad: 12px;           /* vertical padding*/
 }
@@ -132,13 +132,14 @@ html, body {
     display: flex;
     flex-direction: column;        /* Contact on top, Mobile under */
     gap: 8px;
+    font-size: 2.4rem;
 }
 
 /* 4️⃣ Heading */
 .header-title {
     flex-shrink: 0;                /* do not shrink */
     text-align: center;
-    font-size: 2.4rem;             /* larger heading */
+    font-size: 6rem;             /* larger heading */
     white-space: nowrap;
     margin: 0 16px;                /* ensures min 16px gap to button groups */
 }
@@ -299,13 +300,7 @@ html, body {
 }
 
 
-/* Improve tap behavior on mobile Chromium:
-   - Removes 300ms delay
-   - Prevents double-tap zoom
-   - Makes pointer events more predictable */
-.tab-content a {
-  touch-action: manipulation;
-}
+
 
 /* ============================================================
    6 — ICON GRID MODULE (Fixed Aspect Ratio & Centered Images)
@@ -501,4 +496,46 @@ ul.icon-grid li a.mobile-selected {
    - Prevents content from sliding under tooltip / tabs
 ============================================================ */
 
+/* ============================================================
+   MOBILE HEADER BUTTONS — SIZE + HOVER EFFECT
+   ============================================================ */
 
+.header-icons .header-text-link {
+    font-size: clamp(3.2rem, 4.2vw, 4rem);
+    padding: 8px 14px;
+    line-height: 1.1;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    text-decoration: none;
+    border-radius: 10px;
+
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.header-icons .header-text-link:hover,
+.header-icons .header-text-link:focus {
+    color: black;           /* turns text black on hover/focus */
+}
+
+.header-icons .header-text-link:active {
+    transform: scale(0.94);
+}
+
+/* Make taps respond immediately on mobile (Chromium fix) */
+.header-text-link,
+.icon-wrapper {
+    -webkit-tap-highlight-color: transparent; /* remove tap highlight */
+    touch-action: manipulation;               /* speeds up tap events */
+    cursor: pointer;                          /* optional, shows it's clickable */
+}
+
+/* Improve tap behavior on mobile Chromium:
+   - Removes 300ms delay
+   - Prevents double-tap zoom
+   - Makes pointer events more predictable */
+.tab-content a {
+  touch-action: manipulation;
+}
