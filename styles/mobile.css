@@ -22,6 +22,14 @@
     src: url('assets/VT323-Regular.ttf') format('truetype');
 }
 
+:root {
+    --tooltip-speed: 0.45s;
+    --top-ui-shadow: rgba(0,0,0,0.7);
+    --ui-font-size: clamp(1.2rem, 2.8vw, 1.8rem);
+    --ui-element-width: clamp(140px, 20vw, 240px);
+    --ui-hpad: 18px;           /* horizontal padding*/
+    --ui-vpad: 12px;           /* vertical padding*/
+}
 
 html {
     box-sizing: border-box;
@@ -57,14 +65,7 @@ html, body {
   /* transform: none;     /* nothing here */
 }
 
-/* move the scale to the inner wrapper */
-#ui-scale {
-  transform: scale(1.6);
-  transform-origin: top left;
-  width: 62.5%;           /* inverse of 1.6 */
-}
-
-/* backgrounds: fixed to viewport, now truly decoupled */
+/* Override for backgrounds - keep them truly viewport-fixed */
 #background-layer,
 #firefly-layer {
   position: fixed;
@@ -83,6 +84,9 @@ html, body {
   padding-bottom: 40px;
   transition: top var(--tooltip-speed) ease;
   min-height: calc(100svh - var(--top-ui-height, 0px));
+  transform: scale(1.6);
+  transform-origin: top left;
+  width: 62.5%;  /* inverse of 1.6 */
 }
 
 
@@ -139,19 +143,9 @@ html, body {
     margin: 0 16px;                /* ensures min 16px gap to button groups */
 }
 
-
-
 /* ------------------------------------------------------------
    TAB BAR + SEARCH — unified sizing
    ------------------------------------------------------------ */
-:root {
-    --tooltip-speed: 0.45s;      /* tooltip + content sync speed */
-    --top-ui-shadow: rgba(0,0,0,0.7);
-    --ui-font-size: clamp(1.2rem, 2.8vw, 1.8rem);
-    --ui-element-width: clamp(140px, 20vw, 240px);
-    --ui-hpad: 18px;           /* horizontal padding*/
-	--ui-vpad: 12px;           /* vertical padding*/
-}
 
 /* TAB BAR container */
 .tab-bar {
@@ -211,8 +205,10 @@ html, body {
   transition: background 0.25s, transform 0.25s, box-shadow 0.25s;
 
   /* prevent wide tracking from body */
-  letter-spacing: 0;
+  letter-spacing: 0;  /* ← This line should already be here */
+
 }
+
 #search-box:hover {
   transform: scale(1.06);
   background: rgba(255,204,102,0.2);
@@ -223,17 +219,6 @@ html, body {
   border-color: #ffcc66;
   box-shadow: 0 0 18px rgba(255,204,102,0.9);
 }
-
-/* Placeholder fits: single line, clipped or ellipsis */
-#search-box::placeholder {
-  letter-spacing: inherit;   /* 0, from #search-box */
-  white-space: nowrap;       /* never wrap */
-  overflow: hidden;          /* hide overflow */
-  text-overflow: ellipsis;   /* show … if still tight */
-  color: rgba(200,200,200,0.7);
-}
-
-
 /* ============================================================
  4 — TOOLTIP BAR (inside top-ui)
    - Default: single line height (collapsed)
@@ -297,17 +282,6 @@ html, body {
 /* ============================================================
    5 — CONTENT AREA (LAYER 2)
    ============================================================ */
-
-#content-area {
-    position: relative;
-    z-index: 200;
-
-    width: 100%;
-    padding-bottom: 40px;
-
-    /* pushed down by JS depending on top-ui height + tooltip expansion */
-    transition: top var(--tooltip-speed) ease;
-}
 
 .tab-content {
     display: none;
@@ -526,7 +500,5 @@ ul.icon-grid li a.mobile-selected {
    - Keeps JS offsetHeight / positioning logic correct
    - Prevents content from sliding under tooltip / tabs
 ============================================================ */
-
-
 
 
