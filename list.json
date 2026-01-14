@@ -232,7 +232,7 @@
       "items": [
         {
           "href": "https://www.coinspot.com.au/",
-          "tooltip": "A major, yet not well know Australian KYC exchange",
+          "tooltip": "A major, yet not well know Australian KYC exchange that lets you buy BSV",
           "img": "icon/cs.png",
           "alt": "buy",
           "text": "CoinSpot"
@@ -247,14 +247,14 @@
         },
         {
           "href": "https://changenow.io/",
-          "tooltip": "Crypto Swap Exchange, no KYC or account required under certain ammount",
+          "tooltip": "Crypto Swap Exchange, supports BSV, no KYC or account required under certain ammount",
           "img": "icon/changenow.png",
           "alt": "Buy Swap",
           "text": "ChangeNow: swap crypto"
         },
         {
           "href": "https://ghostswap.io/",
-          "tooltip": "Crypto Swap Exchange, no KYC or account required, has ammount limits",
+          "tooltip": "Crypto Swap Exchange, supports BSV, no KYC or account required, has ammount limits",
           "img": "icon/ghostswap.png",
           "alt": "Buy Swap",
           "text": "GhostSwap: swap crypto"
@@ -265,6 +265,14 @@
           "img": "icon/xlist.png",
           "alt": "Exchange List",
           "text": "Exchnage List"
+        },
+        {
+          "href": "https://kyc.rip",
+          "tooltip": "Privacy focussed crypto swap exchange, supports BSV, no KYC or account required",
+          "img": "icon/xlist.png",
+          "alt": "Exchange List",
+          "text": "Exchnage List",
+          "age": "new"
         }
       ]
     },
