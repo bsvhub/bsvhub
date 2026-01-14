@@ -241,8 +241,8 @@ body {
   padding: 0 14px;
 
   /* collapsed baseline: one-line rail */
-  min-height: 24px;
-  max-height: 24px;
+  min-height: 32px;
+  max-height: 32px;
 
   /* allow wrapping by default (non-marquee) */
   white-space: normal;           /* <-- NEW: permit multi-line */
