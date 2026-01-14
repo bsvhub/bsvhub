@@ -260,20 +260,21 @@
           "text": "GhostSwap: swap crypto"
         },
         {
+          "href": "https://kyc.rip",
+          "tooltip": "Privacy focussed crypto swap exchange, supports BSV, no KYC or account required",
+          "img": "icon/xlist.png",
+          "alt": "Exchange swap",
+          "text": "KYC.RIP",
+          "age": "new"
+        },
+        {
           "href": "https://bsvblockchain.org/get-bsv/",
           "tooltip": "Exchanges list provided by bsvblockchain.org; check as some wallets and exchanges no longer work or support BSV",
           "img": "icon/xlist.png",
           "alt": "Exchange List",
           "text": "Exchnage List"
-        },
-        {
-          "href": "https://kyc.rip",
-          "tooltip": "Privacy focussed crypto swap exchange, supports BSV, no KYC or account required",
-          "img": "icon/xlist.png",
-          "alt": "Exchange List",
-          "text": "Exchnage List",
-          "age": "new"
         }
+       
       ]
     },
 
