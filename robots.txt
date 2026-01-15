@@ -4,4 +4,4 @@ Disallow: /cgi-bin/
 Disallow: /tmp/
 Disallow: /private/
 
-Sitemap: https://bsvhub.app/sitemap.xml
+Sitemap: https://bsvhub.io/sitemap.xml
