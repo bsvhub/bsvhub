@@ -84,11 +84,26 @@
       "class": "tab-content",
       "items": [
         {
+          "href": "https://treechat.ai",
+          "tooltip": "Social network on BSV, alternative to X (Twitter)",
+          "img": "icon/treechat.png",
+          "alt": "TreeChat",
+          "text": "TreeChat"
+        },
+        {
           "href": "https://3dordi.io/",
           "tooltip": "Cutting-edge web3 application for exploring, managing and inscribing Ordinals (NFTs) on BSV blockchain",
           "img": "icon/3d.png",
           "alt": "nft tool app",
           "text": "3D Ordi",
+          "age": "new"
+        },
+        {
+          "href": "https://metanetapps.com/",
+          "tooltip": "Metanet App Catalog",
+          "img": "icon/metanetapps.png",
+          "alt": "Metanet Apps",
+          "text": "Metanet Apps",
           "age": "new"
         },
         {
@@ -104,14 +119,6 @@
           "img": "icon/handcash.png",
           "alt": "Handcash Wallet",
           "text": "Handcash Wallet"
-        },
-        {
-          "href": "https://metanetapps.com/",
-          "tooltip": "Metanet App Catalog",
-          "img": "icon/metanetapps.png",
-          "alt": "Metanet Apps",
-          "text": "Metanet Apps",
-          "age": "new"
         }
       ]
     },
@@ -153,8 +160,7 @@
           "tooltip": "Creators of BRC-100 Wallet Standard",
           "img": "icon/pbabbage.png",
           "alt": "Project Babbage",
-          "text": "Project Babbage",
-          "age": "new"
+          "text": "Project Babbage"
         },
         {
           "href": "https://bsvdevs.com/",
@@ -282,20 +288,28 @@
     "social": {
       "class": "tab-content",
       "items": [
+        
+        
         {
-          "href": "https://treechat.ai",
-          "tooltip": "Social network on BSV",
-          "img": "icon/treechat.png",
-          "alt": "TreeChat",
-          "text": "TreeChat"
+          "href": "https://x.com/vamosvigilante",
+          "tooltip": "Co-Founder of The Crypto Vigilante, big BSV (original design) proponent ",
+          "img": "social/rafael_laverde.png",
+          "alt": "BSV Bitcoin Monero Privacy",
+          "text": "Rafael LaVerde on X"
         },
         {
-          "href": "https://metanetapps.com/",
-          "tooltip": "Metanet App Catalog",
-          "img": "icon/metanetapps.png",
-          "alt": "Metanet Apps",
-          "text": "Metanet Apps",
-          "age": "new"
+          "href": "https://x.com/ProjectBabbage",
+          "tooltip": "Project Babbage: Our goal is to create a more efficient, scalable, and secure internet by empowering users to own their own identities and data.",
+          "img": "social/babbage.png",
+          "alt": "BSV BRC 100",
+          "text": "on X"
+        },
+        {
+          "href": "https://linktr.ee/kurtwuckertjr",
+          "tooltip": "Kurt Wuckert Jr (Bitcoin Historian) links",
+          "img": "social/kurt.png",
+          "alt": "Bitcoin historian mining gorillapool",
+          "text": "Kurt Wuckert Jr"
         }
       ]
     },
@@ -309,6 +323,13 @@
           "img": "icon/video.png",
           "alt": "SirToshi on YouTube",
           "text": "SirToshi on YouTube"
+        },
+        {
+          "href": "https://www.youtube.com/@ProjectBabbage/videos",
+          "tooltip": "Project Babbage: Our goal is to create a more efficient, scalable, and secure internet by empowering users to own their own identities and data.",
+          "img": "social/babbage.png",
+          "alt": "blockchain identity brc 100",
+          "text": "on YouTube"
         },
         {
           "href": "https://www.youtube.com/@Cryptoismyretirement/videos",
@@ -372,7 +393,7 @@
 
     "info-section": {
       "class": "tab-content header-tab-content",
-      "lastUpdate": "15th Jan. 2026"
+      "lastUpdate": "16th Jan. 2026"
     },
 
     "contact-section": {
