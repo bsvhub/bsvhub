@@ -150,7 +150,7 @@ function isMobileMode() {
 }
 
 /* ============================================================
-   DEFAULT TOOLTIP (MARQUEE) - OPTIMIZED
+   DEFAULT TOOLTIP (MARQUEE) - DYNAMIC SPEED BASED ON LENGTH
 ============================================================ */
 fetch("tooltip-message.txt")
     .then(r => r.text())
@@ -161,12 +161,23 @@ fetch("tooltip-message.txt")
     .catch(showDefaultTooltip);
 
 function showDefaultTooltip() {
-    // Just repeat 3 times for smooth infinite loop
-    const repeated = Array(3).fill(defaultTooltipMessage)
-        .join("\u00A0\u00A0\u00A0•\u00A0\u00A0\u00A0");
+    const separator = "\u00A0\u00A0\u00A0•\u00A0\u00A0\u00A0";
+    const repeated = Array(5).fill(defaultTooltipMessage).join(separator);
     tooltipBox.innerHTML = `<span>${repeated}</span>`;
     tooltipBox.classList.add("marquee");
     tooltipBox.classList.remove("expanded");
+    
+    // Calculate animation duration based on text length
+    const span = tooltipBox.querySelector('span');
+    if (span) {
+        const textLength = defaultTooltipMessage.length;
+        
+        // Base speed: ~60 pixels per second (adjust multiplier to taste)
+        // Longer text = proportionally longer duration for consistent speed
+        const duration = Math.max(10, textLength * 0.15); // min 10s, scales with length
+        
+        span.style.animationDuration = `${duration}s`;
+    }
 }
 
 /* ============================================================
