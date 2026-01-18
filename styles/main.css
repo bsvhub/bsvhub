@@ -266,22 +266,22 @@ body {
   /* Remove align-items: flex-start - let it stay centered */
 }
 
-#tooltip-display.marquee span {
-  display: inline-block;
-  padding-left: 0;
-  white-space: nowrap;
-  animation: scroll-text 40s linear infinite;
-/* GPU acceleration for smooth performance */
-  will-change: transform;
-  transform: translate3d(0, 0, 0);
-
-}
-
-
-/* Repeat the message multiple times inside JS */
+/* KEEP THIS - defines the animation movement */
 @keyframes scroll-text {
     0%   { transform: translateX(0%); }
-    100% { transform: translateX(-100%); }
+    100% { transform: translateX(-20%); }
+}
+
+/* UPDATE THIS - remove the duration part only */
+#tooltip-display.marquee span {
+    display: inline-block;
+    padding-left: 0;
+    white-space: nowrap;
+    
+    animation: scroll-text linear infinite;  /* ← no duration here, JS sets it */
+    
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
 }
 
 
