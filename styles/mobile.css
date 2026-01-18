@@ -16,7 +16,6 @@
 /* ============================================================
    1 — GLOBAL / RESET / BASE FONTS
    ============================================================ */
-
 @font-face {
     font-family: 'VT323';
     src: url('assets/VT323-Regular.ttf') format('truetype');
@@ -25,10 +24,15 @@
 :root {
     --tooltip-speed: 0.45s;
     --top-ui-shadow: rgba(0,0,0,0.7);
+    
+    /* ⭐ MOBILE SCALE FACTOR - CHANGE THIS ONE VALUE TO SCALE EVERYTHING */
+    --mobile-scale: 1.6;
+    
+    /* UI sizing - automatically scales with --mobile-scale */
     --ui-font-size: clamp(2.2rem, 3vw, 4rem);
     --ui-element-width: clamp(200px, 20vw, 280px);
-    --ui-hpad: 18px;           /* horizontal padding*/
-    --ui-vpad: 12px;           /* vertical padding*/
+    --ui-hpad: calc(32px / var(--mobile-scale));  /* becomes 18px when scaled */
+    --ui-vpad: calc(32px / var(--mobile-scale));  /* ← increase from 12px to 16px or 18px */
 }
 
 html {
@@ -41,33 +45,30 @@ html {
     box-sizing: inherit;
 }
 
-
 /* Base body styling */
 body {
   margin: 0;
   padding: 0;
   font-family: 'VT323', monospace;
-  font-size: 2rem;
+  font-size: calc(2rem / var(--mobile-scale));  /* becomes 2rem when scaled */
   letter-spacing: 2px;
-  overflow-x: hidden;
+  overflow: hidden;
   color: white;
-  overflow: hidden;  /* ← ADD THIS to prevent double scrollbars */
 }
 
-/* 1) Document sizing — keep */
+/* Document sizing */
 html, body {
   min-height: 100svh;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
-/* page wrapper: no transform */
+/* Page wrapper */
 #page-wrapper {
-  overflow-x: hidden;
-  overflow-y: hidden;  /* ← CHANGE from auto to hidden */
+  overflow: hidden;
   min-height: 100svh;
 }
 
-/* Override for backgrounds - keep them truly viewport-fixed */
+/* Backgrounds - viewport-fixed */
 #background-layer,
 #firefly-layer {
   position: fixed;
@@ -78,23 +79,23 @@ html, body {
   z-index: 0;
 }
 
-/* content area – keep your current setup */
+/* Content area - scaled via transform */
 #content-area {
   position: relative;
   z-index: 200;
-  width: 100%;
+  width: calc(100% / var(--mobile-scale));  /* inverse of scale */
   transition: top var(--tooltip-speed) ease;
   
-  /* FIX: Set exact height to prevent overflow */
-  min-height: calc(100svh - var(--top-ui-height, 0px));
-  max-height: calc(100svh - var(--top-ui-height, 0px));  /* ← ADD THIS */
-  overflow-y: auto;  /* ← ADD THIS: scroll inside content-area only */
+  /* Scrollable container that accounts for scaling */
+  min-height: calc((100svh - var(--top-ui-height, 0px)) / var(--mobile-scale));
+  max-height: calc((100svh - var(--top-ui-height, 0px)) / var(--mobile-scale));
+  overflow-y: auto;
+  overflow-x: hidden;
   
-  transform: scale(1.6);
+  /* Apply scale transform */
+  transform: scale(var(--mobile-scale));
   transform-origin: top left;
-  width: 62.5%;  /* inverse of 1.6 */
 }
-
 
 /* ============================================================
    3 — TOP-UI (HEADER + TAB BAR + TOOLTIP)  [LAYER 1]
@@ -110,6 +111,22 @@ html, body {
     flex-direction: column;
     background: transparent;
     pointer-events: auto;
+}
+
+/* ⭐ ADD BACKGROUNDS TO EACH BAR */
+.header-container {
+    /* ... existing styles ... */
+    background: rgba(25, 25, 25, 0.6);  /* ← ADD THIS */
+}
+
+.tab-bar {
+    /* ... existing styles ... */
+    background-color: rgba(25, 25, 25, 0.6);  /* ← Should already be there */
+}
+
+#tooltip-display {
+    /* ... existing styles ... */
+    background: rgba(25, 25, 25, 0.6);  /* ← Should already be there */
 }
 
 /* ==============================
@@ -142,12 +159,13 @@ html, body {
 }
 
 /* 4️⃣ Heading */
+/* Header title */
 .header-title {
-    flex-shrink: 0;                /* do not shrink */
+    flex-shrink: 0;
     text-align: center;
-    font-size: 6rem;             /* larger heading */
+    font-size: calc(3.75rem * var(--mobile-scale));  /* 6rem = 3.75 * 1.6 */
     white-space: nowrap;
-    margin: 0 16px;                /* ensures min 16px gap to button groups */
+    margin: 0 16px;
 }
 
 /* ------------------------------------------------------------
@@ -172,6 +190,8 @@ html, body {
   font-family: 'VT323';
   font-size: var(--ui-font-size);
   padding: var(--ui-vpad) var(--ui-hpad);
+  /* ⭐ ADD minimum height to maintain button size */
+  min-height: calc(48px / var(--mobile-scale));  /* ensures buttons stay tall */
 }
 
 /* ------------------------------------------------------------
@@ -231,33 +251,16 @@ html, body {
    - Default: single line height (collapsed)
    - Expanded: taller, wraps lines, smooth transition
 ============================================================ */
+/* Tooltip */
 #tooltip-display {
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;        /* ← ADD */
-  flex-wrap: wrap;
-  
-  padding: 6px 14px;          /* ← MOVE here from .expanded */
-  
-  min-height: 42px;           /* mobile size */
-  max-height: 42px;
-  
-  white-space: normal;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-  
-  font-size: 1.8rem;          /* mobile size */
-  color: #00ff88;
-  text-align: center;
-  background: rgba(25, 25, 25, 0.6);
-  
-  transition: max-height var(--tooltip-speed) ease;
+  /* ... existing styles ... */
+  min-height: calc(26.25px * var(--mobile-scale));  /* 42px */
+  max-height: calc(26.25px * var(--mobile-scale));
+  font-size: calc(1.125rem * var(--mobile-scale));  /* 1.8rem */
 }
 
 #tooltip-display.expanded {
-  max-height: 180px;
-  /* Remove: padding: 6px 14px; - it's in base now */
+  max-height: calc(112.5px * var(--mobile-scale));  /* 180px */
 }
 
 #tooltip-display.marquee {
@@ -396,27 +399,11 @@ ul.icon-grid li a.mobile-selected {
 /* ==============================
    ICON GRID — TERMINAL GREEN TEXT (wrap + centered)
 ============================== */
+/* Icon text */
 .icon-text {
-    position: absolute;
-    bottom: 0px;
-    left: 50%;                     /* center horizontally */
-    transform: translateX(-50%);   /* exact horizontal center */
-    padding: 4px 12px;             /* top/bottom 4px, left/right 12px */
-
-    background: rgba(0, 0, 0, 0.6); /* black with 40% transparency */
-    border-radius: 12px;           /* rounded ends */
-
-    color: #00ff00;                /* terminal green text */
-    font-family: 'VT323', monospace;
-    font-size: 1.4rem;
-    text-align: center;
-
-    white-space: normal;            /* allow wrapping */
-    word-break: break-word;         /* break long words if needed */
-    overflow-wrap: break-word;      /* ensures wrapping inside the box */
-
-    pointer-events: none;           /* clicks pass through */
-    max-width: 90%;                 /* optional: prevent box from overflowing icon */
+    font-size: calc(0.875rem * var(--mobile-scale));  /* 1.4rem */
+    padding: calc(2.5px * var(--mobile-scale)) calc(7.5px * var(--mobile-scale));
+    /* ... rest of styles ... */
 }
 
 /* ============================================================
@@ -427,31 +414,21 @@ ul.icon-grid li a.mobile-selected {
     text-align: center;
 }
 
+/* Header tab text */
 .header-tab-text {
-    margin: 0 auto;   /* <-- this centers the block horizontally */
-    font-size: 1.4rem;
-    color: #ffcc66;
-    text-align: center; /* <-- ensure inline text is centered */
+    font-size: calc(0.875rem * var(--mobile-scale));  /* 1.4rem */
+    /* ... rest of styles ... */
 }
 
 /* ============================================================
    8 — COPY BUTTON (TIP SECTION)
    ============================================================ */
 
+* Copy button */
 .copy-btn {
-    margin-left: 12px;
-    padding: 8px 14px;
-
-    font-size: 1.4rem;
-    font-family: 'VT323';
-
-    background: #ffcc66;
-    border: 2px solid #b8860b;
-    color: black;
-    border-radius: 10px;
-
-    cursor: pointer;
-    transition: background 0.2s, transform 0.2s;
+    font-size: calc(0.875rem * var(--mobile-scale));  /* 1.4rem */
+    padding: calc(5px * var(--mobile-scale)) calc(8.75px * var(--mobile-scale));
+    /* ... rest of styles ... */
 }
 
 .copy-btn:hover {
@@ -505,19 +482,12 @@ ul.icon-grid li a.mobile-selected {
    MOBILE HEADER BUTTONS — SIZE + HOVER EFFECT
    ============================================================ */
 
+/* Header buttons */
 .header-icons .header-text-link {
-    font-size: clamp(3.2rem, 4.2vw, 4rem);
-    padding: 8px 14px;
+    font-size: calc(2rem * var(--mobile-scale));  /* 3.2rem base */
+    padding: calc(5px * var(--mobile-scale)) calc(8.75px * var(--mobile-scale));
     line-height: 1.1;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    text-decoration: none;
-    border-radius: 10px;
-
-    transition: transform 0.2s ease, color 0.2s ease;
+    /* ... rest of styles ... */
 }
 
 .header-icons .header-text-link:active {
