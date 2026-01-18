@@ -354,6 +354,15 @@ function activateTab(targetId, source) {
 
     const sec = document.getElementById(targetId);
     if (sec) sec.classList.add('active');
+    
+    // Desktop: scroll window
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // Mobile: scroll content-area directly (handles scaled content)
+    const contentArea = document.getElementById('content-area');
+    if (contentArea) {
+        contentArea.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 }
 
 /* ------------------------------------------------------------
