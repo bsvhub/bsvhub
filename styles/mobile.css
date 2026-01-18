@@ -229,19 +229,19 @@ html, body {
   overflow: hidden;
   display: flex;
   justify-content: center;
-  align-items: center;        /* both centered by default */
+  align-items: center;        /* ← ADD */
   flex-wrap: wrap;
   
-  padding: 6px 14px;
+  padding: 6px 14px;          /* ← MOVE here from .expanded */
   
-  min-height: 32px;           /* 42px in mobile.css */
-  max-height: 32px;           /* 42px in mobile.css */
+  min-height: 42px;           /* mobile size */
+  max-height: 42px;
   
   white-space: normal;
   word-break: break-word;
   overflow-wrap: anywhere;
   
-  font-size: 1.2rem;          /* 1.8rem in mobile.css */
+  font-size: 1.8rem;          /* mobile size */
   color: #00ff88;
   text-align: center;
   background: rgba(25, 25, 25, 0.6);
@@ -251,12 +251,13 @@ html, body {
 
 #tooltip-display.expanded {
   max-height: 180px;
+  /* Remove: padding: 6px 14px; - it's in base now */
 }
 
 #tooltip-display.marquee {
   overflow: hidden;
   white-space: nowrap;
-  /* Remove align-items: flex-start - let it stay centered */
+  /* Remove: align-items: flex-start; - stay centered */
 }
 
 #tooltip-display.marquee span {
