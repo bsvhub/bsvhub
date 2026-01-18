@@ -51,6 +51,7 @@ body {
   letter-spacing: 2px;
   overflow-x: hidden;
   color: white;
+  overflow: hidden;  /* ← ADD THIS to prevent double scrollbars */
 }
 
 /* 1) Document sizing — keep */
@@ -61,8 +62,9 @@ html, body {
 
 /* page wrapper: no transform */
 #page-wrapper {
-  overflow-x: hidden;     /* keep horizontal clipping only */
-  /* transform: none;     /* nothing here */
+  overflow-x: hidden;
+  overflow-y: hidden;  /* ← CHANGE from auto to hidden */
+  min-height: 100svh;
 }
 
 /* Override for backgrounds - keep them truly viewport-fixed */
@@ -76,14 +78,18 @@ html, body {
   z-index: 0;
 }
 
-/* content area — keep your current setup */
+/* content area – keep your current setup */
 #content-area {
   position: relative;
   z-index: 200;
   width: 100%;
-  /*padding-bottom: 40px;*/
   transition: top var(--tooltip-speed) ease;
+  
+  /* FIX: Set exact height to prevent overflow */
   min-height: calc(100svh - var(--top-ui-height, 0px));
+  max-height: calc(100svh - var(--top-ui-height, 0px));  /* ← ADD THIS */
+  overflow-y: auto;  /* ← ADD THIS: scroll inside content-area only */
+  
   transform: scale(1.6);
   transform-origin: top left;
   width: 62.5%;  /* inverse of 1.6 */
