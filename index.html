@@ -150,7 +150,7 @@ function isMobileMode() {
 }
 
 /* ============================================================
-   DEFAULT TOOLTIP (MARQUEE)
+   DEFAULT TOOLTIP (MARQUEE) - OPTIMIZED
 ============================================================ */
 fetch("tooltip-message.txt")
     .then(r => r.text())
@@ -161,7 +161,8 @@ fetch("tooltip-message.txt")
     .catch(showDefaultTooltip);
 
 function showDefaultTooltip() {
-    const repeated = Array(40).fill(defaultTooltipMessage)
+    // Just repeat 3 times for smooth infinite loop
+    const repeated = Array(3).fill(defaultTooltipMessage)
         .join("\u00A0\u00A0\u00A0•\u00A0\u00A0\u00A0");
     tooltipBox.innerHTML = `<span>${repeated}</span>`;
     tooltipBox.classList.add("marquee");
@@ -205,8 +206,6 @@ document.addEventListener("mouseleave", (e) => {
 
 /* ============================================================
    MOBILE DOUBLE-TAP (EVENT DELEGATION)
-   - Works on all icons including search results
-   - No binding or mutation observer needed
 ============================================================ */
 document.addEventListener("click", (e) => {
     if (!isMobileMode()) return;
@@ -250,29 +249,24 @@ function clearDoubleTapSelection() {
 /* ============================================================
    AUTO-CLEAR TRIGGERS
 ============================================================ */
-// Clear on outside click
 document.addEventListener('pointerdown', (e) => {
     if (!isMobileMode()) return;
     const isIconArea = e.target.closest('.icon-wrapper');
     if (!isIconArea) clearDoubleTapSelection();
 }, { capture: true });
 
-// Clear on ESC key
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') clearDoubleTapSelection();
 });
 
-// Clear on window blur
 window.addEventListener('blur', clearDoubleTapSelection);
 
-// Clear on tab switch
 document.addEventListener('visibilitychange', () => {
     if (document.hidden) clearDoubleTapSelection();
 });
 
 /* ============================================================
    TOOLTIP HEIGHT TRANSITION HANDLER
-   - Re-measure layout when tooltip expands/collapses
 ============================================================ */
 tooltipBox.addEventListener("transitionend", (e) => {
     if (e.propertyName === "max-height" || e.propertyName === "padding") {
@@ -818,7 +812,7 @@ window.addEventListener("pageshow", () => {
         }
     }
 
-    window.addEventListener("load", deferFireflies);
+    // window.addEventListener("load", deferFireflies);  ← Just add // to disable
 })();
 </script>
 
