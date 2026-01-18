@@ -26,13 +26,7 @@
     --top-ui-shadow: rgba(0,0,0,0.7);
     
     /* ⭐ MOBILE SCALE FACTOR - CHANGE THIS ONE VALUE TO SCALE EVERYTHING */
-    --mobile-scale: 1.6;
-    
-    /* UI sizing - automatically scales with --mobile-scale */
-    --ui-font-size: clamp(2.2rem, 3vw, 4rem);
-    --ui-element-width: clamp(200px, 20vw, 280px);
-    --ui-hpad: calc(32px / var(--mobile-scale));  /* becomes 18px when scaled */
-    --ui-vpad: calc(32px / var(--mobile-scale));  /* ← increase from 12px to 16px or 18px */
+    --mobile-scale: 1.8;
 }
 
 html {
@@ -50,7 +44,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'VT323', monospace;
-  font-size: calc(2rem / var(--mobile-scale));  /* becomes 2rem when scaled */
+  font-size: calc(1.2rem * var(--mobile-scale));  /* MULTIPLY - matches main.css base */
   letter-spacing: 2px;
   overflow: hidden;
   color: white;
@@ -79,22 +73,19 @@ html, body {
   z-index: 0;
 }
 
-/* Content area - scaled via transform */
 #content-area {
   position: relative;
-  z-index: 200;
-  width: calc(100% / var(--mobile-scale));  /* inverse of scale */
-  transition: top var(--tooltip-speed) ease;
+  z-index: 200;  /* change back from 9999 */
+  top: 0 !important;  /* ← FORCE it to ignore JS positioning */
+  width: calc(100% / var(--mobile-scale));
   
-  /* Scrollable container that accounts for scaling */
-  min-height: calc((100svh - var(--top-ui-height, 0px)) / var(--mobile-scale));
-  max-height: calc((100svh - var(--top-ui-height, 0px)) / var(--mobile-scale));
+  min-height: calc(100svh / var(--mobile-scale));  /* ← Remove the top-ui subtraction */
+  max-height: calc(100svh / var(--mobile-scale));  /* ← Remove the top-ui subtraction */
   overflow-y: auto;
-  overflow-x: hidden;
   
-  /* Apply scale transform */
   transform: scale(var(--mobile-scale));
   transform-origin: top left;
+  padding-top: calc(var(--top-ui-height, 0px) / var(--mobile-scale));  /* ← Add top padding instead */
 }
 
 /* ============================================================
@@ -158,14 +149,10 @@ html, body {
     
 }
 
-/* 4️⃣ Heading */
+
 /* Header title */
 .header-title {
-    flex-shrink: 0;
-    text-align: center;
-    font-size: calc(3.75rem * var(--mobile-scale));  /* 6rem = 3.75 * 1.6 */
-    white-space: nowrap;
-    margin: 0 16px;
+    font-size: calc(3.2rem * var(--mobile-scale));  /* MULTIPLY */
 }
 
 /* ------------------------------------------------------------
@@ -184,14 +171,13 @@ html, body {
   box-shadow: none; /* optional depth was disabled */
 }
 
-/* Shared typography + padding for TAB buttons and SEARCH input */
+/* Tab buttons and search */
 .tab-bar button,
 #search-box {
   font-family: 'VT323';
-  font-size: var(--ui-font-size);
-  padding: var(--ui-vpad) var(--ui-hpad);
-  /* ⭐ ADD minimum height to maintain button size */
-  min-height: calc(48px / var(--mobile-scale));  /* ensures buttons stay tall */
+  font-size: calc(1.3rem * var(--mobile-scale));  /* MULTIPLY - matches main.css clamp max */
+  padding: calc(12px * var(--mobile-scale)) calc(18px * var(--mobile-scale));
+  min-height: calc(48px * var(--mobile-scale));
 }
 
 /* ------------------------------------------------------------
@@ -252,15 +238,16 @@ html, body {
    - Expanded: taller, wraps lines, smooth transition
 ============================================================ */
 /* Tooltip */
+/* Tooltip */
 #tooltip-display {
-  /* ... existing styles ... */
-  min-height: calc(26.25px * var(--mobile-scale));  /* 42px */
-  max-height: calc(26.25px * var(--mobile-scale));
-  font-size: calc(1.125rem * var(--mobile-scale));  /* 1.8rem */
+  min-height: calc(32px * var(--mobile-scale));  /* MULTIPLY */
+  max-height: calc(32px * var(--mobile-scale));
+  font-size: calc(1.2rem * var(--mobile-scale));  /* MULTIPLY */
+  padding: calc(6px * var(--mobile-scale)) calc(14px * var(--mobile-scale));
 }
 
 #tooltip-display.expanded {
-  max-height: calc(112.5px * var(--mobile-scale));  /* 180px */
+  max-height: calc(180px * var(--mobile-scale));  /* MULTIPLY */
 }
 
 #tooltip-display.marquee {
@@ -401,9 +388,8 @@ ul.icon-grid li a.mobile-selected {
 ============================== */
 /* Icon text */
 .icon-text {
-    font-size: calc(0.875rem * var(--mobile-scale));  /* 1.4rem */
-    padding: calc(2.5px * var(--mobile-scale)) calc(7.5px * var(--mobile-scale));
-    /* ... rest of styles ... */
+    font-size: calc(1rem * var(--mobile-scale));  /* MULTIPLY - adjust as needed */
+    padding: calc(2px * var(--mobile-scale)) calc(6px * var(--mobile-scale));
 }
 
 /* ============================================================
@@ -416,19 +402,17 @@ ul.icon-grid li a.mobile-selected {
 
 /* Header tab text */
 .header-tab-text {
-    font-size: calc(0.875rem * var(--mobile-scale));  /* 1.4rem */
-    /* ... rest of styles ... */
+    font-size: calc(2rem * var(--mobile-scale));  /* MULTIPLY */
 }
 
 /* ============================================================
    8 — COPY BUTTON (TIP SECTION)
    ============================================================ */
 
-* Copy button */
+/* Copy button */
 .copy-btn {
-    font-size: calc(0.875rem * var(--mobile-scale));  /* 1.4rem */
-    padding: calc(5px * var(--mobile-scale)) calc(8.75px * var(--mobile-scale));
-    /* ... rest of styles ... */
+    font-size: calc(1.4rem * var(--mobile-scale));  /* MULTIPLY */
+    padding: calc(8px * var(--mobile-scale)) calc(14px * var(--mobile-scale));
 }
 
 .copy-btn:hover {
@@ -484,10 +468,8 @@ ul.icon-grid li a.mobile-selected {
 
 /* Header buttons */
 .header-icons .header-text-link {
-    font-size: calc(2rem * var(--mobile-scale));  /* 3.2rem base */
-    padding: calc(5px * var(--mobile-scale)) calc(8.75px * var(--mobile-scale));
-    line-height: 1.1;
-    /* ... rest of styles ... */
+    font-size: calc(1.4rem * var(--mobile-scale));  /* MULTIPLY */
+    padding: calc(6px * var(--mobile-scale)) calc(14px * var(--mobile-scale));
 }
 
 .header-icons .header-text-link:active {
