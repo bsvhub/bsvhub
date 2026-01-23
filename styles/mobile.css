@@ -18,7 +18,7 @@
    ============================================================ */
 @font-face {
     font-family: 'VT323';
-    src: url('assets/VT323-Regular.ttf') format('truetype');
+    src: url('assets/dot_font.ttf') format('truetype');
 }
 
 :root {
@@ -317,20 +317,33 @@ ul.icon-grid li {
 }
 
 ul.icon-grid li a {
-    padding: 6px;
+    padding: 0;
     border: 4px solid #2b3a45;
     background: rgba(135,206,235,0.3);
     border-radius: 20px;
     text-decoration: none;
-
     color: rgba(135,206,235,0.8);
     transition: background 0.25s, border-color 0.25s, transform 0.25s;
+    overflow: hidden;
 }
 
 ul.icon-grid li a:hover {
     background: rgba(135,206,235,0.6);
     border-color: #cc0022;
-    transform: scale(1.04);
+}
+
+/* icon wrapper - image area at top, text at bottom */
+.icon-wrapper {
+    --wrapper-width: clamp(208px, 26vw, 304px);
+    --wrapper-height: clamp(208px, 26vw, 304px);
+    --horizontal-padding: clamp(15px, 1.875vw, 24px);
+    --image-max-height: clamp(160px, 20vw, 256px);
+    
+    position: relative;
+    width: var(--wrapper-width);
+    height: var(--wrapper-height);
+    overflow: visible;
+    padding: 0 var(--horizontal-padding);
 }
 
 /* ============================================================
@@ -347,27 +360,29 @@ ul.icon-grid li a.mobile-selected {
 }
 
 
-/* icon wrapper is always a square */
-.icon-wrapper {
-    position: relative;
-    width: clamp(160px, 20vw, 240px);
-    aspect-ratio: 1 / 1;  /* ensures height = width */
-    flex-shrink: 0;
-    display: flex;         /* center image inside */
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;      /* prevents image overflow */
+/* Badge positions - shared styles */
+.icon-wrapper [class*="icon-badge-pos"] {
+    position: absolute;
+    width: 20%;
+    pointer-events: none;
+    z-index: 2;
 }
 
+.icon-wrapper .icon-badge-pos1 { top: 0; left: 0; }
+.icon-wrapper .icon-badge-pos2 { top: 24%; left: 0; }
+.icon-wrapper .icon-badge-pos3 { top: 0; right: 0; }
+.icon-wrapper .icon-badge-pos4 { top: 24%; right: 0; }
 
-/* Apply global sizing only to base icon images, not to the badge */
-.icon-wrapper img:not(.icon-badge-new) {
-    max-width: 100%;       /* scale down to fit container */
-    max-height: 100%;
-    width: auto;           /* maintain original ratio */
-    height: auto;
-    display: block;
-    object-fit: contain;   /* keeps image inside wrapper without cropping */
+/* Main icon image - centered in top area with 6% offset */
+.icon-wrapper img:not([class*="icon-badge-pos"]) {
+    position: absolute;
+    top: calc(6% + var(--image-max-height) / 2);
+    left: 50%;
+    transform: translate(-50%, -50%) scale(var(--icon-zoom, 1.0));
+    max-width: calc(100% - 2 * var(--horizontal-padding));
+    max-height: var(--image-max-height);
+    object-fit: contain;
+    transition: transform 0.25s;
 }
 
 
@@ -389,7 +404,8 @@ ul.icon-grid li a.mobile-selected {
 /* Icon text */
 .icon-text {
     font-size: calc(1rem * var(--mobile-scale));  /* MULTIPLY - adjust as needed */
-    padding: calc(2px * var(--mobile-scale)) calc(6px * var(--mobile-scale));
+    padding: calc(0px * var(--mobile-scale)) calc(6px * var(--mobile-scale));
+    background-color: rgba(0, 0, 0, 0.3);
 }
 
 /* ============================================================

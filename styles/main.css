@@ -30,12 +30,12 @@
    1 — PAGE WRAPPER FADE TRANSITION FOR MOBILE/DESKTOP
 ===================================================== */
 #page-wrapper {
-    transition: opacity 0.2s ease; /* fast, smooth fade */
-    opacity: 1;                     /* default fully visible */
+    transition: opacity 0.2s ease;
+    opacity: 1;
 }
 
 #page-wrapper.fading {
-    opacity: 0.2; /* semi-transparent fade during CSS swap */
+    opacity: 0.2;
 }
 
 
@@ -45,11 +45,12 @@
 
 @font-face {
     font-family: 'VT323';
-    src: url('assets/VT323-Regular.ttf') format('truetype');
+    src: url('assets/dot_font.ttf') format('truetype');
 }
 
+
 :root {
-    --tooltip-speed: 0.45s;      /* tooltip + content sync speed */
+    --tooltip-speed: 0.45s;
     --top-ui-shadow: rgba(0,0,0,0.7);
 }
 
@@ -76,21 +77,17 @@ body {
 
 /* ============================================================
    PAGE WRAPPER — ALLOW FULL DOCUMENT HEIGHT
-   ------------------------------------------------------------
-   Required for absolute-positioned background layers
-============================================================ */
+   ============================================================ */
 
 #page-wrapper {
-    position: relative;      /* anchor for absolute backgrounds */
-    min-height: 100vh;       /* grows with content */
+    position: relative;
+    min-height: 100vh;
 }
 
 /* ============================================================
    2 — BACKGROUND LAYERS - PAGE HEIGHT AWARE [LAYER 0] 
    ============================================================ */
 
-
-/* backgrounds: fixed to viewport, decoupled from content scroll */
 #background-layer,
 #firefly-layer {
   position: fixed;
@@ -117,8 +114,6 @@ body {
     pointer-events: auto;
 }
 
-
-
 /* ------------------------------------------------------------
    HEADER BAR
 ------------------------------------------------------------ */
@@ -126,25 +121,17 @@ body {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
-
     padding: 0 12px;
-    background: rgba(25, 25, 25, 0.6); /* MATCHES TAB & TOOLTIP */
-
-    /*box-shadow: 0 2px 10px var(--top-ui-shadow);*/
+    background: rgba(25, 25, 25, 0.6);
 }
 
 .header-title {
+    font-family: 'VT323', monospace;
     font-size: clamp(1rem, 5vw, 3.2rem);
     justify-self: center;
     white-space: nowrap;
     margin: 0;
-
-    color: #111;
-    text-shadow:
-        0 0 2px #00ff88,
-        0 0 5px #00ff88,
-        0 0 10px #00ff88,
-        0 0 20px #00ff88;
+    color: #EAB300;
 }
 
 .header-icons {
@@ -168,7 +155,6 @@ body {
     background: rgba(255,255,255,0.1);
     border-radius: 10px;
     text-decoration: none;
-
     transition: background 0.3s, transform 0.3s;
 }
 .header-text-link:hover {
@@ -182,8 +168,6 @@ body {
     box-shadow: 0 0 15px rgba(184,134,11,0.7);
 }
 
-
-
 /* ------------------------------------------------------------
    TAB BAR
 ------------------------------------------------------------ */
@@ -194,27 +178,21 @@ body {
     row-gap: 10px;
     gap: 10px;
     padding: 12px;
-
-    background-color: rgba(25, 25, 25, 0.6); /* match tooltip background exactly */
-    box-shadow: none;/*0 2px 6px var(--top-ui-shadow); /* optional for depth */
+    background-color: rgba(25, 25, 25, 0.6);
+    box-shadow: none;
 }
-
 
 .tab-bar button {
     flex: 0 0 auto;
     min-width: 100px;
-
     padding: 12px 18px;
     font-family: 'VT323';
     font-size: clamp(0.9rem, 2.2vw, 1.3rem);
     white-space: nowrap;
-
     color: white;
     background: rgba(255,255,255,0.1);
-
     border: 2px solid #ff5733;
     border-radius: 10px;
-
     transition: background 0.25s, transform 0.25s;
 }
 .tab-bar button:hover {
@@ -228,31 +206,24 @@ body {
 }
 
 /* ============================================================
- 4 — TOOLTIP BAR (inside top-ui)
-   - Default: single line height (collapsed)
-   - Expanded: taller, wraps lines, smooth transition
+ 4 — TOOLTIP BAR
 ============================================================ */
 #tooltip-display {
   overflow: hidden;
   display: flex;
   justify-content: center;
-  align-items: center;        /* both centered by default */
+  align-items: center;
   flex-wrap: wrap;
-  
   padding: 6px 14px;
-  
-  min-height: 32px;           /* 42px in mobile.css */
-  max-height: 32px;           /* 42px in mobile.css */
-  
+  min-height: 32px;
+  max-height: 32px;
   white-space: normal;
   word-break: break-word;
   overflow-wrap: anywhere;
-  
-  font-size: 1.2rem;          /* 1.8rem in mobile.css */
-  color: #00ff88;
+  font-size: 1.2rem;
+  color: #FF6600;
   text-align: center;
   background: rgba(25, 25, 25, 0.6);
-  
   transition: max-height var(--tooltip-speed) ease;
 }
 
@@ -263,27 +234,21 @@ body {
 #tooltip-display.marquee {
   overflow: hidden;
   white-space: nowrap;
-  /* Remove align-items: flex-start - let it stay centered */
 }
 
-/* KEEP THIS - defines the animation movement */
 @keyframes scroll-text {
     0%   { transform: translateX(0%); }
     100% { transform: translateX(-20%); }
 }
 
-/* UPDATE THIS - remove the duration part only */
 #tooltip-display.marquee span {
     display: inline-block;
     padding-left: 0;
     white-space: nowrap;
-    
-    animation: scroll-text linear infinite;  /* ← no duration here, JS sets it */
-    
+    animation: scroll-text linear infinite;
     will-change: transform;
     transform: translate3d(0, 0, 0);
 }
-
 
 /* ============================================================
    5 — CONTENT AREA (LAYER 2)
@@ -292,11 +257,8 @@ body {
 #content-area {
     position: relative;
     z-index: 200;
-
     width: 100%;
     padding-bottom: 40px;
-
-    /* pushed down by JS depending on top-ui height + tooltip expansion */
     transition: top var(--tooltip-speed) ease;
 }
 
@@ -316,7 +278,7 @@ body {
 }
 
 /* ============================================================
-   6 — ICON GRID MODULE (Fixed Aspect Ratio & Centered Images)
+   6 — ICON GRID MODULE
    ============================================================ */
 
 ul.icon-grid {
@@ -335,70 +297,93 @@ ul.icon-grid li {
 }
 
 ul.icon-grid li a {
-    padding: 6px;
+    padding: 0;
     border: 4px solid #2b3a45;
     background: rgba(135,206,235,0.3);
     border-radius: 20px;
     text-decoration: none;
-
     color: rgba(135,206,235,0.8);
     transition: background 0.25s, border-color 0.25s, transform 0.25s;
+    overflow: hidden;
 }
 
 ul.icon-grid li a:hover {
     background: rgba(135,206,235,0.6);
     border-color: #cc0022;
-    transform: scale(1.04);
 }
 
-/* icon wrapper is always a square */
+/* icon wrapper - image area at top, text at bottom */
 .icon-wrapper {
+    --wrapper-width: clamp(208px, 26vw, 304px);
+    --wrapper-height: clamp(208px, 26vw, 304px);
+    --horizontal-padding: clamp(15px, 1.875vw, 24px);
+    --image-max-height: clamp(160px, 20vw, 256px);
+    
     position: relative;
-    width: clamp(160px, 20vw, 240px);
-    aspect-ratio: 1 / 1;  /* ensures height = width */
-    flex-shrink: 0;
-    display: flex;         /* center image inside */
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;      /* prevents image overflow */
+    width: var(--wrapper-width);
+    height: var(--wrapper-height);
+    overflow: visible;
+    padding: 0 var(--horizontal-padding);
 }
 
-/* Apply global sizing only to base icon images, not to the badge */
-.icon-wrapper img:not(.icon-badge-new) {
-    max-width: 100%;       /* scale down to fit container */
-    max-height: 100%;
-    width: auto;           /* maintain original ratio */
-    height: auto;
-    display: block;
-    object-fit: contain;   /* keeps image inside wrapper without cropping */
+/* ============================================================
+   6B — ZOOM CONTROL & 4-POSITION BADGE SYSTEM
+   ============================================================ */
+
+/* Badge positions - shared styles */
+.icon-wrapper [class*="icon-badge-pos"] {
+    position: absolute;
+    width: 20%;
+    pointer-events: none;
+    z-index: 2;
 }
 
+.icon-wrapper .icon-badge-pos1 { top: 0; left: 0; }
+.icon-wrapper .icon-badge-pos2 { top: 24%; left: 0; }
+.icon-wrapper .icon-badge-pos3 { top: 0; right: 0; }
+.icon-wrapper .icon-badge-pos4 { top: 24%; right: 0; }
 
-/* Badge rules (no need for !important now) */
-.icon-wrapper .icon-badge-new {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 20%;
-  height: auto;
-  pointer-events: none;
-  z-index: 2;
+/* Main icon image - centered in top area with 6% offset */
+.icon-wrapper img:not([class*="icon-badge-pos"]) {
+    position: absolute;
+    top: calc(6% + var(--image-max-height) / 2);
+    left: 50%;
+    transform: translate(-50%, -50%) scale(var(--icon-zoom, 1.0));
+    max-width: calc(100% - 2 * var(--horizontal-padding));
+    max-height: var(--image-max-height);
+    object-fit: contain;
+    transition: transform 0.25s;
+}
+
+/* Hover zoom */
+ul.icon-grid li a:hover .icon-wrapper img:not([class*="icon-badge-pos"]) {
+    transform: translate(-50%, -50%) scale(calc(var(--icon-zoom, 1.0) * 1.15));
 }
 
 .icon-text {
     position: absolute;
-    bottom: 0px;
+    bottom: 4px;
     left: 0;
     width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
     text-align: center;
-
     white-space: normal;
     overflow-wrap: break-word;
     word-break: break-word;
-
-    color: #eee;
+    padding: 0 16px;
+    line-height: 1.2;
+    color: #EAB300;
     pointer-events: none;
+    transition: color 0.2s ease, transform 0.2s ease;
 }
+/* Add this new rule for hover */
+ul.icon-grid li a:hover .icon-text {
+    color: #FF6600;
+    transform: scale(1.15);
+}
+
 
 /* ============================================================
    7 — HEADER-TAB TEXT SECTIONS (About / Tip / Contact)
@@ -409,10 +394,10 @@ ul.icon-grid li a:hover {
 }
 
 .header-tab-text {
-    margin: 0 auto;   /* <-- this centers the block horizontally */
+    margin: 0 auto;
     font-size: 2rem;
     color: #ffd700;
-    text-align: center; /* <-- ensure inline text is centered */
+    text-align: center;
 }
 
 /* ============================================================
@@ -422,17 +407,13 @@ ul.icon-grid li a:hover {
 #search-box {
     max-width: 155px;
     padding: 12px 18px;
-
     font-family: 'VT323';
     font-size: 1.2rem;
     border-radius: 10px;
-
     background: rgba(255,255,255,0.1);
     border: 2px solid rgba(255,204,102,0.4);
-
     color: white;
     outline: none;
-
     transition: background 0.25s, transform 0.25s, box-shadow 0.25s;
 }
 
@@ -452,8 +433,6 @@ ul.icon-grid li a:hover {
     color: rgba(200,200,200,0.7);
 }
 
-
-
 /* ============================================================
    9 — COPY BUTTON (TIP SECTION)
    ============================================================ */
@@ -461,15 +440,12 @@ ul.icon-grid li a:hover {
 .copy-btn {
     margin-left: 12px;
     padding: 8px 14px;
-
     font-size: 1.4rem;
     font-family: 'VT323';
-
     background: #ffcc66;
     border: 2px solid #b8860b;
     color: black;
     border-radius: 10px;
-
     cursor: pointer;
     transition: background 0.2s, transform 0.2s;
 }
@@ -483,33 +459,22 @@ ul.icon-grid li a:hover {
     transform: scale(0.96);
 }
 
-/* ------------------------------------------------------------
+/* ============================================================
    10 — LINK STYLE (inside Contact; "BSVhub")
-   - Terminal green
-   - Bold text
-   - 30% transparent black background
-   - Subtle hover feedback
------------------------------------------------------------- */
+   ============================================================ */
 .header-tab-text a {
-    color: #00ff88;                  /* terminal green */
-    font-weight: bold;               /* make link stand out */
-    text-decoration: none;           /* no underline */
-
-    background: rgba(0, 0, 0, 0.3);   /* 30% transparent black */
-    padding: 4px 10px;               /* clickable hit area */
-    border-radius: 6px;              /* soft edges */
-
-    transition:
-        color 0.25s ease,
-        background 0.25s ease,
-        box-shadow 0.25s ease;
+    color: #00ff88;
+    font-weight: bold;
+    text-decoration: none;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 4px 10px;
+    border-radius: 6px;
+    transition: color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
 }
 
-/* Hover / focus feedback (desktop & keyboard users) */
 .header-tab-text a:hover,
 .header-tab-text a:focus {
-    color: #ffffff;                  /* brighten text */
-    background: rgba(0, 0, 0, 0.45);  /* slightly darker on hover */
-    box-shadow: 0 0 8px rgba(0, 255, 136, 0.6); /* soft green glow */
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.45);
+    box-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
 }
-
