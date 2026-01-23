@@ -415,13 +415,13 @@ headerLinks.forEach(link =>
 
 </script>
 
-
 <!-- ============================================================
-     JS SECTION 5 — JSON LOADER (FIXED & ROBUST)
-     - builds sections
-     - binds behaviors
-     - positions content (double RAF)
-     - auto-activates "new" tab or first tab fallback
+     JS SECTION 5 — JSON LOADER (NEW STRUCTURE)
+     - builds header sections
+     - filters items by tab
+     - sorts alphabetically by "text"
+     - creates 4-position badge system
+     - applies zoom per icon
 ============================================================ -->
 <script>
 fetch("list.json")
@@ -429,102 +429,148 @@ fetch("list.json")
   .then(data => {
     const container = document.getElementById("content-area");
 
-    // Build sections
-    Object.entries(data.sections).forEach(([id, section]) => {
+    // ========================================
+    // 1. BUILD HEADER SECTIONS (About, Tip, Contact)
+    // ========================================
+    if (data.headerContent) {
+      Object.entries(data.headerContent).forEach(([id, section]) => {
+        const sec = document.createElement("section");
+        sec.id = id + "-section";  // "about-section", "tip-section", etc.
+        sec.className = section.class || "tab-content header-tab-content";
+        
+        if (section.html) {
+          sec.innerHTML = section.html;
+        }
+        
+        container.appendChild(sec);
+      });
+    }
+
+    // ========================================
+    // 2. GET ALL UNIQUE TAB NAMES FROM ITEMS
+    // ========================================
+    const tabNames = new Set();
+    data.items.forEach(item => {
+      const tabs = item.tab.split(";");
+      tabs.forEach(t => tabNames.add(t.trim()));
+    });
+
+    // ========================================
+    // 3. BUILD EACH TAB SECTION
+    // ========================================
+    tabNames.forEach(tabName => {
       const sec = document.createElement("section");
-      sec.id = id;
+      sec.id = tabName;
       sec.className = "tab-content";
 
-      if (section.items) {
-        const ul = document.createElement("ul");
-        ul.className = "icon-grid";
+      const ul = document.createElement("ul");
+      ul.className = "icon-grid";
 
-        
-		section.items.forEach(item => {
-		  const li = document.createElement("li");
+      // FILTER items that belong to this tab
+      const tabItems = data.items.filter(item => {
+        const tabs = item.tab.split(";").map(t => t.trim());
+        return tabs.includes(tabName);
+      });
 
-		  const a = document.createElement("a");
-		  a.href = item.href || "#";
-		  a.target = "_blank";
+      // SORT alphabetically by "text" field
+      tabItems.sort((a, b) => {
+        const textA = (a.text || "").toLowerCase();
+        const textB = (b.text || "").toLowerCase();
+        return textA.localeCompare(textB);
+      });
 
-		  const wrap = document.createElement("div");
-		  wrap.className = "icon-wrapper";
-		  if (item.tooltip) wrap.dataset.tooltip = item.tooltip;
+      // BUILD each icon
+      tabItems.forEach(item => {
+        const li = document.createElement("li");
 
-		  // Base icon image
-		  const img = document.createElement("img");
-		  img.src = item.img || "";
-		  img.alt = item.alt || "";
+        const a = document.createElement("a");
+        a.href = item.href || "#";
+        a.target = "_blank";
 
-		  // ----- NEW: conditional "new" badge -----
-		  if (item.age === "new") {
-			const badge = document.createElement("img");
-			badge.src = "icon/new.png";   // your badge file
-			badge.alt = "New";
-			badge.className = "icon-badge-new";
-			wrap.appendChild(badge);
-		  }
-		  // ---------------------------------------
+        const wrap = document.createElement("div");
+        wrap.className = "icon-wrapper";
+        if (item.tooltip) wrap.dataset.tooltip = item.tooltip;
 
-		  // Existing label under the icon
-		  const txt = document.createElement("div");
-		  txt.className = "icon-text";
-		  txt.textContent = item.text || "";
+        // SET ZOOM (as CSS variable)
+        if (item.zoom) {
+          wrap.style.setProperty("--icon-zoom", item.zoom);
+        }
 
-		  // Assemble
-		  wrap.appendChild(img);
-		  wrap.appendChild(txt);
-		  a.appendChild(wrap);
-		  li.appendChild(a);
-		  ul.appendChild(li);
-		});
+        // Base icon image
+        const img = document.createElement("img");
+        img.src = item.img || "";
+        img.alt = item.alt || "";
+        wrap.appendChild(img);
 
+        // ========================================
+        // 4-POSITION BADGE SYSTEM
+        // ========================================
+        if (item.info) {
+          const badges = item.info.split(";"); // e.g., "new.png;;verified.png;"
+          
+          badges.forEach((badgeFile, index) => {
+            if (badgeFile.trim()) {  // only if not empty
+              const badge = document.createElement("img");
+              badge.src = "icon/" + badgeFile.trim();
+              badge.alt = "";
+              badge.className = `icon-badge-pos${index + 1}`; // pos1, pos2, pos3, pos4
+              wrap.appendChild(badge);
+            }
+          });
+        }
 
-        sec.appendChild(ul);
-      }
+        // Icon label under the image
+        const txt = document.createElement("div");
+        txt.className = "icon-text";
+        txt.textContent = item.text || "";
+        wrap.appendChild(txt);
 
-      if (section.html) sec.innerHTML = section.html;
+        // Assemble
+        a.appendChild(wrap);
+        li.appendChild(a);
+        ul.appendChild(li);
+      });
 
+      sec.appendChild(ul);
       container.appendChild(sec);
     });
 
-    // Activate "new" tab AFTER sections exist and layout is stable
-	requestAnimationFrame(() => {
-		requestAnimationFrame(() => {
-			const newBtn = document.querySelector('.tab-btn[data-target="new"]');
-			const firstBtn = document.querySelector('.tab-btn');
-			const targetBtn = newBtn || firstBtn;
-
-			if (targetBtn) {
-				activateTab(targetBtn.dataset.target, targetBtn);
-			}
-
-			// Ensure layout is correct
-			if (typeof positionContent === "function") positionContent();
-		});
-	});
+    // ========================================
+    // 5. ACTIVATE FIRST TAB
+    // ========================================
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const firstBtn = document.querySelector('.tab-btn');
+        if (firstBtn) {
+          activateTab(firstBtn.dataset.target, firstBtn);
+        }
+        if (typeof positionContent === "function") positionContent();
+      });
+    });
 
   })
   .catch(err => console.error(err));
-
 </script>
 
 <!-- ============================================================
-     JS SECTION 6 — SEARCH SYSTEM (SLIMMED & WORKING)
+     JS SECTION 6 — SEARCH SYSTEM (NEW STRUCTURE - ENHANCED)
+     - Searches: tab, href, tooltip, alt, text, info
+     - Alphabetically sorted results
+     - No duplicates
 ============================================================ -->
 <script>
 const searchBox = document.getElementById("search-box");
 const resultSec = document.getElementById("search-results");
-const excludedTabs = ["about-section", "tip-section", "info-section", "contact-section"];
+const excludedTabs = ["about-section", "tip-section", "contact-section"];
 
 searchBox.addEventListener("input", () => {
-    clearDoubleTapSelection(); // <-- NEW: releasing armed icon on search input
+    clearDoubleTapSelection();
     const q = searchBox.value.toLowerCase();
 
     // Clear previous search results
     resultSec.innerHTML = "";
 
-    // If search is empty, hide results and restore nothing
+    // If search is empty, hide results
     if (!q) {
         resultSec.classList.remove("active");
         return;
@@ -540,76 +586,82 @@ searchBox.addEventListener("input", () => {
 
     const grid = document.createElement("ul");
     grid.className = "icon-grid";
-    const found = new Set();
+    const foundItems = []; // Store items with their text for sorting
 
-    // The excludedTabs array prevents searching these sections
+    // Search through all tab sections
     document.querySelectorAll('.tab-content').forEach(sec => {
-        if (excludedTabs.includes(sec.id)) return;  // Skip excluded sections
+        if (excludedTabs.includes(sec.id)) return;  // Skip header sections
 
         sec.querySelectorAll('.icon-wrapper').forEach(icon => {
 
-			// ------------------------------------------------------------
-			// 1. ICON VISIBLE TEXT
-			//    This is the label shown under each icon
-			// ------------------------------------------------------------
-			const txt =
-				icon.querySelector('.icon-text')?.textContent.toLowerCase() || "";
+            // ========================================
+            // SEARCHABLE FIELDS
+            // ========================================
+            
+            // 1. TEXT - visible label under icon
+            const txt = icon.querySelector('.icon-text')?.textContent.toLowerCase() || "";
 
-			// ------------------------------------------------------------
-			// 2. TOOLTIP TEXT
-			//    Pulled from data-tooltip attribute (if present)
-			// ------------------------------------------------------------
-			const tip =
-				(icon.dataset.tooltip || "").toLowerCase();
+            // 2. TOOLTIP - data-tooltip attribute
+            const tooltip = (icon.dataset.tooltip || "").toLowerCase();
 
-			// ------------------------------------------------------------
-			// 3. LINK URL (href)
-			//    Allows searching by domain or partial URL
-			// ------------------------------------------------------------
-			const link = icon.closest('a');
-			const href =
-				link ? (link.getAttribute('href') || "").toLowerCase() : "";
+            // 3. HREF - link URL
+            const link = icon.closest('a');
+            const href = link ? (link.getAttribute('href') || "").toLowerCase() : "";
 
-			// ------------------------------------------------------------
-			// 4. IMAGE ALT TEXT  ← NEW
-			//    Uses <img alt=""> from your list.json
-			// ------------------------------------------------------------
-			const img = icon.querySelector('img');
-			const alt =
-				img ? (img.getAttribute('alt') || "").toLowerCase() : "";
+            // 4. ALT - image alt text
+            const mainImg = icon.querySelector('img:not([class*="icon-badge-pos"])');
+            const alt = mainImg ? (mainImg.getAttribute('alt') || "").toLowerCase() : "";
 
-			// ------------------------------------------------------------
-			// 5. MATCH LOGIC
-			//    Matches if query appears in ANY searchable field
-			// ------------------------------------------------------------
-			if (
-				(txt.includes(q) ||
-				 tip.includes(q) ||
-				 href.includes(q) ||
-				 alt.includes(q)) &&
+            // 5. TAB - extracted from parent section ID
+            const tab = sec.id.toLowerCase();
 
-				// Prevent duplicate entries in search results
-				!found.has(txt)
-			) {
-				// Clone the original <li> so layout + links remain intact
-				grid.appendChild(icon.closest("li").cloneNode(true));
+            // 6. INFO - badge filenames (search badge names)
+            const badges = Array.from(icon.querySelectorAll('[class*="icon-badge-pos"]'));
+            const info = badges.map(b => {
+                const src = b.getAttribute('src') || "";
+                // Extract filename without path (e.g., "icon/new.png" → "new.png")
+                return src.split('/').pop().replace('.png', '').toLowerCase();
+            }).join(' ');
 
-				// Track this item as already added
-				found.add(txt);
-			}
-		});
-
+            // ========================================
+            // MATCH LOGIC
+            // ========================================
+            if (
+                txt.includes(q) ||
+                tooltip.includes(q) ||
+                href.includes(q) ||
+                alt.includes(q) ||
+                tab.includes(q) ||
+                info.includes(q)
+            ) {
+                // Check if already added (by text)
+                const alreadyAdded = foundItems.some(item => item.text === txt);
+                
+                if (!alreadyAdded) {
+                    foundItems.push({
+                        text: txt,
+                        element: icon.closest("li").cloneNode(true)
+                    });
+                }
+            }
+        });
     });
 
-    // If any matches are found, display the results
-    if (found.size > 0) {
+    // ========================================
+    // SORT ALPHABETICALLY & DISPLAY
+    // ========================================
+    if (foundItems.length > 0) {
+        // Sort by text field
+        foundItems.sort((a, b) => a.text.localeCompare(b.text));
+        
+        // Append sorted elements
+        foundItems.forEach(item => {
+            grid.appendChild(item.element);
+        });
+
         resultSec.appendChild(grid);
         resultSec.classList.add("active");
-
-        
-    }
-
-    else {
+    } else {
         resultSec.classList.remove("active");
     }
 });

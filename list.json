@@ -1,405 +1,409 @@
 {
-  "sections": {
-    "tools": {
-      "class": "tab-content active",
-      "items": [
-        {
-          "href": "https://whatsonchain.com",
-          "tooltip": "The main BSV blockchain explorer",
-          "img": "icon/whatsonchain.png",
-          "alt": "tool explorer",
-          "text": "whatsonchain"
-        },
-        {
-          "href": "https://3dordi.io/",
-          "tooltip": "Cutting-edge web3 application for exploring, managing and inscribing Ordinals (NFTs) on BSV blockchain",
-          "img": "icon/3d.png",
-          "alt": "nft tool app",
-          "text": "3D Ordi",
-          "age": "new"
-        },
-         {
-          "href": "https://app.reactonchain.com",
-          "tooltip": "React Onchain; currently in beta, helps with deployment of apps on the blockchan",
-          "img": "icon/bsv.png",
-          "alt": "code onchan coding programming",
-          "text": "React Onchain",
-          "age": "new"
-        }
-      ]
-    },
-
-    "wallets": {
-      "class": "tab-content",
-      "items": [
-        {
-          "href": "https://electrumsv.io",
-          "tooltip": "Classic desktop wallet for Windows/Mac/Linux",
-          "img": "icon/electrumsv.png",
-          "alt": "classic old legacy",
-          "text": "Electrum SV"
-        },
-        {
-          "href": "https://docs.gorillapool.io/electrumsv/",
-          "tooltip": "Electrum SV Server for blockchain syncing",
-          "img": "icon/electrumserver.png",
-          "alt": "wallet settings server",
-          "text": "Electrum SV Server"
-        },
-        {
-          "href": "https://handcash.io/",
-          "tooltip": "Mobile-friendly BSV wallet with Apps",
-          "img": "icon/handcash.png",
-          "alt": "apps",
-          "text": "Handcash Wallet"
-        },
-        {
-          "href": "https://mybsv.io/wallet.html",
-          "tooltip": "Gateway Wallet; an on-chain wallet at MyBSV.io",
-          "img": "icon/mybsv.png",
-          "alt": "on block chain",
-          "text": "Gateway Wallet",
-          "age": "new"
-        },
-        
-        {
-          "href": "https://getmetanet.com/",
-          "tooltip": "Metanet wallet; setting the BRC-100 standard created by Project Babbage",
-          "img": "icon/metanet.png",
-          "alt": "apps wallet",
-          "text": "Metanet Wallet",
-          "age": "new"
-        },
-        {
-          "href": "https://yours.org",
-          "tooltip": "Chrome-based BSV wallet extension",
-          "img": "icon/yours.png",
-          "alt": "Wallet",
-          "text": "Yours Wallet"
-        }
-      ]
-    },
-    
-    "apps": {
-      "class": "tab-content",
-      "items": [
-        {
-          "href": "https://treechat.ai",
-          "tooltip": "Social network on BSV, alternative to X (Twitter)",
-          "img": "icon/treechat.png",
-          "alt": "TreeChat",
-          "text": "TreeChat"
-        },
-        {
-          "href": "https://3dordi.io/",
-          "tooltip": "Cutting-edge web3 application for exploring, managing and inscribing Ordinals (NFTs) on BSV blockchain",
-          "img": "icon/3d.png",
-          "alt": "nft tool app",
-          "text": "3D Ordi",
-          "age": "new"
-        },
-        {
-          "href": "https://metanetapps.com/",
-          "tooltip": "Metanet App Catalog",
-          "img": "icon/metanetapps.png",
-          "alt": "Metanet Apps",
-          "text": "Metanet Apps",
-          "age": "new"
-        },
-        {
-          "href": "https://www.slictionary.com/",
-          "tooltip": "An on-chain Dictionary of unique terms/word",
-          "img": "icon/slictionary.png",
-          "alt": "Slictionary",
-          "text": "Slictionary"
-        },
-        {
-          "href": "https://handcash.io/",
-          "tooltip": "Mobile-friendly BSV wallet with Apps",
-          "img": "icon/handcash.png",
-          "alt": "Handcash Wallet",
-          "text": "Handcash Wallet"
-        }
-      ]
-    },
-
-    "bsv": {
-      "class": "tab-content",
-      "items": [
-      	{
-          "href": "https://mybsv.io",
-          "tooltip": "MyBSV.io: an on-chain wallet and more",
-          "img": "icon/bsv.png",
-          "alt": "MyBSV.io",
-          "text": "MyBSV.io",
-          "age": "new"
-        },
-      	{
-          "href": "https://bsvblockchain.org/",
-          "tooltip": "Official BSV pages",
-          "img": "icon/bsv.png",
-          "alt": "bsvblockchain.org",
-          "text": "bsvblockchain.org"
-        },
-        {
-          "href": "https://bsvassociation.org/",
-          "tooltip": "Guardians of the BSV protocol",
-          "img": "icon/bsv.png",
-          "alt": "BSV Association",
-          "text": "BSV Association"
-        },
-        {
-          "href": "https://gorillapool.com/",
-          "tooltip": "Gorilla Pool Mining",
-          "img": "icon/gorillapool.png",
-          "alt": "Gorilla Pool",
-          "text": "Gorilla Pool"
-        },
-        {
-          "href": "https://projectbabbage.com/",
-          "tooltip": "Creators of BRC-100 Wallet Standard",
-          "img": "icon/pbabbage.png",
-          "alt": "Project Babbage",
-          "text": "Project Babbage"
-        },
-        {
-          "href": "https://bsvdevs.com/",
-          "tooltip": "A directory for devs and users alike. Enabling a one stop shop for great Bitcoin SV projects, tools, and resources.",
-          "img": "icon/bsv.png",
-          "alt": "documents script source code",
-          "text": "bsvdevs.com"
-        }
-      ]
-    },
-
-    "docs": {
-      "class": "tab-content",
-      "items": [
-        {
-          "href": "https://bsvassociation.org/",
-          "tooltip": "Guardians of the BSV protocol",
-          "img": "icon/bsv.png",
-          "alt": "BSV Association",
-          "text": "BSV Association"
-        },
-        {
-          "href": "https://docs.projectbabbage.com/docs",
-          "tooltip": "documentation for getting started with BSV development.",
-          "img": "icon/babbagedoc.png",
-          "alt": "Project Babbage Docs",
-          "text": "Project Babbage Docs"
-        },
-        {
-          "href": "https://wiki.bitcoinsv.io/index.php/Main_Page",
-          "tooltip": "Bitcoin Wiki",
-          "img": "icon/bitcoin_sv.svg",
-          "alt": "wiki info document",
-          "text": "Bitcoin Wiki"
-        },
-        {
-          "href": "https://hub.bsvblockchain.org/",
-          "tooltip": "BSV Hub: wide array of resources to meet diverse needs, from technical details to real-world uses.",
-          "img": "icon/bsv.png",
-          "alt": "documents resources links code skills",
-          "text": "BSV Hub"
-        },
-        {
-          "href": "https://gorillapool.io/",
-          "tooltip": "Join Gorilla Pool",
-          "img": "icon/gorillaminer.png",
-          "alt": "Gorilla Miner",
-          "text": "Gorilla Miner"
-        },
-        {
-          "href": "https://bsvdevs.com/",
-          "tooltip": "A directory for devs and users alike. Enabling a one stop shop for great Bitcoin SV projects, tools, and resources.",
-          "img": "icon/bsv.png",
-          "alt": "documents script source code",
-          "text": "bsvdevs.com"
-        }
-      ]
-    },
-
-    "mining": {
-      "class": "tab-content",
-      "items": [
-        {
-          "href": "https://gorillapool.com/",
-          "tooltip": "Gorilla Pool Mining",
-          "img": "icon/gorillapool.png",
-          "alt": "Gorilla Pool",
-          "text": "Gorilla Pool"
-        },
-        {
-          "href": "https://gorillapool.io/",
-          "tooltip": "Join Gorilla Pool",
-          "img": "icon/gorillaminer.png",
-          "alt": "Gorilla Miner",
-          "text": "Gorilla Miner"
-        }
-      ]
-    },
-
-    "exchange": {
-      "class": "tab-content",
-      "items": [
-        {
-          "href": "https://www.coinspot.com.au/",
-          "tooltip": "A major, yet not well know Australian KYC exchange that lets you buy BSV",
-          "img": "icon/cs.png",
-          "alt": "buy",
-          "text": "CoinSpot"
-        },
-        {
-          "href": "https://swaplobby.com/",
-          "tooltip": "Atomic Swaps BTC <--> BSV",
-          "img": "icon/atomic.png",
-          "alt": "Atomic Swaps buy",
-          "text": "SwapLobby: Atomic Swaps",
-          "age": "new"
-        },
-        {
-          "href": "https://ghostswap.io/",
-          "tooltip": "Crypto Swap Exchange, supports BSV, no KYC or account required, has ammount limits",
-          "img": "icon/ghostswap.png",
-          "alt": "Buy Swap",
-          "text": "GhostSwap: swap crypto"
-        },
-        {
-          "href": "https://kyc.rip",
-          "tooltip": "Privacy focussed crypto swap exchange, supports BSV, no KYC or account required",
-          "img": "icon/kycrip.png",
-          "alt": "Exchange swap",
-          "text": "KYC.RIP",
-          "age": "new"
-        },
-        {
-          "href": "https://bsvblockchain.org/get-bsv/",
-          "tooltip": "Exchanges list provided by bsvblockchain.org; check as some wallets and exchanges no longer work or support BSV",
-          "img": "icon/xlist.png",
-          "alt": "Exchange List",
-          "text": "Exchnage List"
-        }
-       
-      ]
-    },
-
-    
-    "social": {
-      "class": "tab-content",
-      "items": [
-        
-        
-        {
-          "href": "https://x.com/vamosvigilante",
-          "tooltip": "Co-Founder of The Crypto Vigilante, big BSV (original design) proponent ",
-          "img": "social/rafael_laverde.png",
-          "alt": "BSV Bitcoin Monero Privacy",
-          "text": "Rafael LaVerde on X"
-        },
-        {
-          "href": "https://x.com/ProjectBabbage",
-          "tooltip": "Project Babbage: Our goal is to create a more efficient, scalable, and secure internet by empowering users to own their own identities and data.",
-          "img": "social/babbage.png",
-          "alt": "BSV BRC 100",
-          "text": "on X"
-        },
-        {
-          "href": "https://linktr.ee/kurtwuckertjr",
-          "tooltip": "Kurt Wuckert Jr (Bitcoin Historian) links",
-          "img": "social/kurt.png",
-          "alt": "Bitcoin historian mining gorillapool",
-          "text": "Kurt Wuckert Jr"
-        }
-      ]
-    },
-    
-	"videos": {
-      "class": "tab-content",
-      "items": [
-        {
-          "href": "https://www.youtube.com/@bsvbitcoin/videos",
-          "tooltip": "SirToshi: Defender of Bitcoin.",
-          "img": "icon/video.png",
-          "alt": "SirToshi on YouTube",
-          "text": "SirToshi on YouTube"
-        },
-        {
-          "href": "https://www.youtube.com/@ProjectBabbage/videos",
-          "tooltip": "Project Babbage: Our goal is to create a more efficient, scalable, and secure internet by empowering users to own their own identities and data.",
-          "img": "social/babbage.png",
-          "alt": "blockchain identity brc 100",
-          "text": "on YouTube"
-        },
-        {
-          "href": "https://www.youtube.com/@Cryptoismyretirement/videos",
-          "tooltip": "Just some guy on YouTube that talks a lot about BSV and makes some valid points.",
-          "img": "icon/video.png",
-          "alt": "Cryptoismyretirement on YouTube",
-          "text": "Cryptoismyretirement on YouTube"
-        },
-        {
-          "href": "https://www.youtube.com/@Satoshi_VisionTv/videos",
-          "tooltip": "Another Youtuber providing some BSV related content.",
-          "img": "icon/video.png",
-          "alt": "Satoshi Vision on YouTube",
-          "text": "Satoshi Vision on YouTube"
-        },
-        {
-          "href": "https://www.youtube.com/@CoinGeek/videos",
-          "tooltip": "CoinGeek YouTube channel, all about Bitcoin and blockchain technologies.",
-          "img": "icon/video.png",
-          "alt": "CoinGeek on YouTube",
-          "text": "CoinGeek on YouTube"
-        },
-        {
-          "href": "https://www.youtube.com/@CoinGeek/streams",
-          "tooltip": "Kurt Wuckert Jr streams at CoinGeek, all about Bitcoin and blockchain tech..",
-          "img": "icon/video.png",
-          "alt": "Kurt Wuckert Jr streams",
-          "text": "Kurt Wuckert Jr streams"
-        },
-        {
-          "href": "https://www.youtube.com/@BSVsearch/videos",
-          "tooltip": "Info on how to use BSV in business, everyday life; try out BSV apps, wallets, websites; discuss BSV news and stories, and more...",
-          "img": "icon/video.png",
-          "alt": "BSV Search on YouTube",
-          "text": "BSV Search on YouTube"
-        },
-        {
-          "href": "https://www.youtube.com/@Kate_L_Mosso/videos",
-          "tooltip": "Kate Mosso providing content about Crypto and BSV",
-          "img": "icon/video.png",
-          "alt": "Kate Mosso on YouTube",
-          "text": "Kate Mosso on YouTube",
-          "age": "new"
-        },
-        {
-          "href": "https://www.youtube.com/@GavinMehl/videos",
-          "tooltip": "Gavin Mehl talks about Bitcoin SV, health and law",
-          "img": "icon/video.png",
-          "alt": "Gavin Mehl on YouTube",
-          "text": "Gavin Mehl on YouTube"
-        }
-      ]
-    },
-
-    "tip-section": {
-	  "class": "tab-content header-tab-content",
-	  "html": "<div class='header-tab-text'><span id='tip-address'>1HK9fJFQ4ViawZvoPMqJpL2B6Z1P7f3XWd</span> <button id='copy-tip-btn' class='copy-btn'>Copy</button></div>"
-	},
-
-
-
-    "info-section": {
+  "headerContent": {
+    "about": {
       "class": "tab-content header-tab-content",
       "lastUpdate": "16th Jan. 2026"
     },
-
-    "contact-section": {
+    "tip": {
+      "class": "tab-content header-tab-content",
+      "html": "<div class='header-tab-text'><span id='tip-address'>1HK9fJFQ4ViawZvoPMqJpL2B6Z1P7f3XWd</span> <button id='copy-tip-btn' class='copy-btn'>Copy</button></div>"
+    },
+    "contact": {
       "class": "tab-content header-tab-content",
       "html": "<div class=\"header-tab-text\">If you spot any mistakes, or have some cool BSV related link that I can add, I can be contacted via TreeChat, user: <a href=\"https://app.treechat.com/user/bsvhub-d50efaa8-f342-4b88-8e85-de15a2a06629\" target=\"_blank\">BSVhub</a></div>"
-
     }
-  }
+  },
+  
+  "items": [
+    {
+      "tab": "tools;apps",
+      "href": "https://3dordi.io/",
+      "tooltip": "Cutting-edge web3 application for exploring, managing and inscribing Ordinals (NFTs) on BSV blockchain",
+      "img": "icon/3d.png",
+      "zoom": "0.95",
+      "alt": "nft tool app",
+      "text": "3D Ordi",
+      "info": "new.png;;;"
+    },
+    {
+      "tab": "bsv;docs",
+      "href": "https://bsvassociation.org/",
+      "tooltip": "Guardians of the BSV protocol",
+      "img": "icon/bsv.png",
+      "zoom": "1.0",
+      "alt": "BSV Association",
+      "text": "BSV Association",
+      "info": ";;;"
+    },
+    {
+      "tab": "bsv;docs",
+      "href": "https://hub.bsvblockchain.org/",
+      "tooltip": "BSV Hub: wide array of resources to meet diverse needs, from technical details to real-world uses.",
+      "img": "icon/bsv.png",
+      "zoom": "1.0",
+      "alt": "documents resources links code skills",
+      "text": "BSV Hub",
+      "info": ";;;"
+    },
+    {
+      "tab": "videos",
+      "href": "https://www.youtube.com/@BSVsearch/videos",
+      "tooltip": "Info on how to use BSV in business, everyday life; try out BSV apps, wallets, websites; discuss BSV news and stories, and more...",
+      "img": "icon/video.png",
+      "zoom": "1.0",
+      "alt": "BSV Search on YouTube",
+      "text": "BSV Search on YouTube",
+      "info": ";;;"
+    },
+    {
+      "tab": "bsv;docs",
+      "href": "https://bsvblockchain.org/",
+      "tooltip": "Official BSV pages",
+      "img": "icon/bsv.png",
+      "zoom": "1.0",
+      "alt": "bsvblockchain.org",
+      "text": "bsvblockchain.org",
+      "info": ";;;"
+    },
+    {
+      "tab": "bsv;docs",
+      "href": "https://bsvdevs.com/",
+      "tooltip": "A directory for devs and users alike. Enabling a one stop shop for great Bitcoin SV projects, tools, and resources.",
+      "img": "icon/bsv.png",
+      "zoom": "1.0",
+      "alt": "documents script source code",
+      "text": "bsvdevs.com",
+      "info": ";;;"
+    },
+    {
+      "tab": "docs",
+      "href": "https://wiki.bitcoinsv.io/index.php/Main_Page",
+      "tooltip": "Bitcoin Wiki",
+      "img": "icon/bitcoin_sv.png",
+      "zoom": "1.0",
+      "alt": "wiki info document",
+      "text": "Bitcoin Wiki",
+      "info": ";;;"
+    },
+    {
+      "tab": "videos",
+      "href": "https://www.youtube.com/@CoinGeek/videos",
+      "tooltip": "CoinGeek YouTube channel, all about Bitcoin and blockchain technologies.",
+      "img": "icon/video.png",
+      "zoom": "1.0",
+      "alt": "CoinGeek on YouTube",
+      "text": "CoinGeek on YouTube",
+      "info": ";;;"
+    },
+    {
+      "tab": "exchange",
+      "href": "https://www.coinspot.com.au/",
+      "tooltip": "A major, yet not well know Australian KYC exchange that lets you buy BSV",
+      "img": "icon/cs.png",
+      "zoom": "1.0",
+      "alt": "buy",
+      "text": "CoinSpot",
+      "info": ";;;"
+    },
+    {
+      "tab": "videos",
+      "href": "https://www.youtube.com/@Cryptoismyretirement/videos",
+      "tooltip": "Just some guy on YouTube that talks a lot about BSV and makes some valid points.",
+      "img": "icon/video.png",
+      "zoom": "1.0",
+      "alt": "Cryptoismyretirement on YouTube",
+      "text": "Cryptoismyretirement on YouTube",
+      "info": ";;;"
+    },
+    {
+      "tab": "wallets",
+      "href": "https://electrumsv.io",
+      "tooltip": "Classic desktop wallet for Windows/Mac/Linux",
+      "img": "icon/electrumsv.png",
+      "zoom": "1.0",
+      "alt": "classic old legacy",
+      "text": "Electrum SV",
+      "info": ";;;"
+    },
+    {
+      "tab": "wallets",
+      "href": "https://docs.gorillapool.io/electrumsv/",
+      "tooltip": "Electrum SV Server for blockchain syncing",
+      "img": "icon/electrumserver.png",
+      "zoom": "1.0",
+      "alt": "wallet settings server",
+      "text": "Electrum SV Server",
+      "info": ";;;"
+    },
+    {
+      "tab": "exchange",
+      "href": "https://bsvblockchain.org/get-bsv/",
+      "tooltip": "Exchanges list provided by bsvblockchain.org; check as some wallets and exchanges no longer work or support BSV",
+      "img": "icon/xlist.png",
+      "zoom": "1.0",
+      "alt": "Exchange List",
+      "text": "Exchange List",
+      "info": ";;;"
+    },
+    {
+      "tab": "wallets",
+      "href": "https://mybsv.io/wallet.html",
+      "tooltip": "Gateway Wallet; an on-chain wallet at MyBSV.io",
+      "img": "icon/mybsv.png",
+      "zoom": "1.0",
+      "alt": "on block chain",
+      "text": "Gateway Wallet",
+      "info": "new.png;;;"
+    },
+    {
+      "tab": "videos",
+      "href": "https://www.youtube.com/@GavinMehl/videos",
+      "tooltip": "Gavin Mehl talks about Bitcoin SV, health and law",
+      "img": "icon/video.png",
+      "zoom": "1.0",
+      "alt": "Gavin Mehl on YouTube",
+      "text": "Gavin Mehl on YouTube",
+      "info": ";;;"
+    },
+    {
+      "tab": "exchange",
+      "href": "https://ghostswap.io/",
+      "tooltip": "Crypto Swap Exchange, supports BSV, no KYC or account required, has ammount limits",
+      "img": "icon/ghostswap.png",
+      "zoom": "1.0",
+      "alt": "Buy Swap",
+      "text": "GhostSwap: swap crypto",
+      "info": ";;;"
+    },
+    {
+      "tab": "bsv;docs",
+      "href": "https://gorillapool.com/",
+      "tooltip": "Gorilla Pool Mining",
+      "img": "icon/gorillapool.png",
+      "zoom": "1.0",
+      "alt": "Gorilla Pool",
+      "text": "Gorilla Pool",
+      "info": ";;;"
+    },
+    {
+      "tab": "docs",
+      "href": "https://gorillapool.io/",
+      "tooltip": "Join Gorilla Pool",
+      "img": "icon/gorillaminer.png",
+      "zoom": "1.0",
+      "alt": "Gorilla Miner",
+      "text": "Gorilla Miner",
+      "info": ";;;"
+    },
+    {
+      "tab": "wallets;apps",
+      "href": "https://handcash.io/",
+      "tooltip": "Mobile-friendly BSV wallet with Apps",
+      "img": "icon/handcash.png",
+      "zoom": "1.0",
+      "alt": "apps",
+      "text": "Handcash Wallet",
+      "info": ";;;"
+    },
+    {
+      "tab": "videos",
+      "href": "https://www.youtube.com/@Kate_L_Mosso/videos",
+      "tooltip": "Kate Mosso providing content about Crypto and BSV",
+      "img": "icon/video.png",
+      "zoom": "1.0",
+      "alt": "Kate Mosso on YouTube",
+      "text": "Kate Mosso on YouTube",
+      "info": "new.png;;;"
+    },
+    {
+      "tab": "social",
+      "href": "https://linktr.ee/kurtwuckertjr",
+      "tooltip": "Kurt Wuckert Jr (Bitcoin Historian) links",
+      "img": "social/kurt.png",
+      "zoom": "1.0",
+      "alt": "Bitcoin historian mining gorillapool",
+      "text": "Kurt Wuckert Jr",
+      "info": ";;;"
+    },
+    {
+      "tab": "videos",
+      "href": "https://www.youtube.com/@CoinGeek/streams",
+      "tooltip": "Kurt Wuckert Jr streams at CoinGeek, all about Bitcoin and blockchain tech..",
+      "img": "icon/video.png",
+      "zoom": "1.0",
+      "alt": "Kurt Wuckert Jr streams",
+      "text": "Kurt Wuckert Jr streams",
+      "info": ";;;"
+    },
+    {
+      "tab": "exchange",
+      "href": "https://kyc.rip",
+      "tooltip": "Privacy focussed crypto swap exchange, supports BSV, no KYC or account required",
+      "img": "icon/kycrip.png",
+      "zoom": "1.0",
+      "alt": "Exchange swap",
+      "text": "KYC.RIP",
+      "info": "new.png;;;"
+    },
+    {
+      "tab": "apps",
+      "href": "https://metanetapps.com/",
+      "tooltip": "Metanet App Catalog",
+      "img": "icon/metanetapps.png",
+      "zoom": "1.0",
+      "alt": "Metanet Apps",
+      "text": "Metanet Apps",
+      "info": "new.png;;;"
+    },
+    {
+      "tab": "wallets",
+      "href": "https://getmetanet.com/",
+      "tooltip": "Metanet wallet; setting the BRC-100 standard created by Project Babbage",
+      "img": "icon/metanet.png",
+      "zoom": "1.0",
+      "alt": "apps wallet",
+      "text": "Metanet Wallet",
+      "info": "new.png;;;"
+    },
+    {
+      "tab": "bsv",
+      "href": "https://mybsv.io",
+      "tooltip": "MyBSV.io: an on-chain wallet and more",
+      "img": "icon/bsv.png",
+      "zoom": "1.0",
+      "alt": "MyBSV.io",
+      "text": "MyBSV.io",
+      "info": "new.png;;;"
+    },
+    {
+      "tab": "bsv",
+      "href": "https://projectbabbage.com/",
+      "tooltip": "Creators of BRC-100 Wallet Standard",
+      "img": "icon/pbabbage.png",
+      "zoom": "1.0",
+      "alt": "Project Babbage",
+      "text": "Project Babbage",
+      "info": ";;;"
+    },
+    {
+      "tab": "social",
+      "href": "https://x.com/ProjectBabbage",
+      "tooltip": "Project Babbage: Our goal is to create a more efficient, scalable, and secure internet by empowering users to own their own identities and data.",
+      "img": "social/babbage.png",
+      "zoom": "1.0",
+      "alt": "BSV BRC 100",
+      "text": "Project Babbage on X",
+      "info": ";;;"
+    },
+    {
+      "tab": "videos",
+      "href": "https://www.youtube.com/@ProjectBabbage/videos",
+      "tooltip": "Project Babbage: Our goal is to create a more efficient, scalable, and secure internet by empowering users to own their own identities and data.",
+      "img": "social/babbage.png",
+      "zoom": "1.0",
+      "alt": "blockchain identity brc 100",
+      "text": "Project Babbage on YouTube",
+      "info": ";;;"
+    },
+    {
+      "tab": "docs",
+      "href": "https://docs.projectbabbage.com/docs",
+      "tooltip": "documentation for getting started with BSV development.",
+      "img": "icon/babbagedoc.png",
+      "zoom": "1.0",
+      "alt": "Project Babbage Docs",
+      "text": "Project Babbage Docs",
+      "info": ";;;"
+    },
+    {
+      "tab": "social",
+      "href": "https://x.com/vamosvigilante",
+      "tooltip": "Co-Founder of The Crypto Vigilante, big BSV (original design) proponent ",
+      "img": "social/rafael_laverde.png",
+      "zoom": "1.0",
+      "alt": "BSV Bitcoin Monero Privacy",
+      "text": "Rafael LaVerde on X",
+      "info": ";;;"
+    },
+    {
+      "tab": "tools;apps",
+      "href": "https://app.reactonchain.com",
+      "tooltip": "React Onchain; currently in beta, helps with deployment of apps on the blockchan",
+      "img": "icon/bsv.png",
+      "zoom": "1.0",
+      "alt": "code onchan coding programming",
+      "text": "React Onchain",
+      "info": "new.png;;;"
+    },
+    {
+      "tab": "videos",
+      "href": "https://www.youtube.com/@Satoshi_VisionTv/videos",
+      "tooltip": "Another Youtuber providing some BSV related content.",
+      "img": "icon/video.png",
+      "zoom": "1.0",
+      "alt": "Satoshi Vision on YouTube",
+      "text": "Satoshi Vision on YouTube",
+      "info": ";;;"
+    },
+    {
+      "tab": "videos",
+      "href": "https://www.youtube.com/@bsvbitcoin/videos",
+      "tooltip": "SirToshi: Defender of Bitcoin.",
+      "img": "icon/video.png",
+      "zoom": "1.0",
+      "alt": "SirToshi on YouTube",
+      "text": "SirToshi on YouTube",
+      "info": ";;;"
+    },
+    {
+      "tab": "apps",
+      "href": "https://www.slictionary.com/",
+      "tooltip": "An on-chain Dictionary of unique terms/word",
+      "img": "icon/slictionary.png",
+      "zoom": "1.0",
+      "alt": "Slictionary",
+      "text": "Slictionary",
+      "info": ";;;"
+    },
+    {
+      "tab": "exchange",
+      "href": "https://swaplobby.com/",
+      "tooltip": "Atomic Swaps BTC <--> BSV",
+      "img": "icon/atomic.png",
+      "zoom": "1.0",
+      "alt": "Atomic Swaps buy",
+      "text": "SwapLobby: Atomic Swaps",
+      "info": "new.png;;;"
+    },
+    {
+      "tab": "apps",
+      "href": "https://treechat.ai",
+      "tooltip": "Social network on BSV, alternative to X (Twitter)",
+      "img": "icon/treechat.png",
+      "zoom": "1.2",
+      "alt": "TreeChat",
+      "text": "TreeChat",
+      "info": ";;;"
+    },
+    {
+      "tab": "tools",
+      "href": "https://whatsonchain.com",
+      "tooltip": "The main BSV blockchain explorer",
+      "img": "icon/whatsonchain.png",
+      "zoom": "1.0",
+      "alt": "tool explorer",
+      "text": "whatsonchain",
+      "info": ";;;"
+    },
+    {
+      "tab": "wallets",
+      "href": "https://yours.org",
+      "tooltip": "Chrome-based BSV wallet extension",
+      "img": "icon/yours.png",
+      "zoom": "1.0",
+      "alt": "Wallet",
+      "text": "Yours Wallet",
+      "info": ";;;"
+    }
+  ]
 }
