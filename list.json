@@ -209,7 +209,7 @@
       "tab": "videos",
       "href": "https://www.youtube.com/@Kate_L_Mosso/videos",
       "tooltip": "Kate Mosso providing content about Crypto and BSV",
-      "img": "icon/video.png",
+      "img": "social/crypto_kate.png",
       "zoom": "1.4",
       "alt": "Kate Mosso",
       "text": "Kate Mosso",
@@ -296,6 +296,16 @@
       "info": ";;twitter.png;"
     },
     {
+      "tab": "social",
+      "href": "https://x.com/Kate_L_Mosso",
+      "tooltip": "Kate Mosso: former FOX TV Reporter turned Independent Crypto Reporter",
+      "img": "social/crypto_kate.png",
+      "zoom": "0.9",
+      "alt": "Kate Mosso",
+      "text": "@Kate_L_Mosso",
+      "info": "new.png;;twitter.png;"
+    },
+    {
       "tab": "videos",
       "href": "https://www.youtube.com/@ProjectBabbage/videos",
       "tooltip": "Project Babbage: Our goal is to create a more efficient, scalable, and secure internet by empowering users to own their own identities and data.",
@@ -368,7 +378,7 @@
     {
       "tab": "videos",
       "href": "https://www.youtube.com/@bridgetdoran/videos",
-      "tooltip": "Bridget D talks abou Bitcon and blockchain tech.",
+      "tooltip": "Bridget D talks abou Bitcoin and blockchain tech.",
       "img": "social/bridgetd.png",
       "zoom": "0.9",
       "alt": "tech onchain",
