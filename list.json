@@ -210,7 +210,7 @@
       "href": "https://www.youtube.com/@Kate_L_Mosso/videos",
       "tooltip": "Kate Mosso providing content about Crypto and BSV",
       "img": "social/crypto_kate.png",
-      "zoom": "1.4",
+      "zoom": "0.9",
       "alt": "Kate Mosso",
       "text": "Kate Mosso",
       "info": "new.png;;;"
@@ -370,7 +370,7 @@
       "href": "https://www.youtube.com/@bsvbitcoin/videos",
       "tooltip": "SirToshi: Defender of Bitcoin.",
       "img": "social/sirtoshi.png",
-      "zoom": "1.0",
+      "zoom": "0.9",
       "alt": "SirToshi on YouTube",
       "text": "SirToshi",
       "info": ";;;"
