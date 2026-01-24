@@ -61,14 +61,22 @@
     <!-- TAB BAR -->
     <nav class="tab-bar">
 
-        <button class="tab-btn" data-target="tools">Tools</button>
+        <button class="tab-btn" data-target="tools"><span>Tools</span></button>
+        <button class="tab-btn" data-target="apps"><span>Apps</span></button>
+        <button class="tab-btn" data-target="wallets"><span>Wallets</span></button>
+        <button class="tab-btn" data-target="exchange"><span>Buy BSV</span></button>
+        <button class="tab-btn" data-target="bsv"><span>BSV Main Sites</span></button>
+        <button class="tab-btn" data-target="docs"><span>Documents</span></button>
+        <button class="tab-btn" data-target="social"><span>Social Media</span></button>
+        <button class="tab-btn" data-target="videos"><span>Videos</span></button>
+        <!--button class="tab-btn" data-target="tools">Tools</!--button>
         <button class="tab-btn" data-target="apps">Apps</button>
         <button class="tab-btn" data-target="wallets">Wallets</button>
         <button class="tab-btn" data-target="exchange">Buy BSV</button>
         <button class="tab-btn" data-target="bsv">BSV Main Sites</button>
         <button class="tab-btn" data-target="docs">Documents</button>
         <button class="tab-btn" data-target="social">Social Media</button>
-        <button class="tab-btn" data-target="videos">Videos</button>
+        <button class="tab-btn" data-target="videos">Videos</button-->
 
         <div class="search-container">
             <input id="search-box" type="text" placeholder="search here">
@@ -529,7 +537,36 @@ fetch("list.json")
 <!-- ============================================================
      VISITOR COUNTER SCRIPT
 ============================================================ -->
-<script src="count.js"></script>     
+<script>
+(function() {
+    function loadCounter() {
+        const counterSpan = document.getElementById('visit-counter');
+        if (counterSpan) {
+            const iframe = document.createElement('iframe');
+            iframe.style.border = 'none';
+            iframe.style.width = '100%';
+            iframe.style.height = '30px';
+            iframe.style.verticalAlign = 'middle';
+            iframe.style.display = 'block';
+            iframe.style.marginTop = '10px';  // Add space above counter
+            counterSpan.appendChild(iframe);
+            
+            const iframeDoc = iframe.contentWindow.document;
+            iframeDoc.open();
+            iframeDoc.write('<html><body style="margin:0;padding:0;font-family:VT323,monospace;font-size:2rem;color:#ffd700;text-align:center;"><script src="https://counter.websiteout.com/js/7/6/0/0"><\/script></body></html>');
+            iframeDoc.close();
+        } else {
+            setTimeout(loadCounter, 100);
+        }
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', loadCounter);
+    } else {
+        loadCounter();
+    }
+})();
+</script>
     
 <!-- ============================================================
      JS SECTION 6 — SEARCH SYSTEM (NEW STRUCTURE - ENHANCED)
