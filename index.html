@@ -92,38 +92,9 @@
     <!-- SEARCH RESULTS -->
     <section id="search-results" class="tab-content"></section>
 
-    <!-- STATIC ABOUT SECTION -->
-    <section id="about-section" class="tab-content header-tab-content">
-		<div class="header-tab-text">
-			Number of visitors: 
-			<span id="visit-counter" style="pointer-events:none;">
-				<script src="https://counter.websiteout.com/js/7/6/0/0"></script>
-			</span>
-		</div>
-
-		<div>Last update: <span id="last-update-date"></span></div>
-	</section>
-
-
-
+    
 </main>
  
-<script>
-function loadLastUpdate() {
-  fetch("list.json")
-    .then(r => r.json())
-    .then(data => {
-      const date = data.sections?.["info-section"]?.lastUpdate;
-      const el = document.getElementById("last-update-date");
-      if (date && el) el.textContent = date;
-    })
-    .catch(err => console.error("Failed to load update date:", err));
-}
-
-loadLastUpdate();
-</script>
-
-
     
 <!-- ============================================================
      JS SECTION 1 — TOOLTIPS + MOBILE DOUBLE-TAP (EVENT DELEGATION)
@@ -432,20 +403,22 @@ fetch("list.json")
     // ========================================
     // 1. BUILD HEADER SECTIONS (About, Tip, Contact)
     // ========================================
+
     if (data.headerContent) {
       Object.entries(data.headerContent).forEach(([id, section]) => {
         const sec = document.createElement("section");
-        sec.id = id + "-section";  // "about-section", "tip-section", etc.
+        sec.id = id + "-section";
         sec.className = section.class || "tab-content header-tab-content";
-        
+
         if (section.html) {
           sec.innerHTML = section.html;
         }
-        
+
         container.appendChild(sec);
       });
     }
-
+    
+    
     // ========================================
     // 2. GET ALL UNIQUE TAB NAMES FROM ITEMS
     // ========================================
@@ -535,6 +508,7 @@ fetch("list.json")
       container.appendChild(sec);
     });
 
+    
     // ========================================
     // 5. ACTIVATE FIRST TAB
     // ========================================
@@ -552,6 +526,11 @@ fetch("list.json")
   .catch(err => console.error(err));
 </script>
 
+<!-- ============================================================
+     VISITOR COUNTER SCRIPT
+============================================================ -->
+<script src="count.js"></script>     
+    
 <!-- ============================================================
      JS SECTION 6 — SEARCH SYSTEM (NEW STRUCTURE - ENHANCED)
      - Searches: tab, href, tooltip, alt, text, info
@@ -887,7 +866,7 @@ window.addEventListener("pageshow", () => {
     // window.addEventListener("load", deferFireflies);  ← Just add // to disable
 })();
 </script>
-
+    
 </div>
 </body>
 </html>

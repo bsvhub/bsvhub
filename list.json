@@ -2,6 +2,7 @@
   "headerContent": {
     "about": {
       "class": "tab-content header-tab-content",
+      "html": "<div class='header-tab-text'>Number of visitors: <span id='visit-counter' style='pointer-events:none;'></span></div><div>Last update: <span id='last-update-date'>23th Jan. 2026</span></div>",
       "lastUpdate": "23th Jan. 2026"
     },
     "tip": {
