@@ -2,8 +2,7 @@
   "headerContent": {
     "about": {
       "class": "tab-content header-tab-content",
-      "html": "<div class='header-tab-text'>Number of visitors: <span id='visit-counter' style='pointer-events:none;'></span></div><div>Last update: <span id='last-update-date'>23th Jan. 2026</span></div>",
-      "lastUpdate": "24th Jan. 2026"
+      "html": "<div class='header-tab-text'>Number of visitors: <span id='visit-counter' style='pointer-events:none;'></span></div><div>Last update: <span id='last-update-date'>24th Jan. 2026</span></div>"
     },
     "tip": {
       "class": "tab-content header-tab-content",
@@ -459,7 +458,7 @@
     {
       "tab": "apps",
       "href": "https://everdraw.art/",
-      "tooltip": "Draw on blockchain",
+      "tooltip": "A professional open-source drawing application with blockchain-backed artwork ownership.",
       "img": "icon/everdraw.png",
       "zoom": "0.85",
       "alt": "pixel art",
@@ -515,7 +514,38 @@
       "alt": "decentralizes decentalised social media",
       "text": "Zanaadu",
       "info": "new.png;;beta.png;"
+    },
+    {
+      "tab": "apps",
+      "href": "https://bitgenius.net/",
+      "tooltip": "Your intelligent assistant.",
+      "img": "icon/bsv.png",
+      "zoom": "1.4",
+      "alt": "ai",
+      "text": "Genius System",
+      "info": "new.png;;;"
+    },
+    {
+      "tab": "docs",
+      "href": "https://bsvhackathon.com/",
+      "tooltip": "Hackathon info, events, registration",
+      "img": "icon/bsv.png",
+      "zoom": "1.4",
+      "alt": "devs win prise competition",
+      "text": "BSV Hackathon",
+      "info": ";;;"
+    },
+    {
+      "tab": "docs",
+      "href": "https://metanetacademy.com/",
+      "tooltip": "Learn to build real applications with these primitives — the version of the web the early engineers never got to finish.",
+      "img": "icon/metanet_academy.png",
+      "zoom": "0.9",
+      "alt": "documentation inscraction script coding",
+      "text": "Metanet Academy",
+      "info": "new.png;;;"
     }
+    
     
   ]
 }
