@@ -385,15 +385,15 @@ ul.icon-grid li a:hover {
 /* Badge positions - shared styles */
 .icon-wrapper [class*="icon-badge-pos"] {
     position: absolute;
-    width: 20%;
+    width: 25%;
     pointer-events: none;
     z-index: 2;
 }
 
 .icon-wrapper .icon-badge-pos1 { top: 0; left: 0; }
-.icon-wrapper .icon-badge-pos2 { top: 24%; left: 0; }
+.icon-wrapper .icon-badge-pos2 { top: 30%; left: 0; }
 .icon-wrapper .icon-badge-pos3 { top: 0; right: 0; }
-.icon-wrapper .icon-badge-pos4 { top: 24%; right: 0; }
+.icon-wrapper .icon-badge-pos4 { top: 30%; right: 0; }
 
 /* Main icon image - centered in top area with 6% offset */
 .icon-wrapper img:not([class*="icon-badge-pos"]) {
