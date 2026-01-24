@@ -440,8 +440,8 @@
       "tab": "apps",
       "href": "https://bsvtube.com/",
       "tooltip": "Video platform on chain",
-      "img": "icon/bsv.png",
-      "zoom": "1.4",
+      "img": "icon/bsvtube.svg",
+      "zoom": "0.85",
       "alt": "videos upload tip",
       "text": "BSVTube",
       "info": "new.png;;;"
