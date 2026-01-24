@@ -350,8 +350,8 @@
       "href": "https://app.reactonchain.com",
       "tooltip": "React Onchain; currently in beta, helps with deployment of apps on the blockchan",
       "img": "icon/",
-      "zoom": "7",
-      "alt": "</>",
+      "zoom": "12",
+      "alt": ".</>",
       "text": "React Onchain",
       "info": "new.svg;;beta.svg;"
     },
