@@ -171,6 +171,8 @@ body {
 /* ------------------------------------------------------------
    TAB BAR
 ------------------------------------------------------------ */
+
+/* TAB BAR container */
 .tab-bar {
     display: flex;
     flex-wrap: wrap;
@@ -182,28 +184,78 @@ body {
     box-shadow: none;
 }
 
+/* Tab buttons and search - unified sizing */
+.tab-bar button,
+#search-box {
+    font-family: 'VT323';
+    font-size: clamp(0.9rem, 2.2vw, 1.3rem);
+    padding: 12px 18px;
+    min-height: 48px;
+}
+
+/* ------------------------------------------------------------
+   TAB BUTTONS
+------------------------------------------------------------ */
 .tab-bar button {
     flex: 0 0 auto;
     min-width: 100px;
-    padding: 12px 18px;
-    font-family: 'VT323';
-    font-size: clamp(0.9rem, 2.2vw, 1.3rem);
     white-space: nowrap;
     color: white;
     background: rgba(255,255,255,0.1);
     border: 2px solid #ff5733;
     border-radius: 10px;
-    transition: background 0.25s, transform 0.25s;
+    transition: background 0.25s;
 }
+
+.tab-bar button span {
+    display: inline-block;
+    transition: transform 0.25s;
+}
+
 .tab-bar button:hover {
-    transform: scale(1.06);
     background: rgba(255,87,51,0.8);
 }
+
+.tab-bar button:hover span {
+    transform: scale(1.2);
+}
+
 .tab-bar button.active {
     background: #ff5733;
     color: black;
     box-shadow: 0 0 12px rgba(255,87,51,0.6);
 }
+
+/* ------------------------------------------------------------
+   SEARCH BOX (matches tab style)
+------------------------------------------------------------ */
+#search-box {
+    max-width: 155px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,204,102,0.4);
+    color: white;
+    outline: none;
+    transition: background 0.25s, box-shadow 0.25s;
+    letter-spacing: 0;
+}
+
+#search-box:hover {
+    background: rgba(255,204,102,0.2);
+    box-shadow: 0 0 12px rgba(255,204,102,0.7);
+}
+
+#search-box:focus {
+    background: rgba(255,204,102,0.25);
+    border-color: #ffcc66;
+    box-shadow: 0 0 18px rgba(255,204,102,0.9);
+}
+
+#search-box::placeholder {
+    color: rgba(200,200,200,0.7);
+}
+
 
 /* ============================================================
  4 — TOOLTIP BAR
@@ -401,39 +453,6 @@ ul.icon-grid li a:hover .icon-text {
 }
 
 /* ============================================================
-   8 — SEARCH BAR (MATCH TAB STYLE)
-   ============================================================ */
-
-#search-box {
-    max-width: 155px;
-    padding: 12px 18px;
-    font-family: 'VT323';
-    font-size: 1.2rem;
-    border-radius: 10px;
-    background: rgba(255,255,255,0.1);
-    border: 2px solid rgba(255,204,102,0.4);
-    color: white;
-    outline: none;
-    transition: background 0.25s, transform 0.25s, box-shadow 0.25s;
-}
-
-#search-box:hover {
-    transform: scale(1.06);
-    background: rgba(255,204,102,0.2);
-    box-shadow: 0 0 12px rgba(255,204,102,0.7);
-}
-
-#search-box:focus {
-    background: rgba(255,204,102,0.25);
-    border-color: #ffcc66;
-    box-shadow: 0 0 18px rgba(255,204,102,0.9);
-}
-
-#search-box::placeholder {
-    color: rgba(200,200,200,0.7);
-}
-
-/* ============================================================
    9 — COPY BUTTON (TIP SECTION)
    ============================================================ */
 
@@ -460,21 +479,21 @@ ul.icon-grid li a:hover .icon-text {
 }
 
 /* ============================================================
-   10 — LINK STYLE (inside Contact; "BSVhub")
+   10 – LINK STYLE (inside Contact; "BSVhub")
    ============================================================ */
 .header-tab-text a {
-    color: #00ff88;
-    font-weight: bold;
-    text-decoration: none;
-    background: rgba(0, 0, 0, 0.3);
-    padding: 4px 10px;
-    border-radius: 6px;
-    transition: color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+    color: #FF6600;                  /* orange link color */
+    font-weight: normal;             /* remove bold */
+    text-decoration: none;           /* no underline */
+    background: transparent;         /* remove background */
+    padding: 0;                      /* remove padding */
+    border-radius: 0;                /* remove rounded corners */
+    transition: color 0.25s ease;
 }
 
 .header-tab-text a:hover,
 .header-tab-text a:focus {
-    color: #ffffff;
-    background: rgba(0, 0, 0, 0.45);
-    box-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
+    background: transparent;         /* no background */
+    box-shadow: none;                /* no glow */
+    text-decoration: underline;      /* underline on hover */
 }

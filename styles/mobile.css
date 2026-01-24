@@ -26,7 +26,10 @@
     --top-ui-shadow: rgba(0,0,0,0.7);
     
     /* ⭐ MOBILE SCALE FACTOR - CHANGE THIS ONE VALUE TO SCALE EVERYTHING */
-    --mobile-scale: 1.8;
+    --mobile-scale: 1.6;
+    
+    /* ⭐ HEADER SECTIONS SCALE (About, Tip, Contact) - separate from main content */
+    --header-section-scale: 1;  /* adjust this value (try 1.0 to 1.5) */
 }
 
 html {
@@ -223,7 +226,7 @@ html, body {
 }
 
 #search-box:hover {
-  transform: scale(1.06);
+  transform: scale(1.0);
   background: rgba(255,204,102,0.2);
   box-shadow: 0 0 12px rgba(255,204,102,0.7);
 }
@@ -479,9 +482,33 @@ ul.icon-grid li a.mobile-selected {
 ============================================================ */
 
 /* ============================================================
-   MOBILE HEADER BUTTONS — SIZE + HOVER EFFECT
+   HEADER SECTIONS â€" SEPARATE SCALE (About / Tip / Contact)
    ============================================================ */
 
+.header-tab-content {
+    font-size: calc(1rem * var(--header-section-scale));
+}
+
+.header-tab-content .header-tab-text {
+    font-size: calc(2rem * var(--header-section-scale));
+}
+
+.header-tab-content .copy-btn {
+    font-size: calc(1.4rem * var(--header-section-scale));
+    padding: calc(8px * var(--header-section-scale)) calc(14px * var(--header-section-scale));
+}
+
+.header-tab-content a {
+    font-size: inherit; /* inherits from parent */
+}
+
+
+
+
+
+/* ============================================================
+   MOBILE HEADER BUTTONS — SIZE + HOVER EFFECT
+   ============================================================ */
 /* Header buttons */
 .header-icons .header-text-link {
     font-size: calc(1.4rem * var(--mobile-scale));  /* MULTIPLY */
