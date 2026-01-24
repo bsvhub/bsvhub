@@ -3,7 +3,7 @@
     "about": {
       "class": "tab-content header-tab-content",
       "html": "<div class='header-tab-text'>Number of visitors: <span id='visit-counter' style='pointer-events:none;'></span></div><div>Last update: <span id='last-update-date'>23th Jan. 2026</span></div>",
-      "lastUpdate": "23th Jan. 2026"
+      "lastUpdate": "24th Jan. 2026"
     },
     "tip": {
       "class": "tab-content header-tab-content",
@@ -407,7 +407,7 @@
       "info": "new.png;;;"
     },
     {
-      "tab": "apps",
+      "tab": "apps;social",
       "href": "https://treechat.ai",
       "tooltip": "Social network on BSV, alternative to X (Twitter)",
       "img": "icon/treechat.png",
@@ -437,7 +437,7 @@
       "info": ";;;"
     },
     {
-      "tab": "apps",
+      "tab": "apps;videos",
       "href": "https://bsvtube.com/",
       "tooltip": "Video platform on chain",
       "img": "icon/bsvtube.svg",
@@ -445,6 +445,77 @@
       "alt": "videos upload tip",
       "text": "BSVTube",
       "info": "new.png;;;"
+    },
+    {
+      "tab": "apps",
+      "href": "https://authsig.metanet.app/",
+      "tooltip": "You can't tell if content is AI anymore — but you can check who's willing to put their name on it.",
+      "img": "icon/bsv.png",
+      "zoom": "1.4",
+      "alt": "sign authanticate",
+      "text": "AuthSig",
+      "info": "new.png;;;"
+    },
+    {
+      "tab": "apps",
+      "href": "https://everdraw.art/",
+      "tooltip": "Draw on blockchain",
+      "img": "icon/everdraw.png",
+      "zoom": "0.85",
+      "alt": "pixel art",
+      "text": "Everdraw",
+      "info": "new.png;;;"
+    },
+    {
+      "tab": "apps",
+      "href": "https://pixelwar.click/",
+      "tooltip": "Create pixel art on blockchain, interact with others on same canves",
+      "img": "icon/pixelwar.png",
+      "zoom": "0.85",
+      "alt": "pixelart",
+      "text": "PixelWar",
+      "info": "new.png;;;"
+    },
+    {
+      "tab": "docs",
+      "href": "https://go.projectbabbage.com/",
+      "tooltip": "Info for creating apps on BRC-100; turn your app into revenue",
+      "img": "icon/babbage.png",
+      "zoom": "2",
+      "alt": "documentation script",
+      "text": "Babbage Go",
+      "info": "new.png;;;"
+    },
+    {
+      "tab": "apps;docs",
+      "href": "https://traceport.io/",
+      "tooltip": "1. Submit your data, 2. Hash it client-side, 3. Verification when you need it",
+      "img": "icon/traceport.svg",
+      "zoom": "0.95",
+      "alt": "independent verification",
+      "text": "Traceport",
+      "info": "new.png;;;"
+    },
+    {
+      "tab": "apps;social",
+      "href": "https://microblog.bitspv.com/",
+      "tooltip": "Public forum; can post info/ideas and recive likes and tips",
+      "img": "icon/bsv.png",
+      "zoom": "1.4",
+      "alt": "decentralizes decentalised",
+      "text": "Metanet Microblog",
+      "info": "new.png;;;"
+    },
+    {
+      "tab": "apps;social",
+      "href": "https://zanaadu.com/",
+      "tooltip": "A Social Web Unchained",
+      "img": "icon/zanaadu.png",
+      "zoom": "1.3",
+      "alt": "decentralizes decentalised social media",
+      "text": "Zanaadu",
+      "info": "new.png;;beta.png;"
     }
+    
   ]
 }
