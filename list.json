@@ -23,14 +23,14 @@
       "zoom": "1.2",
       "alt": "nft tool app",
       "text": "3D Ordi",
-      "info": "new.png;;;"
+      "info": "new.svg;;;"
     },
     {
       "tab": "bsv;docs",
       "href": "https://bsvassociation.org/",
       "tooltip": "Guardians of the BSV protocol",
-      "img": "icon/bsv.png",
-      "zoom": "1.4",
+      "img": "icon/bsv.svg",
+      "zoom": "0.9",
       "alt": "BSV Association",
       "text": "BSV Association",
       "info": ";;;"
@@ -39,8 +39,8 @@
       "tab": "bsv;docs",
       "href": "https://hub.bsvblockchain.org/",
       "tooltip": "BSV Hub: wide array of resources to meet diverse needs, from technical details to real-world uses.",
-      "img": "icon/bsv.png",
-      "zoom": "1.4",
+      "img": "icon/bsv.svg",
+      "zoom": "0.9",
       "alt": "documents resources links code skills",
       "text": "BSV Hub",
       "info": ";;;"
@@ -49,8 +49,8 @@
       "tab": "videos",
       "href": "https://www.youtube.com/@BSVsearch/videos",
       "tooltip": "Info on how to use BSV in business, everyday life; try out BSV apps, wallets, websites; discuss BSV news and stories, and more...",
-      "img": "icon/video.png",
-      "zoom": "1.4",
+      "img": "icon/video.svg",
+      "zoom": "0.9",
       "alt": "BSV Search on YouTube",
       "text": "BSV Search",
       "info": ";;;"
@@ -59,8 +59,8 @@
       "tab": "bsv;docs",
       "href": "https://bsvblockchain.org/",
       "tooltip": "Official BSV pages",
-      "img": "icon/bsv.png",
-      "zoom": "1.4",
+      "img": "icon/bsv.svg",
+      "zoom": "0.9",
       "alt": "bsvblockchain.org",
       "text": "bsvblockchain.org",
       "info": ";;;"
@@ -69,8 +69,8 @@
       "tab": "bsv;docs",
       "href": "https://bsvdevs.com/",
       "tooltip": "A directory for devs and users alike. Enabling a one stop shop for great Bitcoin SV projects, tools, and resources.",
-      "img": "icon/bsv.png",
-      "zoom": "1.4",
+      "img": "icon/bsv.svg",
+      "zoom": "0.9",
       "alt": "documents script source code",
       "text": "bsvdevs.com",
       "info": ";;;"
@@ -89,8 +89,8 @@
       "tab": "videos",
       "href": "https://www.youtube.com/@CoinGeek/videos",
       "tooltip": "CoinGeek YouTube channel, all about Bitcoin and blockchain technologies.",
-      "img": "icon/video.png",
-      "zoom": "1.4",
+      "img": "icon/video.svg",
+      "zoom": "0.9",
       "alt": "CoinGeek on YouTube",
       "text": "CoinGeek",
       "info": ";;;"
@@ -109,8 +109,8 @@
       "tab": "videos",
       "href": "https://www.youtube.com/@Cryptoismyretirement/videos",
       "tooltip": "Just some guy on YouTube that talks a lot about BSV and makes some valid points.",
-      "img": "icon/video.png",
-      "zoom": "1.4",
+      "img": "icon/video.svg",
+      "zoom": "0.9",
       "alt": "Cryptoismyretirement",
       "text": "Cryptoismyretirement",
       "info": ";;;"
@@ -159,8 +159,8 @@
       "tab": "videos",
       "href": "https://www.youtube.com/@GavinMehl/videos",
       "tooltip": "Gavin Mehl talks about Bitcoin SV, health and law",
-      "img": "icon/video.png",
-      "zoom": "1.4",
+      "img": "icon/video.svg",
+      "zoom": "0.9",
       "alt": "Gavin Mehl",
       "text": "Gavin Mehl",
       "info": ";;;"
@@ -213,7 +213,7 @@
       "zoom": "0.9",
       "alt": "Kate Mosso",
       "text": "Kate Mosso",
-      "info": "new.png;;;"
+      "info": "new.svg;;;"
     },
     {
       "tab": "social",
@@ -243,7 +243,7 @@
       "zoom": "1.1",
       "alt": "Exchange swap",
       "text": "KYC.RIP",
-      "info": "new.png;;;"
+      "info": "new.svg;;;"
     },
     {
       "tab": "apps",
@@ -253,7 +253,7 @@
       "zoom": "1.2",
       "alt": "Metanet Apps",
       "text": "Metanet Apps",
-      "info": "new.png;;;"
+      "info": "new.svg;;;"
     },
     {
       "tab": "wallets",
@@ -263,17 +263,17 @@
       "zoom": "1.2",
       "alt": "apps wallet",
       "text": "Metanet Wallet",
-      "info": "new.png;;;"
+      "info": "new.svg;;;"
     },
     {
       "tab": "bsv",
       "href": "https://mybsv.io",
       "tooltip": "MyBSV.io: an on-chain wallet and more",
       "img": "icon/bsv.png",
-      "zoom": "1.4",
+      "zoom": "0.9",
       "alt": "MyBSV.io",
       "text": "MyBSV.io",
-      "info": "new.png;;;"
+      "info": "new.svg;;;"
     },
     {
       "tab": "bsv",
@@ -289,11 +289,11 @@
       "tab": "social",
       "href": "https://x.com/ProjectBabbage",
       "tooltip": "Project Babbage: Our goal is to create a more efficient, scalable, and secure internet by empowering users to own their own identities and data.",
-      "img": "icon/babbage.png",
-      "zoom": "2.0",
+      "img": "icon/babbage.svg",
+      "zoom": "0.9",
       "alt": "BSV BRC 100",
       "text": "Project Babbage",
-      "info": ";;twitter.png;"
+      "info": ";;twitter.svg;"
     },
     {
       "tab": "social",
@@ -303,14 +303,14 @@
       "zoom": "0.9",
       "alt": "Kate Mosso",
       "text": "@Kate_L_Mosso",
-      "info": "new.png;;twitter.png;"
+      "info": "new.svg;;twitter.svg;"
     },
     {
       "tab": "videos",
       "href": "https://www.youtube.com/@ProjectBabbage/videos",
       "tooltip": "Project Babbage: Our goal is to create a more efficient, scalable, and secure internet by empowering users to own their own identities and data.",
-      "img": "icon/babbage.png",
-      "zoom": "2.0",
+      "img": "icon/babbage.svg",
+      "zoom": "0.9",
       "alt": "blockchain identity brc 100",
       "text": "Project Babbage",
       "info": ";;;"
@@ -333,7 +333,7 @@
       "zoom": "0.9",
       "alt": "BSV Bitcoin Monero Privacy",
       "text": "Rafael LaVerde",
-      "info": ";;twitter.png;"
+      "info": ";;twitter.svg;"
     },
     {
       "tab": "social",
@@ -343,24 +343,24 @@
       "zoom": "0.9",
       "alt": "BSV Bitcoin",
       "text": "$SirToshi",
-      "info": ";;twitter.png;"
+      "info": ";;twitter.svg;"
     },
     {
-      "tab": "tools;apps",
+      "tab": "tools;docs",
       "href": "https://app.reactonchain.com",
       "tooltip": "React Onchain; currently in beta, helps with deployment of apps on the blockchan",
-      "img": "icon/bsv.png",
-      "zoom": "1.4",
+      "img": "icon/bsv.svg",
+      "zoom": "0.9",
       "alt": "code onchan coding programming",
       "text": "React Onchain",
-      "info": "new.png;;;"
+      "info": "new.svg;;beta.svg;"
     },
     {
       "tab": "videos",
       "href": "https://www.youtube.com/@Satoshi_VisionTv/videos",
       "tooltip": "Another Youtuber providing some BSV related content.",
-      "img": "icon/video.png",
-      "zoom": "1.4",
+      "img": "icon/video.svg",
+      "zoom": "0.9",
       "alt": "Satoshi Vision on YouTube",
       "text": "Satoshi Vision",
       "info": ";;;"
@@ -403,7 +403,7 @@
       "zoom": "1.2",
       "alt": "Atomic Swaps buy",
       "text": "SwapLobby: Atomic Swaps",
-      "info": "new.png;;;"
+      "info": "new.svg;;;"
     },
     {
       "tab": "apps;social",
@@ -443,27 +443,27 @@
       "zoom": "0.85",
       "alt": "videos upload tip",
       "text": "BSVTube",
-      "info": "new.png;;;"
+      "info": "new.svg;;;"
     },
     {
       "tab": "apps",
       "href": "https://authsig.metanet.app/",
       "tooltip": "You can't tell if content is AI anymore — but you can check who's willing to put their name on it.",
-      "img": "icon/bsv.png",
-      "zoom": "1.4",
+      "img": "icon/authsig.svg",
+      "zoom": "0.8",
       "alt": "sign authanticate",
       "text": "AuthSig",
-      "info": "new.png;;;"
+      "info": "new.svg;;;"
     },
     {
       "tab": "apps",
       "href": "https://everdraw.art/",
       "tooltip": "A professional open-source drawing application with blockchain-backed artwork ownership.",
-      "img": "icon/everdraw.png",
-      "zoom": "0.85",
+      "img": "icon/bsv.svg",
+      "zoom": "0.9",
       "alt": "pixel art",
       "text": "Everdraw",
-      "info": "new.png;;;"
+      "info": "new.svg;;;"
     },
     {
       "tab": "apps",
@@ -473,17 +473,17 @@
       "zoom": "0.85",
       "alt": "pixelart",
       "text": "PixelWar",
-      "info": "new.png;;;"
+      "info": "new.svg;;;"
     },
     {
       "tab": "docs",
       "href": "https://go.projectbabbage.com/",
       "tooltip": "Info for creating apps on BRC-100; turn your app into revenue",
-      "img": "icon/babbage.png",
-      "zoom": "2",
+      "img": "icon/babbage.svg",
+      "zoom": "0.9",
       "alt": "documentation script",
       "text": "Babbage Go",
-      "info": "new.png;;;"
+      "info": "new.svg;;;"
     },
     {
       "tab": "apps;docs",
@@ -493,44 +493,44 @@
       "zoom": "0.95",
       "alt": "independent verification",
       "text": "Traceport",
-      "info": "new.png;;;"
+      "info": "new.svg;;;"
     },
     {
       "tab": "apps;social",
       "href": "https://microblog.bitspv.com/",
       "tooltip": "Public forum; can post info/ideas and recive likes and tips",
-      "img": "icon/bsv.png",
-      "zoom": "1.4",
+      "img": "icon/bsv.svg",
+      "zoom": "0.9",
       "alt": "decentralizes decentalised",
       "text": "Metanet Microblog",
-      "info": "new.png;;;"
+      "info": "new.svg;;;"
     },
     {
       "tab": "apps;social",
       "href": "https://zanaadu.com/",
       "tooltip": "A Social Web Unchained",
-      "img": "icon/zanaadu.png",
-      "zoom": "1.3",
+      "img": "icon/zanaadu.svg",
+      "zoom": "0.9",
       "alt": "decentralizes decentalised social media",
       "text": "Zanaadu",
-      "info": "new.png;;beta.png;"
+      "info": "new.svg;;beta.svg;"
     },
     {
       "tab": "apps",
       "href": "https://bitgenius.net/",
       "tooltip": "Your intelligent assistant.",
-      "img": "icon/bsv.png",
-      "zoom": "1.4",
+      "img": "icon/bsv.svg",
+      "zoom": "0.9",
       "alt": "ai",
       "text": "Genius System",
-      "info": "new.png;;;"
+      "info": "new.svg;;;"
     },
     {
       "tab": "docs",
       "href": "https://bsvhackathon.com/",
       "tooltip": "Hackathon info, events, registration",
-      "img": "icon/bsv.png",
-      "zoom": "1.4",
+      "img": "icon/bsv.svg",
+      "zoom": "0.9",
       "alt": "devs win prise competition",
       "text": "BSV Hackathon",
       "info": ";;;"
@@ -543,7 +543,7 @@
       "zoom": "0.9",
       "alt": "documentation inscraction script coding",
       "text": "Metanet Academy",
-      "info": "new.png;;;"
+      "info": "new.svg;;;"
     }
     
     
