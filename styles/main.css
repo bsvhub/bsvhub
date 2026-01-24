@@ -428,11 +428,13 @@ ul.icon-grid li a:hover .icon-wrapper img:not([class*="icon-badge-pos"]) {
     line-height: 1.2;
     color: #EAB300;
     pointer-events: none;
+    background-color: rgba(0, 0, 0, 0.2);
     transition: color 0.2s ease, transform 0.2s ease;
 }
 /* Add this new rule for hover */
 ul.icon-grid li a:hover .icon-text {
     color: #FF6600;
+    background-color: rgba(0, 0, 0, 0.4);
     transform: scale(1.15);
 }
 
