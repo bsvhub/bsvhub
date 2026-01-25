@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   version="1.1"
+   id="_x32_"
+   viewBox="0 0 512 512"
+   xml:space="preserve"
+   sodipodi:docname="metanet.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs27"><linearGradient
+     inkscape:collect="always"
+     id="linearGradient18688"><stop
+       style="stop-color:#2a0dff;stop-opacity:1;"
+       offset="0"
+       id="stop18684" /><stop
+       style="stop-color:#cc00cc;stop-opacity:0.99607843;"
+       offset="0.5"
+       id="stop19420" /></linearGradient><linearGradient
+     inkscape:collect="always"
+     xlink:href="#linearGradient18688"
+     id="linearGradient20878"
+     x1="61.945759"
+     y1="201.40961"
+     x2="458.61774"
+     y2="201.40961"
+     gradientUnits="userSpaceOnUse"
+     gradientTransform="matrix(1.3456411,0,0,1.3456412,-71.989367,-31.738398)" /></defs><sodipodi:namedview
+   id="namedview25"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#d1d1d1"
+   showgrid="false"
+   inkscape:zoom="1.198767"
+   inkscape:cx="262.3529"
+   inkscape:cy="274.44866"
+   inkscape:window-width="1880"
+   inkscape:window-height="1056"
+   inkscape:window-x="40"
+   inkscape:window-y="0"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="_x32_" />
+<style
+   type="text/css"
+   id="style2">
+	.st0{fill:#000000;}
+</style>
+
+<text
+   xml:space="preserve"
+   style="font-weight:bold;font-size:129.181px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';text-align:center;text-anchor:middle;fill:url(#linearGradient20878);fill-opacity:1;fill-rule:nonzero;stroke-width:1.34564"
+   x="266.62863"
+   y="284.75851"
+   id="text8451"
+   transform="scale(0.94832808,1.0544874)"><tspan
+     sodipodi:role="line"
+     id="tspan8449"
+     x="266.62863"
+     y="284.75851"
+     style="text-align:center;text-anchor:middle;fill:url(#linearGradient20878);fill-opacity:1;fill-rule:nonzero;stroke-width:1.34564">Metanet</tspan></text></svg>
