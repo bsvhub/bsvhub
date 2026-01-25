@@ -269,8 +269,8 @@
       "tab": "bsv",
       "href": "https://mybsv.io",
       "tooltip": "MyBSV.io: an on-chain wallet and more",
-      "img": "icon/",
-      "zoom": "1.5",
+      "img": "icon/bsv.svg",
+      "zoom": "0.9",
       "alt": "MyBSV.io",
       "text": "MyBSV.io",
       "info": "new.svg;;;"
@@ -349,8 +349,8 @@
       "tab": "tools;docs",
       "href": "https://app.reactonchain.com",
       "tooltip": "React Onchain; currently in beta, helps with deployment of apps on the blockchan",
-      "img": "icon/",
-      "zoom": "6",
+      "img": "icon/bsv.svg",
+      "zoom": "0.9",
       "alt": ".</>",
       "text": "React Onchain",
       "info": "new.svg;;beta.svg;"
