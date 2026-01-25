@@ -120,7 +120,7 @@
       "href": "https://electrumsv.io",
       "tooltip": "Classic desktop wallet for Windows/Mac/Linux",
       "img": "icon/electrumsv.svg",
-      "zoom": "1.8",
+      "zoom": "1.6",
       "alt": "classic old legacy",
       "text": "Wallet",
       "info": ";;;"
@@ -200,7 +200,7 @@
       "href": "https://handcash.io/",
       "tooltip": "Mobile-friendly BSV wallet with Apps",
       "img": "icon/handcash.svg",
-      "zoom": "1.6",
+      "zoom": "1.45",
       "alt": "apps",
       "text": "Handcash Wallet",
       "info": ";;;"
@@ -270,7 +270,7 @@
       "href": "https://mybsv.io",
       "tooltip": "MyBSV.io: an on-chain wallet and more",
       "img": "icon/mybsv.svg",
-      "zoom": "1.8",
+      "zoom": "1.6",
       "alt": "MyBSV.io",
       "text": "MyBSV.io",
       "info": "new.svg;;;"
@@ -450,7 +450,7 @@
       "href": "https://authsig.metanet.app/",
       "tooltip": "You can't tell if content is AI anymore — but you can check who's willing to put their name on it.",
       "img": "icon/authsig.svg",
-      "zoom": "1.5",
+      "zoom": "1.3",
       "alt": "sign authanticate",
       "text": "AuthSig",
       "info": "new.svg;;;"
@@ -500,7 +500,7 @@
       "href": "https://microblog.bitspv.com/",
       "tooltip": "Public forum; can post info/ideas and recive likes and tips",
       "img": "icon/blog.svg",
-      "zoom": "1.7",
+      "zoom": "1.4",
       "alt": "decentralizes decentalised",
       "text": "Metanet Microblog",
       "info": "new.svg;;;"
@@ -560,7 +560,7 @@
       "href": "https://bsvgolf.com/",
       "tooltip": "Golf Tournament Software onchain",
       "img": "icon/bsvgolf.svg",
-      "zoom": "1.7",
+      "zoom": "1.5",
       "alt": "Live scoring, leaderboards, AI caddy, 170+ player events",
       "text": "BSVGolf",
       "info": "new.svg;;;"
