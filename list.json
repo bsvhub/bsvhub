@@ -269,8 +269,8 @@
       "tab": "bsv",
       "href": "https://mybsv.io",
       "tooltip": "MyBSV.io: an on-chain wallet and more",
-      "img": "icon/bsv.png",
-      "zoom": "0.9",
+      "img": "icon/",
+      "zoom": "2",
       "alt": "MyBSV.io",
       "text": "MyBSV.io",
       "info": "new.svg;;;"
