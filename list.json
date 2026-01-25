@@ -450,7 +450,7 @@
       "href": "https://authsig.metanet.app/",
       "tooltip": "You can't tell if content is AI anymore — but you can check who's willing to put their name on it.",
       "img": "icon/authsig.svg",
-      "zoom": "1.3",
+      "zoom": "1.0",
       "alt": "sign authanticate",
       "text": "AuthSig",
       "info": "new.svg;;;"
