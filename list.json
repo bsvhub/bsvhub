@@ -53,7 +53,7 @@
       "zoom": "0.9",
       "alt": "BSV Search on YouTube",
       "text": "BSV Search",
-      "info": ";;;"
+      "info": ";;yt.svg;"
     },
     {
       "tab": "bsv;docs",
@@ -93,7 +93,7 @@
       "zoom": "0.9",
       "alt": "CoinGeek on YouTube",
       "text": "CoinGeek",
-      "info": ";;;"
+      "info": ";;yt.svg;"
     },
     {
       "tab": "exchange",
@@ -113,7 +113,7 @@
       "zoom": "0.9",
       "alt": "Cryptoismyretirement",
       "text": "Cryptoismyretirement",
-      "info": ";;;"
+      "info": ";;yt.svg;"
     },
     {
       "tab": "wallets",
@@ -163,7 +163,7 @@
       "zoom": "0.9",
       "alt": "Gavin Mehl",
       "text": "Gavin Mehl",
-      "info": ";;;"
+      "info": ";;yt.svg;"
     },
     {
       "tab": "exchange",
@@ -213,7 +213,7 @@
       "zoom": "0.9",
       "alt": "Kate Mosso",
       "text": "Kate Mosso",
-      "info": "new.svg;;;"
+      "info": "new.svg;;yt.svg;"
     },
     {
       "tab": "social",
@@ -233,7 +233,7 @@
       "zoom": "1.1",
       "alt": "Kurt Wuckert Jr streams",
       "text": "Kurt Wuckert Jr streams",
-      "info": ";;;"
+      "info": ";;yt.svg;"
     },
     {
       "tab": "exchange",
@@ -313,7 +313,7 @@
       "zoom": "0.9",
       "alt": "blockchain identity brc 100",
       "text": "Project Babbage",
-      "info": ";;;"
+      "info": ";;yt.svg;"
     },
     {
       "tab": "docs",
@@ -339,7 +339,7 @@
       "tab": "social",
       "href": "https://x.com/SirToshiTV",
       "tooltip": "$SirToshi: Đefender ✪f ₿itcoin",
-      "img": "social/sirtoshi.svg",
+      "img": "social/sirtoshi.png",
       "zoom": "0.9",
       "alt": "BSV Bitcoin",
       "text": "$SirToshi",
@@ -363,7 +363,7 @@
       "zoom": "0.9",
       "alt": "Satoshi Vision on YouTube",
       "text": "Satoshi Vision",
-      "info": ";;;"
+      "info": ";;yt.svg;"
     },
     {
       "tab": "videos",
@@ -373,7 +373,7 @@
       "zoom": "0.9",
       "alt": "SirToshi on YouTube",
       "text": "SirToshi",
-      "info": ";;;"
+      "info": ";;yt.svg;"
     },
     {
       "tab": "videos",
@@ -383,7 +383,7 @@
       "zoom": "0.9",
       "alt": "tech onchain",
       "text": "Bridget D",
-      "info": ";;;"
+      "info": ";;yt.svg;"
     },
     {
       "tab": "apps",
