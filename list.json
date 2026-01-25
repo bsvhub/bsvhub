@@ -339,7 +339,7 @@
       "tab": "social",
       "href": "https://x.com/SirToshiTV",
       "tooltip": "$SirToshi: Đefender ✪f ₿itcoin",
-      "img": "social/sirtoshi.png",
+      "img": "icon/react.svg",
       "zoom": "0.9",
       "alt": "BSV Bitcoin",
       "text": "$SirToshi",
@@ -351,7 +351,7 @@
       "tooltip": "React Onchain; currently in beta, helps with deployment of apps on the blockchan",
       "img": "icon/react.svg",
       "zoom": "0.9",
-      "alt": "React-Onchain",
+      "alt": "developer tool",
       "text": "React-Onchain",
       "info": "new.svg;;beta.svg;"
     },
