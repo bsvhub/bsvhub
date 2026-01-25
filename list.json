@@ -270,7 +270,7 @@
       "href": "https://mybsv.io",
       "tooltip": "MyBSV.io: an on-chain wallet and more",
       "img": "icon/",
-      "zoom": "2",
+      "zoom": "1.5",
       "alt": "MyBSV.io",
       "text": "MyBSV.io",
       "info": "new.svg;;;"
@@ -350,7 +350,7 @@
       "href": "https://app.reactonchain.com",
       "tooltip": "React Onchain; currently in beta, helps with deployment of apps on the blockchan",
       "img": "icon/",
-      "zoom": "12",
+      "zoom": "6",
       "alt": ".</>",
       "text": "React Onchain",
       "info": "new.svg;;beta.svg;"
