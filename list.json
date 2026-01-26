@@ -50,7 +50,7 @@
       "href": "https://www.youtube.com/@BSVsearch/videos",
       "tooltip": "Info on how to use BSV in business, everyday life; try out BSV apps, wallets, websites; discuss BSV news and stories, and more...",
       "img": "social/bsvsearch.svg",
-      "zoom": "0.9",
+      "zoom": "1",
       "alt": "BSV Search on YouTube",
       "text": "BSV Search",
       "info": ";;yt.svg;"
@@ -490,7 +490,7 @@
       "href": "https://traceport.io/",
       "tooltip": "1. Submit your data, 2. Hash it client-side, 3. Verification when you need it",
       "img": "icon/traceport.svg",
-      "zoom": "1.1",
+      "zoom": "1.3",
       "alt": "independent verification",
       "text": "Traceport",
       "info": "new.svg;;;"
