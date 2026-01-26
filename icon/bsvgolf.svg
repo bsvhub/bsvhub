@@ -41,7 +41,8 @@
          rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><g
      id="Template"
-     style="fill:none;stroke:black;stroke-width:0.05"><text
+     style="fill:none;stroke:#000000;stroke-width:0.05"
+     transform="matrix(0.96503974,0,0,1.0464091,0.34516308,-0.20499039)"><text
        xml:space="preserve"
        style="font-weight:bold;font-size:32.8204px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';text-align:center;text-anchor:middle;fill:#008000;stroke-width:0.0143113"
        x="-2.2968156"
