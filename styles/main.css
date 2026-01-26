@@ -42,18 +42,29 @@
 /* ============================================================
    1 — GLOBAL / RESET / BASE FONTS
    ============================================================ */
-
+@font-face {
+    font-family: 'vt323';
+    src: url('assets/vt323.ttf') format('truetype');
+}
 @font-face {
     font-family: 'dotm';
     src: url('assets/dotm.ttf') format('truetype');
 }
 @font-face {
-    font-family: 'monoid';
-    src: url('assets/monoid.ttf') format('truetype');
+    font-family: 'dotmb';
+    src: url('assets/dotmb.ttf') format('truetype');
 }
 @font-face {
-    font-family: 'monoidb';
-    src: url('assets/monoidb.ttf') format('truetype');
+    font-family: 'jb';
+    src: url('assets/jetbrains.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'jbm';
+    src: url('assets/jetbrainsm.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'jbb';
+    src: url('assets/jetbrainsb.ttf') format('truetype');
 }
 
 :root {
@@ -61,11 +72,11 @@
     --top-ui-shadow: rgba(0,0,0,0.7);
     
     /* Font definitions for each section */
-    --font-header: 'dotm', monospace;
-    --font-tab: 'monoid', monospace;
-    --font-tooltip: 'dotm', monospace;
-    --font-icon-grid: 'dotm', monospace;
-    --font-header-content: 'VT323', monospace;  /* ADD THIS LINE */
+    --font-header: 'dotmb', monospace;
+    --font-tab: 'jbm', monospace;
+    --font-tooltip: 'jb', monospace;
+    --font-icon-grid: 'jb', monospace;
+    --font-header-content: 'vt323', monospace;  /* ADD THIS LINE */
 }
 
 html {
