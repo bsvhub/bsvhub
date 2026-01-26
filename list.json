@@ -359,7 +359,7 @@
       "tab": "videos",
       "href": "https://www.youtube.com/@Satoshi_VisionTv/videos",
       "tooltip": "Another Youtuber providing some BSV related content.",
-      "img": "icon/video.svg",
+      "img": "social/svtv.png",
       "zoom": "0.9",
       "alt": "Satoshi Vision on YouTube",
       "text": "Satoshi Vision",
@@ -490,7 +490,7 @@
       "href": "https://traceport.io/",
       "tooltip": "1. Submit your data, 2. Hash it client-side, 3. Verification when you need it",
       "img": "icon/traceport.svg",
-      "zoom": "0.95",
+      "zoom": "1.1",
       "alt": "independent verification",
       "text": "Traceport",
       "info": "new.svg;;;"
@@ -560,7 +560,7 @@
       "href": "https://bsvgolf.com/",
       "tooltip": "Golf Tournament Software onchain",
       "img": "icon/bsvgolf.svg",
-      "zoom": "1.5",
+      "zoom": "1.0",
       "alt": "Live scoring, leaderboards, AI caddy, 170+ player events",
       "text": "BSVGolf",
       "info": "new.svg;;;"

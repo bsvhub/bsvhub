@@ -44,15 +44,15 @@
     <!-- HEADER -->
     <header class="header-container">
         <div class="header-icons header-icons-left">
-            <a href="#" data-target="about-section" class="header-text-link">About</a>
-            <a href="#" data-target="tip-section" class="header-text-link">Tip</a>
+            <a href="#" data-target="about-section" class="header-text-link"><span>About</span></a>
+            <a href="#" data-target="tip-section" class="header-text-link"><span>Tip</span></a>
         </div>
 
         <h1 class="header-title">₿SVhub.io</h1>
 
         <div class="header-icons header-icons-right">
-			<a href="#" data-target="contact-section" class="header-text-link">Contact</a>
-            <a href="#" id="mobile-toggle" class="header-text-link">mobile</a>
+			<a href="#" data-target="contact-section" class="header-text-link"><span>Contact</span></a>
+            <a href="#" id="mobile-toggle" class="header-text-link"><span>mobile</span></a>
             
         </div>
     </header>
@@ -69,15 +69,7 @@
         <button class="tab-btn" data-target="docs"><span>Tech Docs</span></button>
         <button class="tab-btn" data-target="social"><span>Social Media</span></button>
         <button class="tab-btn" data-target="videos"><span>Videos</span></button>
-        <!--button class="tab-btn" data-target="tools">Tools</!--button>
-        <button class="tab-btn" data-target="apps">Apps</button>
-        <button class="tab-btn" data-target="wallets">Wallets</button>
-        <button class="tab-btn" data-target="exchange">Buy BSV</button>
-        <button class="tab-btn" data-target="bsv">BSV Main Sites</button>
-        <button class="tab-btn" data-target="docs">Documents</button>
-        <button class="tab-btn" data-target="social">Social Media</button>
-        <button class="tab-btn" data-target="videos">Videos</button-->
-
+       
         <div class="search-container">
             <input id="search-box" type="text" placeholder="search here">
         </div>
@@ -763,7 +755,7 @@ function restoreUIState(state) {
 // ---------------------
 function enableMobileMode(state) {
   mobileCSS.href = "styles/mobile.css";        // begin loading mobile CSS
-  mobileToggle.textContent = "desktop";
+  mobileToggle.querySelector('span').textContent = "desktop";
   localStorage.setItem("ui-mode", "mobile");
 
   // Flush layout queue
@@ -783,7 +775,7 @@ function enableMobileMode(state) {
 
 function disableMobileMode(state) {
   mobileCSS.href = "";                         // remove mobile CSS
-  mobileToggle.textContent = "mobile";
+  mobileToggle.querySelector('span').textContent = "mobile";
   localStorage.setItem("ui-mode", "desktop");
 
   void document.body.offsetHeight;
