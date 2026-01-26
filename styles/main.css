@@ -44,14 +44,28 @@
    ============================================================ */
 
 @font-face {
-    font-family: 'VT323';
-    src: url('assets/dot_font.ttf') format('truetype');
+    font-family: 'dotm';
+    src: url('assets/dotm.ttf') format('truetype');
 }
-
+@font-face {
+    font-family: 'monoid';
+    src: url('assets/monoid.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'monoidb';
+    src: url('assets/monoidb.ttf') format('truetype');
+}
 
 :root {
     --tooltip-speed: 0.45s;
     --top-ui-shadow: rgba(0,0,0,0.7);
+    
+    /* Font definitions for each section */
+    --font-header: 'dotm', monospace;
+    --font-tab: 'monoid', monospace;
+    --font-tooltip: 'dotm', monospace;
+    --font-icon-grid: 'dotm', monospace;
+    --font-header-content: 'VT323', monospace;  /* ADD THIS LINE */
 }
 
 html {
@@ -67,7 +81,6 @@ html {
 body {
     margin: 0;
     padding: 0;
-    font-family: 'VT323', monospace;
     font-size: 1.2rem;
     letter-spacing: 2px;
     overflow-x: hidden;
@@ -126,7 +139,7 @@ body {
 }
 
 .header-title {
-    font-family: 'VT323', monospace;
+    font-family: var(--font-header);  /* <-- ADD THIS */
     font-size: clamp(1rem, 5vw, 3.2rem);
     justify-self: center;
     white-space: nowrap;
@@ -146,22 +159,35 @@ body {
     justify-content: flex-end;
 }
 
+/* Header buttons settings */
 .header-text-link {
     display: inline-flex;
     align-items: center;
-    padding: 6px 14px;
-    font-size: 1.4rem;
+    padding: 12px 18px;
+    min-height: 32px;
+    font-size: clamp(0.9rem, 2.2vw, 1.3rem);
+    font-family: var(--font-header);  /* <-- ADD THIS */
     color: #ffcc66;
     background: rgba(255,255,255,0.1);
     border-radius: 10px;
     text-decoration: none;
-    transition: background 0.3s, transform 0.3s;
+    transition: background 0.25s;
 }
+
+.header-text-link span {
+    display: inline-block;
+    transition: transform 0.25s;
+}
+
 .header-text-link:hover {
     background: rgba(255,204,102,0.8);
     color: black;
-    transform: scale(1.1);
 }
+
+.header-text-link:hover span {
+    transform: scale(1.3);
+}
+
 .header-text-link.active {
     background: #b8860b;
     color: black;
@@ -182,12 +208,13 @@ body {
     padding: 12px;
     background-color: rgba(25, 25, 25, 0.6);
     box-shadow: none;
+    font-family: var(--font-tab);  /* <-- ADD THIS */
 }
 
 /* Tab buttons and search - unified sizing */
 .tab-bar button,
 #search-box {
-    font-family: 'VT323';
+    font-family: var(--font-tab);  /* <-- ADD THIS */
     font-size: clamp(0.9rem, 2.2vw, 1.3rem);
     padding: 12px 18px;
     min-height: 48px;
@@ -272,8 +299,9 @@ body {
   white-space: normal;
   word-break: break-word;
   overflow-wrap: anywhere;
+  font-family: var(--font-tooltip);  /* <-- ADD THIS */
   font-size: 1.2rem;
-  color: #FF6600;
+  color: #fada4e;
   text-align: center;
   background: rgba(25, 25, 25, 0.6);
   transition: max-height var(--tooltip-speed) ease;
@@ -426,14 +454,16 @@ ul.icon-grid li a:hover .icon-wrapper img:not([class*="icon-badge-pos"]) {
     word-break: break-word;
     padding: 0 16px;
     line-height: 1.2;
-    color: #EAB300;
+    font-family: var(--font-icon-grid);  /* <-- ADD THIS */
+    color: #ffffff;
     pointer-events: none;
     background-color: rgba(0, 0, 0, 0.2);
     transition: color 0.2s ease, transform 0.2s ease;
 }
+
 /* Add this new rule for hover */
 ul.icon-grid li a:hover .icon-text {
-    color: #FF6600;
+    color: #fdfdfd;
     background-color: rgba(0, 0, 0, 0.4);
     transform: scale(1.15);
 }
@@ -443,8 +473,10 @@ ul.icon-grid li a:hover .icon-text {
    7 — HEADER-TAB TEXT SECTIONS (About / Tip / Contact)
    ============================================================ */
 
+/* NEW */
 .header-tab-content {
     text-align: center;
+    font-family: var(--font-header-content);
 }
 
 .header-tab-text {
@@ -452,17 +484,19 @@ ul.icon-grid li a:hover .icon-text {
     font-size: 2rem;
     color: #ffd700;
     text-align: center;
+    font-family: var(--font-header-content);
 }
 
 /* ============================================================
    9 — COPY BUTTON (TIP SECTION)
    ============================================================ */
 
+/* NEW */
 .copy-btn {
     margin-left: 12px;
     padding: 8px 14px;
     font-size: 1.4rem;
-    font-family: 'VT323';
+    font-family: var(--font-header-content);
     background: #ffcc66;
     border: 2px solid #b8860b;
     color: black;
