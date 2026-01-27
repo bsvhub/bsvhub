@@ -268,7 +268,7 @@ body {
    SEARCH BOX (matches tab style)
 ------------------------------------------------------------ */
 #search-box {
-    max-width: 155px;
+    max-width: 180px;
     box-sizing: border-box;
     border-radius: 10px;
     background: rgba(255,255,255,0.1);
