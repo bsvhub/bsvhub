@@ -490,7 +490,7 @@
       "href": "https://traceport.io/",
       "tooltip": "1. Submit your data, 2. Hash it client-side, 3. Verification when you need it",
       "img": "icon/traceport.svg",
-      "zoom": "1.2",
+      "zoom": "1.25",
       "alt": "independent verification",
       "text": "Traceport",
       "info": "new.svg;;;"
