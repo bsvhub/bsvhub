@@ -89,8 +89,8 @@
       "tab": "videos",
       "href": "https://www.youtube.com/@CoinGeek/videos",
       "tooltip": "CoinGeek YouTube channel, all about Bitcoin and blockchain technologies.",
-      "img": "icon/video.svg",
-      "zoom": "0.9",
+      "img": "social/cg.svg",
+      "zoom": "0.95",
       "alt": "CoinGeek on YouTube",
       "text": "CoinGeek",
       "info": ";;yt.svg;"
@@ -109,10 +109,10 @@
       "tab": "videos",
       "href": "https://www.youtube.com/@Cryptoismyretirement/videos",
       "tooltip": "Just some guy on YouTube that talks a lot about BSV and makes some valid points.",
-      "img": "icon/video.svg",
+      "img": "social/cimr.svg",
       "zoom": "0.9",
-      "alt": "Cryptoismyretirement",
-      "text": "Cryptoismyretirement",
+      "alt": "info videos",
+      "text": "Crypto is my Retirement",
       "info": ";;yt.svg;"
     },
     {
@@ -139,8 +139,8 @@
       "tab": "exchange",
       "href": "https://bsvblockchain.org/get-bsv/",
       "tooltip": "Exchanges list provided by bsvblockchain.org; check as some wallets and exchanges no longer work or support BSV",
-      "img": "icon/xlist.png",
-      "zoom": "1.2",
+      "img": "icon/bsv.svg",
+      "zoom": "0.9",
       "alt": "Exchange List",
       "text": "Exchange List",
       "info": ";;;"
@@ -169,10 +169,10 @@
       "tab": "exchange",
       "href": "https://ghostswap.io/",
       "tooltip": "Crypto Swap Exchange, supports BSV, no KYC or account required, has ammount limits",
-      "img": "icon/ghostswap.png",
-      "zoom": "1.2",
-      "alt": "Buy Swap",
-      "text": "GhostSwap: swap crypto",
+      "img": "icon/ghostswap.svg",
+      "zoom": "0.9",
+      "alt": "Buy Swap crypto",
+      "text": "GhostSwap",
       "info": ";;;"
     },
     {
@@ -279,8 +279,8 @@
       "tab": "bsv",
       "href": "https://projectbabbage.com/",
       "tooltip": "Creators of BRC-100 Wallet Standard",
-      "img": "icon/pbabbage.png",
-      "zoom": "1.2",
+      "img": "icon/babbage.svg",
+      "zoom": "0.9",
       "alt": "Project Babbage",
       "text": "Project Babbage",
       "info": ";;;"
@@ -319,8 +319,8 @@
       "tab": "docs",
       "href": "https://docs.projectbabbage.com/docs",
       "tooltip": "documentation for getting started with BSV development.",
-      "img": "icon/babbagedoc.png",
-      "zoom": "1.2",
+      "img": "icon/babbage.svg",
+      "zoom": "0.9",
       "alt": "Project Babbage Docs",
       "text": "Project Babbage Docs",
       "info": ";;;"
@@ -402,7 +402,7 @@
       "img": "icon/atomic.png",
       "zoom": "1.2",
       "alt": "Atomic Swaps buy",
-      "text": "SwapLobby: Atomic Swaps",
+      "text": "SwapLobby",
       "info": "new.svg;;;"
     },
     {
@@ -490,7 +490,7 @@
       "href": "https://traceport.io/",
       "tooltip": "1. Submit your data, 2. Hash it client-side, 3. Verification when you need it",
       "img": "icon/traceport.svg",
-      "zoom": "1.3",
+      "zoom": "1.2",
       "alt": "independent verification",
       "text": "Traceport",
       "info": "new.svg;;;"
@@ -564,6 +564,16 @@
       "alt": "Live scoring, leaderboards, AI caddy, 170+ player events",
       "text": "BSVGolf",
       "info": "new.svg;;;"
+    },
+    {
+      "tab": "wallets",
+      "href": "https://www.rockwallet.com/",
+      "tooltip": "Golf Tournament Software onchain",
+      "img": "icon/rock.svg",
+      "zoom": "0.9",
+      "alt": "KYC mobile wallet that supports BSV and in wallet swaps.",
+      "text": "ROCKWALLET",
+      "info": ";;;"
     }
     
     
