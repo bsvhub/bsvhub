@@ -674,7 +674,38 @@
       "alt": "NFT on chain bitcoin",
       "text": "ORD-FS",
       "info": "new.svg;;;"
+    },
+    {
+      "tab": "docs;bsv",
+      "href": "https://thatsbtcnotbitcoin.com/",
+      "tooltip": "Site explains why BTC is not Bitcoin",
+      "img": "icon/bsv.svg",
+      "zoom": "0.9",
+      "alt": "explenation blog",
+      "text": "BTC != Bitcoin",
+      "info": ";;;"
+    },
+    {
+      "tab": "social",
+      "href": "https://x.com/cryptorebel_SV",
+      "tooltip": "Big proponent of Bitcoin; original design, involved in the development of ElectrumSVP wallet",
+      "img": "social/truth_machine.png",
+      "zoom": "0.9",
+      "alt": "Electrum SVP",
+      "text": "Truth Machine",
+      "info": ";;twitter.svg;"
+    },
+    {
+      "tab": "social",
+      "href": "https://crypto-rebel.medium.com/",
+      "tooltip": "Big proponent of Bitcoin; original design, involved in the development of ElectrumSVP wallet",
+      "img": "social/truth_machine.png",
+      "zoom": "0.9",
+      "alt": "Electrum SVP",
+      "text": "Truth Machine",
+      "info": ";;medium.svg;"
     }
+    
     
     
   ]
