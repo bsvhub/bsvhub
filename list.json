@@ -2,7 +2,7 @@
   "headerContent": {
     "about": {
       "class": "tab-content header-tab-content",
-      "html": "<div class='header-tab-text'>Number of visitors: <span id='visit-counter' style='pointer-events:none;'></span></div><div>Last update: <span id='last-update-date'>24th Jan. 2026</span></div>"
+      "html": "<div class='header-tab-text'>Number of visitors: <span id='visit-counter' style='pointer-events:none;'></span></div><div>Last update: <span id='last-update-date'>27th Jan. 2026</span></div>"
     },
     "tip": {
       "class": "tab-content header-tab-content",
@@ -200,7 +200,7 @@
       "href": "https://handcash.io/",
       "tooltip": "Mobile-friendly BSV wallet with Apps",
       "img": "icon/handcash.svg",
-      "zoom": "0.9",
+      "zoom": "1.05",
       "alt": "apps",
       "text": "Handcash Wallet",
       "info": ";;;"
@@ -592,7 +592,7 @@
       "img": "icon/guarda.svg",
       "zoom": "0.9",
       "alt": "milti chain",
-      "text": "wallet",
+      "text": "Wallet",
       "info": ";;;"
     },
     {
