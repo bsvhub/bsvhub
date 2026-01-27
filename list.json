@@ -460,7 +460,7 @@
       "href": "https://everdraw.art/",
       "tooltip": "A professional open-source drawing application with blockchain-backed artwork ownership.",
       "img": "icon/everdraw.png",
-      "zoom": "0.9",
+      "zoom": "0.85",
       "alt": "pixel art",
       "text": "Everdraw",
       "info": "new.svg;;;"
