@@ -606,6 +606,36 @@
       "info": ";;;"
     },
     {
+      "tab": "market",
+      "href": "https://www.nftana.com/",
+      "tooltip": "Nftana is a next-gen open source NFT Exchange marketplace that anyone can contribute to develop or use this marketplace as their framework.",
+      "img": "icon/nftana.svg",
+      "zoom": "0.9",
+      "alt": "market-place",
+      "text": "Nftana",
+      "info": "new.svg;;;"
+    },
+    {
+      "tab": "docs; bsv",
+      "href": "https://1satordinals.com/",
+      "tooltip": "Website provides resources and links in relation to Ordinals/NFTs on BSV",
+      "img": "icon/ordinals.svg",
+      "zoom": "0.9",
+      "alt": "market-place NFT",
+      "text": "1satordinals.com",
+      "info": "new.svg;;;"
+    },
+    {
+      "tab": "market; tools",
+      "href": "https://1sat.market/",
+      "tooltip": "Ordinals, BSV20 and BSV21 marketpalce",
+      "img": "icon/ordinals.svg",
+      "zoom": "0.9",
+      "alt": "market-place NFT",
+      "text": "1sat.market",
+      "info": "new.svg;;beta.svg;"
+    },
+    {
       "tab": "exchange",
       "href": "https://www.kucoin.com/",
       "tooltip": "KYC exchange where you can buy BSV.",
