@@ -624,6 +624,16 @@
       "alt": "exchange",
       "text": "Orange Gateway",
       "info": ";;;"
+    },
+    {
+      "tab": "social",
+      "href": "https://gavinmehl.blogspot.com/",
+      "tooltip": "Gavin Mehl articles and videos on Blogspot",
+      "img": "social/gavinm.png",
+      "zoom": "0.9",
+      "alt": "articles",
+      "text": "Gavin Mehl",
+      "info": ";;blogspot.svg;"
     }
     
     
