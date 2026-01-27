@@ -150,7 +150,7 @@
       "href": "https://mybsv.io/wallet.html",
       "tooltip": "Gateway Wallet; an on-chain wallet at MyBSV.io",
       "img": "icon/gateway.svg",
-      "zoom": "1",
+      "zoom": "0.95",
       "alt": "on block chain",
       "text": "Gateway Wallet",
       "info": "new.png;;;"
@@ -260,7 +260,7 @@
       "href": "https://getmetanet.com/",
       "tooltip": "Metanet wallet; setting the BRC-100 standard created by Project Babbage",
       "img": "icon/metanet.svg",
-      "zoom": "1.8",
+      "zoom": "1.7",
       "alt": "apps wallet",
       "text": "Metanet Wallet",
       "info": "new.svg;;;"
