@@ -168,7 +168,7 @@
     {
       "tab": "exchange",
       "href": "https://ghostswap.io/",
-      "tooltip": "Crypto Swap Exchange, supports BSV, no KYC or account required, has ammount limits",
+      "tooltip": "Crypto Swap Exchange, supports BSV, no KYC or account required, has amount limits.",
       "img": "icon/ghostswap.svg",
       "zoom": "0.9",
       "alt": "Buy Swap crypto",
@@ -238,7 +238,7 @@
     {
       "tab": "exchange",
       "href": "https://kyc.rip",
-      "tooltip": "Privacy focussed crypto swap exchange, supports BSV, no KYC or account required",
+      "tooltip": "Privacy focused crypto swap exchange, supports BSV, no KYC or account required",
       "img": "icon/kycrip.png",
       "zoom": "1.1",
       "alt": "Exchange swap",
@@ -348,7 +348,7 @@
     {
       "tab": "tools;docs",
       "href": "https://app.reactonchain.com",
-      "tooltip": "React Onchain; currently in beta, helps with deployment of apps on the blockchan",
+      "tooltip": "React Onchain; currently in beta, helps with deployment of apps on the blockchain.",
       "img": "icon/react.svg",
       "zoom": "0.9",
       "alt": "developer tool",
@@ -468,7 +468,7 @@
     {
       "tab": "apps",
       "href": "https://pixelwar.click/",
-      "tooltip": "Create pixel art on blockchain, interact with others on same canves",
+      "tooltip": "Create pixel art on blockchain, interact with others on same canvas",
       "img": "icon/pixelwar.png",
       "zoom": "0.85",
       "alt": "pixelart",
@@ -498,7 +498,7 @@
     {
       "tab": "apps;social",
       "href": "https://microblog.bitspv.com/",
-      "tooltip": "Public forum; can post info/ideas and recive likes and tips",
+      "tooltip": "Public forum; can post info/ideas and receive likes and tips",
       "img": "icon/blog.svg",
       "zoom": "1.4",
       "alt": "decentralizes decentalised",
@@ -618,7 +618,7 @@
     {
       "tab": "exchange",
       "href": "https://www.orangegateway.com/",
-      "tooltip": "Orange Gateway, an exchange based in Iceland where you can but BSV in several fiat currencis.",
+      "tooltip": "Orange Gateway, an exchange based in Iceland where you can but BSV in several fiat currencies.",
       "img": "icon/orange.svg",
       "zoom": "0.9",
       "alt": "exchange",
