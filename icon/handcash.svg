@@ -1,21 +1,54 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-
 <svg
-   version="1.1"
-   id="_x32_"
-   viewBox="0 0 512 512"
-   xml:space="preserve"
+   version="1.0"
+   width="142.740571pt"
+   height="144.066104pt"
+   viewBox="0 0 142.740571 144.066104"
+   preserveAspectRatio="xMidYMid meet"
+   id="svg10"
+   sodipodi:docname="handcash.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"><defs
-   id="defs27" />
-<style
-   type="text/css"
-   id="style2">
-	.st0{fill:#000000;}
-</style>
-
-<path
-   style="fill:#58fe98;fill-opacity:1;stroke:none;stroke-width:3.91392"
-   d="m 240.74684,6.3651171 c 3.83604,18.5854829 6.90689,62.0786799 22.41737,74.2587979 11.9261,9.364835 37.34309,7.94917 51.9471,13.662318 38.98734,15.252157 76.87134,45.498927 93.93407,84.291347 -26.49449,2.16401 -55.92678,18.63807 -82.19231,15.75822 -45.85078,-5.02664 -74.24117,-41.40378 -121.27396,-5.74681 -74.55665,56.52326 -19.26666,162.10907 66.4791,153.9654 42.79087,-4.06384 45.95371,-38.46562 75.2404,-58.5456 22.26198,-15.2639 59.46888,-15.99697 85.23028,-23.2389 -1.75733,40.84802 -16.68502,78.80951 -43.77482,109.58976 -11.94841,13.5766 -37.21904,27.44439 -43.72985,44.32513 -7.28419,18.88466 8.8302,50.37998 13.14022,69.17854 C 495.39819,443.47948 539.71551,254.98199 478.23176,139.43838 430.38799,49.53526 339.49191,6.3651171 240.74684,6.3651171 M 272.05821,507.34683 256.40253,432.98235 C 227.45087,431.73772 199.38962,424.5283 174.21022,409.98417 95.658231,364.61283 59.964852,265.18989 101.31933,182.49151 117.08186,150.97036 156.31225,132.5585 169.52016,103.49138 178.05016,84.719049 162.21091,47.444443 154.6406,29.848636 17.408484,70.230892 -26.911994,258.72996 34.574472,374.27357 82.370082,464.09019 173.29279,507.34683 272.05821,507.34683 Z"
-   id="path4742" /></svg>
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs14" />
+  <sodipodi:namedview
+     id="namedview12"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="pt"
+     showgrid="false"
+     inkscape:zoom="4.5187591"
+     inkscape:cx="95.269518"
+     inkscape:cy="96.044067"
+     inkscape:window-width="1880"
+     inkscape:window-height="1056"
+     inkscape:window-x="40"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg10" />
+  <metadata
+     id="metadata2"> Created by potrace 1.16, written by Peter Selinger 2001-2019 </metadata>
+  <g
+     transform="translate(-0.629715,144.005436) scale(0.100000,-0.100000)"
+     fill="#000000"
+     stroke="none"
+     id="g8"
+     style="fill:#56ff96;fill-opacity:1">
+    <path
+       d="M680 1428 c1 -21 45 -197 52 -203 3 -3 34 -10 69 -16 85 -13 197 -67 258 -124 49 -46 108 -122 100 -129 -2 -3 -59 -18 -126 -35 l-122 -31 -50 31 c-93 58 -199 57 -280 -2 -127 -91 -144 -267 -37 -373 57 -57 117 -80 200 -74 86 5 149 43 194 118 l32 55 123 30 122 31 3 -33 c4 -44 -22 -134 -61 -206 -30 -58 -128 -159 -174 -180 -14 -6 -22 -16 -19 -26 3 -9 15 -58 26 -109 l22 -92 61 32 c79 43 220 183 270 268 21 36 49 101 64 145 23 70 26 96 27 215 0 122 -3 143 -28 215 -15 44 -43 108 -62 143 -71 127 -227 262 -362 312 -113 43 -303 66 -302 38z"
+       id="path4"
+       style="fill:#56ff96;fill-opacity:1" />
+    <path
+       d="M360 1343 c-82 -46 -213 -177 -263 -263 -21 -36 -49 -101 -64 -145 -23 -70 -26 -96 -27 -215 0 -122 3 -143 28 -215 57 -166 156 -296 294 -386 114 -75 258 -119 388 -119 62 0 60 -17 20 135 l-21 80 -65 7 c-45 5 -89 19 -146 47 -228 113 -333 367 -253 609 35 106 127 221 218 272 13 7 11 22 -8 111 -13 57 -26 107 -30 111 -3 4 -35 -9 -71 -29z"
+       id="path6"
+       style="fill:#56ff96;fill-opacity:1" />
+  </g>
+</svg>
