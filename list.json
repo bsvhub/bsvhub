@@ -10,7 +10,7 @@
     },
     "contact": {
       "class": "tab-content header-tab-content",
-      "html": "<div class=\"header-tab-text\">If you spot any mistakes, or have some cool BSV related link that I can add, I can be contacted via TreeChat, user: <a href=\"https://app.treechat.com/user/bsvhub-d50efaa8-f342-4b88-8e85-de15a2a06629\" target=\"_blank\">BSVhub</a></div>"
+      "html": "<div class=\"header-tab-text\">If you spot any mistakes, or have some cool BSV related link that I can add, I can be contacted via:</div><div class=\"social-icons\"><a href=\"https://x.com/BSVhubio\" target=\"_blank\"><img src=\"icon/twitter.svg\" alt=\"Twitter\"></a><a href=\"https://app.treechat.com/user/bsvhub\" target=\"_blank\"><img src=\"icon/treechat.svg\" alt=\"TreeChat\"></a></div>"
     }
   },
   
