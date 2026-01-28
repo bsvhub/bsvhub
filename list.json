@@ -99,15 +99,15 @@
       "tab": "exchange",
       "href": "https://www.coinspot.com.au/",
       "tooltip": "A major, yet not well know Australian KYC exchange that lets you buy BSV",
-      "img": "icon/cs.png",
-      "zoom": "1.2",
+      "img": "icon/coinspot.svg",
+      "zoom": "0.9",
       "alt": "buy",
       "text": "CoinSpot",
       "info": ";;;"
     },
     {
       "tab": "videos",
-      "href": "https://www.youtube.com/@Cryptoismyretirement/videos",
+      "href": "https://www.youtube.com/@Cryptoismyretirement/streams",
       "tooltip": "Just some guy on YouTube that talks a lot about BSV and makes some valid points.",
       "img": "social/cimr.svg",
       "zoom": "0.9",
@@ -692,7 +692,7 @@
       "img": "social/truth_machine.png",
       "zoom": "0.9",
       "alt": "Electrum SVP",
-      "text": "Truth Machine",
+      "text": "@cryptorebel_SV",
       "info": ";;twitter.svg;"
     },
     {

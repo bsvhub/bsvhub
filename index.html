@@ -643,12 +643,13 @@ searchBox.addEventListener("input", () => {
                 tab.includes(q) ||
                 info.includes(q)
             ) {
-                // Check if already added (by text)
-                const alreadyAdded = foundItems.some(item => item.text === txt);
-                
+                // Check if already added (by href)
+                const alreadyAdded = foundItems.some(item => item.href === href);
+
                 if (!alreadyAdded) {
                     foundItems.push({
-                        text: txt,
+                        text: txt,      // For sorting alphabetically
+                        href: href,     // For duplicate checking
                         element: icon.closest("li").cloneNode(true)
                     });
                 }
