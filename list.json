@@ -2,7 +2,7 @@
   "headerContent": {
     "about": {
       "class": "tab-content header-tab-content",
-      "html": "<div class='header-tab-text'>Number of visitors: <span id='visit-counter' style='pointer-events:none;'></span></div><div>Last update: <span id='last-update-date'>27th Jan. 2026</span></div>"
+      "html": "<div class='header-tab-text'>Number of visitors: <span id='visit-counter' style='pointer-events:none;'></span></div><div>Last update: <span id='last-update-date'>28th Jan. 2026</span></div>"
     },
     "tip": {
       "class": "tab-content header-tab-content",
@@ -409,8 +409,8 @@
       "tab": "apps;social",
       "href": "https://treechat.ai",
       "tooltip": "Social network on BSV, alternative to X (Twitter)",
-      "img": "icon/treechat.png",
-      "zoom": "1.3",
+      "img": "icon/treechat.svg",
+      "zoom": "0.9",
       "alt": "TreeChat",
       "text": "TreeChat",
       "info": ";;;"
