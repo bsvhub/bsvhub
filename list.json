@@ -40,7 +40,7 @@
       "href": "https://hub.bsvblockchain.org/",
       "tooltip": "BSV Blockchain Hub: wide array of resources to meet diverse needs, from technical details to real-world uses.",
       "img": "icon/bsv_blockchain.svg",
-      "zoom": "1.3",
+      "zoom": "1.5",
       "alt": "documents resources links code skills",
       "text": "Hub",
       "info": ";;;"
@@ -60,7 +60,7 @@
       "href": "https://bsvblockchain.org/",
       "tooltip": "Official BSV pages",
       "img": "icon/bsv_blockchain.svg",
-      "zoom": "1.3",
+      "zoom": "1.5",
       "alt": "bsvblockchain.org",
       "text": "bsvblockchain.org",
       "info": ";;;"
