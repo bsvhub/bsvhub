@@ -29,7 +29,7 @@
       "tab": "bsv;docs",
       "href": "https://bsvassociation.org/",
       "tooltip": "Guardians of the BSV protocol",
-      "img": "icon/bsv.svg",
+      "img": "icon/association.svg",
       "zoom": "0.9",
       "alt": "BSV Association",
       "text": "BSV Association",
@@ -38,11 +38,11 @@
     {
       "tab": "bsv;docs",
       "href": "https://hub.bsvblockchain.org/",
-      "tooltip": "BSV Hub: wide array of resources to meet diverse needs, from technical details to real-world uses.",
-      "img": "icon/bsv.svg",
-      "zoom": "0.9",
+      "tooltip": "BSV Blockchain Hub: wide array of resources to meet diverse needs, from technical details to real-world uses.",
+      "img": "icon/bsv_blockchain.svg",
+      "zoom": "1.3",
       "alt": "documents resources links code skills",
-      "text": "BSV Hub",
+      "text": "Hub",
       "info": ";;;"
     },
     {
@@ -59,8 +59,8 @@
       "tab": "bsv;docs",
       "href": "https://bsvblockchain.org/",
       "tooltip": "Official BSV pages",
-      "img": "icon/bsv.svg",
-      "zoom": "0.9",
+      "img": "icon/bsv_blockchain.svg",
+      "zoom": "1.3",
       "alt": "bsvblockchain.org",
       "text": "bsvblockchain.org",
       "info": ";;;"
@@ -153,7 +153,7 @@
       "zoom": "0.95",
       "alt": "on block chain",
       "text": "Gateway Wallet",
-      "info": "new.png;;;"
+      "info": "new.svg;;;"
     },
     {
       "tab": "videos",
@@ -197,10 +197,10 @@
     },
     {
       "tab": "wallets;apps",
-      "href": "https://handcash.io/",
+      "href": "https://handcash1.io/",
       "tooltip": "Mobile-friendly BSV wallet with Apps",
       "img": "icon/handcash.svg",
-      "zoom": "1.05",
+      "zoom": "0.9",
       "alt": "apps",
       "text": "Handcash Wallet",
       "info": ";;;"
@@ -390,7 +390,7 @@
       "href": "https://www.slictionary.com/",
       "tooltip": "An on-chain Dictionary of unique terms/word",
       "img": "icon/slictionary.png",
-      "zoom": "1.2",
+      "zoom": "0.9",
       "alt": "Slictionary",
       "text": "Slictionary",
       "info": ";;;"
@@ -500,7 +500,7 @@
       "href": "https://microblog.bitspv.com/",
       "tooltip": "Very simple on-chanin blog post where you can share info/ideas.",
       "img": "icon/blog.svg",
-      "zoom": "1.4",
+      "zoom": "0.95",
       "alt": "decentralizes decentalised",
       "text": "Metanet Microblog",
       "info": "new.svg;;;"
@@ -529,7 +529,7 @@
       "tab": "docs",
       "href": "https://bsvhackathon.com/",
       "tooltip": "Hackathon info, events, registration",
-      "img": "icon/bsv.svg",
+      "img": "icon/hackathon.svg",
       "zoom": "0.9",
       "alt": "devs win prise competition",
       "text": "BSV Hackathon",
@@ -601,7 +601,7 @@
       "tooltip": "BSV Search is a website for people to find others with whom to transact in BSVs.",
       "img": "social/bsvsearch.svg",
       "zoom": "0.9",
-      "alt": "market-place",
+      "alt": "market place buy",
       "text": "BSV Search",
       "info": ";;;"
     },
@@ -611,7 +611,7 @@
       "tooltip": "Nftana is a next-gen open source NFT Exchange marketplace that anyone can contribute to develop or use this marketplace as their framework.",
       "img": "icon/nftana.svg",
       "zoom": "0.85",
-      "alt": "market-place",
+      "alt": "market place buy",
       "text": "Nftana",
       "info": "new.svg;;;"
     },
@@ -631,7 +631,7 @@
       "tooltip": "Ordinals, BSV20 and BSV21 marketpalce",
       "img": "icon/ordinals.svg",
       "zoom": "0.9",
-      "alt": "market-place NFT",
+      "alt": "market place NFT buy",
       "text": "1sat.market",
       "info": "new.svg;;beta.svg;"
     },
