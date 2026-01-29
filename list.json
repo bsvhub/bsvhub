@@ -150,7 +150,7 @@
       "href": "https://mybsv.io/wallet.html",
       "tooltip": "Gateway Wallet; an on-chain wallet at MyBSV.io",
       "img": "icon/gateway.svg",
-      "zoom": "0.65",
+      "zoom": "0.9",
       "alt": "on block chain",
       "text": "Gateway Wallet",
       "info": "new.svg;;;"
@@ -270,7 +270,7 @@
       "href": "https://mybsv.io",
       "tooltip": "MyBSV.io: an on-chain wallet and more",
       "img": "icon/mybsv.svg",
-      "zoom": "1.3",
+      "zoom": "1.0",
       "alt": "MyBSV.io",
       "text": "MyBSV.io",
       "info": "new.svg;;;"
