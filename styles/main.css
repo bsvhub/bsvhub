@@ -390,7 +390,7 @@ ul.icon-grid li {
 ul.icon-grid li a {
     padding: 0;
     border: 4px solid #000000; /* icon border colour */
-    background: rgba(56, 77, 124, 0.5); /* icon colour */
+    background: rgba(121, 139, 178, 0.5); /* icon colour */
     border-radius: 20px;
     text-decoration: none;
     color: rgba(135,206,235,0.8);
