@@ -40,7 +40,7 @@
       "href": "https://hub.bsvblockchain.org/",
       "tooltip": "BSV Blockchain Hub: wide array of resources to meet diverse needs, from technical details to real-world uses.",
       "img": "icon/bsv_blockchain.svg",
-      "zoom": "1.5",
+      "zoom": "1.8",
       "alt": "documents resources links code skills",
       "text": "Hub",
       "info": ";;;"
@@ -60,7 +60,7 @@
       "href": "https://bsvblockchain.org/",
       "tooltip": "Official BSV pages",
       "img": "icon/bsv_blockchain.svg",
-      "zoom": "1.5",
+      "zoom": "1.8",
       "alt": "bsvblockchain.org",
       "text": "bsvblockchain.org",
       "info": ";;;"
@@ -200,7 +200,7 @@
       "href": "https://handcash1.io/",
       "tooltip": "Mobile-friendly BSV wallet with Apps",
       "img": "icon/handcash.svg",
-      "zoom": "0.9",
+      "zoom": "1.1",
       "alt": "apps",
       "text": "Handcash Wallet",
       "info": ";;;"
@@ -620,7 +620,7 @@
       "href": "https://1satordinals.com/",
       "tooltip": "Website provides resources and links in relation to Ordinals/NFTs on BSV",
       "img": "icon/ordinals.svg",
-      "zoom": "0.9",
+      "zoom": "0.8",
       "alt": "market-place NFT",
       "text": "1satordinals.com",
       "info": "new.svg;;;"
@@ -630,7 +630,7 @@
       "href": "https://1sat.market/",
       "tooltip": "Ordinals, BSV20 and BSV21 marketpalce",
       "img": "icon/ordinals.svg",
-      "zoom": "0.9",
+      "zoom": "0.8",
       "alt": "market place NFT buy",
       "text": "1sat.market",
       "info": "new.svg;;beta.svg;"
