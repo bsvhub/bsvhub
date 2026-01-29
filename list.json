@@ -40,7 +40,7 @@
       "href": "https://hub.bsvblockchain.org/",
       "tooltip": "BSV Blockchain Hub: wide array of resources to meet diverse needs, from technical details to real-world uses.",
       "img": "icon/bsv_blockchain.svg",
-      "zoom": "1.8",
+      "zoom": "2.2",
       "alt": "documents resources links code skills",
       "text": "Hub",
       "info": ";;;"
@@ -60,7 +60,7 @@
       "href": "https://bsvblockchain.org/",
       "tooltip": "Official BSV pages",
       "img": "icon/bsv_blockchain.svg",
-      "zoom": "1.8",
+      "zoom": "2.2",
       "alt": "bsvblockchain.org",
       "text": "bsvblockchain.org",
       "info": ";;;"
@@ -100,7 +100,7 @@
       "href": "https://www.coinspot.com.au/",
       "tooltip": "A major, yet not well know Australian KYC exchange that lets you buy BSV",
       "img": "icon/coinspot.svg",
-      "zoom": "0.9",
+      "zoom": "1.25",
       "alt": "buy",
       "text": "CoinSpot",
       "info": ";;;"
@@ -150,7 +150,7 @@
       "href": "https://mybsv.io/wallet.html",
       "tooltip": "Gateway Wallet; an on-chain wallet at MyBSV.io",
       "img": "icon/gateway.svg",
-      "zoom": "0.95",
+      "zoom": "0.65",
       "alt": "on block chain",
       "text": "Gateway Wallet",
       "info": "new.svg;;;"
