@@ -91,9 +91,9 @@
     --top-ui-shadow: rgba(0,0,0,0.7);
     
     /* ⭐ MOBILE SCALE FACTOR - CHANGE THIS ONE VALUE TO SCALE EVERYTHING ON MOBILE */
-    --mobile-scale: 0.8;              /* 👈 Adjust this value (1.0-2.0 recommended) */
+    --mobile-scale: 0.9;              /* 👈 Adjust this value (1.0-2.0 recommended) */
     --header-section-scale: 0.8;      /* 👈 Scale for About/Tip/Contact sections */
-    --header-buttons-scale: 0.5;      /* 👈 Scale for header buttons (About, Tip, Contact, Mobile) */
+    --header-buttons-scale: 0.8;      /* 👈 Scale for header buttons (About, Tip, Contact, Mobile) */
     --tab-buttons-scale: 0.7;         /* 👈 Scale for tab bar buttons and search box */
     --tooltip-scale: 0.7;             /* 👈 Scale for tooltip display */
     
@@ -204,7 +204,7 @@ body {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    padding: 0 12px;
+    padding: 8px 12px;
     background: rgba(25, 25, 25, 0.6);
     /* min-width: var(--page-min-width); */  /* ← REMOVED for mobile compatibility */
 }
@@ -212,11 +212,13 @@ body {
 .header-title {
     font-family: var(--font-header);
     font-size: clamp(1rem, 5vw, 3.2rem);
+    color: #EAB300;
+    margin: 0;
+    text-align: center;
+    letter-spacing: 3px;
     justify-self: center;
     white-space: nowrap;
-    margin: 0;
-    color: #EAB300;
-    min-width: fit-content;     /* 👈 NEW - prevents title from collapsing */
+    min-width: fit-content;
 }
 
 .header-icons {
@@ -231,41 +233,45 @@ body {
     justify-content: flex-end;
 }
 
-/* Header buttons settings */
-.header-text-link {
+/* Header icon links and images */
+.header-icon-link {
     display: inline-flex;
     align-items: center;
-    padding: 6px 9px;          /* 50% of original 12px 18px */
-    min-height: 16px;          /* 50% of original 32px */
-    font-size: 0.65rem;        /* 50% of original 1.3rem */
-    font-family: var(--font-header);
-    color: #ffcc66;
-    background: rgba(255,255,255,0.1);
-    border-radius: 10px;
+    justify-content: center;
     text-decoration: none;
-    transition: background 0.25s;
-    white-space: nowrap;       /* 👈 NEW - prevents text from wrapping */
+    transition: transform 0.2s, opacity 0.2s;
 }
 
-.header-text-link span {
-    display: inline-block;
-    transition: transform 0.25s;
+.header-icon-link:hover {
+    transform: scale(1.1);
+    opacity: 0.8;
 }
 
-.header-text-link:hover {
-    background: rgba(255,204,102,0.8);
-    color: black;
+.header-icon {
+    height: clamp(1rem, 5vw, 3.2rem); /* Match header title height */
+    width: auto;
+    display: block;
 }
 
-.header-text-link:hover span {
-    transform: scale(1.3);
+/* Desktop mode: show mobile icon, hide desktop icon */
+.desktop-mode-icon {
+    display: none;
 }
 
-.header-text-link.active {
-    background: #b8860b;
-    color: black;
-    box-shadow: 0 0 15px rgba(184,134,11,0.7);
+.mobile-mode-icon {
+    display: block;
 }
+
+/* Mobile mode: show desktop icon, hide mobile icon */
+body.mobile-mode .desktop-mode-icon {
+    display: block;
+}
+
+body.mobile-mode .mobile-mode-icon {
+    display: none;
+}
+
+
 
 /* ------------------------------------------------------------
    TAB BAR
@@ -734,36 +740,14 @@ body.mobile-mode .tab-bar {
     min-width: unset;
 }
 
-/* 📱 MOBILE - Header layout: vertical button stacks */
-body.mobile-mode .header-container {
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 8px 12px;
-}
 
-body.mobile-mode .header-icons-left,
-body.mobile-mode .header-icons-right {
-    flex-direction: column;
-    gap: 8px;
-}
-
-/* 📱 MOBILE - Scale ALL UI elements (matches old mobile.css approach) */
+/* 📱 MOBILE - Scale header title and icons with --header-buttons-scale */
 body.mobile-mode .header-title {
-    /* Match 1.5x the height of a single header button */
-    /* Each button: 1.4rem font + 12px padding (6px top + 6px bottom) */
-    /* 1.5x = (1.4rem + 12px) * 1.5 */
-    font-size: calc((1.4rem + 12px) * 1.5 * var(--header-buttons-scale));
-    line-height: 1;
-    margin: 0;
-    display: flex;
-    align-items: center;
+    font-size: calc(3.2rem * var(--header-buttons-scale));
 }
 
-body.mobile-mode .header-text-link {
-    font-size: calc(1.4rem * var(--header-buttons-scale));
-    padding: calc(6px * var(--header-buttons-scale)) calc(14px * var(--header-buttons-scale));
+body.mobile-mode .header-icon {
+    height: calc(3.2rem * var(--header-buttons-scale));
 }
 
 body.mobile-mode .tab-bar button,
