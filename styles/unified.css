@@ -93,9 +93,9 @@
     /* ⭐ MOBILE SCALE FACTOR - CHANGE THIS ONE VALUE TO SCALE EVERYTHING ON MOBILE */
     --mobile-scale: 0.8;              /* 👈 Adjust this value (1.0-2.0 recommended) */
     --header-section-scale: 0.8;      /* 👈 Scale for About/Tip/Contact sections */
-    --header-buttons-scale: 0.55;      /* 👈 Scale for header buttons (About, Tip, Contact, Mobile) */
+    --header-buttons-scale: 0.5;      /* 👈 Scale for header buttons (About, Tip, Contact, Mobile) */
     --tab-buttons-scale: 0.6;         /* 👈 Scale for tab bar buttons and search box */
-    --tooltip-scale: 0.7;             /* 👈 Scale for tooltip display */
+    --tooltip-scale: 0.6;             /* 👈 Scale for tooltip display */
     
     /* Font definitions for each section */
     --font-header: 'dotmb', monospace;
@@ -307,7 +307,7 @@ body.mobile-mode .mobile-mode-icon {
 ------------------------------------------------------------ */
 .tab-bar button {
     flex: 0 0 auto;
-    min-width: 80px;
+    min-width: 75px;
     white-space: nowrap;       /* Already here - good! Prevents text wrapping */
     color: white;
     background: rgba(255,255,255,0.1);
@@ -339,7 +339,7 @@ body.mobile-mode .mobile-mode-icon {
    SEARCH BOX (matches tab style)
 ------------------------------------------------------------ */
 #search-box {
-    max-width: 125px;
+    max-width: 130px;
     box-sizing: border-box;
     border-radius: 10px;
     background: rgba(255,255,255,0.1);
@@ -689,7 +689,7 @@ body.mobile-mode {
 /* 📱 MOBILE - Document overflow control */
 body.mobile-mode,
 body.mobile-mode html {
-    min-height: 100svh;
+    min-height: 100vh;  /* Use vh instead of svh for older browser compatibility */
     overflow: hidden;
     -webkit-text-size-adjust: 100%;  /* Prevent mobile text inflation */
     text-size-adjust: 100%;          /* Prevent mobile text inflation */
@@ -703,7 +703,7 @@ body.mobile-mode {
 /* 📱 MOBILE - Page wrapper */
 body.mobile-mode #page-wrapper {
     overflow: hidden;
-    min-height: 100svh;
+    min-height: 100vh;  /* Use vh instead of svh for older browser compatibility */
     min-width: unset;            /* Remove desktop min-width */
 }
 
@@ -717,16 +717,18 @@ body.mobile-mode #content-area {
     
     /* Calculate dimensions to account for scale */
     width: calc(100% / var(--mobile-scale));
-    min-height: calc(100svh / var(--mobile-scale));
-    max-height: calc(100svh / var(--mobile-scale));
+    min-height: calc(100vh / var(--mobile-scale));   /* Use vh instead of svh for older browsers */
+    max-height: calc(100vh / var(--mobile-scale));
     
-    /* Enable scrolling */
+    /* Enable scrolling - important for older browsers */
     overflow-y: auto;
     overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;  /* ← Critical for iOS smooth scrolling */
     
     /* Apply the scale transform */
     transform: scale(var(--mobile-scale));
     transform-origin: top left;
+    will-change: transform;  /* ← Hint to browser for better performance */
     
     /* Padding to account for header height */
     padding-top: calc(var(--top-ui-height, 0px) / var(--mobile-scale));
