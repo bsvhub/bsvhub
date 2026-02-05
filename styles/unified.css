@@ -93,8 +93,8 @@
     /* ⭐ MOBILE SCALE FACTOR - CHANGE THIS ONE VALUE TO SCALE EVERYTHING ON MOBILE */
     --mobile-scale: 0.8;              /* 👈 Adjust this value (1.0-2.0 recommended) */
     --header-section-scale: 0.8;      /* 👈 Scale for About/Tip/Contact sections */
-    --header-buttons-scale: 0.6;      /* 👈 Scale for header buttons (About, Tip, Contact, Mobile) */
-    --tab-buttons-scale: 0.7;         /* 👈 Scale for tab bar buttons and search box */
+    --header-buttons-scale: 0.55;      /* 👈 Scale for header buttons (About, Tip, Contact, Mobile) */
+    --tab-buttons-scale: 0.6;         /* 👈 Scale for tab bar buttons and search box */
     --tooltip-scale: 0.7;             /* 👈 Scale for tooltip display */
     
     /* Font definitions for each section */
@@ -339,7 +339,7 @@ body.mobile-mode .mobile-mode-icon {
    SEARCH BOX (matches tab style)
 ------------------------------------------------------------ */
 #search-box {
-    max-width: 130px;
+    max-width: 125px;
     box-sizing: border-box;
     border-radius: 10px;
     background: rgba(255,255,255,0.1);
