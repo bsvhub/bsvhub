@@ -676,7 +676,7 @@ ul.icon-grid li a:hover .icon-text {
 /* 📱 MOBILE - Scale variables */
 body.mobile-mode {
     /* Mobile scale factor - change this to scale entire UI */
-    --mobile-scale: 0.6;         /* 👈 Adjust this value (1.4-1.8 recommended) */
+    --mobile-scale: 1.6;         /* 👈 Adjust this value (1.4-1.8 recommended) */
     
     /* Header sections scale (About/Tip/Contact) */
     --header-section-scale: 1;   /* 👈 Adjust separately from main content */
@@ -751,30 +751,30 @@ body.mobile-mode .header-icons-right {
 
 /* 📱 MOBILE - Scale all UI elements */
 body.mobile-mode .header-title {
-    font-size: calc(3.2rem * var(--mobile-scale));
+    font-size: 3.2rem;  /* Base size - no scale multiplication */
 }
 
 body.mobile-mode .header-text-link {
-    font-size: calc(1.3rem * var(--mobile-scale));
-    padding: calc(12px * var(--mobile-scale)) calc(18px * var(--mobile-scale));
+    font-size: 1.3rem;  /* Base size - no scale multiplication */
+    padding: 12px 18px;
 }
 
 body.mobile-mode .tab-bar button,
 body.mobile-mode #search-box {
-    font-size: calc(1.3rem * var(--mobile-scale));
-    padding: calc(12px * var(--mobile-scale)) calc(18px * var(--mobile-scale));
-    min-height: calc(48px * var(--mobile-scale));
+    font-size: 1.3rem;  /* Base size - no scale multiplication */
+    padding: 12px 18px;
+    min-height: 48px;
 }
 
 body.mobile-mode #tooltip-display {
-    font-size: calc(1.2rem * var(--mobile-scale));
-    min-height: calc(32px * var(--mobile-scale));
-    max-height: calc(32px * var(--mobile-scale));
-    padding: calc(6px * var(--mobile-scale)) calc(14px * var(--mobile-scale));
+    font-size: 1.2rem;  /* Base size - no scale multiplication */
+    min-height: 32px;
+    max-height: 32px;
+    padding: 6px 14px;
 }
 
 body.mobile-mode #tooltip-display.expanded {
-    max-height: calc(180px * var(--mobile-scale));
+    max-height: 180px;  /* Base size - no scale multiplication */
 }
 
 /* 📱 MOBILE - Header tab content sections (About/Tip/Contact) */
@@ -793,8 +793,8 @@ body.mobile-mode .copy-btn {
 
 /* 📱 MOBILE - Icon text scaling */
 body.mobile-mode .icon-text {
-    font-size: calc(1rem * var(--mobile-scale));
-    padding: calc(0px * var(--mobile-scale)) calc(6px * var(--mobile-scale));
+    font-size: calc(1rem * var(--mobile-scale));  /* Keep scale for content area */
+    padding: 0px 6px;
 }
 
 /* 📱 MOBILE - Double-tap selected state */
