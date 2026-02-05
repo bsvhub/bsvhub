@@ -93,9 +93,9 @@
     /* ⭐ MOBILE SCALE FACTOR - CHANGE THIS ONE VALUE TO SCALE EVERYTHING ON MOBILE */
     --mobile-scale: 0.9;              /* 👈 Adjust this value (1.0-2.0 recommended) */
     --header-section-scale: 0.8;      /* 👈 Scale for About/Tip/Contact sections */
-    --header-buttons-scale: 0.6;      /* 👈 Scale for header buttons (About, Tip, Contact, Mobile) */
+    --header-buttons-scale: 0.8;      /* 👈 Scale for header buttons (About, Tip, Contact, Mobile) */
     --tab-buttons-scale: 0.7;         /* 👈 Scale for tab bar buttons and search box */
-    --tooltip-scale: 0.9;             /* 👈 Scale for tooltip display */
+    --tooltip-scale: 0.7;             /* 👈 Scale for tooltip display */
     
     /* Font definitions for each section */
     --font-header: 'dotmb', monospace;
@@ -235,14 +235,9 @@ body {
 .header-text-link {
     display: inline-flex;
     align-items: center;
-    padding: 12px 18px;
-    min-height: 32px;
-    font-size: 1.3rem;         /* 👈 CHANGED - fixed size instead of clamp */
-                               /*    This prevents buttons from shrinking below readable size */
-                               /*    Adjust this value if buttons are too large/small:
-                               /*    - 1.1rem = smaller, more compact
-                               /*    - 1.3rem = current (good balance)
-                               /*    - 1.5rem = larger, more prominent */
+    padding: 6px 9px;          /* 50% of original 12px 18px */
+    min-height: 16px;          /* 50% of original 32px */
+    font-size: 0.65rem;        /* 50% of original 1.3rem */
     font-family: var(--font-header);
     color: #ffcc66;
     background: rgba(255,255,255,0.1);
@@ -756,7 +751,14 @@ body.mobile-mode .header-icons-right {
 
 /* 📱 MOBILE - Scale ALL UI elements (matches old mobile.css approach) */
 body.mobile-mode .header-title {
-    /*font-size: calc(3.2rem * var(--mobile-scale));*/
+    /* Match height of two stacked header buttons + gap + padding */
+    /* Each button: 1.4rem font + 12px padding (6px top + 6px bottom) */
+    /* Two buttons + 8px gap between them */
+    font-size: calc((1.4rem + 12px) * 2 * var(--header-buttons-scale) + 8px);
+    line-height: 1;
+    margin: 0;
+    display: flex;
+    align-items: center;
 }
 
 body.mobile-mode .header-text-link {
