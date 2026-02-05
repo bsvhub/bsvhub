@@ -91,7 +91,7 @@
     --top-ui-shadow: rgba(0,0,0,0.7);
     
     /* ⭐ MOBILE SCALE FACTOR - CHANGE THIS ONE VALUE TO SCALE EVERYTHING ON MOBILE */
-    --mobile-scale: 1.1;              /* 👈 Adjust this value (1.0-2.0 recommended) */
+    --mobile-scale: 0.9;              /* 👈 Adjust this value (1.0-2.0 recommended) */
     --header-section-scale: 0.8;        /* 👈 Scale for About/Tip/Contact sections */
     
     /* Font definitions for each section */
