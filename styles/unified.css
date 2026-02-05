@@ -98,13 +98,9 @@
     --font-header-content: 'vt323', monospace;
     
     /* ============================================================
-       📏 PAGE MINIMUM WIDTH - CHANGE ONLY THIS ONE VALUE!
+       📏 PAGE MINIMUM WIDTH - REMOVED FOR MOBILE COMPATIBILITY
        ============================================================ */
-    --page-min-width: 800px;   /* 👈 Minimum page width before horizontal scroll appears */
-                               /*    Recommended values:
-                               /*    - 700px = compact (buttons may feel tight)
-                               /*    - 800px = comfortable (default)
-                               /*    - 900px = spacious (extra breathing room) */
+    /* --page-min-width: 800px; */   /* ← DISABLED - was causing mobile zoom issues */
     
     /* ============================================================
        🎯 ICON SIZE CONFIGURATION - CHANGE ONLY THESE TWO VALUES!
@@ -150,7 +146,7 @@ body {
     overflow-x: auto;          /* Allows horizontal scroll when needed */
     min-height: 100%;
     color: white;
-    min-width: var(--page-min-width);  /* 👈 Uses centralized variable */
+    /* min-width: var(--page-min-width); */  /* ← REMOVED for mobile compatibility */
 }
 
 /* ============================================================
@@ -160,7 +156,7 @@ body {
 #page-wrapper {
     position: relative;
     min-height: 100vh;
-    min-width: var(--page-min-width);  /* 👈 Uses centralized variable */
+    /* min-width: var(--page-min-width); */  /* ← REMOVED for mobile compatibility */
 }
 
 /* ============================================================
@@ -191,7 +187,7 @@ body {
     flex-direction: column;
     background: transparent;
     pointer-events: auto;
-    min-width: var(--page-min-width);  /* 👈 Uses centralized variable */
+    /* min-width: var(--page-min-width); */  /* ← REMOVED for mobile compatibility */
 }
 
 /* ------------------------------------------------------------
@@ -736,22 +732,6 @@ body.mobile-mode #top-ui,
 body.mobile-mode .header-container,
 body.mobile-mode .tab-bar {
     min-width: unset;
-}
-
-/* 📱 MOBILE - Critical: Prevent body overflow on actual mobile devices */
-@media (max-width: 768px) {
-    body {
-        min-width: unset !important;  /* Override desktop 800px constraint */
-        overflow-x: hidden;           /* Prevent horizontal scroll */
-    }
-    
-    #page-wrapper {
-        min-width: unset !important;  /* Override desktop 800px constraint */
-    }
-    
-    #top-ui {
-        min-width: unset !important;  /* Override desktop 800px constraint */
-    }
 }
 
 /* 📱 MOBILE - Header layout: vertical button stacks */
