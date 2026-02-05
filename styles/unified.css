@@ -804,7 +804,7 @@ body.mobile-mode .icon-text {
 /* Visual feedback for first tap (shows tooltip) */
 body.mobile-mode ul.icon-grid li a.mobile-selected {
     background: rgba(15, 175, 240, 0.6);  /* Same as desktop :hover */
-    border-color: #cc0022;                /* Same as desktop :hover */
+    border-color: #00ff00;                /* 👈 GREEN border for mobile selection */
     transform: scale(1.04);
 }
 
@@ -816,7 +816,7 @@ body.mobile-mode .tab-content a {
     touch-action: manipulation;
 }
 
-/* 📱 MOBILE - Disable hover effects on mobile (not needed for touch) */
+/* 📱 MOBILE - Disable hover scale effects on buttons (not needed for touch) */
 body.mobile-mode .header-text-link:hover span,
 body.mobile-mode .tab-bar button:hover span {
     transform: none;
@@ -826,7 +826,7 @@ body.mobile-mode ul.icon-grid li a:hover {
     transform: none;
 }
 
-body.mobile-mode ul.icon-grid li a:hover .icon-wrapper img:not([class*="icon-badge-pos"]) {
-    transform: translate(-50%, -50%) scale(var(--icon-zoom, 1.0));  /* No hover zoom */
-}
+/* NOTE: Image zoom on hover is NOT disabled in mobile mode.
+   The desktop hover zoom logic (1.15x scale on icon images) works
+   identically in mobile mode, sharing the same CSS from desktop. */
 
