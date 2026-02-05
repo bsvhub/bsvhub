@@ -26,7 +26,6 @@
     <link rel="stylesheet" href="styles/firefly.css">
 </head>
 
-
 <body>
 <div id="page-wrapper">
 <!-- ============================================================
@@ -799,7 +798,21 @@ if (mobileToggle) {
 
 // Restore mode on page load
 window.addEventListener("load", () => {
-    if (localStorage.getItem("ui-mode") === "mobile") {
+    // Auto-detect mobile devices and apply mobile-mode by default
+    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+                          || (window.innerWidth <= 768);
+    
+    const savedMode = localStorage.getItem("ui-mode");
+    
+    // If no saved preference, use auto-detection
+    if (!savedMode) {
+        if (isMobileDevice) {
+            const state = captureUIState();
+            enableMobileMode(state);
+        }
+    }
+    // If user has saved preference, respect it
+    else if (savedMode === "mobile") {
         const state = captureUIState();
         enableMobileMode(state);
     }
