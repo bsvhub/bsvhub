@@ -92,7 +92,7 @@
     
     /* ⭐ MOBILE SCALE FACTOR - CHANGE THIS ONE VALUE TO SCALE EVERYTHING ON MOBILE */
     --mobile-scale: 0.8;              /* 👈 Adjust this value (1.0-2.0 recommended) */
-    --header-section-scale: 0.8;      /* 👈 Scale for About/Tip/Contact sections */
+    --header-section-scale: 0.6;      /* 👈 Scale for About/Tip/Contact sections */
     --header-buttons-scale: 0.5;      /* 👈 Scale for header buttons (About, Tip, Contact, Mobile) */
     --tab-buttons-scale: 0.6;         /* 👈 Scale for tab bar buttons and search box */
     --tooltip-scale: 0.6;             /* 👈 Scale for tooltip display */
