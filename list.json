@@ -497,16 +497,6 @@
     },
     {
       "tab": "app;social",
-      "href": "https://microblog.bitspv.com/",
-      "tooltip": "Very simple on-chanin blog post where you can share info/ideas.",
-      "img": "icon/blog.svg",
-      "zoom": "0.95",
-      "alt": "decentralizes decentalised",
-      "text": "Metanet Microblog",
-      "info": "new.svg;;;"
-    },
-    {
-      "tab": "app;social",
       "href": "https://zanaadu.com/",
       "tooltip": "A Social Web Unchained",
       "img": "icon/zanaadu.svg",
@@ -747,7 +737,7 @@
     },
     {
       "tab": "app",
-      "href": "https://gloss.metanet.app/",
+      "href": "https://truelink.metanet.app/",
       "tooltip": "Build your personal page that lives on the Metanet — permanent, portable, and truly yours.",
       "img": "app/truelink.png",
       "zoom": "0.9",
@@ -773,6 +763,86 @@
       "zoom": "0.9",
       "alt": "block explorer",
       "text": "BSVSCAN.IO",
+      "info": ";;;"
+    },
+    {
+      "tab": "app",
+      "href": "https://hypertypist.com/",
+      "tooltip": "Test your typing speed and save immutable records to the blockchain. Compete on the global leaderboard.",
+      "img": "app/hypertypist.png",
+      "zoom": "0.9",
+      "alt": "",
+      "text": "HyperTypist",
+      "info": ";;;"
+    },
+    {
+      "tab": "app",
+      "href": "https://microblog.bitspv.com/",
+      "tooltip": "Experience the future of social media with Metanet Microblog, a decentralized platform where your posts are stored directly on the Bitcoin SV blockchain. Connect your wallet, share your thoughts.",
+      "img": "app/metanet_microblog.png",
+      "zoom": "0.9",
+      "alt": "",
+      "text": "Metanet Microblog",
+      "info": ";;;"
+    },
+    {
+      "tab": "app",
+      "href": "https://socialcert.net/",
+      "tooltip": "Get certificates that bind social attributes, such as your email or X handle, to your identity key. This will allow your friends to find you on the Metanet.",
+      "img": "app/socialcert.png",
+      "zoom": "0.9",
+      "alt": "",
+      "text": "SocialCert",
+      "info": ";;;"
+    },
+    {
+      "tab": "app",
+      "href": "https://calendar.metanet.app/",
+      "tooltip": "Own your events",
+      "img": "app/metanet_calendar.png",
+      "zoom": "0.9",
+      "alt": "",
+      "text": "Metanet Calendar",
+      "info": ";;;"
+    },
+    {
+      "tab": "app",
+      "href": "https://todo.metanet.app/",
+      "tooltip": "Create and complete TODO items, with a reward.",
+      "img": "app/todo.png",
+      "zoom": "0.9",
+      "alt": "",
+      "text": "ToDo",
+      "info": ";;;"
+    },
+    {
+      "tab": "app",
+      "href": "https://your-files-and-stuff.lovable.app/",
+      "tooltip": "On-chain stuff",
+      "img": "app/stuff.png",
+      "zoom": "0.9",
+      "alt": "",
+      "text": "Stuff",
+      "info": ";;;"
+    },
+    {
+      "tab": "app",
+      "href": "https://uhrp-ui.bapp.dev/",
+      "tooltip": "Easily upload and download content using the Universal Hash Resolution Protocol (UHRP).",
+      "img": "app/uhrp.png",
+      "zoom": "0.9",
+      "alt": "",
+      "text": "UHRP Storage",
+      "info": ";;;"
+    },
+    {
+      "tab": "app",
+      "href": "https://www.thryll.online/",
+      "tooltip": "Ad-free blockchain gaming where every play auto-enters you into a transparent raffle. Powered by BSV micropayments for seamless, rewarding fun.",
+      "img": "app/thryll_arcade.png",
+      "zoom": "0.9",
+      "alt": "",
+      "text": "Thryll Arcade",
       "info": ";;;"
     }
     
