@@ -90,6 +90,10 @@
     --tooltip-speed: 0.45s;
     --top-ui-shadow: rgba(0,0,0,0.7);
     
+    /* ⭐ MOBILE SCALE FACTOR - CHANGE THIS ONE VALUE TO SCALE EVERYTHING ON MOBILE */
+    --mobile-scale: 1.6;              /* 👈 Adjust this value (1.0-2.0 recommended) */
+    --header-section-scale: 1;        /* 👈 Scale for About/Tip/Contact sections */
+    
     /* Font definitions for each section */
     --font-header: 'dotmb', monospace;
     --font-tab: 'jbm', monospace;
@@ -675,11 +679,7 @@ ul.icon-grid li a:hover .icon-text {
 
 /* 📱 MOBILE - Scale variables */
 body.mobile-mode {
-    /* Mobile scale factor - change this to scale entire UI */
-    --mobile-scale: 1.6;         /* 👈 Adjust this value (1.4-1.8 recommended) */
-    
-    /* Header sections scale (About/Tip/Contact) */
-    --header-section-scale: 1;   /* 👈 Adjust separately from main content */
+    /* Scale variables are defined in :root at the top of the file */
 }
 
 /* 📱 MOBILE - Document overflow control */
