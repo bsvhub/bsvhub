@@ -91,7 +91,7 @@
     --top-ui-shadow: rgba(0,0,0,0.7);
     
     /* ⭐ MOBILE SCALE FACTOR - CHANGE THIS ONE VALUE TO SCALE EVERYTHING ON MOBILE */
-    --mobile-scale: 1.0;              /* 👈 Adjust this value (1.0-2.0 recommended) */
+    --mobile-scale: 1.6;              /* 👈 Adjust this value (1.0-2.0 recommended) */
     --header-section-scale: 1;        /* 👈 Scale for About/Tip/Contact sections */
     
     /* Font definitions for each section */
@@ -203,7 +203,7 @@ body {
     align-items: center;
     padding: 0 12px;
     background: rgba(25, 25, 25, 0.6);
-    min-width: var(--page-min-width);  /* 👈 Uses centralized variable */
+    /* min-width: var(--page-min-width); */  /* ← REMOVED for mobile compatibility */
 }
 
 .header-title {
@@ -284,7 +284,7 @@ body {
     background-color: rgba(25, 25, 25, 0.6);
     box-shadow: none;
     font-family: var(--font-tab);
-    min-width: var(--page-min-width);  /* 👈 Uses centralized variable */
+    /* min-width: var(--page-min-width); */  /* ← REMOVED for mobile compatibility */
 }
 
 /* Tab buttons and search - unified sizing */
@@ -751,52 +751,52 @@ body.mobile-mode .header-icons-right {
     gap: 8px;
 }
 
-/* 📱 MOBILE - Top UI elements stay at NORMAL size (NOT scaled) */
+/* 📱 MOBILE - Scale ALL UI elements (matches old mobile.css approach) */
 body.mobile-mode .header-title {
-    font-size: 3.2rem;
+    font-size: calc(3.2rem * var(--mobile-scale));
 }
 
 body.mobile-mode .header-text-link {
-    font-size: 1.3rem;
-    padding: 12px 18px;
+    font-size: calc(1.4rem * var(--mobile-scale));
+    padding: calc(6px * var(--mobile-scale)) calc(14px * var(--mobile-scale));
 }
 
 body.mobile-mode .tab-bar button,
 body.mobile-mode #search-box {
-    font-size: 1.3rem;
-    padding: 12px 18px;
-    min-height: 48px;
+    font-size: calc(1.3rem * var(--mobile-scale));
+    padding: calc(12px * var(--mobile-scale)) calc(18px * var(--mobile-scale));
+    min-height: calc(48px * var(--mobile-scale));
 }
 
 body.mobile-mode #tooltip-display {
-    font-size: 1.2rem;
-    min-height: 32px;
-    max-height: 32px;
-    padding: 6px 14px;
+    font-size: calc(1.2rem * var(--mobile-scale));
+    min-height: calc(32px * var(--mobile-scale));
+    max-height: calc(32px * var(--mobile-scale));
+    padding: calc(6px * var(--mobile-scale)) calc(14px * var(--mobile-scale));
 }
 
 body.mobile-mode #tooltip-display.expanded {
-    max-height: 180px;
+    max-height: calc(180px * var(--mobile-scale));
 }
 
-/* 📱 MOBILE - Header tab content sections (About/Tip/Contact) - NORMAL size */
+/* 📱 MOBILE - Header tab content sections (About/Tip/Contact) */
 body.mobile-mode .header-tab-content {
-    font-size: 1rem;
+    font-size: calc(1rem * var(--header-section-scale));
 }
 
 body.mobile-mode .header-tab-text {
-    font-size: 2rem;
+    font-size: calc(2rem * var(--header-section-scale));
 }
 
 body.mobile-mode .copy-btn {
-    font-size: 1.4rem;
-    padding: 8px 14px;
+    font-size: calc(1.4rem * var(--header-section-scale));
+    padding: calc(8px * var(--header-section-scale)) calc(14px * var(--header-section-scale));
 }
 
-/* 📱 MOBILE - Icon text - scaled by content-area transform */
+/* 📱 MOBILE - Icon text scaling */
 body.mobile-mode .icon-text {
-    font-size: 1rem;    /* Transform scale() will handle the sizing */
-    padding: 0px 6px;
+    font-size: calc(1rem * var(--mobile-scale));
+    padding: calc(0px * var(--mobile-scale)) calc(6px * var(--mobile-scale));
 }
 
 /* 📱 MOBILE - Double-tap selected state */
