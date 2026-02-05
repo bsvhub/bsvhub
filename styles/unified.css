@@ -91,8 +91,8 @@
     --top-ui-shadow: rgba(0,0,0,0.7);
     
     /* ⭐ MOBILE SCALE FACTOR - CHANGE THIS ONE VALUE TO SCALE EVERYTHING ON MOBILE */
-    --mobile-scale: 1.2;              /* 👈 Adjust this value (1.0-2.0 recommended) */
-    --header-section-scale: 1;        /* 👈 Scale for About/Tip/Contact sections */
+    --mobile-scale: 1.1;              /* 👈 Adjust this value (1.0-2.0 recommended) */
+    --header-section-scale: 0.8;        /* 👈 Scale for About/Tip/Contact sections */
     
     /* Font definitions for each section */
     --font-header: 'dotmb', monospace;
@@ -291,11 +291,11 @@ body {
 .tab-bar button,
 #search-box {
     font-family: var(--font-tab);
-    font-size: 1.1rem;         /* 👈 CHANGED - fixed size instead of clamp */
+    font-size: 1.0rem;         /* 👈 CHANGED - fixed size instead of clamp */
                                /*    Prevents tab buttons from shrinking */
                                /*    Adjust to match header buttons if needed */
-    padding: 10px 15px;
-    min-height: 38px;
+    padding: 8px 12px;
+    min-height: 32px;
 }
 
 /* ------------------------------------------------------------
