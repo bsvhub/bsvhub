@@ -91,9 +91,9 @@
     --top-ui-shadow: rgba(0,0,0,0.7);
     
     /* ⭐ MOBILE SCALE FACTOR - CHANGE THIS ONE VALUE TO SCALE EVERYTHING ON MOBILE */
-    --mobile-scale: 0.9;              /* 👈 Adjust this value (1.0-2.0 recommended) */
+    --mobile-scale: 0.8;              /* 👈 Adjust this value (1.0-2.0 recommended) */
     --header-section-scale: 0.8;      /* 👈 Scale for About/Tip/Contact sections */
-    --header-buttons-scale: 0.8;      /* 👈 Scale for header buttons (About, Tip, Contact, Mobile) */
+    --header-buttons-scale: 0.6;      /* 👈 Scale for header buttons (About, Tip, Contact, Mobile) */
     --tab-buttons-scale: 0.7;         /* 👈 Scale for tab bar buttons and search box */
     --tooltip-scale: 0.7;             /* 👈 Scale for tooltip display */
     
@@ -301,7 +301,7 @@ body {
 ------------------------------------------------------------ */
 .tab-bar button {
     flex: 0 0 auto;
-    min-width: 100px;
+    min-width: 80px;
     white-space: nowrap;       /* Already here - good! Prevents text wrapping */
     color: white;
     background: rgba(255,255,255,0.1);
@@ -333,7 +333,7 @@ body {
    SEARCH BOX (matches tab style)
 ------------------------------------------------------------ */
 #search-box {
-    max-width: 140px;
+    max-width: 130px;
     box-sizing: border-box;
     border-radius: 10px;
     background: rgba(255,255,255,0.1);
@@ -751,10 +751,10 @@ body.mobile-mode .header-icons-right {
 
 /* 📱 MOBILE - Scale ALL UI elements (matches old mobile.css approach) */
 body.mobile-mode .header-title {
-    /* Match height of two stacked header buttons + gap + padding */
+    /* Match 1.5x the height of a single header button */
     /* Each button: 1.4rem font + 12px padding (6px top + 6px bottom) */
-    /* Two buttons + 8px gap between them */
-    font-size: calc((1.4rem + 12px) * 2 * var(--header-buttons-scale) + 8px);
+    /* 1.5x = (1.4rem + 12px) * 1.5 */
+    font-size: calc((1.4rem + 12px) * 1.5 * var(--header-buttons-scale));
     line-height: 1;
     margin: 0;
     display: flex;
