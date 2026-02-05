@@ -753,30 +753,30 @@ body.mobile-mode .header-icons-right {
 
 /* 📱 MOBILE - Scale ALL UI elements (matches old mobile.css approach) */
 body.mobile-mode .header-title {
-    font-size: calc(3.2rem * var(--mobile-scale));
+    /*font-size: calc(3.2rem * var(--mobile-scale));*/
 }
 
 body.mobile-mode .header-text-link {
-    font-size: calc(1.4rem * var(--mobile-scale));
-    padding: calc(6px * var(--mobile-scale)) calc(14px * var(--mobile-scale));
+    /*font-size: calc(1.4rem * var(--mobile-scale));
+    padding: calc(6px * var(--mobile-scale)) calc(14px * var(--mobile-scale));*/
 }
 
 body.mobile-mode .tab-bar button,
 body.mobile-mode #search-box {
-    font-size: calc(1.3rem * var(--mobile-scale));
+    /*font-size: calc(1.3rem * var(--mobile-scale));
     padding: calc(12px * var(--mobile-scale)) calc(18px * var(--mobile-scale));
-    min-height: calc(48px * var(--mobile-scale));
+    min-height: calc(48px * var(--mobile-scale));*/
 }
 
 body.mobile-mode #tooltip-display {
-    font-size: calc(1.2rem * var(--mobile-scale));
+    /*font-size: calc(1.2rem * var(--mobile-scale));
     min-height: calc(32px * var(--mobile-scale));
     max-height: calc(32px * var(--mobile-scale));
-    padding: calc(6px * var(--mobile-scale)) calc(14px * var(--mobile-scale));
+    padding: calc(6px * var(--mobile-scale)) calc(14px * var(--mobile-scale));*/
 }
 
 body.mobile-mode #tooltip-display.expanded {
-    max-height: calc(180px * var(--mobile-scale));
+    /*max-height: calc(180px * var(--mobile-scale));*/
 }
 
 /* 📱 MOBILE - Header tab content sections (About/Tip/Contact) */
