@@ -695,6 +695,7 @@ body.mobile-mode html {
 
 body.mobile-mode {
     min-width: unset;            /* Remove desktop min-width */
+    overflow-x: hidden;          /* Prevent horizontal scroll */
 }
 
 /* 📱 MOBILE - Page wrapper */
@@ -730,11 +731,27 @@ body.mobile-mode #content-area {
     padding-bottom: calc(40px / var(--mobile-scale));  /* Bottom padding */
 }
 
-/* 📱 MOBILE - Remove desktop UI min-widths */
+/* 📱 MOBILE - Remove ALL desktop min-width constraints */
 body.mobile-mode #top-ui,
 body.mobile-mode .header-container,
 body.mobile-mode .tab-bar {
     min-width: unset;
+}
+
+/* 📱 MOBILE - Critical: Prevent body overflow on actual mobile devices */
+@media (max-width: 768px) {
+    body {
+        min-width: unset !important;  /* Override desktop 800px constraint */
+        overflow-x: hidden;           /* Prevent horizontal scroll */
+    }
+    
+    #page-wrapper {
+        min-width: unset !important;  /* Override desktop 800px constraint */
+    }
+    
+    #top-ui {
+        min-width: unset !important;  /* Override desktop 800px constraint */
+    }
 }
 
 /* 📱 MOBILE - Header layout: vertical button stacks */
