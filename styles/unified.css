@@ -676,7 +676,7 @@ ul.icon-grid li a:hover .icon-text {
 /* 📱 MOBILE - Scale variables */
 body.mobile-mode {
     /* Mobile scale factor - change this to scale entire UI */
-    --mobile-scale: 1.6;         /* 👈 Adjust this value (1.4-1.8 recommended) */
+    --mobile-scale: 1.0;         /* 👈 Adjust this value (1.4-1.8 recommended) */
     
     /* Header sections scale (About/Tip/Contact) */
     --header-section-scale: 1;   /* 👈 Adjust separately from main content */
