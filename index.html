@@ -5,16 +5,9 @@
 	<title>₿SVhub.io</title>
     <!-- MAIN STYLES -->
     <!-- ============================================================
-     BASE DESKTOP STYLES (ALWAYS LOADED)
+     UNIFIED STYLES (handles both desktop and mobile)
 	============================================================ -->
-	<link rel="stylesheet" href="styles/main.css">
-
-	<!-- ============================================================
-		 MOBILE OVERRIDES (DYNAMICALLY ENABLED)
-		 - Empty by default
-		 - JS will set href to styles/mobile.css when needed
-	============================================================ -->
-	<link id="mobile-css" rel="stylesheet" href="">
+	<link rel="stylesheet" href="styles/unified.css">
 
 	<!-- ============================================================
 		 BACKGROUND / EFFECT STYLES
@@ -693,166 +686,95 @@ document.addEventListener("click", (e) => {
 
 <script>
 /* ============================================================
- JS SECTION 8 — MOBILE / DESKTOP MODE TOGGLE (STATE-PRESERVING + FADE)
- - Switches CSS only
- - Preserves active tab + content
- - Waits for CSS + fonts before measuring
-============================================================ */
+   SIMPLIFIED MOBILE / DESKTOP MODE TOGGLE
+   ============================================================
+   Replaces the complex CSS file switching logic.
+   Simply toggles 'mobile-mode' class on body element.
+   
+   INSTALLATION:
+   1. Replace both main.css AND mobile.css with unified.css
+   2. Update HTML: <link rel="stylesheet" href="styles/unified.css">
+   3. Remove the <link id="mobile-css"> element entirely
+   4. Replace the old JS toggle code with this script
+   ============================================================ */
 
-// DOM references from your original code
-const mobileToggle = document.getElementById("mobile-toggle");
-const mobileCSS    = document.getElementById("mobile-css");
-const wrapper      = document.getElementById("page-wrapper");
-
-// ---------------------
-// [NEW] readiness utils
-// ---------------------
-function waitForCss(linkEl) {
-  return new Promise((resolve, reject) => {
-    if (linkEl.sheet) return resolve();   // already loaded (cache)
-    linkEl.addEventListener('load', resolve, { once: true });
-    linkEl.addEventListener('error', () => reject(new Error('Failed to load CSS')), { once: true });
-  });
-}
-
-function waitForFonts() {
-  if (document.fonts && document.fonts.ready) {
-    return document.fonts.ready.catch(() => {});
-  }
-  return Promise.resolve();
-}
-
-// ---------------------
-// State capture/restore
-// ---------------------
-function captureUIState() {
-  return {
-    activeTabBtn: document.querySelector(".tab-btn.active"),
-    activeHeaderLink: document.querySelector(".header-text-link.active"),
-    activeSection: document.querySelector(".tab-content.active")
-  };
-}
-
-
-function restoreUIState(state) {
-  const hasSomething =
-    state.activeTabBtn || state.activeHeaderLink || state.activeSection;
-
-  // Only clear if we actually have a saved state to restore
-  if (hasSomething) {
-    document.querySelectorAll(".tab-btn, .header-text-link")
-      .forEach(el => el.classList.remove("active"));
-    document.querySelectorAll(".tab-content")
-      .forEach(sec => sec.classList.remove("active"));
-
-    if (state.activeTabBtn) state.activeTabBtn.classList.add("active");
-    if (state.activeHeaderLink) state.activeHeaderLink.classList.add("active");
-    if (state.activeSection) state.activeSection.classList.add("active");
-  }
-}
-
-
-// ---------------------
-// [REPLACED] Enablers
-// ---------------------
-function enableMobileMode(state) {
-  mobileCSS.href = "styles/mobile.css";        // begin loading mobile CSS
-  mobileToggle.querySelector('span').textContent = "desktop";
-  localStorage.setItem("ui-mode", "mobile");
-
-  // Flush layout queue
-  void document.body.offsetHeight;
-
-  // Wait for stylesheet + fonts (prevents first-paint mis-measure)
-  Promise.all([waitForCss(mobileCSS), waitForFonts()]).then(() => {
-    // Double rAF to ensure final style/layout commit
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        restoreUIState(state);
-        if (typeof positionContent === "function") positionContent();
-      });
-    });
-  });
-}
-
-function disableMobileMode(state) {
-  mobileCSS.href = "";                         // remove mobile CSS
-  mobileToggle.querySelector('span').textContent = "mobile";
-  localStorage.setItem("ui-mode", "desktop");
-
-  void document.body.offsetHeight;
-
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      restoreUIState(state);
-      if (typeof positionContent === "function") positionContent();
-    });
-  });
-}
-
-// ---------------------
-// Fade transition (keep)
-// ---------------------
-function swapModeWithFade(enableMobile) {
-  wrapper.classList.add("fading");        // fade out
-  setTimeout(() => {
-    const state = captureUIState();
-    if (enableMobile) enableMobileMode(state);
-    else              disableMobileMode(state);
-    // ==================== NEW ====================
-    // Reveal page after mode is applied
-    wrapper.style.visibility = "visible"; // NEW
-    // ==================== END NEW ====================
-  }, 50);
-  setTimeout(() => {
-    wrapper.classList.remove("fading");   // fade back in
-  }, 200);
-}
-
-// Toggle handler (keep)
-mobileToggle.addEventListener("click", (e) => {
-  e.preventDefault();
-  e.stopPropagation();                // prevent tab logic
-  clearDoubleTapSelection();      // <-- NEW: release armed icon on mode toggle
-  mobileToggle.classList.add("blink");
-  setTimeout(() => mobileToggle.classList.remove("blink"), 150);
-  mobileToggle.classList.remove("active");
-  const enableMobile = localStorage.getItem("ui-mode") !== "mobile";
-  swapModeWithFade(enableMobile);
-});
-
-// Restore mode on page load (keep)
-window.addEventListener("load", () => {
-  if (localStorage.getItem("ui-mode") === "mobile") {
-    const state = captureUIState();
-    enableMobileMode(state);
-  }
-});
-
-// [OPTIONAL] One-time re-measure after fonts become ready
-window.addEventListener("load", () => {
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(() => {
-      if (typeof positionContent === "function") positionContent();
-    });
-  }
-});
-
-// [OPTIONAL] Re-measure after BFCache restore (history navigation)
-window.addEventListener("pageshow", () => {
-  if (typeof positionContent === "function") positionContent();
-});
-    
-// Auto-enable mobile mode on smartphones
 (function() {
-    const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-    // Only enable if no previous choice was stored
-    if (isMobileDevice && localStorage.getItem("ui-mode") !== "mobile") {
-        const state = captureUIState?.() || {};
-        enableMobileMode(state);
+    const mobileToggle = document.getElementById("mobile-toggle");
+    const wrapper = document.getElementById("page-wrapper");
+    
+    // Check if user previously selected mobile mode
+    function isMobileMode() {
+        return localStorage.getItem("ui-mode") === "mobile";
     }
+    
+    // Enable mobile mode
+    function enableMobileMode() {
+        document.body.classList.add("mobile-mode");
+        if (mobileToggle) {
+            mobileToggle.querySelector('span').textContent = "desktop";
+        }
+        localStorage.setItem("ui-mode", "mobile");
+        clearDoubleTapSelection(); // Clear any armed icons
+    }
+    
+    // Disable mobile mode
+    function disableMobileMode() {
+        document.body.classList.remove("mobile-mode");
+        if (mobileToggle) {
+            mobileToggle.querySelector('span').textContent = "mobile";
+        }
+        localStorage.setItem("ui-mode", "desktop");
+    }
+    
+    // Toggle with fade effect
+    function swapModeWithFade(enableMobile) {
+        wrapper.classList.add("fading");
+        
+        setTimeout(() => {
+            if (enableMobile) {
+                enableMobileMode();
+            } else {
+                disableMobileMode();
+            }
+        }, 50);
+        
+        setTimeout(() => {
+            wrapper.classList.remove("fading");
+        }, 200);
+    }
+    
+    // Toggle button click handler
+    if (mobileToggle) {
+        mobileToggle.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Blink feedback
+            mobileToggle.classList.add("blink");
+            setTimeout(() => mobileToggle.classList.remove("blink"), 150);
+            mobileToggle.classList.remove("active");
+            
+            // Toggle mode
+            const enableMobile = !document.body.classList.contains("mobile-mode");
+            swapModeWithFade(enableMobile);
+        });
+    }
+    
+    // Restore mode on page load
+    window.addEventListener("load", () => {
+        if (isMobileMode()) {
+            enableMobileMode();
+        }
+    });
+    
+    // Auto-enable mobile mode on smartphones (first visit only)
+    const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (isMobileDevice && !localStorage.getItem("ui-mode")) {
+        enableMobileMode();
+    }
+    
 })();
+
     
 </script>
 

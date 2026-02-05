@@ -754,6 +754,26 @@
       "alt": "",
       "text": "TrueLink",
       "info": "new.svg;;;"
+    },
+    {
+      "tab": "tool",
+      "href": "https://bitails.io/",
+      "tooltip": "Bitails is the API service provider and blockchain explorer for the BSV blockchain, focusing on scalability.",
+      "img": "icon/bitails.svg",
+      "zoom": "0.9",
+      "alt": "block explorer",
+      "text": "Bitails",
+      "info": ";;;"
+    },
+    {
+      "tab": "tool",
+      "href": "https://bsvscan.io/",
+      "tooltip": "Explore the Bitcoin SV (BSV) blockchain. Search for transactions, addresses, tokens, and outpoints with BSVScan.io.",
+      "img": "icon/bsv.svg",
+      "zoom": "0.9",
+      "alt": "block explorer",
+      "text": "BSVSCAN.IO",
+      "info": ";;;"
     }
     
     
