@@ -24,6 +24,20 @@
     <!-- MAIN STYLES -->
     <link rel="stylesheet" href="styles/unified.css">
     <link rel="stylesheet" href="styles/firefly.css">
+    
+    <!-- EARLY MOBILE DETECTION - Prevents flash of desktop content -->
+    <script>
+    (function() {
+        const savedMode = localStorage.getItem("ui-mode");
+        const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+                              || (window.innerWidth <= 768);
+        
+        // Apply mobile-mode class immediately if needed
+        if (savedMode === "mobile" || (!savedMode && isMobileDevice)) {
+            document.documentElement.classList.add('mobile-mode-loading');
+        }
+    })();
+    </script>
 </head>
 
 <body>
@@ -392,7 +406,18 @@ headerLinks.forEach(link =>
   const topUI = document.getElementById("top-ui");
   function positionContent() {
     const baseTop = topUI.offsetHeight;
-    content.style.top = `${baseTop}px`;
+    
+    // Only apply inline top positioning in desktop mode
+    // Mobile mode uses CSS fixed positioning (top: 0)
+    const isMobileMode = document.body.classList.contains("mobile-mode") 
+                       || document.documentElement.classList.contains("mobile-mode-loading");
+    
+    if (!isMobileMode) {
+      content.style.top = `${baseTop}px`;
+    } else {
+      content.style.top = '';  // Clear inline style in mobile mode
+    }
+    
     document.documentElement.style.setProperty('--top-ui-height', `${baseTop}px`);
   }
   window.positionContent = positionContent;
@@ -805,6 +830,14 @@ if (mobileToggle) {
 
 // Restore mode on page load
 window.addEventListener("load", () => {
+    // Transfer mobile-mode from html to body if it was set early
+    if (document.documentElement.classList.contains('mobile-mode-loading')) {
+        document.documentElement.classList.remove('mobile-mode-loading');
+        const state = captureUIState();
+        enableMobileMode(state);
+        return;
+    }
+    
     // Auto-detect mobile devices and apply mobile-mode by default
     const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
                           || (window.innerWidth <= 768);
