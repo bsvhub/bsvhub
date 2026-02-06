@@ -414,14 +414,22 @@ body.mobile-mode .mobile-mode-icon {
 
 /* ============================================================
    5 – CONTENT AREA (LAYER 2)
+   ============================================================
+   UNIFIED STRUCTURE (Desktop + Mobile):
+   - #content-area = outer positioning/scroll container
+   - #content-scale = inner wrapper for content (scaled in mobile only)
    ============================================================ */
 
 #content-area {
     position: relative;
     z-index: 200;
     width: 100%;
-    padding-bottom: 40px;
     transition: top var(--tooltip-speed) ease;
+}
+
+#content-scale {
+    width: 100%;
+    padding-bottom: 40px;
 }
 
 .tab-content {
@@ -709,25 +717,32 @@ body.mobile-mode #page-wrapper {
 /* 📱 MOBILE - Content area with transform scaling */
 /* Mobile behaves like desktop, but content-area becomes the scroll container
    because body/wrapper have overflow:hidden in mobile mode */
+/* ============================================================
+   📱 MOBILE MODE — LAYOUT & SCALING
+   ============================================================
+   Mobile applies transform scaling to fix Chromium clipping bug.
+   Structure remains the same, only scroll + transform differ.
+   ============================================================ */
+
+/* Mobile: content-area becomes fixed scroll container */
 body.mobile-mode #content-area {
-    /* Content-area must be the scroll container in mobile mode */
-    position: fixed;             /* Fixed positioning to fill viewport */
-    top: 0 !important;          /* Always at top - use padding-top for header spacing */
+    position: fixed;
+    top: 0;
     left: 0;
-    overflow-y: auto;           /* Enable vertical scrolling */
-    overflow-x: hidden;         /* Prevent horizontal scroll */
-    -webkit-overflow-scrolling: touch;  /* Smooth scrolling on iOS */
-    
-    /* Apply the scale transform */
+    width: 100vw;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile: content-scale applies transform + inverse scaling */
+body.mobile-mode #content-scale {
     transform: scale(var(--mobile-scale));
     transform-origin: top left;
-    
-    /* Use padding instead of top positioning for header spacing */
-    padding-top: calc(var(--top-ui-height, 0px) / var(--mobile-scale));
-    
-    /* Use viewport units instead of percentages for WebKit/Blink compatibility */
     width: calc(100vw / var(--mobile-scale));
-    height: calc(100vh / var(--mobile-scale));
+    min-height: calc(100vh / var(--mobile-scale));
+    padding-bottom: 40px;
 }
 
 /* 📱 MOBILE - Remove ALL desktop min-width constraints */
