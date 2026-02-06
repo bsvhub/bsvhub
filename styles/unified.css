@@ -339,7 +339,7 @@ body.mobile-mode .mobile-mode-icon {
    SEARCH BOX (matches tab style)
 ------------------------------------------------------------ */
 #search-box {
-    max-width: 130px;
+    max-width: 133px;
     box-sizing: border-box;
     border-radius: 10px;
     background: rgba(255,255,255,0.1);
@@ -715,8 +715,6 @@ body.mobile-mode #content-area {
     position: fixed;             /* Fixed positioning to fill viewport */
     top: 0 !important;          /* Always at top - use padding-top for header spacing */
     left: 0;
-    right: 0;                   /* Use right instead of width for better compatibility */
-    bottom: 0;                  /* Use bottom instead of height for better compatibility */
     overflow-y: auto;           /* Enable vertical scrolling */
     overflow-x: hidden;         /* Prevent horizontal scroll */
     -webkit-overflow-scrolling: touch;  /* Smooth scrolling on iOS */
@@ -728,7 +726,7 @@ body.mobile-mode #content-area {
     /* Use padding instead of top positioning for header spacing */
     padding-top: calc(var(--top-ui-height, 0px) / var(--mobile-scale));
     
-    /* Adjust the scrollable area to account for scale */
+    /* Explicit dimensions - no conflicting right/bottom positioning */
     width: calc(100% / var(--mobile-scale));
     height: calc(100% / var(--mobile-scale));
 }
@@ -817,3 +815,4 @@ body.mobile-mode ul.icon-grid li a:hover {
 /* NOTE: Image zoom on hover is NOT disabled in mobile mode.
    The desktop hover zoom logic (1.15x scale on icon images) works
    identically in mobile mode, sharing the same CSS from desktop. */
+
