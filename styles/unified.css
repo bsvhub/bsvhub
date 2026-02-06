@@ -817,4 +817,3 @@ body.mobile-mode ul.icon-grid li a:hover {
 /* NOTE: Image zoom on hover is NOT disabled in mobile mode.
    The desktop hover zoom logic (1.15x scale on icon images) works
    identically in mobile mode, sharing the same CSS from desktop. */
-
