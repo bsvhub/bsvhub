@@ -100,11 +100,10 @@
 ============================================================ -->
 
 <main id="content-area">
-
-    <!-- SEARCH RESULTS -->
-    <section id="search-results" class="tab-content"></section>
-
-    
+    <div id="content-scale">
+        <!-- SEARCH RESULTS -->
+        <section id="search-results" class="tab-content"></section>
+    </div>
 </main>
  
     
@@ -415,7 +414,7 @@ headerLinks.forEach(link =>
 fetch("list.json")
   .then(r => r.json())
   .then(data => {
-    const container = document.getElementById("content-area");
+    const container = document.getElementById("content-scale");
 
     // ========================================
     // 1. BUILD HEADER SECTIONS (About, Tip, Contact)
