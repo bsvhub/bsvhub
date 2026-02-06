@@ -339,7 +339,7 @@ body.mobile-mode .mobile-mode-icon {
    SEARCH BOX (matches tab style)
 ------------------------------------------------------------ */
 #search-box {
-    max-width: 140px;
+    max-width: 130px;
     box-sizing: border-box;
     border-radius: 10px;
     background: rgba(255,255,255,0.1);
@@ -702,7 +702,6 @@ body.mobile-mode {
 
 /* 📱 MOBILE - Page wrapper */
 body.mobile-mode #page-wrapper {
-    overflow: hidden;            /* Block wrapper scroll - content-area handles scrolling instead */
     min-height: 100vh;  /* Use vh instead of svh for older browser compatibility */
     min-width: unset;            /* Remove desktop min-width */
 }
