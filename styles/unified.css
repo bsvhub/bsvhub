@@ -420,13 +420,13 @@ body.mobile-mode .mobile-mode-icon {
     position: relative;
     z-index: 200;
     width: 100%;
-    padding-bottom: 40px;
+    padding-bottom: 20px;
     transition: top var(--tooltip-speed) ease;
 }
 
 .tab-content {
     display: none;
-    padding: 20px;
+    padding: 10px;
 }
 
 .tab-content.active {
@@ -690,7 +690,7 @@ body.mobile-mode {
 body.mobile-mode,
 body.mobile-mode html {
     min-height: 100vh;  /* Use vh instead of svh for older browser compatibility */
-    overflow: hidden;
+    overflow: hidden;   /* Block body scroll - content-area handles scrolling instead */
     -webkit-text-size-adjust: 100%;  /* Prevent mobile text inflation */
     text-size-adjust: 100%;          /* Prevent mobile text inflation */
 }
@@ -702,37 +702,35 @@ body.mobile-mode {
 
 /* 📱 MOBILE - Page wrapper */
 body.mobile-mode #page-wrapper {
-    overflow: hidden;
+    overflow: hidden;            /* Block wrapper scroll - content-area handles scrolling instead */
     min-height: 100vh;  /* Use vh instead of svh for older browser compatibility */
     min-width: unset;            /* Remove desktop min-width */
 }
 
 /* 📱 MOBILE - Content area with transform scaling */
-/* This is the KEY to mobile mode - it scales everything up while
-   maintaining the exact same layout logic as desktop */
+/* Mobile behaves like desktop, but content-area becomes the scroll container
+   because body/wrapper have overflow:hidden in mobile mode */
 body.mobile-mode #content-area {
-    position: relative;
-    z-index: 200;
-    top: 0 !important;           /* Force - ignore JS positioning */
-    
-    /* Calculate dimensions to account for scale */
-    width: calc(100% / var(--mobile-scale));
-    min-height: calc(100vh / var(--mobile-scale));   /* Use vh instead of svh for older browsers */
-    max-height: calc(100vh / var(--mobile-scale));
-    
-    /* Enable scrolling - important for older browsers */
-    overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;  /* ← Critical for iOS smooth scrolling */
+    /* Content-area must be the scroll container in mobile mode */
+    position: fixed;             /* Fixed positioning to fill viewport */
+    top: 0 !important;          /* Always at top - use padding-top for header spacing */
+    left: 0;
+    width: 100vw;               /* Full viewport width */
+    height: 100vh;              /* Full viewport height */
+    overflow-y: auto;           /* Enable vertical scrolling */
+    overflow-x: hidden;         /* Prevent horizontal scroll */
+    -webkit-overflow-scrolling: touch;  /* Smooth scrolling on iOS */
     
     /* Apply the scale transform */
     transform: scale(var(--mobile-scale));
     transform-origin: top left;
-    will-change: transform;  /* ← Hint to browser for better performance */
     
-    /* Padding to account for header height */
+    /* Account for scale in width - content needs to be wider to fill viewport when scaled down */
+    width: calc(100vw / var(--mobile-scale));
+    height: calc(100vh / var(--mobile-scale));
+    
+    /* Use padding instead of top positioning for header spacing */
     padding-top: calc(var(--top-ui-height, 0px) / var(--mobile-scale));
-    padding-bottom: calc(40px / var(--mobile-scale));  /* Bottom padding */
 }
 
 /* 📱 MOBILE - Remove ALL desktop min-width constraints */
