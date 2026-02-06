@@ -725,9 +725,9 @@ body.mobile-mode #content-area {
     /* Use padding instead of top positioning for header spacing */
     padding-top: calc(var(--top-ui-height, 0px) / var(--mobile-scale));
     
-    /* Explicit dimensions - no conflicting right/bottom positioning */
-    width: calc(100% / var(--mobile-scale));
-    height: calc(100% / var(--mobile-scale));
+    /* Use viewport units instead of percentages for WebKit/Blink compatibility */
+    width: calc(100vw / var(--mobile-scale));
+    height: calc(100vh / var(--mobile-scale));
 }
 
 /* 📱 MOBILE - Remove ALL desktop min-width constraints */
