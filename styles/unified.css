@@ -420,13 +420,13 @@ body.mobile-mode .mobile-mode-icon {
     position: relative;
     z-index: 200;
     width: 100%;
-    padding-bottom: 20px;
+    padding-bottom: 40px;
     transition: top var(--tooltip-speed) ease;
 }
 
 .tab-content {
     display: none;
-    padding: 10px;
+    padding: 20px;
 }
 
 .tab-content.active {
@@ -715,8 +715,8 @@ body.mobile-mode #content-area {
     position: fixed;             /* Fixed positioning to fill viewport */
     top: 0 !important;          /* Always at top - use padding-top for header spacing */
     left: 0;
-    width: 100vw;               /* Full viewport width */
-    height: 100vh;              /* Full viewport height */
+    right: 0;                   /* Use right instead of width for better compatibility */
+    bottom: 0;                  /* Use bottom instead of height for better compatibility */
     overflow-y: auto;           /* Enable vertical scrolling */
     overflow-x: hidden;         /* Prevent horizontal scroll */
     -webkit-overflow-scrolling: touch;  /* Smooth scrolling on iOS */
@@ -725,12 +725,12 @@ body.mobile-mode #content-area {
     transform: scale(var(--mobile-scale));
     transform-origin: top left;
     
-    /* Account for scale in width - content needs to be wider to fill viewport when scaled down */
-    width: calc(100vw / var(--mobile-scale));
-    height: calc(100vh / var(--mobile-scale));
-    
     /* Use padding instead of top positioning for header spacing */
     padding-top: calc(var(--top-ui-height, 0px) / var(--mobile-scale));
+    
+    /* Adjust the scrollable area to account for scale */
+    width: calc(100% / var(--mobile-scale));
+    height: calc(100% / var(--mobile-scale));
 }
 
 /* 📱 MOBILE - Remove ALL desktop min-width constraints */
