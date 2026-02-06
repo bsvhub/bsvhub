@@ -339,7 +339,7 @@ body.mobile-mode .mobile-mode-icon {
    SEARCH BOX (matches tab style)
 ------------------------------------------------------------ */
 #search-box {
-    max-width: 133px;
+    max-width: 140px;
     box-sizing: border-box;
     border-radius: 10px;
     background: rgba(255,255,255,0.1);
