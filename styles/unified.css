@@ -724,8 +724,14 @@ body.mobile-mode #page-wrapper {
    Structure remains the same, only scroll + transform differ.
    ============================================================ */
 
+/* Early mobile detection - apply to <html> before body loads */
+html.mobile-mode-loading body {
+    opacity: 0;
+}
+
 /* Mobile: content-area becomes fixed scroll container */
-body.mobile-mode #content-area {
+body.mobile-mode #content-area,
+html.mobile-mode-loading #content-area {
     position: fixed;
     top: 0;
     left: 0;
@@ -737,46 +743,57 @@ body.mobile-mode #content-area {
 }
 
 /* Mobile: content-scale applies transform + inverse scaling */
-body.mobile-mode #content-scale {
+body.mobile-mode #content-scale,
+html.mobile-mode-loading #content-scale {
     transform: scale(var(--mobile-scale));
     transform-origin: top left;
     width: calc(100vw / var(--mobile-scale));
     min-height: calc(100vh / var(--mobile-scale));
+    padding-top: calc(var(--top-ui-height, 0px) / var(--mobile-scale));
     padding-bottom: 40px;
 }
 
 /* 📱 MOBILE - Remove ALL desktop min-width constraints */
 body.mobile-mode #top-ui,
 body.mobile-mode .header-container,
-body.mobile-mode .tab-bar {
+body.mobile-mode .tab-bar,
+html.mobile-mode-loading #top-ui,
+html.mobile-mode-loading .header-container,
+html.mobile-mode-loading .tab-bar {
     min-width: unset;
 }
 
 
 /* 📱 MOBILE - Scale header title and icons with --header-buttons-scale */
-body.mobile-mode .header-title {
+body.mobile-mode .header-title,
+html.mobile-mode-loading .header-title {
     font-size: calc(3.2rem * var(--header-buttons-scale));
 }
 
-body.mobile-mode .header-icon {
+body.mobile-mode .header-icon,
+html.mobile-mode-loading .header-icon {
     height: calc(3.2rem * var(--header-buttons-scale));
 }
 
 body.mobile-mode .tab-bar button,
-body.mobile-mode #search-box {
+body.mobile-mode #search-box,
+html.mobile-mode-loading .tab-bar button,
+html.mobile-mode-loading #search-box {
     font-size: calc(1.3rem * var(--tab-buttons-scale));
     padding: calc(12px * var(--tab-buttons-scale)) calc(18px * var(--tab-buttons-scale));
     min-height: calc(48px * var(--tab-buttons-scale));
 }
 
-body.mobile-mode #tooltip-display {
+body.mobile-mode #tooltip-display,
+html.mobile-mode-loading #tooltip-display {
     font-size: calc(1.2rem * var(--tooltip-scale));
     min-height: calc(32px * var(--tooltip-scale));
     max-height: calc(32px * var(--tooltip-scale));
     padding: calc(6px * var(--tooltip-scale)) calc(14px * var(--tooltip-scale));
 }
 
-body.mobile-mode #tooltip-display.expanded {
+body.mobile-mode #tooltip-display.expanded,
+html.mobile-mode-loading #tooltip-display.expanded {
     max-height: calc(180px * var(--tooltip-scale));
 }
 
