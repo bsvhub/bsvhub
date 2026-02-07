@@ -378,6 +378,16 @@ tabButtons.forEach(btn =>
 );
 
 /* ------------------------------------------------------------
+   AUTO-ACTIVATE APPS TAB ON PAGE LOAD
+------------------------------------------------------------ */
+window.addEventListener("load", () => {
+    const appsTab = document.querySelector('.tab-btn[data-target="app"]');
+    if (appsTab && !document.querySelector('.tab-btn.active')) {
+        appsTab.click();
+    }
+});
+
+/* ------------------------------------------------------------
    HEADER LINK CLICK — WITH SEARCH RESET
 ------------------------------------------------------------ */
 headerLinks.forEach(link =>
@@ -767,37 +777,26 @@ function restoreUIState(state) {
     }
 }
 
-// Enable mobile mode
 function enableMobileMode(state) {
-    document.body.classList.add("mobile-mode");
-    if (mobileToggle) {
-        mobileToggle.querySelector('span').textContent = "desktop";
-    }
-    localStorage.setItem("ui-mode", "mobile");
-    
-    // Restore UI state and reposition content
+  document.body.classList.add("mobile-mode");
+  localStorage.setItem("ui-mode", "mobile");
+  requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-            restoreUIState(state);
-            if (typeof positionContent === "function") positionContent();
-        });
+      restoreUIState(state);
+      if (typeof positionContent === "function") positionContent();
     });
+  });
 }
 
-// Disable mobile mode
 function disableMobileMode(state) {
-    document.body.classList.remove("mobile-mode");
-    if (mobileToggle) {
-        mobileToggle.querySelector('span').textContent = "mobile";
-    }
-    localStorage.setItem("ui-mode", "desktop");
-    
+  document.body.classList.remove("mobile-mode");
+  localStorage.setItem("ui-mode", "desktop");
+  requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-            restoreUIState(state);
-            if (typeof positionContent === "function") positionContent();
-        });
+      restoreUIState(state);
+      if (typeof positionContent === "function") positionContent();
     });
+  });
 }
 
 // Fade transition
@@ -925,6 +924,21 @@ window.addEventListener("pageshow", () => {
 })();
 </script>
     
+<!-- DIAGNOSTIC: Scroll height debugging ->
+<script>
+setTimeout(() => {
+    const area = document.getElementById('content-area');
+    const scale = document.getElementById('content-scale');
+    console.log('=== SCROLL DIAGNOSTIC ===');
+    console.log('content-area scrollHeight:', area.scrollHeight);
+    console.log('content-area clientHeight:', area.clientHeight);
+    console.log('content-scale offsetHeight:', scale.offsetHeight);
+    console.log('Difference (extra scroll):', area.scrollHeight - area.clientHeight);
+    console.log('Mobile mode active:', document.body.classList.contains('mobile-mode'));
+    console.log('Scale factor:', getComputedStyle(document.documentElement).getPropertyValue('--mobile-scale'));
+}, 2000);
+</script-->
+
 </div>
 </body>
 </html>
