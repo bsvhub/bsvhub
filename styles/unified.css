@@ -91,7 +91,7 @@
     --top-ui-shadow: rgba(0,0,0,0.7);
     
     /* ⭐ MOBILE SCALE FACTOR - CHANGE THIS ONE VALUE TO SCALE EVERYTHING ON MOBILE */
-    --mobile-scale: 0.8;              /* 👈 Adjust this value (1.0-2.0 recommended) */
+    --mobile-scale: 1;              /* 👈 Adjust this value (1.0-2.0 recommended) */
     --header-section-scale: 0.6;      /* 👈 Scale for About/Tip/Contact sections */
     --header-buttons-scale: 0.5;      /* 👈 Scale for header buttons (About, Tip, Contact, Mobile) */
     --tab-buttons-scale: 0.6;         /* 👈 Scale for tab bar buttons and search box */
@@ -425,11 +425,12 @@ body.mobile-mode .mobile-mode-icon {
     z-index: 200;
     width: 100%;
     transition: top var(--tooltip-speed) ease;
+    padding-bottom: 40px;  /* Bottom padding - same for desktop and mobile */
 }
 
 #content-scale {
     width: 100%;
-    padding-bottom: 40px;
+    /* padding-bottom moved to content-area in mobile, stays here in desktop */
 }
 
 .tab-content {
@@ -455,6 +456,7 @@ ul.icon-grid {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    align-content: flex-start;  /* FIX: Pack rows at top, prevent blank space below last row */
     gap: 20px;
     margin: 0 auto;
     padding: 10px;
@@ -734,12 +736,14 @@ body.mobile-mode #content-area,
 html.mobile-mode-loading #content-area {
     position: fixed;
     top: 0;
+    bottom: 0;  /* Use top/bottom instead of height: 100vh */
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    right: 0;
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
+    padding-top: var(--top-ui-height, 0px);  /* Move header offset HERE (unscaled) */
+    padding-bottom: 40px;  /* Same 40px as desktop - NOT SCALED */
 }
 
 /* Mobile: content-scale applies transform + inverse scaling */
@@ -748,9 +752,7 @@ html.mobile-mode-loading #content-scale {
     transform: scale(var(--mobile-scale));
     transform-origin: top left;
     width: calc(100vw / var(--mobile-scale));
-    min-height: calc(100vh / var(--mobile-scale));
-    padding-top: calc(var(--top-ui-height, 0px) / var(--mobile-scale));
-    padding-bottom: 40px;
+    /* padding-top removed - now on content-area instead */
 }
 
 /* 📱 MOBILE - Remove ALL desktop min-width constraints */
@@ -847,3 +849,18 @@ body.mobile-mode ul.icon-grid li a:hover {
    The desktop hover zoom logic (1.15x scale on icon images) works
    identically in mobile mode, sharing the same CSS from desktop. */
 
+body.mobile-mode #content-area {
+  position: fixed;
+  top: 0;
+  bottom: 0;      /* <-- correct */
+  left: 0;
+  right: 0;
+  overflow-y: auto;
+  padding-top: var(--top-ui-height, 0px);  /* offset for header in unscaled layer */
+  padding-bottom: 40px;
+}
+body.mobile-mode #content-scale {
+  transform: scale(var(--mobile-scale));
+  transform-origin: top left;
+  width: calc(100vw / var(--mobile-scale));
+}
