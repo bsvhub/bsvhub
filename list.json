@@ -850,7 +850,7 @@
       "href": "https://bsvbetter.org/",
       "tooltip": "BSV Better is dedicated to exploring, and educating others about the revolutionary potential of Bitcoin SV (BSV).",
       "img": "icon/bsvbetter.png",
-      "zoom": "2.8",
+      "zoom": "2.3",
       "alt": "",
       "text": "BSV Better",
       "info": ";;;"
@@ -900,7 +900,7 @@
       "href": "https://coolcert.babbage.systems/",
       "tooltip": "Get certified as officially cool!!",
       "img": "app/coolcert.svg",
-      "zoom": "0.9",
+      "zoom": "0.75",
       "alt": "",
       "text": "CoolCert",
       "info": ";;;"
