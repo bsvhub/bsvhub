@@ -88,11 +88,11 @@
 
         <button class="tab-btn" data-target="tool"><span>Tools</span></button>
         <button class="tab-btn" data-target="app"><span>Apps</span></button>
-        <button class="tab-btn" data-target="wallets"><span>Wallets</span></button>
+        <button class="tab-btn" data-target="wallet"><span>Wallets</span></button>
         <button class="tab-btn" data-target="exchange"><span>Get BSV</span></button>
         <button class="tab-btn" data-target="market"><span>Market</span></button>
-        <button class="tab-btn" data-target="bsv"><span>Main Sites</span></button>
-        <button class="tab-btn" data-target="docs"><span>Tech Docs</span></button>
+        <button class="tab-btn" data-target="bsv"><span>Info</span></button>
+        <button class="tab-btn" data-target="doc"><span>Tech Docs</span></button>
         <button class="tab-btn" data-target="social"><span>SM</span></button>
         <button class="tab-btn" data-target="video"><span>Videos</span></button>
        
@@ -377,15 +377,11 @@ tabButtons.forEach(btn =>
     })
 );
 
+
 /* ------------------------------------------------------------
    AUTO-ACTIVATE APPS TAB ON PAGE LOAD
 ------------------------------------------------------------ */
-window.addEventListener("load", () => {
-    const appsTab = document.querySelector('.tab-btn[data-target="app"]');
-    if (appsTab && !document.querySelector('.tab-btn.active')) {
-        appsTab.click();
-    }
-});
+// 🔧 REMOVED: Now handled in JSON loader (section 5) to avoid race condition
 
 /* ------------------------------------------------------------
    HEADER LINK CLICK — WITH SEARCH RESET
@@ -561,13 +557,14 @@ fetch("list.json")
 
     
     // ========================================
-    // 5. ACTIVATE FIRST TAB
+    // 5. ACTIVATE DEFAULT TAB
     // ========================================
+    // 🔧 CHANGE: Activate "Apps" tab instead of first tab (Tools)
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        const firstBtn = document.querySelector('.tab-btn');
-        if (firstBtn) {
-          activateTab(firstBtn.dataset.target, firstBtn);
+        const appsBtn = document.querySelector('.tab-btn[data-target="app"]');
+        if (appsBtn) {
+          activateTab(appsBtn.dataset.target, appsBtn);
         }
         if (typeof positionContent === "function") positionContent();
       });
@@ -924,7 +921,7 @@ window.addEventListener("pageshow", () => {
 })();
 </script>
     
-<!-- DIAGNOSTIC: Scroll height debugging ->
+<!-- DIAGNOSTIC: Scroll height debugging -->
 <script>
 setTimeout(() => {
     const area = document.getElementById('content-area');
@@ -937,7 +934,7 @@ setTimeout(() => {
     console.log('Mobile mode active:', document.body.classList.contains('mobile-mode'));
     console.log('Scale factor:', getComputedStyle(document.documentElement).getPropertyValue('--mobile-scale'));
 }, 2000);
-</script-->
+</script>
 
 </div>
 </body>
