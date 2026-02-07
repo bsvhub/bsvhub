@@ -112,8 +112,8 @@
     /* ============================================================
        🎯 ICON SIZE CONFIGURATION - CHANGE ONLY THESE TWO VALUES!
        ============================================================ */
-    --icon-min-size: 160px;    /* 👈 Minimum icon size (narrow screens) */
-    --icon-max-size: 220px;    /* 👈 Maximum icon size (wide screens) */
+    --icon-min-size: 120px;    /* 👈 Minimum icon size (narrow screens) */
+    --icon-max-size: 200px;    /* 👈 Maximum icon size (wide screens) */
     
     /* ============================================================
        ⚙️ AUTO-CALCULATED VALUES - DO NOT MODIFY THESE
@@ -148,7 +148,7 @@ html {
 body {
     margin: 0;
     padding: 0;
-    font-size: 1.2rem;
+    font-size: 0.9rem;
     letter-spacing: 2px;
     overflow-x: auto;          /* Allows horizontal scroll when needed */
     min-height: 100%;
@@ -382,7 +382,7 @@ body.mobile-mode .mobile-mode-icon {
   word-break: break-word;
   overflow-wrap: anywhere;
   font-family: var(--font-tooltip);
-  font-size: 1.2rem;
+  font-size: 1.0rem;
   color: #fada4e;
   text-align: center;
   background: rgba(25, 25, 25, 0.6);
