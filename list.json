@@ -237,7 +237,7 @@
     },
     {
       "tab": "exchange",
-      "href": "https://kyc.rip",
+      "href": "https://kyc.rip/swap",
       "tooltip": "Privacy focused crypto swap exchange, supports BSV, no KYC or account required",
       "img": "icon/kycrip.png",
       "zoom": "1.1",
