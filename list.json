@@ -209,10 +209,10 @@
       "tab": "video",
       "href": "https://www.youtube.com/@Kate_L_Mosso/videos",
       "tooltip": "Kate Mosso providing content about Crypto and BSV",
-      "img": "social/crypto_kate.png",
+      "img": "social/kate_mosso.png",
       "zoom": "0.9",
       "alt": "Kate Mosso",
-      "text": "Kate Mosso",
+      "text": "KryptoKate",
       "info": "new.svg;;yt.svg;"
     },
     {
@@ -292,14 +292,14 @@
       "img": "icon/babbage.svg",
       "zoom": "0.9",
       "alt": "BSV BRC 100",
-      "text": "Project Babbage",
+      "text": "@ProjectBabbage",
       "info": ";;twitter.svg;"
     },
     {
       "tab": "social",
       "href": "https://x.com/Kate_L_Mosso",
       "tooltip": "Kate Mosso: former FOX TV Reporter turned Independent Crypto Reporter",
-      "img": "social/crypto_kate.png",
+      "img": "social/kate_mosso.png",
       "zoom": "0.9",
       "alt": "Kate Mosso",
       "text": "@Kate_L_Mosso",
@@ -966,7 +966,7 @@
       "info": ";;;"
     },
     {
-      "tab": "app",
+      "tab": "app;tool",
       "href": "https://mnemonic-brc100.vercel.app/",
       "tooltip": "This tool can help you retrieve funds stuck in old BSV wallets which used BIP39 BIP32 style HD keys.",
       "img": "app/mnemonic.svg",
@@ -974,6 +974,46 @@
       "alt": "",
       "text": "Mnemonic",
       "info": ";;;"
+    },
+    {
+      "tab": "social",
+      "href": "https://x.com/CsTominaga",
+      "tooltip": "S Tominaga (Aka Dr Craig Wright)",
+      "img": "social/cs-tominaga.png",
+      "zoom": "0.9",
+      "alt": "",
+      "text": "@CsTominaga",
+      "info": ";;twitter.svg;"
+    },
+    {
+      "tab": "tool",
+      "href": "https://wordpress.org/plugins/bsvanon-bitcoin-sv-payments/#description",
+      "tooltip": "This plugin enables your WooCommerce store to accept Bitcoin SV (BSV) payments directly to your wallet using BIP32 address derivation. No third-party payment processors, no monthly fees, complete self-custody.",
+      "img": "app/woocommerce.svg",
+      "zoom": "0.9",
+      "alt": "",
+      "text": "WooCommerce",
+      "info": ";;;"
+    },
+    {
+      "tab": "social",
+      "href": "https://x.com/deggen",
+      "tooltip": "Distributed Applications Lead @BSVBlockchain - identity, data integrity, and micropayments.",
+      "img": "social/deggen.png",
+      "zoom": "0.9",
+      "alt": "",
+      "text": "@deggen",
+      "info": ";;twitter.svg;"
+    },
+    {
+      "tab": "social",
+      "href": "https://x.com/KanoTheTruth",
+      "tooltip": "𝗕𝗶𝘁𝗰𝗼𝗶𝗻ˢᵛ : On-Chain Layer 1 Bitcoin Scaling",
+      "img": "social/kano.png",
+      "zoom": "0.9",
+      "alt": "",
+      "text": "@KanoTheTruth",
+      "info": ";;twitter.svg;"
     }
     
   ]
