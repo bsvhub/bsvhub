@@ -799,7 +799,7 @@
       "tab": "app",
       "href": "https://calendar.metanet.app/",
       "tooltip": "Own your events",
-      "img": "app/metanet_calendar.png",
+      "img": "app/metanet_calendar.svg",
       "zoom": "0.9",
       "alt": "",
       "text": "Metanet Calendar",
@@ -854,8 +854,127 @@
       "alt": "",
       "text": "BSV Better",
       "info": ";;;"
+    },
+    {
+      "tab": "app",
+      "href": "https://coinflip.babbage.systems/",
+      "tooltip": "Flip a coin, earn some sats.",
+      "img": "app/coinflip.svg",
+      "zoom": "0.9",
+      "alt": "",
+      "text": "Coinflip",
+      "info": ";;;"
+    },
+    {
+      "tab": "app",
+      "href": "https://metanethighway.com/",
+      "tooltip": "Our app generates fresh, secure addresses for your Metanet wallet, letting you receive BSV from any external wallet with ease.",
+      "img": "app/metanet_highway.png",
+      "zoom": "1.2",
+      "alt": "",
+      "text": "Metanet Highway",
+      "info": ";;;"
+    },
+    {
+      "tab": "app",
+      "href": "https://marscast.babbage.systems/",
+      "tooltip": "Micropayment-powered martian weather data for Cool people",
+      "img": "app/marscast.png",
+      "zoom": "0.9",
+      "alt": "",
+      "text": "MarsCast",
+      "info": ";;;"
+    },
+    {
+      "tab": "app",
+      "href": "https://legacy.atx.systems/",
+      "tooltip": "For taking and making payments using traditional Bitcoin addresses.",
+      "img": "icon/qr.svg",
+      "zoom": "0.7",
+      "alt": "",
+      "text": "Legacy Payments",
+      "info": ";;;"
+    },
+    {
+      "tab": "app",
+      "href": "https://coolcert.babbage.systems/",
+      "tooltip": "Get certified as officially cool!!",
+      "img": "app/coolcert.svg",
+      "zoom": "0.9",
+      "alt": "",
+      "text": "CoolCert",
+      "info": ";;;"
+    },
+    {
+      "tab": "app",
+      "href": "https://pensona.metanet.app/",
+      "tooltip": "On-chain note-taking app.",
+      "img": "app/pensona.svg",
+      "zoom": "0.9",
+      "alt": "",
+      "text": "Pensona",
+      "info": ";;;"
+    },
+    {
+      "tab": "app",
+      "href": "https://dropblocks.org/",
+      "tooltip": "A decentralized file storage using BSV blockchain and UHRP protocol. Store files in UHRP with cryptographic proof recorded on-chain.",
+      "img": "app/dropblocks.png",
+      "zoom": "1.0",
+      "alt": "",
+      "text": "DropBlocks",
+      "info": ";;;"
+    },
+    {
+      "tab": "app",
+      "href": "https://pay-quickr.atx.systems/",
+      "tooltip": "Fast and secure phone to phone BSV payments using QR codes.",
+      "img": "app/pay-quickr.png",
+      "zoom": "0.8",
+      "alt": "",
+      "text": "Pay-QuickR",
+      "info": ";;;"
+    },
+    {
+      "tab": "app",
+      "href": "https://secure.atx.systems/",
+      "tooltip": "Generate a cryptographically secure random key using your browser's crypto API and divide that into multiple shares using Shamir's Secret Sharing Scheme.",
+      "img": "app/SBR.png",
+      "zoom": "1.0",
+      "alt": "",
+      "text": "Secure Backup & Recovery",
+      "info": ";;;"
+    },
+    {
+      "tab": "app",
+      "href": "https://fast.brc.dev/",
+      "tooltip": "This allows developers to read code, run the snippet as is, and see the output in an easily read format for testing out the different functionality of the WalletClient.",
+      "img": "app/quickstart-docs.png",
+      "zoom": "0.9",
+      "alt": "",
+      "text": "Quickstart Docs",
+      "info": ";;;"
+    },
+    {
+      "tab": "app",
+      "href": "http://paymail.us/",
+      "tooltip": "For registering a paymail alias and collecting inbound payments from external wallets which use paymail p2p destinations and rawtx / beef delivery.",
+      "img": "app/paymail-bridge.png",
+      "zoom": "0.9",
+      "alt": "",
+      "text": "Paymail Bridge",
+      "info": ";;;"
+    },
+    {
+      "tab": "app",
+      "href": "https://mnemonic-brc100.vercel.app/",
+      "tooltip": "This tool can help you retrieve funds stuck in old BSV wallets which used BIP39 BIP32 style HD keys.",
+      "img": "app/mnemonic.svg",
+      "zoom": "2.8",
+      "alt": "",
+      "text": "Mnemonic",
+      "info": ";;;"
     }
-    
     
   ]
 }
