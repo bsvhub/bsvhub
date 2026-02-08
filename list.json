@@ -419,7 +419,7 @@
       "tab": "tool",
       "href": "https://whatsonchain.com",
       "tooltip": "The main BSV blockchain explorer",
-      "img": "icon/whatsonchain.png",
+      "img": "icon/whatsonchain.svg",
       "zoom": "1.0",
       "alt": "tool explorer",
       "text": "whatsonchain",
