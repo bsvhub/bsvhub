@@ -378,7 +378,7 @@
     {
       "tab": "video",
       "href": "https://www.youtube.com/@bridgetdoran/videos",
-      "tooltip": "Bridget D talks abou Bitcoin and blockchain tech.",
+      "tooltip": "Bridget D talks about Bitcoin and blockchain tech.",
       "img": "social/bridgetd.png",
       "zoom": "0.9",
       "alt": "tech onchain",
@@ -544,6 +544,26 @@
       "alt": "Gavin Mehl",
       "text": "@GavinMehl",
       "info": ";;twitter.svg;"
+    },
+    {
+      "tab": "social",
+      "href": "https://x.com/hbgnostic",
+      "tooltip": "Bridget D talks about Bitcoin and blockchain tech. Prponent of Bitcoin in it's original design.",
+      "img": "social/bridgetd.png",
+      "zoom": "0.9",
+      "alt": "",
+      "text": "@hbgnostic",
+      "info": ";;twitter.svg;"
+    },
+    {
+      "tab": "social",
+      "href": "https://linktr.ee/BsvGodfather",
+      "tooltip": "Spreading awareness of satoshis vision with the power of memes.",
+      "img": "social/bsv-godfather.svg",
+      "zoom": "0.9",
+      "alt": "social media",
+      "text": "BsvGodfather",
+      "info": ";;;"
     },
     {
       "tab": "app",
@@ -820,7 +840,7 @@
       "href": "https://your-files-and-stuff.lovable.app/",
       "tooltip": "On-chain stuff",
       "img": "app/stuff.png",
-      "zoom": "1.8",
+      "zoom": "1.2",
       "alt": "",
       "text": "Stuff",
       "info": ";;;"
@@ -1014,6 +1034,16 @@
       "alt": "",
       "text": "@KanoTheTruth",
       "info": ";;twitter.svg;"
+    },
+    {
+      "tab": "app",
+      "href": "https://pollr.gg/",
+      "tooltip": "On-chain polls",
+      "img": "app/pollr.svg",
+      "zoom": "0.9",
+      "alt": "",
+      "text": "Pollr",
+      "info": ";;;"
     }
     
   ]
