@@ -1044,6 +1044,26 @@
       "alt": "",
       "text": "Pollr",
       "info": ";;;"
+    },
+    {
+      "tab": "video",
+      "href": "https://www.youtube.com/@SmilaZ/videos",
+      "tooltip": "SmilaZ often covers Bitcoin and CSW content.",
+      "img": "social/smilaz.png",
+      "zoom": "0.9",
+      "alt": "",
+      "text": "SmilaZ",
+      "info": ";;;"
+    },
+    {
+      "tab": "social",
+      "href": "https://substack.com/@cstominaga",
+      "tooltip": "Dr Craig Wright on Substack",
+      "img": "social/cs-tominaga.png",
+      "zoom": "0.9",
+      "alt": "",
+      "text": "Craig Wright",
+      "info": ";;substack.svg;"
     }
     
   ]
