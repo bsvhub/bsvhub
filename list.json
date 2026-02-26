@@ -411,6 +411,16 @@
       "info": ";;;"
     },
     {
+      "tab": "tool",
+      "href": "https://gaia-explorer.com",
+      "tooltip": "BSV image blockchain explorer",
+      "img": "icon/gaia.png",
+      "zoom": "1.0",
+      "alt": "tool explorer",
+      "text": "Explorer",
+      "info": ";;;"
+    },
+    {
       "tab": "wallet",
       "href": "https://yours.org",
       "tooltip": "Chrome-based BSV wallet extension",
@@ -1049,6 +1059,16 @@
       "alt": "",
       "text": "Kurt Wuckert Jr",
       "info": ";;yt.svg;"
+    },
+    {
+      "tab": "video",
+      "href": "https://www.youtube.com/@todobitcoin3167/featured",
+      "tooltip": "Bitcoin channel in Spanish",
+      "img": "social/todo.png",
+      "zoom": "1.1",
+      "alt": "",
+      "text": "TODO BITCOIN",
+      "info": ";;yt.svg;spain.svg"
     },
     {
       "tab": "social",
