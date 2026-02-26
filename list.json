@@ -217,7 +217,7 @@
       "img": "social/kurt.png",
       "zoom": "1.1",
       "alt": "Kurt Wuckert Jr streams",
-      "text": "Kurt Wuckert Jr streams",
+      "text": "Kurt Wuckert Jr at CoinGeek",
       "info": ";;yt.svg;"
     },
     {
@@ -1038,6 +1038,16 @@
       "zoom": "0.9",
       "alt": "",
       "text": "SmilaZ",
+      "info": ";;yt.svg;"
+    },
+    {
+      "tab": "video",
+      "href": "https://www.youtube.com/@Kurtwuckertjr/videos",
+      "tooltip": "Kurt Wuckert Jr personal chanel where he talkes about Bitcoin and more.",
+      "img": "social/kurt.png",
+      "zoom": "1.1",
+      "alt": "",
+      "text": "Kurt Wuckert Jr",
       "info": ";;yt.svg;"
     },
     {
