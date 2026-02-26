@@ -91,7 +91,7 @@
     --top-ui-shadow: rgba(0,0,0,0.7);
     
     /* ⭐ MOBILE SCALE FACTOR - CHANGE THIS ONE VALUE TO SCALE EVERYTHING ON MOBILE */
-    --mobile-scale: 1;              /* 👈 Adjust this value (1.0-2.0 recommended) */
+    --mobile-scale: 0.8;              /* 👈 Adjust this value (0.1-2.0 recommended) */
     --header-section-scale: 0.6;      /* 👈 Scale for About/Tip/Contact sections */
     --header-buttons-scale: 0.5;      /* 👈 Scale for header buttons (About, Tip, Contact, Mobile) */
     --tab-buttons-scale: 0.6;         /* 👈 Scale for tab bar buttons and search box */
@@ -378,6 +378,8 @@ body.mobile-mode .mobile-mode-icon {
   padding: 6px 14px;
   min-height: 32px;
   max-height: 32px;
+  line-height: 20px;  /* 32px min-height − 12px vertical padding = 20px per line,
+                         so single-line expanded matches marquee height exactly */
   white-space: normal;
   word-break: break-word;
   overflow-wrap: anywhere;
@@ -791,6 +793,7 @@ html.mobile-mode-loading #tooltip-display {
     font-size: calc(1.2rem * var(--tooltip-scale));
     min-height: calc(32px * var(--tooltip-scale));
     max-height: calc(32px * var(--tooltip-scale));
+    line-height: calc(20px * var(--tooltip-scale));  /* scales with padding to keep single-line height consistent */
     padding: calc(6px * var(--tooltip-scale)) calc(14px * var(--tooltip-scale));
 }
 
