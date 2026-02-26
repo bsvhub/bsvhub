@@ -410,21 +410,43 @@ headerLinks.forEach(link =>
 (function () {
   const content = document.getElementById("content-area");
   const topUI = document.getElementById("top-ui");
+
+  /* Fix extra blank space below icon-grid when --mobile-scale < 1.
+     CSS transforms don't affect layout, so the scroll container sees the
+     full pre-transform height. Compensate with a negative margin-bottom
+     equal to: naturalHeight × (scale - 1), which is negative when scale < 1. */
+  function fixScaleSpacing() {
+    const isMobile = document.body.classList.contains("mobile-mode")
+                  || document.documentElement.classList.contains("mobile-mode-loading");
+    const cs = document.getElementById("content-scale");
+    if (!cs) return;
+    if (isMobile) {
+      const scale = parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue("--mobile-scale")
+      ) || 1;
+      cs.style.marginBottom = cs.scrollHeight * (scale - 1) + "px";
+    } else {
+      cs.style.marginBottom = "";
+    }
+  }
+  window.fixScaleSpacing = fixScaleSpacing;
+
   function positionContent() {
     const baseTop = topUI.offsetHeight;
-    
+
     // Only apply inline top positioning in desktop mode
     // Mobile mode uses CSS fixed positioning (top: 0)
-    const isMobileMode = document.body.classList.contains("mobile-mode") 
+    const isMobileMode = document.body.classList.contains("mobile-mode")
                        || document.documentElement.classList.contains("mobile-mode-loading");
-    
+
     if (!isMobileMode) {
       content.style.top = `${baseTop}px`;
     } else {
       content.style.top = '';  // Clear inline style in mobile mode
     }
-    
+
     document.documentElement.style.setProperty('--top-ui-height', `${baseTop}px`);
+    fixScaleSpacing();
   }
   window.positionContent = positionContent;
   window.addEventListener("resize", positionContent);
@@ -442,30 +464,22 @@ headerLinks.forEach(link =>
      - applies zoom per icon
 ============================================================ -->
 <script>
-fetch("list.json")
-  .then(r => r.json())
-  .then(data => {
+Promise.all([fetch("about.json").then(r => r.json()), fetch("list.json").then(r => r.json())])
+  .then(([about, data]) => {
     const container = document.getElementById("content-scale");
 
     // ========================================
     // 1. BUILD HEADER SECTIONS (About, Tip, Contact)
     // ========================================
 
-    if (data.headerContent) {
-      Object.entries(data.headerContent).forEach(([id, section]) => {
-        const sec = document.createElement("section");
-        sec.id = id + "-section";
-        sec.className = section.class || "tab-content header-tab-content";
+    Object.entries(about).forEach(([id, section]) => {
+      const sec = document.createElement("section");
+      sec.id = id + "-section";
+      sec.className = "tab-content header-tab-content";
+      if (section.html) sec.innerHTML = section.html;
+      container.appendChild(sec);
+    });
 
-        if (section.html) {
-          sec.innerHTML = section.html;
-        }
-
-        container.appendChild(sec);
-      });
-    }
-    
-    
     // ========================================
     // 2. GET ALL UNIQUE TAB NAMES FROM ITEMS
     // ========================================
@@ -629,6 +643,7 @@ searchBox.addEventListener("input", () => {
     // If search is empty, hide results
     if (!q) {
         resultSec.classList.remove("active");
+        requestAnimationFrame(() => { if (typeof fixScaleSpacing === 'function') fixScaleSpacing(); });
         return;
     }
 
@@ -721,6 +736,7 @@ searchBox.addEventListener("input", () => {
     } else {
         resultSec.classList.remove("active");
     }
+    requestAnimationFrame(() => { if (typeof fixScaleSpacing === 'function') fixScaleSpacing(); });
 });
 </script>
 

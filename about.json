@@ -1,0 +1,11 @@
+{
+  "about": {
+    "html": "<div class='header-tab-text'>BSVhub.io — one place for all your Bitcoin SV related content. Number of visitors: <span id='visit-counter' style='pointer-events:none;'></span></div><div>Last update: <span id='last-update-date'>26th Feb. 2026</span></div>"
+  },
+  "tip": {
+    "html": "<div class='header-tab-text'><span id='tip-address'>1HK9fJFQ4ViawZvoPMqJpL2B6Z1P7f3XWd</span> <button id='copy-tip-btn' class='copy-btn'>Copy</button></div><img src='icon/qr.svg' alt='BSV tip QR code' style='display:block; margin:16px auto 0; width:512px; max-width:100%; height:auto;'>"
+  },
+  "contact": {
+    "html": "<div class=\"header-tab-text\">If you spot any mistakes, or have some cool BSV related link that I can add, I can be contacted via:</div><div class=\"social-icons\"><a href=\"https://x.com/BSVhubio\" target=\"_blank\"><img src=\"icon/twitter.svg\" alt=\"Twitter\"></a><a href=\"https://app.treechat.com/user/bsvhub\" target=\"_blank\"><img src=\"icon/treechat.svg\" alt=\"TreeChat\"></a></div>"
+  }
+}
