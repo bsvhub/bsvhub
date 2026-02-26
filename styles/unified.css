@@ -10,7 +10,8 @@
    8  – CONTENT AREA (scrollable main body, sits below top-ui) [LAYER 2]
    9  – ICON GRID (grid layout, icon wrapper, badges, image zoom, label)
    10 – HEADER-TAB SECTIONS (About / Tip / Contact)
-   11 – MOBILE MODE
+   11 – APP IDEAS PAGE (accordion cards)
+   12 – MOBILE MODE
 ------------------------------------------------------------ */
 
 /* =====================================================
@@ -634,7 +635,128 @@ ul.icon-grid li a:hover .icon-text {
 }
 
 /* ============================================================
-   11 – MOBILE MODE (activated via body.mobile-mode class)
+   11 – APP IDEAS PAGE (accordion cards)
+   ============================================================ */
+
+.ideas-section {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 10px 20px 40px;
+}
+
+/* ---- CARD ------------------------------------------------- */
+.idea-card {
+    background: rgba(25, 25, 25, 0.65);
+    border: 2px solid #ff5733;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    overflow: hidden;
+    transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.idea-card:hover {
+    border-color: #ff7a5a;
+    box-shadow: 0 0 14px rgba(255, 87, 51, 0.35);
+}
+
+.idea-card.is-open {
+    border-color: #ffcc66;
+    box-shadow: 0 0 18px rgba(255, 204, 102, 0.3);
+}
+
+/* ---- HEADER (clickable title row) ------------------------- */
+.idea-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    cursor: pointer;
+    user-select: none;
+    gap: 12px;
+}
+
+.idea-title {
+    font-family: var(--font-tab);
+    font-size: 1.05rem;
+    color: #EAB300;
+    letter-spacing: 1px;
+    flex: 1;
+    margin: 0;
+}
+
+.idea-chevron {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+    color: #ff5733;
+}
+
+.idea-card.is-open .idea-chevron {
+    transform: rotate(180deg);
+    color: #ffcc66;
+}
+
+.idea-chevron svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* ---- BODY (collapsible content) --------------------------- */
+.idea-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.38s ease, padding 0.38s ease;
+    padding: 0 20px;
+}
+
+.idea-card.is-open .idea-body {
+    max-height: 600px;
+    padding: 0 20px 18px;
+}
+
+.idea-body p {
+    font-family: var(--font-icon-grid);
+    font-size: 0.88rem;
+    color: rgba(220, 220, 220, 0.9);
+    line-height: 1.7;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+/* ---- LOADING / EMPTY STATE -------------------------------- */
+.ideas-loading {
+    font-family: var(--font-tooltip);
+    color: #fada4e;
+    text-align: center;
+    padding: 40px 20px;
+    font-size: 1rem;
+    letter-spacing: 1px;
+}
+
+/* ---- MOBILE OVERRIDES ------------------------------------- */
+body.mobile-mode .idea-title {
+    font-size: calc(1.05rem * var(--mobile-scale));
+}
+
+body.mobile-mode .idea-body p {
+    font-size: calc(0.88rem * var(--mobile-scale));
+}
+
+body.mobile-mode .idea-header {
+    padding: calc(16px * var(--mobile-scale)) calc(20px * var(--mobile-scale));
+}
+
+/* ============================================================
+   12 – MOBILE MODE (activated via body.mobile-mode class)
    ============================================================
    Uses CSS transform scale() on #content-scale to resize content.
    Top-UI (header/tabs/tooltip) is scaled separately via CSS vars.
