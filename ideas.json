@@ -1,0 +1,12 @@
+{
+  "ideas": [
+    {
+	  "title": "On-Chain Webpage Snapshot Vault",
+	  "body": "A BSV-powered visual evidence platform that captures and permanently records a single webpage exactly as it appears at a specific moment in time. Instead of archiving source code, the system renders the live page in a controlled browser environment and generates a full-length visual snapshot — similar to a scrollable screenshot or unrestricted PDF-style canvas — preserving the entire page in one continuous image. The snapshot’s cryptographic hash, URL, timestamp, and digital signature are written to the BSV blockchain, creating immutable proof that cannot be altered or falsified. The full-resolution file may be stored on-chain or anchored via hash for cost efficiency, whilst still retaining verifiable integrity. Designed for legal professionals, journalists, compliance teams, and businesses, the platform provides independently rendered, timestamped, and cryptographically sealed visual evidence of online content."
+	},
+	{
+	  "title": "GeoProof Photo Map",
+	  "body": "A BSV-powered app that allows users to take photos with integrated GPS data and upload them to a global map. Each photo is cryptographically verified on the BSV blockchain, creating an immutable record of its existence at a specific time and location. Users can tag photos with categories such as 'nature', 'sports', 'history', or 'architecture' for easy searching and browsing. The app includes an interactive **world map** where users can **zoom in and navigate** clusters of photos, and click on a specific area to view individual images. Users can filter photos based on category, rating, or location. Every rating submitted by users (whether for photo quality, location accuracy, or trustworthiness) is treated as a **microtransaction**, with users paying a small fee in BSV for each rating. This ensures that ratings are valuable and thoughtful, reducing spam and increasing the quality of reviews. Public photos are available to everyone, while private images can be shared only with specific users. A built-in moderation system allows inappropriate content to be flagged by the community, flagged photos while still on-chain are automatically hidden from public view within the app. The platform offers a secure, transparent, and verifiable method for users to share location-based images while ensuring the integrity of content through blockchain technology."
+	}
+  ]
+}
