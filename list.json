@@ -814,7 +814,7 @@
       "tab": "app",
       "href": "https://calendar.metanet.app/",
       "tooltip": "Own your events",
-      "img": "app/metanet_calendar.png",
+      "img": "app/metanet_calendar.svg",
       "zoom": "0.9",
       "alt": "",
       "text": "Metanet Calendar",
