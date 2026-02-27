@@ -405,7 +405,7 @@
       "href": "https://gaia-explorer.com",
       "tooltip": "BSV image blockchain explorer",
       "img": "app/gaia.svg",
-      "zoom": "1.0",
+      "zoom": "1.4",
       "alt": "tool explorer",
       "text": "Explorer",
       "info": ";;;"
