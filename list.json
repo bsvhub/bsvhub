@@ -1,4 +1,4 @@
-{
+#170808#9B9FCA#9B9FCA{
   "items": [
     {
       "tab": "tool;app",
@@ -105,7 +105,7 @@
       "href": "https://electrumsv.io",
       "tooltip": "Classic desktop wallet for Windows/Mac/Linux",
       "img": "icon/electrumsv.svg",
-      "zoom": "1.2",
+      "zoom": "1.4",
       "alt": "classic old legacy",
       "text": "Wallet",
       "info": ";;;"
@@ -334,7 +334,7 @@
       "tab": "tool;doc",
       "href": "https://app.reactonchain.com",
       "tooltip": "React Onchain; currently in beta, helps with deployment of apps on the blockchain.",
-      "img": "icon/react.svg",
+      "img": "app/react.svg",
       "zoom": "0.9",
       "alt": "developer tool",
       "text": "React-Onchain",
@@ -465,7 +465,7 @@
       "href": "https://pixelwar.click/",
       "tooltip": "Create pixel art on blockchain, interact with others on same canvas",
       "img": "app/pixelwar.svg",
-      "zoom": "0.85",
+      "zoom": "1.6",
       "alt": "pixelart",
       "text": "PixelWar",
       "info": ";;;"
@@ -735,7 +735,7 @@
       "href": "https://peerpay.metanet.app/",
       "tooltip": "Simple Peer-to-peer Payments",
       "img": "app/peerpay.svg",
-      "zoom": "0.9",
+      "zoom": "1.6",
       "alt": "",
       "text": "PeerPay",
       "info": ";;;"
@@ -755,7 +755,7 @@
       "href": "https://truelink.metanet.app/",
       "tooltip": "Build your personal page that lives on the Metanet — permanent, portable, and truly yours.",
       "img": "app/truelink.svg",
-      "zoom": "0.9",
+      "zoom": "1.5",
       "alt": "",
       "text": "TrueLink",
       "info": ";;;"
@@ -785,7 +785,7 @@
       "href": "https://hypertypist.com/",
       "tooltip": "Test your typing speed and save immutable records to the blockchain. Compete on the global leaderboard.",
       "img": "app/hypertypist.svg",
-      "zoom": "0.9",
+      "zoom": "1.6",
       "alt": "",
       "text": "HyperTypist",
       "info": ";;;"
@@ -835,7 +835,7 @@
       "href": "https://your-files-and-stuff.lovable.app/",
       "tooltip": "On-chain stuff",
       "img": "app/stuff.png",
-      "zoom": "1.2",
+      "zoom": "1.0",
       "alt": "",
       "text": "Stuff",
       "info": ";;;"
@@ -845,7 +845,7 @@
       "href": "https://uhrp-ui.bapp.dev/",
       "tooltip": "Easily upload and download content using the Universal Hash Resolution Protocol (UHRP).",
       "img": "app/uhrp.svg",
-      "zoom": "0.9",
+      "zoom": "1.2",
       "alt": "",
       "text": "UHRP Storage",
       "info": ";;;"
@@ -855,7 +855,7 @@
       "href": "https://www.thryll.online/",
       "tooltip": "Ad-free blockchain gaming where every play auto-enters you into a transparent raffle. Powered by BSV micropayments for seamless, rewarding fun.",
       "img": "app/thryll_arcade.svg",
-      "zoom": "0.9",
+      "zoom": "1.6",
       "alt": "",
       "text": "Thryll Arcade",
       "info": ";;;"
@@ -865,7 +865,7 @@
       "href": "https://bsvbetter.org/",
       "tooltip": "BSV Better is dedicated to exploring, and educating others about the revolutionary potential of Bitcoin SV (BSV).",
       "img": "icon/bsvbetter.svg",
-      "zoom": "0.9",
+      "zoom": "1.4",
       "alt": "",
       "text": "BSV Better",
       "info": ";;;"
@@ -885,7 +885,7 @@
       "href": "https://metanethighway.com/",
       "tooltip": "Our app generates fresh, secure addresses for your Metanet wallet, letting you receive BSV from any external wallet with ease.",
       "img": "app/metanet_highway.svg",
-      "zoom": "1.2",
+      "zoom": "0.9",
       "alt": "",
       "text": "Metanet Highway",
       "info": ";;;"
@@ -945,7 +945,7 @@
       "href": "https://pay-quickr.atx.systems/",
       "tooltip": "Fast and secure phone to phone BSV payments using QR codes.",
       "img": "app/pay-quickr.svg",
-      "zoom": "0.9",
+      "zoom": "1.1",
       "alt": "",
       "text": "Pay-QuickR",
       "info": ";;;"
