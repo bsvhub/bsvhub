@@ -211,16 +211,6 @@
       "info": ";;;"
     },
     {
-      "tab": "video",
-      "href": "https://www.youtube.com/@CoinGeek/streams",
-      "tooltip": "Kurt Wuckert Jr streams at CoinGeek, all about Bitcoin and blockchain tech..",
-      "img": "social/kurt.png",
-      "zoom": "1.1",
-      "alt": "Kurt Wuckert Jr streams",
-      "text": "Kurt Wuckert Jr at CoinGeek",
-      "info": ";;yt.svg;"
-    },
-    {
       "tab": "exchange",
       "href": "https://kyc.rip/swap",
       "tooltip": "Privacy focused crypto swap exchange, supports BSV, no KYC or account required",
@@ -1079,6 +1069,16 @@
       "alt": "",
       "text": "Craig Wright",
       "info": ";;substack.svg;"
+    },
+    {
+      "tab": "app",
+      "href": "https://peerjump.fun/",
+      "tooltip": "A simple game where you climb through jumping to get the higest score",
+      "img": "app/peerjump.png",
+      "zoom": "1.0",
+      "alt": "",
+      "text": "PeerJump",
+      "info": ";;;"
     }
     
   ]
