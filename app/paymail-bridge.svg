@@ -6,10 +6,37 @@
    viewBox="0 0 153.782028 153.347238"
    preserveAspectRatio="xMidYMid meet"
    id="svg8"
+   sodipodi:docname="paymail-bridge.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   inkscape:export-filename="paymail-bridge.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <defs
      id="defs12" />
+  <sodipodi:namedview
+     id="namedview10"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="pt"
+     showgrid="false"
+     inkscape:zoom="4.1865767"
+     inkscape:cx="65.805554"
+     inkscape:cy="102.58978"
+     inkscape:window-width="1920"
+     inkscape:window-height="1020"
+     inkscape:window-x="0"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg8" />
   <metadata
      id="metadata2"> Created by potrace 1.16, written by Peter Selinger 2001-2019 </metadata>
   <g
@@ -63,14 +90,12 @@
      height="38.910538"
      x="62.933189"
      y="51.839573" />
-  <text
-     xml:space="preserve"
-     style="font-weight:bold;font-size:48px;line-height:0px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';text-align:center;text-anchor:middle;fill:#f3c300;fill-opacity:1;stroke:#fdfdfd;stroke-width:0.75"
-     x="78.078087"
-     y="88.887344"
-     id="text772"><tspan
-       id="tspan770"
-       style="fill:#f3c300;fill-opacity:1;stroke-width:0.75"
-       x="78.078087"
-       y="88.887344">@</tspan></text>
+  <g
+     aria-label="@"
+     id="text772"
+     style="font-weight:bold;font-size:48px;line-height:0px;-inkscape-font-specification:'sans-serif Bold';text-align:center;text-anchor:middle;fill:#f3c300;stroke:#fdfdfd;stroke-width:0.75">
+    <path
+       d="m 97.206102,71.703344 q 0,2.208 -0.528,4.368 -0.528,2.16 -1.632,3.936 -1.056,1.776 -2.688,2.832 -1.632,1.008 -3.84,1.008 -1.776,0 -3.12,-0.816 -1.344,-0.864 -1.872,-2.208 h -0.384 q -0.96,1.2 -2.592,2.112 -1.584,0.912 -3.84,0.912 -4.272,0 -6.624,-2.544 -2.304,-2.592 -2.304,-6.768 0,-3.216 1.392,-5.664 1.392,-2.496 3.936,-3.888 2.544,-1.44 6,-1.44 2.256,0 4.656,0.432 2.448,0.384 3.792,0.864 l -0.48,9.84 q -0.048,0.48 -0.048,1.008 0,0.48 0,0.624 0,1.968 0.528,2.64 0.576,0.624 1.248,0.624 1.104,0 1.824,-1.056 0.72,-1.104 1.056,-2.88 0.384,-1.824 0.384,-3.984 0,-4.032 -1.632,-6.816 -1.632,-2.832 -4.464,-4.32 -2.784,-1.488 -6.384,-1.488 -5.04,0 -8.496,2.112 -3.408,2.064 -5.184,5.664 -1.776,3.6 -1.776,8.256 0,6.48 3.456,9.936 3.504,3.456 10.032,3.456 2.784,0 5.808,-0.624 3.024,-0.624 5.52,-1.536 v 4.512 q -2.304,0.96 -5.136,1.536 -2.832,0.576 -6,0.576 -5.952,0 -10.176,-2.112 -4.224,-2.112 -6.48,-6.048 -2.208,-3.984 -2.208,-9.552 0,-4.368 1.44,-8.112 1.44,-3.744 4.128,-6.528 2.736,-2.832 6.528,-4.368 3.792,-1.584 8.496,-1.584 5.136,0 9.12,2.064 3.984,2.064 6.24,5.904 2.304,3.84 2.304,9.12 z m -24,2.928 q 0,2.64 1.104,3.792 1.104,1.152 2.928,1.152 2.4,0 3.36,-1.728 1.008,-1.776 1.2,-4.608 l 0.288,-5.184 q -0.528,-0.096 -1.2,-0.144 -0.672,-0.096 -1.488,-0.096 -2.256,0 -3.648,1.008 -1.344,0.96 -1.968,2.544 -0.576,1.536 -0.576,3.264 z"
+       id="path8925" />
+  </g>
 </svg>
