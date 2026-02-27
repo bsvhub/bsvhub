@@ -315,7 +315,7 @@
       "href": "https://x.com/vamosvigilante",
       "tooltip": "Co-Founder of The Crypto Vigilante, big BSV (original design) proponent",
       "img": "social/rafael_laverde.svg",
-      "zoom": "0.9",
+      "zoom": "1.5",
       "alt": "BSV Bitcoin Monero Privacy",
       "text": "Rafael LaVerde",
       "info": ";;twitter.svg;"
@@ -465,7 +465,7 @@
       "href": "https://pixelwar.click/",
       "tooltip": "Create pixel art on blockchain, interact with others on same canvas",
       "img": "app/pixelwar.svg",
-      "zoom": "1.6",
+      "zoom": "1.4",
       "alt": "pixelart",
       "text": "PixelWar",
       "info": ";;;"
@@ -1025,7 +1025,7 @@
       "href": "https://x.com/KanoTheTruth",
       "tooltip": "𝗕𝗶𝘁𝗰𝗼𝗶𝗻ˢᵛ : On-Chain Layer 1 Bitcoin Scaling",
       "img": "social/kano.svg",
-      "zoom": "0.9",
+      "zoom": "1.5",
       "alt": "",
       "text": "@KanoTheTruth",
       "info": ";;twitter.svg;"
