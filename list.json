@@ -794,8 +794,8 @@
       "tab": "app",
       "href": "https://socialcert.net/",
       "tooltip": "Get certificates that bind social attributes, such as your email or X handle, to your identity key. This will allow your friends to find you on the Metanet.",
-      "img": "app/socialcert.png",
-      "zoom": "0.9",
+      "img": "app/socialcert.svg",
+      "zoom": "1.0",
       "alt": "",
       "text": "SocialCert",
       "info": ";;;"
