@@ -45,7 +45,7 @@
       "href": "https://bsvblockchain.org/",
       "tooltip": "Official BSV pages",
       "img": "icon/bsv_blockchain.svg",
-      "zoom": "1.7",
+      "zoom": "1.0",
       "alt": "bsvblockchain.org",
       "text": "bsvblockchain.org",
       "info": ";;;"
@@ -315,7 +315,7 @@
       "href": "https://x.com/vamosvigilante",
       "tooltip": "Co-Founder of The Crypto Vigilante, big BSV (original design) proponent",
       "img": "social/rafael_laverde.svg",
-      "zoom": "1.5",
+      "zoom": "1.4",
       "alt": "BSV Bitcoin Monero Privacy",
       "text": "Rafael LaVerde",
       "info": ";;twitter.svg;"
@@ -1025,7 +1025,7 @@
       "href": "https://x.com/KanoTheTruth",
       "tooltip": "𝗕𝗶𝘁𝗰𝗼𝗶𝗻ˢᵛ : On-Chain Layer 1 Bitcoin Scaling",
       "img": "social/kano.svg",
-      "zoom": "1.5",
+      "zoom": "1.4",
       "alt": "",
       "text": "@KanoTheTruth",
       "info": ";;twitter.svg;"
