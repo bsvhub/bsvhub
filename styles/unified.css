@@ -385,7 +385,7 @@ body.mobile-mode .mobile-mode-icon {
     z-index: 200;
     width: 100%;
     transition: top var(--tooltip-speed) ease;
-    padding-bottom: 40px;  /* Bottom padding - same for desktop and mobile */
+    padding-bottom: 4px;  /* Bottom padding - same for desktop and mobile */
 }
 
 #content-scale {
@@ -799,7 +799,7 @@ html.mobile-mode-loading #content-area {
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     padding-top: var(--top-ui-height, 0px);  /* Move header offset HERE (unscaled) */
-    padding-bottom: 40px;  /* Same 40px as desktop - NOT SCALED */
+    padding-bottom: 4px;  /* Same 4px as desktop - NOT SCALED */
 }
 
 /* Mobile: content-scale applies transform + inverse scaling */
