@@ -641,7 +641,12 @@ ul.icon-grid li a:hover .icon-text {
 .ideas-section {
     max-width: 860px;
     margin: 0 auto;
-    padding: 10px 20px 40px;
+    /*
+       10px  = top      
+       5px  = left/right 
+       0     = bottom
+    */
+    padding: 10px 5px 0;
 }
 
 /* ---- CARD ------------------------------------------------- */
@@ -652,6 +657,12 @@ ul.icon-grid li a:hover .icon-text {
     margin-bottom: 14px;
     overflow: hidden;
     transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+/* Remove trailing gap after the last card — 
+   #content-area padding-bottom already provides scroll buffer */
+.idea-card:last-child {
+    margin-bottom: 0;
 }
 
 .idea-card:hover {
