@@ -24,8 +24,8 @@
       "tab": "bsv;doc",
       "href": "https://hub.bsvblockchain.org/",
       "tooltip": "BSV Blockchain Hub: wide array of resources to meet diverse needs, from technical details to real-world uses.",
-      "img": "icon/bsv_blockchain.svg",
-      "zoom": "1.2",
+      "img": "icon/hub.svg",
+      "zoom": "1.0",
       "alt": "documents resources links code skills",
       "text": "BSV Hub",
       "info": ";;;"
@@ -54,10 +54,10 @@
       "tab": "bsv;doc",
       "href": "https://bsvblockchain.org/",
       "tooltip": "Official BSV pages",
-      "img": "icon/bsv_blockchain.svg",
-      "zoom": "1.2",
+      "img": "icon/bsv-blockchain.svg",
+      "zoom": "1.0",
       "alt": "bsvblockchain.org",
-      "text": "bsvblockchain.org",
+      "text": "BSV Blockchain",
       "info": ";;;"
     },
     {
@@ -138,7 +138,7 @@
       "zoom": "0.9",
       "alt": "Exchange List",
       "text": "Exchange List",
-      "info": ";;;"
+      "info": "old.svg;;;"
     },
     {
       "tab": "wallet",
@@ -1085,7 +1085,7 @@
       "href": "https://peerjump.fun/",
       "tooltip": "A simple game where you climb through jumping to get the higest score",
       "img": "app/peerjump.png",
-      "zoom": "1.0",
+      "zoom": "0.9",
       "alt": "",
       "text": "PeerJump",
       "info": ";;;"
