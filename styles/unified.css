@@ -395,7 +395,7 @@ body.mobile-mode .mobile-mode-icon {
 
 .tab-content {
     display: none;
-    padding: 20px;
+    padding: 10px;
 }
 
 .tab-content.active {
