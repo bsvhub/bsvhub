@@ -61,7 +61,7 @@
     
     /* ⭐ MOBILE SCALE FACTOR - CHANGE THIS ONE VALUE TO SCALE EVERYTHING ON MOBILE */
     --mobile-scale: 0.8;              /* 👈 Adjust this value (0.1-2.0 recommended) */
-    --icon-text-scale: 0.6;           /* 👈 Scale for icon labels in mobile mode */
+    --icon-text-scale: 0.7;           /* 👈 Scale for icon labels in mobile mode */
     --header-section-scale: 0.6;      /* 👈 Scale for About/Tip/Contact sections */
     --header-buttons-scale: 0.5;      /* 👈 Scale for header buttons (About, Tip, Contact, Mobile) */
     --tab-buttons-scale: 0.6;         /* 👈 Scale for tab bar buttons and search box */
