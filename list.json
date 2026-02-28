@@ -27,7 +27,17 @@
       "img": "icon/bsv_blockchain.svg",
       "zoom": "1.2",
       "alt": "documents resources links code skills",
-      "text": "Hub",
+      "text": "BSV Hub",
+      "info": ";;;"
+    },
+    {
+      "tab": "bsv;doc",
+      "href": "https://hub.bsvblockchain.org/",
+      "tooltip": "Real-World Adoption Across Industries, Regions, and Applications",
+      "img": "icon/bsv_industry.svg",
+      "zoom": "1.2",
+      "alt": "documents resources links code skills",
+      "text": "Case Study Library",
       "info": ";;;"
     },
     {
@@ -846,7 +856,7 @@
       "tooltip": "Ad-free blockchain gaming where every play auto-enters you into a transparent raffle. Powered by BSV micropayments for seamless, rewarding fun.",
       "img": "app/thryll_arcade.svg",
       "zoom": "1.6",
-      "alt": "",
+      "alt": "arcade games",
       "text": "Thryll Arcade",
       "info": ";;;"
     },
