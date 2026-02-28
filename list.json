@@ -435,7 +435,7 @@
       "href": "https://bsvtube.com/",
       "tooltip": "Video platform on chain",
       "img": "app/bsvtube.svg",
-      "zoom": "0.85",
+      "zoom": "1.5",
       "alt": "videos upload tip",
       "text": "BSVTube",
       "info": ";;;"
@@ -675,7 +675,7 @@
       "href": "https://ordfs.network/",
       "tooltip": "For Building Programmable HTML Inscriptions on BSV",
       "img": "icon/bsv.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "NFT on chain bitcoin",
       "text": "ORD-FS",
       "info": ";;;"
@@ -735,7 +735,7 @@
       "href": "https://peerpay.metanet.app/",
       "tooltip": "Simple Peer-to-peer Payments",
       "img": "app/peerpay.svg",
-      "zoom": "1.6",
+      "zoom": "1.0",
       "alt": "",
       "text": "PeerPay",
       "info": ";;;"
@@ -755,7 +755,7 @@
       "href": "https://truelink.metanet.app/",
       "tooltip": "Build your personal page that lives on the Metanet — permanent, portable, and truly yours.",
       "img": "app/truelink.svg",
-      "zoom": "1.5",
+      "zoom": "2.2",
       "alt": "",
       "text": "TrueLink",
       "info": ";;;"
@@ -955,7 +955,7 @@
       "href": "https://fast.brc.dev/",
       "tooltip": "This allows developers to read code, run the snippet as is, and see the output in an easily read format for testing out the different functionality of the WalletClient.",
       "img": "app/quickstart-docs.png",
-      "zoom": "0.9",
+      "zoom": "1.5",
       "alt": "",
       "text": "Quickstart Docs",
       "info": ";;;"
@@ -965,7 +965,7 @@
       "href": "http://paymail.us/",
       "tooltip": "For registering a paymail alias and collecting inbound payments from external wallets which use paymail p2p destinations and rawtx / beef delivery.",
       "img": "app/paymail-bridge.svg",
-      "zoom": "0.9",
+      "zoom": "1.5",
       "alt": "",
       "text": "Paymail Bridge",
       "info": ";;;"
@@ -1105,7 +1105,7 @@
       "href": "https://nodeless.network",
       "tooltip": "deploy blockchain-powered services that scale globaly",
       "img": "icon/bsv.svg",
-      "zoom": "1.1",
+      "zoom": "1.0",
       "alt": "",
       "text": "nodeless network",
       "info": ";;;"
@@ -1124,8 +1124,8 @@
       "tab": "tool;wallet",
       "href": "https://firesat.io",
       "tooltip": "Discover FireSat Wallet, your secure, non-custodial BSV wallet for effortless BSV20 token trading, feeless transactions, and intuitive asset management.",
-      "img": "icon/firesat.png",
-      "zoom": "1.2",
+      "img": "icon/firesat.svg",
+      "zoom": "0.9",
       "alt": "ordinals NFT BSV20",
       "text": "FireSat Wallet",
       "info": ";;;"
@@ -1134,7 +1134,7 @@
       "tab": "app",
       "href": "https://peerjump.fun/",
       "tooltip": "A simple game where you climb through jumping to get the higest score",
-      "img": "app/peerjump.png",
+      "img": "app/peerjump.svg",
       "zoom": "0.9",
       "alt": "",
       "text": "PeerJump",
