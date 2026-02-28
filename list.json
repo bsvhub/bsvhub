@@ -761,16 +761,6 @@
       "info": ";;;"
     },
     {
-      "tab": "tool",
-      "href": "https://bsvscan.io/",
-      "tooltip": "Explore the Bitcoin SV (BSV) blockchain. Search for transactions, addresses, tokens, and outpoints with BSVScan.io.",
-      "img": "icon/bsv.svg",
-      "zoom": "0.9",
-      "alt": "block explorer",
-      "text": "BSVSCAN.IO",
-      "info": ";;;"
-    },
-    {
       "tab": "app",
       "href": "https://hypertypist.com/",
       "tooltip": "Test your typing speed and save immutable records to the blockchain. Compete on the global leaderboard.",
