@@ -115,7 +115,7 @@
       "href": "https://electrumsv.io",
       "tooltip": "Classic desktop wallet for Windows/Mac/Linux",
       "img": "icon/electrumsv.svg",
-      "zoom": "1.4",
+      "zoom": "1.6",
       "alt": "classic old legacy",
       "text": "Wallet",
       "info": ";;;"
@@ -125,7 +125,7 @@
       "href": "https://docs.gorillapool.io/electrumsv/",
       "tooltip": "Electrum SV Server for blockchain syncing",
       "img": "icon/electrum-server.svg",
-      "zoom": "0.9",
+      "zoom": "1.2",
       "alt": "wallet settings server",
       "text": "Sync Fix",
       "info": ";;;"
