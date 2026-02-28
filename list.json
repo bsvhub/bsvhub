@@ -131,16 +131,6 @@
       "info": ";;;"
     },
     {
-      "tab": "exchange",
-      "href": "https://bsvblockchain.org/get-bsv/",
-      "tooltip": "Exchanges list provided by bsvblockchain.org; check as some wallets and exchanges no longer work or support BSV",
-      "img": "icon/bsv.svg",
-      "zoom": "0.9",
-      "alt": "Exchange List",
-      "text": "Exchange List",
-      "info": "old.svg;;;"
-    },
-    {
       "tab": "wallet",
       "href": "https://mybsv.io/wallet.html",
       "tooltip": "Gateway Wallet; an on-chain wallet at MyBSV.io",
