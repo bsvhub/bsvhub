@@ -64,7 +64,7 @@
       "tab": "bsv;doc",
       "href": "https://bsvdevs.com/",
       "tooltip": "A directory for devs and users alike. Enabling a one stop shop for great Bitcoin SV projects, tools, and resources.",
-      "img": "icon/bsv.svg",
+      "img": "icon/dev_tools.svg",
       "zoom": "0.9",
       "alt": "documents script source code",
       "text": "bsvdevs.com",
@@ -1043,7 +1043,7 @@
     {
       "tab": "video",
       "href": "https://www.youtube.com/@Kurtwuckertjr/videos",
-      "tooltip": "Kurt Wuckert Jr personal chanel where he talkes about Bitcoin and more.",
+      "tooltip": "Kurt Wuckert Jr personal channel where he talks about Bitcoin and more.",
       "img": "social/kurt.png",
       "zoom": "1.1",
       "alt": "",
