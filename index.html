@@ -248,8 +248,7 @@ document.addEventListener("click", (e) => {
     }
 
     // Second tap - navigate (allow default)
-    link.classList.remove("mobile-selected");
-    lastTappedLink = null;
+    clearDoubleTapSelection();  // ← resets tooltip to default before navigating
 }, true);
 
 /* ============================================================
