@@ -32,7 +32,7 @@
     },
     {
       "tab": "bsv;doc",
-      "href": "https://hub.bsvblockchain.org/case-study-library",
+      "href": "https://bsv-case-studies.bsvblockchain.org",
       "tooltip": "Real-World Adoption Across Industries, Regions, and Applications",
       "img": "icon/bsv_industry.svg",
       "zoom": "1.2",
