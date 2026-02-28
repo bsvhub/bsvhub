@@ -24,28 +24,45 @@ let lastTappedLink        = null;
 
 /* ============================================================
    2 — BSV PRICE FETCH
-   Updates every 5 minutes while page is open.
-   Falls back to last value stored in localStorage.
+   Checks localStorage first — only calls API if cached value
+   is older than 10 minutes. Falls back to stale cache if API
+   fails. No setInterval — cache TTL handles refresh timing.
 ============================================================ */
 let bsvPricePrefix = "";
 
+const BSV_CACHE_KEY      = "bsv_last_price";
+const BSV_CACHE_TIME_KEY = "bsv_last_fetch";
+const BSV_TTL_MS         = 10 * 60 * 1000;   // 10 minutes
+
 async function fetchBSVPrice() {
+    // Use cached value if it is less than 10 minutes old
+    const lastFetch = parseInt(localStorage.getItem(BSV_CACHE_TIME_KEY) || "0");
+    const isFresh   = (Date.now() - lastFetch) < BSV_TTL_MS;
+
+    if (isFresh) {
+        const cachedPrice = localStorage.getItem(BSV_CACHE_KEY);
+        if (cachedPrice) {
+            bsvPricePrefix = `— BSV $${cachedPrice} —`;
+            showDefaultTooltip();
+            return;
+        }
+    }
+
+    // Cache expired or missing — fetch fresh data
     try {
         const res   = await fetch("https://api.whatsonchain.com/v1/bsv/main/exchangerate");
         const data  = await res.json();
         const price = parseFloat(data.rate).toFixed(2);
-        localStorage.setItem("bsv_last_price", price);
-        localStorage.setItem("bsv_last_fetch", Date.now());
+        localStorage.setItem(BSV_CACHE_KEY,      price);
+        localStorage.setItem(BSV_CACHE_TIME_KEY, Date.now());
         bsvPricePrefix = `— BSV $${price} —`;
     } catch {
-        const cached = localStorage.getItem("bsv_last_price");
+        // API failed — use localStorage regardless of age
+        const cached = localStorage.getItem(BSV_CACHE_KEY);
         bsvPricePrefix = cached ? `— BSV $${cached} —` : "— BSV $? —";
     }
     showDefaultTooltip();
 }
-
-// Refresh price every 5 minutes while page is open
-setInterval(fetchBSVPrice, 5 * 60 * 1000);
 
 /* ============================================================
    3 — FEAR & GREED INDEX FETCH
