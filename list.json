@@ -181,6 +181,16 @@
       "info": ";;;"
     },
     {
+      "tab": "tool;doc",
+      "href": "https://junglebus.gorillapool.io",
+      "tooltip": "JungleBus is an indexing engine for on-chain data developed by GorillaPool. Used to filter and organize blockchain data.",
+      "img": "icon/junglebus.svg",
+      "zoom": "1.1",
+      "alt": "Gorilla Miner",
+      "text": "Jungle Bus",
+      "info": ";;;"
+    },
+    {
       "tab": "wallet;app",
       "href": "https://handcash.io/",
       "tooltip": "Mobile-friendly BSV wallet with Apps",
@@ -617,7 +627,7 @@
       "img": "icon/ordinals.svg",
       "zoom": "0.8",
       "alt": "market-place NFT",
-      "text": "1satordinals.com",
+      "text": "1Sat Ordinals",
       "info": ";;;"
     },
     {
@@ -1059,6 +1069,66 @@
       "alt": "",
       "text": "Craig Wright",
       "info": ";;substack.svg;"
+    },
+    {
+      "tab": "tool;doc",
+      "href": "https://scrypt.io",
+      "tooltip": "The FULL STACK Web3 development platform for Bitcoin Compatible Blockchains",
+      "img": "icon/scrypt.png",
+      "zoom": "1.1",
+      "alt": "scripting code development programming",
+      "text": "sCrypt",
+      "info": ";;;"
+    },
+    {
+      "tab": "tool;market",
+      "href": "https://www.bubblemint.io",
+      "tooltip": "Ordinals on BSV",
+      "img": "icon/bubblemint.png",
+      "zoom": "1.0",
+      "alt": "ordinals NFT",
+      "text": "bubblemint.io",
+      "info": ";;;"
+    },
+    {
+      "tab": "tool;market",
+      "href": "https://zoide.io",
+      "tooltip": "NFTs on BSV",
+      "img": "icon/zoide.png",
+      "zoom": "1.1",
+      "alt": "ordinals NFT",
+      "text": "zoide.io",
+      "info": ";;;"
+    },
+    {
+      "tab": "tool;doc",
+      "href": "https://nodeless.network",
+      "tooltip": "deploy blockchain-powered services that scale globaly",
+      "img": "icon/bsv.svg",
+      "zoom": "1.1",
+      "alt": "",
+      "text": "nodeless network",
+      "info": ";;;"
+    },
+    {
+      "tab": "tool",
+      "href": "https://bitcoinschema.org",
+      "tooltip": "The universal standard for data structure. Build interoperable applications that share a single global database.",
+      "img": "icon/bitcoinschema.svg",
+      "zoom": "1.1",
+      "alt": "",
+      "text": "Bitcoin Schema",
+      "info": ";;;"
+    },
+    {
+      "tab": "tool;wallet",
+      "href": "https://firesat.io",
+      "tooltip": "Discover FireSat Wallet, your secure, non-custodial BSV wallet for effortless BSV20 token trading, feeless transactions, and intuitive asset management.",
+      "img": "icon/firesat.png",
+      "zoom": "1.2",
+      "alt": "ordinals NFT BSV20",
+      "text": "FireSat Wallet",
+      "info": ";;;"
     },
     {
       "tab": "app",
