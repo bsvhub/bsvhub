@@ -674,8 +674,8 @@
       "tab": "doc;bsv",
       "href": "https://thatsbtcnotbitcoin.com/",
       "tooltip": "Site explains why BTC is not Bitcoin",
-      "img": "icon/bsv.svg",
-      "zoom": "0.9",
+      "img": "icon/not_bitcoin.svg",
+      "zoom": "1.1",
       "alt": "explenation blog",
       "text": "BTC != Bitcoin",
       "info": ";;;"
