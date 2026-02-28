@@ -61,6 +61,7 @@
     
     /* ⭐ MOBILE SCALE FACTOR - CHANGE THIS ONE VALUE TO SCALE EVERYTHING ON MOBILE */
     --mobile-scale: 0.8;              /* 👈 Adjust this value (0.1-2.0 recommended) */
+    --icon-text-scale: 0.6;           /* 👈 Scale for icon labels in mobile mode */
     --header-section-scale: 0.6;      /* 👈 Scale for About/Tip/Contact sections */
     --header-buttons-scale: 0.5;      /* 👈 Scale for header buttons (About, Tip, Contact, Mobile) */
     --tab-buttons-scale: 0.6;         /* 👈 Scale for tab bar buttons and search box */
@@ -883,8 +884,8 @@ body.mobile-mode .copy-btn {
 
 /* 📱 MOBILE - Icon text scaling */
 body.mobile-mode .icon-text {
-    font-size: calc(1rem * var(--mobile-scale));
-    padding: calc(0px * var(--mobile-scale)) calc(6px * var(--mobile-scale));
+    font-size: calc(1rem * var(--icon-text-scale));
+    padding: calc(0px * var(--icon-text-scale)) calc(6px * var(--icon-text-scale));
 }
 
 /* 📱 MOBILE - Double-tap selected state */
