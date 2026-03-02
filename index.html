@@ -272,9 +272,9 @@ headerLinks.forEach(link =>
         const scale = parseFloat(
             getComputedStyle(document.documentElement).getPropertyValue("--mobile-scale")
         ) || 1;
-        cs.style.marginBottom = "";   // clear previous fix
-        void cs.offsetHeight;         // ← forces Firefox to complete reflow NOW
-        cs.style.marginBottom = cs.scrollHeight * (scale - 1) + "px";
+        const activeTab = cs.querySelector(".tab-content.active");
+        const height = activeTab ? activeTab.offsetHeight : cs.offsetHeight;
+        cs.style.marginBottom = height * (scale - 1) + "px";
     } else {
         cs.style.marginBottom = "";
     }
@@ -515,9 +515,12 @@ function restoreUIState(state) {
 function enableMobileMode(state) {
   document.body.classList.add("mobile-mode");
   localStorage.setItem("ui-mode", "mobile");
-  setTimeout(() => {
-        if (typeof fixScaleSpacing === 'function') fixScaleSpacing();
-  }, 50);
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      restoreUIState(state);
+      if (typeof positionContent === "function") positionContent();
+    });
+  });
 }
 
 function disableMobileMode(state) {
