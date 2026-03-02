@@ -214,7 +214,9 @@ function activateTab(targetId, source) {
     
     // Icon-Grid bottom padding fix: recalculate scale spacing after new tab content paints
     requestAnimationFrame(() => {
-        if (typeof fixScaleSpacing === 'function') fixScaleSpacing();
+        requestAnimationFrame(() => {
+            if (typeof fixScaleSpacing === 'function') fixScaleSpacing();
+        });
     });
 }
 
