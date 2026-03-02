@@ -1139,6 +1139,16 @@
       "alt": "",
       "text": "PeerJump",
       "info": ";;;"
+    },
+    {
+      "tab": "app;exchange;market",
+      "href": "https://www.beymo.app",
+      "tooltip": "Peer to Peer Bitcoin BSV trading platform",
+      "img": "icon/beymo.svg",
+      "zoom": "1.0",
+      "alt": "",
+      "text": "Beymo",
+      "info": ";;new.svg;"
     }
     
   ]
