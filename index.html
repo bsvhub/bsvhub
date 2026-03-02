@@ -212,12 +212,15 @@ function activateTab(targetId, source) {
         contentArea.scrollTo({ top: 0, behavior: 'smooth' });
     }
     
-    // Icon-Grid bottom padding fix: recalculate scale spacing after new tab content paints
-    requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-            if (typeof fixScaleSpacing === 'function') fixScaleSpacing();
-        });
-    });
+    // ResizeObserver — fires when content-scale actually changes size
+	// Replaces unreliable rAF timing for Firefox Android tab switching
+	const _cs = document.getElementById("content-scale");
+	if (_cs && typeof ResizeObserver !== "undefined") {
+		const _ro = new ResizeObserver(() => {
+			if (typeof fixScaleSpacing === "function") fixScaleSpacing();
+		});
+		_ro.observe(_cs);
+	}
 }
 
 /* ------------------------------------------------------------
