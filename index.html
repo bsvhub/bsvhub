@@ -269,12 +269,14 @@ headerLinks.forEach(link =>
     const cs = document.getElementById("content-scale");
     if (!cs) return;
     if (isMobile) {
-      const scale = parseFloat(
-        getComputedStyle(document.documentElement).getPropertyValue("--mobile-scale")
-      ) || 1;
-      cs.style.marginBottom = cs.scrollHeight * (scale - 1) + "px";
+        const scale = parseFloat(
+            getComputedStyle(document.documentElement).getPropertyValue("--mobile-scale")
+        ) || 1;
+        cs.style.marginBottom = "";   // clear previous fix
+        void cs.offsetHeight;         // ← forces Firefox to complete reflow NOW
+        cs.style.marginBottom = cs.scrollHeight * (scale - 1) + "px";
     } else {
-      cs.style.marginBottom = "";
+        cs.style.marginBottom = "";
     }
   }
   window.fixScaleSpacing = fixScaleSpacing;
