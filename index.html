@@ -212,15 +212,6 @@ function activateTab(targetId, source) {
         contentArea.scrollTo({ top: 0, behavior: 'smooth' });
     }
     
-    // ResizeObserver — fires when content-scale actually changes size
-	// Replaces unreliable rAF timing for Firefox Android tab switching
-	const _cs = document.getElementById("content-scale");
-	if (_cs && typeof ResizeObserver !== "undefined") {
-		const _ro = new ResizeObserver(() => {
-			if (typeof fixScaleSpacing === "function") fixScaleSpacing();
-		});
-		_ro.observe(_cs);
-	}
 }
 
 /* ------------------------------------------------------------
@@ -522,12 +513,9 @@ function restoreUIState(state) {
 function enableMobileMode(state) {
   document.body.classList.add("mobile-mode");
   localStorage.setItem("ui-mode", "mobile");
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      restoreUIState(state);
-      if (typeof positionContent === "function") positionContent();
-    });
-  });
+  setTimeout(() => {
+        if (typeof fixScaleSpacing === 'function') fixScaleSpacing();
+  }, 50);
 }
 
 function disableMobileMode(state) {
