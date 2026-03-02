@@ -1,17 +1,18 @@
 /* ============================================================
-   SCROLL.JS — Tooltip, Marquee, BSV Price, F&G Index & Mobile Double-Tap
+   SCROLL.JS — Tooltip, Marquee, BSV Price, BTC Price, F&G Index & Mobile Double-Tap
    ------------------------------------------------------------
    1.  TOOLTIP STATE
-   2.  BSV PRICE FETCH (localStorage fallback, refresh every 5 min)
-   3.  FEAR & GREED INDEX FETCH (localStorage fallback, 24hr cache)
-   4.  INITIALISE — load both feeds then build marquee
-   5.  DEFAULT TOOLTIP (MARQUEE)
-   6.  SET TOOLTIP TEXT
-   7.  DESKTOP HOVER TOOLTIPS (event delegation)
-   8.  MOBILE DOUBLE-TAP (event delegation)
-   9.  CLEAR SELECTION HELPERS
-   10. AUTO-CLEAR TRIGGERS
-   11. TOOLTIP HEIGHT TRANSITION HANDLER
+   2.  BSV PRICE FETCH (localStorage fallback, refresh every 10 min)
+   3.  BTC PRICE FETCH (localStorage fallback, refresh every 10 min)
+   4.  FEAR & GREED INDEX FETCH (localStorage fallback, 1hr cache)
+   5.  INITIALISE — load all feeds then build marquee
+   6.  DEFAULT TOOLTIP (MARQUEE)
+   7.  SET TOOLTIP TEXT
+   8.  DESKTOP HOVER TOOLTIPS (event delegation)
+   9.  MOBILE DOUBLE-TAP (event delegation)
+   10. CLEAR SELECTION HELPERS
+   11. AUTO-CLEAR TRIGGERS
+   12. TOOLTIP HEIGHT TRANSITION HANDLER
 ============================================================ */
 
 /* ============================================================
@@ -65,8 +66,51 @@ async function fetchBSVPrice() {
 }
 
 /* ============================================================
-   3 — FEAR & GREED INDEX FETCH
-   The index only updates once per day so we cache for 24 hours.
+   3 — BTC PRICE FETCH
+   Checks localStorage first — only calls API if cached value
+   is older than 10 minutes. Falls back to stale cache if API
+   fails. No setInterval — cache TTL handles refresh timing.
+   API: https://api.coinbase.com/v2/prices/BTC-USD/spot
+============================================================ */
+let btcPricePrefix = "";
+
+const BTC_CACHE_KEY      = "btc_last_price";
+const BTC_CACHE_TIME_KEY = "btc_last_fetch";
+const BTC_TTL_MS         = 10 * 60 * 1000;   // 10 minutes
+
+async function fetchBTCPrice() {
+    // Use cached value if it is less than 10 minutes old
+    const lastFetch = parseInt(localStorage.getItem(BTC_CACHE_TIME_KEY) || "0");
+    const isFresh   = (Date.now() - lastFetch) < BTC_TTL_MS;
+
+    if (isFresh) {
+        const cachedPrice = localStorage.getItem(BTC_CACHE_KEY);
+        if (cachedPrice) {
+            btcPricePrefix = `— BTC $${cachedPrice} —`;
+            showDefaultTooltip();
+            return;
+        }
+    }
+
+    // Cache expired or missing — fetch fresh data
+    try {
+        const res   = await fetch("https://api.coinbase.com/v2/prices/BTC-USD/spot");
+        const data  = await res.json();
+        const price = parseFloat(data.data.amount).toFixed(2);
+        localStorage.setItem(BTC_CACHE_KEY,      price);
+        localStorage.setItem(BTC_CACHE_TIME_KEY, Date.now());
+        btcPricePrefix = `— BTC $${price} —`;
+    } catch {
+        // API failed — use localStorage regardless of age
+        const cached = localStorage.getItem(BTC_CACHE_KEY);
+        btcPricePrefix = cached ? `— BTC $${cached} —` : "— BTC $? —";
+    }
+    showDefaultTooltip();
+}
+
+/* ============================================================
+   4 — FEAR & GREED INDEX FETCH
+   The index updates periodically so we cache for 1 hour.
    Falls back to last value stored in localStorage.
 
    API: https://api.alternative.me/fng/
@@ -84,10 +128,10 @@ let fgiPrefix = "";
 const FGI_CACHE_KEY       = "fgi_last_value";
 const FGI_CACHE_CLASS_KEY = "fgi_last_class";
 const FGI_CACHE_TIME_KEY  = "fgi_last_fetch";
-const FGI_TTL_MS          = 24 * 60 * 60 * 1000;   // 24 hours
+const FGI_TTL_MS          = 1 * 60 * 60 * 1000;   // 1 hour
 
 async function fetchFearGreed() {
-    // Use cached value if it is less than 24 hours old
+    // Use cached value if it is less than 1 hour old
     const lastFetch = parseInt(localStorage.getItem(FGI_CACHE_TIME_KEY) || "0");
     const isFresh   = (Date.now() - lastFetch) < FGI_TTL_MS;
 
@@ -124,33 +168,33 @@ async function fetchFearGreed() {
 }
 
 /* ============================================================
-   4 — INITIALISE
-   Load tooltip-message.txt first, then fetch both data feeds
+   5 — INITIALISE
+   Load tooltip-message.txt first, then fetch all data feeds
    in parallel so the marquee builds as fast as possible.
 ============================================================ */
 fetch("tooltip-message.txt")
     .then(r => r.text())
     .then(t => {
         defaultTooltipMessage = t.trim();
-        showDefaultTooltip();                           // show text immediately
-        Promise.all([fetchBSVPrice(), fetchFearGreed()]); // feeds load in parallel
+        showDefaultTooltip();                                              // show text immediately
+        Promise.all([fetchBSVPrice(), fetchBTCPrice(), fetchFearGreed()]); // feeds load in parallel
     })
     .catch(() => {
         showDefaultTooltip();
-        Promise.all([fetchBSVPrice(), fetchFearGreed()]);
+        Promise.all([fetchBSVPrice(), fetchBTCPrice(), fetchFearGreed()]);
     });
 
 /* ============================================================
-   5 — DEFAULT TOOLTIP (MARQUEE)
+   6 — DEFAULT TOOLTIP (MARQUEE)
    Format each loop unit:
-     — BSV $xx.xx —  — F&G xx Class —   [message text]
+     — BSV $xx.xx —  — BTC $xxxxx —  — F&G xx Class —   [message text]
    Each call rebuilds the marquee with the latest prefix values.
 ============================================================ */
 function showDefaultTooltip() {
     const separator = "\u00A0\u00A0\u00A0•\u00A0\u00A0\u00A0";
 
     // Only include prefixes that have loaded
-    const prefixParts = [bsvPricePrefix, fgiPrefix].filter(Boolean);
+    const prefixParts = [bsvPricePrefix, btcPricePrefix, fgiPrefix].filter(Boolean);
     const prefix      = prefixParts.length
         ? prefixParts.join("\u00A0\u00A0") + "\u00A0\u00A0\u00A0"
         : "";
@@ -170,7 +214,7 @@ function showDefaultTooltip() {
 }
 
 /* ============================================================
-   6 — SET TOOLTIP TEXT
+   7 — SET TOOLTIP TEXT
 ============================================================ */
 function setTooltipText(text) {
     if (revertTimeout) clearTimeout(revertTimeout);
@@ -189,7 +233,7 @@ function setTooltipText(text) {
 }
 
 /* ============================================================
-   7 — DESKTOP HOVER TOOLTIPS (event delegation)
+   8 — DESKTOP HOVER TOOLTIPS (event delegation)
 ============================================================ */
 document.addEventListener("mouseenter", (e) => {
     if (isMobileMode()) return;
@@ -204,7 +248,7 @@ document.addEventListener("mouseleave", (e) => {
 }, true);
 
 /* ============================================================
-   8 — MOBILE DOUBLE-TAP (event delegation)
+   9 — MOBILE DOUBLE-TAP (event delegation)
    First tap  → show tooltip
    Second tap → navigate + reset tooltip to default
 ============================================================ */
@@ -236,7 +280,7 @@ document.addEventListener("click", (e) => {
 }, true);
 
 /* ============================================================
-   9 — CLEAR SELECTION HELPER
+   10 — CLEAR SELECTION HELPER
 ============================================================ */
 function clearDoubleTapSelection() {
     if (lastTappedLink) {
@@ -247,7 +291,7 @@ function clearDoubleTapSelection() {
 }
 
 /* ============================================================
-   10 — AUTO-CLEAR TRIGGERS
+   11 — AUTO-CLEAR TRIGGERS
 ============================================================ */
 document.addEventListener("pointerdown", (e) => {
     if (!isMobileMode()) return;
@@ -265,7 +309,7 @@ document.addEventListener("visibilitychange", () => {
 });
 
 /* ============================================================
-   11 — TOOLTIP HEIGHT TRANSITION HANDLER
+   12 — TOOLTIP HEIGHT TRANSITION HANDLER
 ============================================================ */
 tooltipBox.addEventListener("transitionend", (e) => {
     if (e.propertyName === "max-height" || e.propertyName === "padding") {
