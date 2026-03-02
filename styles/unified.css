@@ -56,8 +56,10 @@
 }
 
 :root {
+    color-scheme: dark; /* ...rest of your existing variables */
     --tooltip-speed: 0.45s;
     --top-ui-shadow: rgba(0,0,0,0.7);
+    
     
     /* ⭐ MOBILE SCALE FACTOR - CHANGE THIS ONE VALUE TO SCALE EVERYTHING ON MOBILE */
     --mobile-scale: 0.8;              /* 👈 Adjust this value (0.1-2.0 recommended) */
@@ -119,7 +121,9 @@ body {
     min-height: 100%;
     color: white;
 }
-
+img, svg {
+    color-scheme: normal;
+}
 /* ============================================================
    3 – PAGE WRAPPER (full-height container + mode-switch fade)
    ============================================================ */
