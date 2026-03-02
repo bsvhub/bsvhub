@@ -191,24 +191,37 @@ fetch("tooltip-message.txt")
    Each call rebuilds the marquee with the latest prefix values.
 ============================================================ */
 function showDefaultTooltip() {
-    const separator = "\u00A0\u00A0\u00A0•\u00A0\u00A0\u00A0";
+    const sep = "\u00A0\u00A0\u00A0••\u00A0\u00A0\u00A0";
 
-    // Only include prefixes that have loaded
-    const prefixParts = [bsvPricePrefix, btcPricePrefix, fgiPrefix].filter(Boolean);
-    const prefix      = prefixParts.length
-        ? prefixParts.join("\u00A0\u00A0") + "\u00A0\u00A0\u00A0"
-        : "";
+    const parts = [defaultTooltipMessage];
+    if (bsvPricePrefix) parts.push(bsvPricePrefix.replace(/^—\s*|\s*—$/g, "").trim());
+    if (btcPricePrefix) parts.push(btcPricePrefix.replace(/^—\s*|\s*—$/g, "").trim());
+    if (fgiPrefix)      parts.push(fgiPrefix.replace(/^—\s*|\s*—$/g, "").trim());
 
-    const unit     = `${prefix}${defaultTooltipMessage}`;
-    const repeated = Array(5).fill(unit).join(separator);
+    const unit = parts.join(sep) + sep;
 
+    // Step 1 — render ONE copy off-screen to measure its real pixel width
+    const probe = document.createElement("span");
+    probe.style.cssText = "position:absolute;visibility:hidden;white-space:nowrap;";
+    probe.textContent = unit;
+    tooltipBox.appendChild(probe);
+    const unitPx = probe.getBoundingClientRect().width;
+    tooltipBox.removeChild(probe);
+
+    // Step 2 — fill screen width with enough copies + 2 extra buffer
+    const copies = Math.ceil(tooltipBox.clientWidth / unitPx) + 2;
+    const repeated = Array(copies).fill(unit).join("");
+
+    // Step 3 — animate exactly one unit width in pixels — seamless on any screen
     tooltipBox.innerHTML = `<span>${repeated}</span>`;
     tooltipBox.classList.add("marquee");
     tooltipBox.classList.remove("expanded");
 
     const span = tooltipBox.querySelector("span");
     if (span) {
-        const duration = Math.max(10, unit.length * 0.15);
+        const SCROLL_SPEED = 0.02;   // 👈 seconds per pixel — lower = faster, higher = slower
+		const duration = Math.max(10, unitPx * SCROLL_SPEED);
+        span.style.setProperty("--unit-px", `-${unitPx}px`);
         span.style.animationDuration = `${duration}s`;
     }
 }
