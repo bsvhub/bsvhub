@@ -145,7 +145,7 @@
       "href": "https://www.youtube.com/@GavinMehl/videos",
       "tooltip": "Gavin Mehl talks about Bitcoin SV, health and law",
       "img": "social/gavinm.png",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "Gavin Mehl",
       "text": "Gavin Mehl",
       "info": ";;yt.svg;"
@@ -205,7 +205,7 @@
       "href": "https://www.youtube.com/@Kate_L_Mosso/videos",
       "tooltip": "Kate Mosso providing content about Crypto and BSV",
       "img": "social/kate_mosso.png",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "Kate Mosso",
       "text": "KryptoKate",
       "info": ";;yt.svg;"
@@ -285,7 +285,7 @@
       "href": "https://x.com/Kate_L_Mosso",
       "tooltip": "Kate Mosso: former FOX TV Reporter turned Independent Crypto Reporter",
       "img": "social/kate_mosso.png",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "Kate Mosso",
       "text": "@Kate_L_Mosso",
       "info": ";;twitter.svg;"
@@ -325,7 +325,7 @@
       "href": "https://x.com/SirToshiTV",
       "tooltip": "$SirToshi: \u0110efender \u272af \u20bfitcoin",
       "img": "social/sirtoshi.png",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "BSV Bitcoin",
       "text": "$SirToshi",
       "info": ";;twitter.svg;"
@@ -345,7 +345,7 @@
       "href": "https://www.youtube.com/@Satoshi_VisionTv/videos",
       "tooltip": "Another Youtuber providing some BSV related content.",
       "img": "social/svtv.png",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "Satoshi Vision on YouTube",
       "text": "Satoshi Vision",
       "info": ";;yt.svg;"
@@ -355,7 +355,7 @@
       "href": "https://www.youtube.com/@bsvbitcoin/videos",
       "tooltip": "SirToshi: Defender of Bitcoin.",
       "img": "social/sirtoshi.png",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "SirToshi on YouTube",
       "text": "SirToshi",
       "info": ";;yt.svg;"
@@ -365,7 +365,7 @@
       "href": "https://www.youtube.com/@bridgetdoran/videos",
       "tooltip": "Bridget D talks about Bitcoin and blockchain tech.",
       "img": "social/bridgetd.png",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "tech onchain",
       "text": "Bridget D",
       "info": ";;yt.svg;"
@@ -375,7 +375,7 @@
       "href": "https://www.slictionary.com/",
       "tooltip": "An on-chain Dictionary of unique terms/word",
       "img": "icon/slictionary.png",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "Slictionary",
       "text": "Slictionary",
       "info": ";;;"
@@ -528,7 +528,7 @@
       "href": "https://metanetacademy.com/",
       "tooltip": "Learn to build real applications with these primitives \u2014 the version of the web the early engineers never got to finish.",
       "img": "icon/metanet_academy.png",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "documentation inscraction script coding",
       "text": "Metanet Academy",
       "info": ";;;"
@@ -538,7 +538,7 @@
       "href": "https://x.com/GavinMehl",
       "tooltip": "Follow to get inside The Great BitCoin Flippening as Freedom's Final Frontier & for six-pack abs. Law is fun.",
       "img": "social/gavinm.png",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "Gavin Mehl",
       "text": "@GavinMehl",
       "info": ";;twitter.svg;"
@@ -548,7 +548,7 @@
       "href": "https://x.com/hbgnostic",
       "tooltip": "Bridget D talks about Bitcoin and blockchain tech. Prponent of Bitcoin in it's original design.",
       "img": "social/bridgetd.png",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "",
       "text": "@hbgnostic",
       "info": ";;twitter.svg;"
@@ -668,7 +668,7 @@
       "href": "https://gavinmehl.blogspot.com/",
       "tooltip": "Gavin Mehl articles and videos on Blogspot",
       "img": "social/gavinm.png",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "articles",
       "text": "Gavin Mehl",
       "info": ";;blogspot.svg;"
@@ -698,7 +698,7 @@
       "href": "https://x.com/cryptorebel_SV",
       "tooltip": "Big proponent of Bitcoin; original design, involved in the development of ElectrumSVP wallet",
       "img": "social/truth_machine.png",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "Electrum SVP",
       "text": "@cryptorebel_SV",
       "info": ";;twitter.svg;"
@@ -708,7 +708,7 @@
       "href": "https://crypto-rebel.medium.com/",
       "tooltip": "Big proponent of Bitcoin; original design, involved in the development of ElectrumSVP wallet",
       "img": "social/truth_machine.png",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "Electrum SVP",
       "text": "Truth Machine",
       "info": ";;medium.svg;"
@@ -718,7 +718,7 @@
       "href": "https://www.bitchute.com/channel/3hMeJiX7kv5T",
       "tooltip": "BSV and other related topics",
       "img": "social/newsonchain.avif",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "",
       "text": "NewsOnChain",
       "info": ";;bitchute.svg;"
@@ -984,7 +984,7 @@
       "href": "https://x.com/CsTominaga",
       "tooltip": "S Tominaga (Aka Dr Craig Wright)",
       "img": "social/cs-tominaga.png",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "",
       "text": "@CsTominaga",
       "info": ";;twitter.svg;"
@@ -1004,7 +1004,7 @@
       "href": "https://x.com/deggen",
       "tooltip": "Distributed Applications Lead @BSVBlockchain - identity, data integrity, and micropayments.",
       "img": "social/deggen.png",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "",
       "text": "@deggen",
       "info": ";;twitter.svg;"
@@ -1034,7 +1034,7 @@
       "href": "https://www.youtube.com/@SmilaZ/videos",
       "tooltip": "SmilaZ often covers Bitcoin and CSW content.",
       "img": "social/smilaz.png",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "",
       "text": "SmilaZ",
       "info": ";;yt.svg;"
@@ -1053,7 +1053,7 @@
       "tab": "video",
       "href": "https://www.youtube.com/@todobitcoin3167/videos",
       "tooltip": "Bitcoin channel in Spanish",
-      "img": "social/todo.svg",
+      "img": "social/todo-sp.png",
       "zoom": "1.0",
       "alt": "",
       "text": "TODO BITCOIN",
@@ -1064,7 +1064,7 @@
       "href": "https://substack.com/@cstominaga",
       "tooltip": "Dr Craig Wright on Substack",
       "img": "social/cs-tominaga.png",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "",
       "text": "Craig Wright",
       "info": ";;substack.svg;"
