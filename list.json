@@ -4,7 +4,7 @@
       "tab": "tool;app",
       "href": "https://3dordi.io/",
       "tooltip": "Cutting-edge web3 application for exploring, managing and inscribing Ordinals (NFTs) on BSV blockchain",
-      "img": "app/3d.png",
+      "img": "app/3d.avif",
       "zoom": "1.2",
       "alt": "nft tool app",
       "text": "3D Ordi",
@@ -714,7 +714,7 @@
       "tab": "video",
       "href": "https://www.bitchute.com/channel/3hMeJiX7kv5T",
       "tooltip": "BSV and other related topics",
-      "img": "social/newsonchain.svg",
+      "img": "social/newsonchain.avif",
       "zoom": "0.9",
       "alt": "",
       "text": "NewsOnChain",
@@ -755,10 +755,13 @@
       "href": "https://truelink.metanet.app/",
       "tooltip": "Build your personal page that lives on the Metanet — permanent, portable, and truly yours.",
       "img": "app/truelink.svg",
-      "zoom": "2.5",
+      "zoom": "1.0",
       "alt": "",
       "text": "TrueLink",
-      "info": ";;;"
+      "info": ";;;",
+      "colour1": "#1f0d32ff",
+      "colour2": "#d7523eff",
+      "opacity": "0.85"
     },
     {
       "tab": "tool",
@@ -784,7 +787,7 @@
       "tab": "app",
       "href": "https://microblog.bitspv.com/",
       "tooltip": "Experience the future of social media with Metanet Microblog, a decentralized platform where your posts are stored directly on the Bitcoin SV blockchain. Connect your wallet, share your thoughts.",
-      "img": "app/metanet_microblog.png",
+      "img": "app/metanet_microblog.svg",
       "zoom": "0.9",
       "alt": "",
       "text": "Metanet Microblog",
@@ -814,7 +817,7 @@
       "tab": "app",
       "href": "https://todo.metanet.app/",
       "tooltip": "Create and complete TODO items, with a reward.",
-      "img": "app/todo.png",
+      "img": "app/todo.svg",
       "zoom": "0.9",
       "alt": "",
       "text": "ToDo",
@@ -825,7 +828,7 @@
       "href": "https://your-files-and-stuff.lovable.app/",
       "tooltip": "On-chain stuff",
       "img": "app/stuff.png",
-      "zoom": "1.0",
+      "zoom": "1.3",
       "alt": "",
       "text": "Stuff",
       "info": ";;;"
@@ -838,16 +841,6 @@
       "zoom": "1.2",
       "alt": "",
       "text": "UHRP Storage",
-      "info": ";;;"
-    },
-    {
-      "tab": "app",
-      "href": "https://www.thryll.online/",
-      "tooltip": "Ad-free blockchain gaming where every play auto-enters you into a transparent raffle. Powered by BSV micropayments for seamless, rewarding fun.",
-      "img": "app/thryll_arcade.svg",
-      "zoom": "1.6",
-      "alt": "arcade games",
-      "text": "Thryll Arcade",
       "info": ";;;"
     },
     {
@@ -905,7 +898,7 @@
       "href": "https://coolcert.babbage.systems/",
       "tooltip": "Get certified as officially cool!!",
       "img": "app/coolcert.svg",
-      "zoom": "0.75",
+      "zoom": "1.0",
       "alt": "",
       "text": "CoolCert",
       "info": ";;;"
@@ -944,8 +937,8 @@
       "tab": "app",
       "href": "https://secure.atx.systems/",
       "tooltip": "Generate a cryptographically secure random key using your browser's crypto API and divide that into multiple shares using Shamir's Secret Sharing Scheme.",
-      "img": "app/SBR.png",
-      "zoom": "1.0",
+      "img": "app/SBR.svg",
+      "zoom": "0.9",
       "alt": "",
       "text": "Secure Backup & Recovery",
       "info": ";;;"
@@ -954,21 +947,24 @@
       "tab": "app",
       "href": "https://fast.brc.dev/",
       "tooltip": "This allows developers to read code, run the snippet as is, and see the output in an easily read format for testing out the different functionality of the WalletClient.",
-      "img": "app/quickstart-docs.png",
-      "zoom": "1.5",
+      "img": "app/quickstart-docs.svg",
+      "zoom": "1.2",
       "alt": "",
       "text": "Quickstart Docs",
-      "info": ";;;"
+      "info": ";;;",
+      "colour1": "#5500aaff"
     },
     {
       "tab": "app",
       "href": "http://paymail.us/",
       "tooltip": "For registering a paymail alias and collecting inbound payments from external wallets which use paymail p2p destinations and rawtx / beef delivery.",
       "img": "app/paymail-bridge.svg",
-      "zoom": "1.5",
+      "zoom": "1.1",
       "alt": "",
       "text": "Paymail Bridge",
-      "info": ";;;"
+      "info": ";;;",
+      "colour1": "#6793b4ff",
+      "opacity": "0"
     },
     {
       "tab": "app;tool",
@@ -1074,8 +1070,8 @@
       "tab": "tool;doc",
       "href": "https://scrypt.io",
       "tooltip": "The FULL STACK Web3 development platform for Bitcoin Compatible Blockchains",
-      "img": "icon/scrypt.png",
-      "zoom": "1.1",
+      "img": "icon/scrypt.svg",
+      "zoom": "0.9",
       "alt": "scripting code development programming",
       "text": "sCrypt",
       "info": ";;;"
@@ -1145,10 +1141,54 @@
       "href": "https://www.beymo.app",
       "tooltip": "Peer to Peer Bitcoin BSV trading platform",
       "img": "icon/beymo.svg",
-      "zoom": "1.0",
+      "zoom": "1.3",
       "alt": "",
       "text": "Beymo",
       "info": ";;new.svg;"
+    },
+    {
+      "tab": "tool;app",
+      "href": "https://b0ase.com/bcorp-mint",
+      "tooltip": "Design, print, stamp, and mint currency on BSV. A desktop currency designer with 11 security layers (guilloche, rosette, microprint, watermark), SHA-256 file stamping with Description │ on-chain OP_RETURN inscription, and BSV-20/21 token minting.",
+      "img": "app/bitcoin_mint.avif",
+      "zoom": "1.0",
+      "alt": "",
+      "text": "Bitcoin Mint",
+      "info": ";;new.svg;"
+    },
+    {
+      "tab": "market",
+      "href": "https://metamarket.bapp.dev/",
+      "tooltip": "Micropayment powered marketplace for buying and selling 3D model files.",
+      "img": "app/metamarket.svg",
+      "zoom": "1.0",
+      "alt": "",
+      "text": "MetaMarket",
+      "info": ";;new.svg;"
+    },
+    {
+      "tab": "tool;app",
+      "href": "https://bitcoin-os.vercel.app/",
+      "tooltip": "A revolutionary Bitcoin-based operating system that integrates cryptocurrency functionality directly into the desktop environment.",
+      "img": "app/bitcoin_os.svg",
+      "zoom": "2.0",
+      "alt": "",
+      "text": "Bitcoin OS",
+      "info": ";;new.svg;",
+      "colour1": "black"
+    },
+    {
+      "tab": "tool;app",
+      "href": "https://www.bit-sign.online/",
+      "tooltip": "Sign, seal, and share documents with blockchain-verified proof. Upload PDFs or images, place your signature, inscribe on-chain via HandCash, and co-sign with others.",
+      "img": "app/bitsign.svg",
+      "zoom": "1.0",
+      "alt": "",
+      "text": "Bit Sign",
+      "info": ";;new.svg;",
+      "colour1": "black",
+      "colour2": "gray",
+      "opacity": "0.85"
     }
     
   ]
