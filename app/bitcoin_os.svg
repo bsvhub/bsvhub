@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="9.8047314mm"
+   height="13.486541mm"
+   viewBox="0 0 9.8047314 13.486541"
+   version="1.1"
+   id="svg28843"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="bitcoin_os.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview28845"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.74742565"
+     inkscape:cx="99.675467"
+     inkscape:cy="101.01339"
+     inkscape:window-width="1920"
+     inkscape:window-height="1020"
+     inkscape:window-x="0"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs28840" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-54.491707,-121.6419)">
+    <path
+       style="fill:#dcb113;fill-opacity:1;stroke:#fdfdfd;stroke-width:0.127231"
+       d="m 56.988894,134.36514 v -0.69978 h -1.21478 -1.21476 l 0.0379,-0.79519 0.0379,-0.79521 0.5308,-0.0387 c 0.29197,-0.0212 0.5935,-0.11417 0.6701,-0.20643 0.0952,-0.11466 0.12849,-1.24885 0.10528,-3.58068 l -0.0339,-3.41291 -0.63615,-0.1344 -0.63616,-0.13439 -0.0383,-0.73119 -0.0381,-0.7312 h 1.21504 1.21506 v -0.69975 -0.69979 h 0.57255 0.57252 v 0.69979 0.69975 h 0.63617 0.63615 v -0.69975 -0.69979 h 0.57256 0.57254 v 0.76339 c 0,0.72657 0.0151,0.76339 0.31362,0.76339 0.48425,0 1.48481,0.37288 1.95858,0.72989 0.78887,0.59445 1.11873,1.82889 0.73446,2.74856 -0.0958,0.22921 -0.47013,0.67566 -0.83192,0.99216 l -0.65782,0.57543 0.50813,0.15224 c 1.50171,0.44994 2.07777,1.93834 1.33054,3.43783 -0.44571,0.89442 -1.34554,1.50425 -2.5152,1.7046 l -0.84039,0.14395 v 0.67395 0.67392 h -0.57254 -0.57256 v -0.69976 -0.69978 h -0.63615 -0.63617 v 0.69978 0.69976 h -0.57252 -0.57255 z m 3.69228,-2.67319 c 0.45428,-0.23492 0.63358,-0.54824 0.63358,-1.10709 0,-0.89309 -0.61762,-1.24336 -2.19474,-1.24467 l -0.85882,-7e-4 v 1.2723 1.27232 h 1.02418 c 0.66465,0 1.15463,-0.0675 1.3958,-0.19217 z m -0.1532,-4.60513 c 0.27932,-0.20787 0.34842,-0.37138 0.37957,-0.8984 0.059,-0.99747 -0.40012,-1.30203 -1.96246,-1.30203 h -0.68389 v 1.28903 1.28906 l 0.96265,-0.0617 c 0.69172,-0.0444 1.05874,-0.1333 1.30413,-0.31587 z"
+       id="path28438" />
+  </g>
+</svg>
