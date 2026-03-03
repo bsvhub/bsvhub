@@ -1,62 +1,19 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   version="1.0"
-   width="351.815995pt"
-   height="364.545645pt"
-   viewBox="0 0 351.815995 364.545645"
-   preserveAspectRatio="xMidYMid meet"
-   id="svg14"
-   sodipodi:docname="pensona.svg"
-   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
-  <defs
-     id="defs18" />
-  <sodipodi:namedview
-     id="namedview16"
-     pagecolor="#ffffff"
-     bordercolor="#000000"
-     borderopacity="0.25"
-     inkscape:showpageshadow="2"
-     inkscape:pageopacity="0.0"
-     inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#d1d1d1"
-     inkscape:document-units="pt"
-     showgrid="false"
-     inkscape:zoom="1.7610963"
-     inkscape:cx="221.45297"
-     inkscape:cy="243.31435"
-     inkscape:window-width="1920"
-     inkscape:window-height="1020"
-     inkscape:window-x="0"
-     inkscape:window-y="32"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg14" />
-  <metadata
-     id="metadata2"> Created by potrace 1.16, written by Peter Selinger 2001-2019 </metadata>
-  <g
-     transform="translate(-80.184005,431.659415) scale(0.100000,-0.100000)"
-     fill="#000000"
-     stroke="none"
-     id="g12"
-     style="fill:#f9f9f9">
-    <path
-       d="M1225 4310 c-178 -28 -325 -149 -397 -327 l-23 -58 -3 -1394 c-1 -916 1 -1414 8 -1450 24 -132 138 -285 258 -349 121 -65 80 -63 1274 -60 l1083 3 57 23 c84 34 174 98 220 156 l40 51 97 6 c122 8 195 30 274 82 87 59 149 140 181 237 l26 79 0 388 c0 357 -2 391 -19 429 -25 55 -73 84 -140 84 l-51 0 0 148 c0 163 -12 231 -58 316 -39 74 -155 187 -229 225 -291 146 -637 18 -756 -281 -17 -44 -22 -83 -26 -228 l-6 -175 -62 -5 c-47 -4 -67 -11 -88 -30 -56 -52 -55 -46 -55 -484 0 -369 2 -410 19 -465 36 -116 131 -228 236 -277 l50 -24 -945 2 -945 3 -47 28 c-56 34 -94 76 -122 137 -21 45 -21 49 -24 1385 -2 1220 -1 1344 14 1392 46 147 205 222 339 159 107 -50 150 -127 143 -253 -4 -71 -9 -85 -51 -158 -28 -47 -47 -92 -47 -110 0 -40 32 -90 72 -115 32 -20 49 -20 981 -18 l947 3 0 -127 0 -128 130 0 130 0 0 171 0 171 31 36 c47 53 87 147 101 235 22 147 -21 300 -117 405 -59 66 -110 101 -200 138 l-70 29 -1090 1 c-600 1 -1112 -2 -1140 -6z m2191 -255 c60 -18 127 -72 157 -129 16 -30 21 -58 21 -106 0 -73 -15 -109 -64 -155 l-31 -30 -866 -3 c-754 -2 -865 0 -860 12 45 116 38 296 -14 382 -11 17 -19 34 -19 38 0 3 366 6 813 6 688 0 821 -2 863 -15z m304 -1397 c104 -70 129 -131 130 -315 l0 -133 -275 0 -275 0 0 148 c0 130 2 152 21 187 29 55 76 102 129 131 39 21 56 24 130 22 80 -3 89 -5 140 -40z m-56 -788 c97 -67 111 -193 31 -271 -35 -34 -35 -34 -35 -125 0 -136 -19 -174 -88 -174 -18 0 -38 10 -53 26 -22 23 -24 35 -27 132 -3 102 -5 108 -32 137 -89 93 -70 226 40 283 55 28 114 25 164 -8z"
-       id="path4"
-       style="fill:#f9f9f9" />
-    <path
-       d="M1514 3009 c-16 -4 -41 -20 -55 -35 -20 -21 -24 -36 -24 -84 0 -68 25 -103 84 -120 22 -6 267 -10 631 -10 560 0 597 2 636 19 52 24 74 55 74 104 0 51 -23 93 -63 114 -29 17 -80 18 -642 20 -340 1 -624 -3 -641 -8z"
-       id="path6"
-       style="fill:#f9f9f9" />
-    <path
-       d="M1494 2381 c-18 -11 -39 -30 -48 -42 -20 -29 -21 -91 -1 -129 31 -60 29 -60 541 -60 l466 0 33 33 c61 61 53 154 -17 197 -32 19 -49 20 -488 20 -430 0 -457 -1 -486 -19z"
-       id="path8"
-       style="fill:#f9f9f9" />
-    <path
-       d="M1470 1743 c-56 -50 -51 -150 10 -193 26 -18 47 -20 356 -20 366 -1 358 -3 398 71 25 46 16 98 -25 139 l-31 30 -339 0 -339 0 -30 -27z"
-       id="path10"
-       style="fill:#f9f9f9" />
-  </g>
-</svg>
+<?xml version='1.0' encoding='utf-8'?>
+<svg:svg xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:svg="http://www.w3.org/2000/svg" version="1.0" width="154.4129" height="160" viewBox="0 0 351.815995 364.545645" preserveAspectRatio="xMidYMid meet" id="svg14" sodipodi:docname="pensona.svg" inkscape:version="1.2.2 (b0a8486541, 2022-12-01)">
+  <svg:defs>
+    <svg:style>
+      :root { color-scheme: light; } /* dark-mode fix */
+    </svg:style>
+  </svg:defs>
+  <svg:rect id="fix-darkmode-bg" width="100%" height="100%" fill="transparent" />
+  
+  <svg:defs id="defs18" />
+  <sodipodi:namedview id="namedview16" pagecolor="#ffffff" bordercolor="#000000" borderopacity="0.25" inkscape:showpageshadow="2" inkscape:pageopacity="0.0" inkscape:pagecheckerboard="0" inkscape:deskcolor="#d1d1d1" inkscape:document-units="pt" showgrid="false" inkscape:zoom="1.7610963" inkscape:cx="221.45297" inkscape:cy="243.31435" inkscape:window-width="1920" inkscape:window-height="1020" inkscape:window-x="0" inkscape:window-y="32" inkscape:window-maximized="1" inkscape:current-layer="svg14" />
+  <svg:metadata id="metadata2"> Created by potrace 1.16, written by Peter Selinger 2001-2019 </svg:metadata>
+  <svg:g transform="translate(-80.184005,431.659415) scale(0.100000,-0.100000)" fill="#000000" stroke="none" id="g12" style="fill:#f9f9f9">
+    <svg:path d="M1225 4310 c-178 -28 -325 -149 -397 -327 l-23 -58 -3 -1394 c-1 -916 1 -1414 8 -1450 24 -132 138 -285 258 -349 121 -65 80 -63 1274 -60 l1083 3 57 23 c84 34 174 98 220 156 l40 51 97 6 c122 8 195 30 274 82 87 59 149 140 181 237 l26 79 0 388 c0 357 -2 391 -19 429 -25 55 -73 84 -140 84 l-51 0 0 148 c0 163 -12 231 -58 316 -39 74 -155 187 -229 225 -291 146 -637 18 -756 -281 -17 -44 -22 -83 -26 -228 l-6 -175 -62 -5 c-47 -4 -67 -11 -88 -30 -56 -52 -55 -46 -55 -484 0 -369 2 -410 19 -465 36 -116 131 -228 236 -277 l50 -24 -945 2 -945 3 -47 28 c-56 34 -94 76 -122 137 -21 45 -21 49 -24 1385 -2 1220 -1 1344 14 1392 46 147 205 222 339 159 107 -50 150 -127 143 -253 -4 -71 -9 -85 -51 -158 -28 -47 -47 -92 -47 -110 0 -40 32 -90 72 -115 32 -20 49 -20 981 -18 l947 3 0 -127 0 -128 130 0 130 0 0 171 0 171 31 36 c47 53 87 147 101 235 22 147 -21 300 -117 405 -59 66 -110 101 -200 138 l-70 29 -1090 1 c-600 1 -1112 -2 -1140 -6z m2191 -255 c60 -18 127 -72 157 -129 16 -30 21 -58 21 -106 0 -73 -15 -109 -64 -155 l-31 -30 -866 -3 c-754 -2 -865 0 -860 12 45 116 38 296 -14 382 -11 17 -19 34 -19 38 0 3 366 6 813 6 688 0 821 -2 863 -15z m304 -1397 c104 -70 129 -131 130 -315 l0 -133 -275 0 -275 0 0 148 c0 130 2 152 21 187 29 55 76 102 129 131 39 21 56 24 130 22 80 -3 89 -5 140 -40z m-56 -788 c97 -67 111 -193 31 -271 -35 -34 -35 -34 -35 -125 0 -136 -19 -174 -88 -174 -18 0 -38 10 -53 26 -22 23 -24 35 -27 132 -3 102 -5 108 -32 137 -89 93 -70 226 40 283 55 28 114 25 164 -8z" id="path4" style="fill:#f9f9f9" />
+    <svg:path d="M1514 3009 c-16 -4 -41 -20 -55 -35 -20 -21 -24 -36 -24 -84 0 -68 25 -103 84 -120 22 -6 267 -10 631 -10 560 0 597 2 636 19 52 24 74 55 74 104 0 51 -23 93 -63 114 -29 17 -80 18 -642 20 -340 1 -624 -3 -641 -8z" id="path6" style="fill:#f9f9f9" />
+    <svg:path d="M1494 2381 c-18 -11 -39 -30 -48 -42 -20 -29 -21 -91 -1 -129 31 -60 29 -60 541 -60 l466 0 33 33 c61 61 53 154 -17 197 -32 19 -49 20 -488 20 -430 0 -457 -1 -486 -19z" id="path8" style="fill:#f9f9f9" />
+    <svg:path d="M1470 1743 c-56 -50 -51 -150 10 -193 26 -18 47 -20 356 -20 366 -1 358 -3 398 71 25 46 16 98 -25 139 l-31 30 -339 0 -339 0 -30 -27z" id="path10" style="fill:#f9f9f9" />
+  </svg:g>
+</svg:svg>

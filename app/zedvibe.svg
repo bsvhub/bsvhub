@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg:svg xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:svg="http://www.w3.org/2000/svg" version="1.0" width="160" height="46.2763" viewBox="0 0 854.000000 247.000000" preserveAspectRatio="xMidYMid meet" id="svg272" sodipodi:docname="zedvibe.svg" inkscape:version="1.2.2 (b0a8486541, 2022-12-01)">
+  <svg:defs>
+    <svg:style>
+      :root { color-scheme: light; } /* dark-mode fix */
+    </svg:style>
+  </svg:defs>
+  <svg:rect id="fix-darkmode-bg" width="100%" height="100%" fill="transparent" />
+  
+  <svg:defs id="defs276" />
+  <sodipodi:namedview id="namedview274" pagecolor="#ffffff" bordercolor="#000000" borderopacity="0.25" inkscape:showpageshadow="2" inkscape:pageopacity="0.0" inkscape:pagecheckerboard="0" inkscape:deskcolor="#d1d1d1" inkscape:document-units="pt" showgrid="false" inkscape:zoom="1.2145785" inkscape:cx="521.99181" inkscape:cy="165.07785" inkscape:window-width="1920" inkscape:window-height="1020" inkscape:window-x="0" inkscape:window-y="32" inkscape:window-maximized="1" inkscape:current-layer="g270" />
+  <svg:metadata id="metadata256"> Created by potrace 1.16, written by Peter Selinger 2001-2019 </svg:metadata>
+  <svg:g transform="translate(-82.000000,689.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none" id="g270" style="fill:#f9f9f9">
+    <svg:path d="M825 6877 c-3 -7 -4 -129 -3 -272 l3 -260 504 -3 c395 -2 502 -5 498 -15 -5 -12 -276 -387 -823 -1134 l-184 -252 0 -261 0 -260 895 0 895 0 0 275 0 275 -511 0 -511 0 5 14 c3 8 77 111 163 228 87 117 197 267 246 333 48 66 205 278 348 472 l260 352 0 260 0 261 -890 0 -891 0 -4 -13z" id="path258" style="fill:#f9f9f9" />
+    <svg:path d="M2990 5655 l0 -1235 785 0 785 0 0 270 0 270 -442 2 -443 3 0 225 0 225 390 5 390 5 0 250 0 250 -390 5 -390 5 -3 199 c-2 153 1 201 10 208 7 4 207 8 443 8 l430 -1 3 271 2 270 -785 0 -785 0 0 -1235z" id="path260" style="fill:#f9f9f9" />
+    <svg:path d="M4910 5655 l0 -1235 485 0 c613 0 772 14 985 87 383 131 658 435 751 831 28 120 39 285 29 432 -21 313 -132 566 -335 766 -96 94 -172 147 -310 214 -241 117 -424 140 -1131 140 l-474 0 0 -1235z m1100 625 c110 -24 163 -47 242 -107 145 -111 213 -247 224 -453 15 -269 -57 -452 -225 -576 -131 -95 -256 -126 -497 -122 l-159 3 -3 638 -2 637 162 0 c124 0 186 -5 258 -20z" id="path262" style="fill:#f9f9f9" />
+    <svg:path d="M7700 6490 l0 -400 410 0 410 0 0 400 0 400 -410 0 -410 0 0 -400z" id="path264" style="fill:#f9f9f9" />
+    <svg:path d="M8530 5670 l0 -410 415 0 415 0 0 410 0 410 -415 0 -415 0 0 -410z" id="path266" style="fill:#cc00cc;fill-opacity:1" />
+    <svg:path d="M7700 4855 l0 -405 410 0 410 0 0 405 0 405 -410 0 -410 0 0 -405z" id="path268" style="fill:#f9f9f9" />
+  </svg:g>
+</svg:svg>
