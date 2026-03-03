@@ -15,7 +15,7 @@
       "href": "https://bsvassociation.org/",
       "tooltip": "Guardians of the BSV protocol",
       "img": "icon/association.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "BSV Association",
       "text": "BSV Association",
       "info": ";;;"
@@ -35,7 +35,7 @@
       "href": "https://bsv-case-studies.bsvblockchain.org",
       "tooltip": "Real-World Adoption Across Industries, Regions, and Applications",
       "img": "icon/bsv_industry.svg",
-      "zoom": "1.2",
+      "zoom": "1.0",
       "alt": "documents resources links code skills",
       "text": "Case Study Library",
       "info": ";;;"
@@ -45,7 +45,7 @@
       "href": "https://www.youtube.com/@BSVsearch/videos",
       "tooltip": "Info on how to use BSV in business, everyday life; try out BSV apps, wallets, websites; discuss BSV news and stories, and more...",
       "img": "social/bsvsearch.svg",
-      "zoom": "1.2",
+      "zoom": "1.0",
       "alt": "BSV Search on YouTube",
       "text": "BSV Search",
       "info": ";;yt.svg;"
@@ -65,7 +65,7 @@
       "href": "https://bsvdevs.com/",
       "tooltip": "A directory for devs and users alike. Enabling a one stop shop for great Bitcoin SV projects, tools, and resources.",
       "img": "icon/dev_tools.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "documents script source code",
       "text": "bsvdevs.com",
       "info": ";;;"
@@ -75,7 +75,7 @@
       "href": "https://wiki.bitcoinsv.io/index.php/Main_Page",
       "tooltip": "Bitcoin Wiki",
       "img": "icon/bitcoin_sv.svg",
-      "zoom": "1.5",
+      "zoom": "1.0",
       "alt": "wiki info document",
       "text": "Bitcoin Wiki",
       "info": ";;;"
@@ -85,7 +85,7 @@
       "href": "https://www.youtube.com/@CoinGeek/videos",
       "tooltip": "CoinGeek YouTube channel, all about Bitcoin and blockchain technologies.",
       "img": "social/cg.svg",
-      "zoom": "0.95",
+      "zoom": "1.0",
       "alt": "CoinGeek on YouTube",
       "text": "CoinGeek",
       "info": ";;yt.svg;"
@@ -95,7 +95,7 @@
       "href": "https://www.coinspot.com.au/",
       "tooltip": "A major, yet not well know Australian KYC exchange that lets you buy BSV",
       "img": "icon/coinspot.svg",
-      "zoom": "1.25",
+      "zoom": "1.0",
       "alt": "buy",
       "text": "CoinSpot",
       "info": ";;;"
@@ -105,7 +105,7 @@
       "href": "https://www.youtube.com/@Cryptoismyretirement/streams",
       "tooltip": "Just some guy on YouTube that talks a lot about BSV and makes some valid points.",
       "img": "social/cimr.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "info videos",
       "text": "Crypto is my Retirement",
       "info": ";;yt.svg;"
@@ -115,7 +115,7 @@
       "href": "https://electrumsv.io",
       "tooltip": "Classic desktop wallet for Windows/Mac/Linux",
       "img": "icon/electrumsv.svg",
-      "zoom": "1.8",
+      "zoom": "1.0",
       "alt": "classic old legacy",
       "text": "Wallet",
       "info": ";;;"
@@ -125,7 +125,7 @@
       "href": "https://docs.gorillapool.io/electrumsv/",
       "tooltip": "Electrum SV Server for blockchain syncing",
       "img": "icon/electrum-server.svg",
-      "zoom": "1.2",
+      "zoom": "1.0",
       "alt": "wallet settings server",
       "text": "Sync Fix",
       "info": ";;;"
@@ -135,7 +135,7 @@
       "href": "https://mybsv.io/wallet.html",
       "tooltip": "Gateway Wallet; an on-chain wallet at MyBSV.io",
       "img": "icon/gateway.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "on block chain",
       "text": "Gateway Wallet",
       "info": ";;;"
@@ -155,7 +155,7 @@
       "href": "https://ghostswap.io/",
       "tooltip": "Crypto Swap Exchange, supports BSV, no KYC or account required, has amount limits.",
       "img": "icon/ghostswap.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "Buy Swap crypto",
       "text": "GhostSwap",
       "info": ";;;"
@@ -165,7 +165,7 @@
       "href": "https://gorillapool.com/",
       "tooltip": "Gorilla Pool Mining",
       "img": "icon/gorillapool.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "Gorilla Pool",
       "text": "Gorilla Pool",
       "info": ";;;"
@@ -175,7 +175,7 @@
       "href": "https://gorillapool.io/",
       "tooltip": "Join Gorilla Pool",
       "img": "icon/gorillaminer.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "Gorilla Miner",
       "text": "Gorilla Miner",
       "info": ";;;"
@@ -185,7 +185,7 @@
       "href": "https://junglebus.gorillapool.io",
       "tooltip": "JungleBus is an indexing engine for on-chain data developed by GorillaPool. Used to filter and organize blockchain data.",
       "img": "icon/junglebus.svg",
-      "zoom": "1.1",
+      "zoom": "1.0",
       "alt": "Gorilla Miner",
       "text": "Jungle Bus",
       "info": ";;;"
@@ -195,7 +195,7 @@
       "href": "https://handcash.io/",
       "tooltip": "Mobile-friendly BSV wallet with Apps",
       "img": "icon/handcash.svg",
-      "zoom": "0.95",
+      "zoom": "1.0",
       "alt": "apps",
       "text": "Handcash Wallet",
       "info": ";;;"
@@ -245,7 +245,7 @@
       "href": "https://getmetanet.com/",
       "tooltip": "Metanet wallet; setting the BRC-100 standard created by Project Babbage",
       "img": "icon/metanet.svg",
-      "zoom": "1.7",
+      "zoom": "1.0",
       "alt": "apps wallet",
       "text": "Metanet Wallet",
       "info": ";;;"
@@ -265,7 +265,7 @@
       "href": "https://projectbabbage.com/",
       "tooltip": "Creators of BRC-100 Wallet Standard",
       "img": "icon/babbage.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "Project Babbage",
       "text": "Project Babbage",
       "info": ";;;"
@@ -275,7 +275,7 @@
       "href": "https://x.com/ProjectBabbage",
       "tooltip": "Project Babbage: Our goal is to create a more efficient, scalable, and secure internet by empowering users to own their own identities and data.",
       "img": "icon/babbage.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "BSV BRC 100",
       "text": "@ProjectBabbage",
       "info": ";;twitter.svg;"
@@ -295,7 +295,7 @@
       "href": "https://www.youtube.com/@ProjectBabbage/videos",
       "tooltip": "Project Babbage: Our goal is to create a more efficient, scalable, and secure internet by empowering users to own their own identities and data.",
       "img": "icon/babbage.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "blockchain identity brc 100",
       "text": "Project Babbage",
       "info": ";;yt.svg;"
@@ -305,7 +305,7 @@
       "href": "https://docs.projectbabbage.com/docs",
       "tooltip": "documentation for getting started with BSV development.",
       "img": "icon/babbage.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "Project Babbage Docs",
       "text": "Project Babbage Docs",
       "info": ";;;"
@@ -315,7 +315,7 @@
       "href": "https://x.com/vamosvigilante",
       "tooltip": "Co-Founder of The Crypto Vigilante, big BSV (original design) proponent",
       "img": "social/rafael_laverde.svg",
-      "zoom": "1.4",
+      "zoom": "1.0",
       "alt": "BSV Bitcoin Monero Privacy",
       "text": "Rafael LaVerde",
       "info": ";;twitter.svg;"
@@ -323,7 +323,7 @@
     {
       "tab": "social",
       "href": "https://x.com/SirToshiTV",
-      "tooltip": "$SirToshi: Đefender ✪f ₿itcoin",
+      "tooltip": "$SirToshi: \u0110efender \u272af \u20bfitcoin",
       "img": "social/sirtoshi.png",
       "zoom": "0.9",
       "alt": "BSV Bitcoin",
@@ -335,7 +335,7 @@
       "href": "https://app.reactonchain.com",
       "tooltip": "React Onchain; currently in beta, helps with deployment of apps on the blockchain.",
       "img": "app/react.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "developer tool",
       "text": "React-Onchain",
       "info": ";;beta.svg;"
@@ -395,7 +395,7 @@
       "href": "https://treechat.ai",
       "tooltip": "Social network on BSV, alternative to X (Twitter)",
       "img": "app/treechat.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "TreeChat",
       "text": "TreeChat",
       "info": ";;;"
@@ -415,7 +415,7 @@
       "href": "https://gaia-explorer.com",
       "tooltip": "BSV image blockchain explorer",
       "img": "app/gaia.svg",
-      "zoom": "1.6",
+      "zoom": "1.0",
       "alt": "tool explorer",
       "text": "Explorer",
       "info": ";;;"
@@ -425,7 +425,7 @@
       "href": "https://yours.org",
       "tooltip": "Chrome-based BSV wallet extension",
       "img": "icon/yours.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "Wallet",
       "text": "Wallet",
       "info": ";;;"
@@ -444,9 +444,9 @@
     {
       "tab": "app",
       "href": "https://authsig.metanet.app/",
-      "tooltip": "You can't tell if content is AI anymore — but you can check who's willing to put their name on it.",
+      "tooltip": "You can't tell if content is AI anymore \u2014 but you can check who's willing to put their name on it.",
       "img": "app/authsig.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "sign authanticate",
       "text": "AuthSig",
       "info": ";;;"
@@ -456,7 +456,7 @@
       "href": "https://everdraw.art/",
       "tooltip": "A professional open-source drawing application with blockchain-backed artwork ownership.",
       "img": "app/everdraw.svg",
-      "zoom": "0.85",
+      "zoom": "1.0",
       "alt": "pixel art",
       "text": "Everdraw",
       "info": ";;;",
@@ -468,7 +468,7 @@
       "href": "https://pixelwar.click/",
       "tooltip": "Create pixel art on blockchain, interact with others on same canvas",
       "img": "app/pixelwar.svg",
-      "zoom": "1.4",
+      "zoom": "1.0",
       "alt": "pixelart",
       "text": "PixelWar",
       "info": ";;;"
@@ -478,7 +478,7 @@
       "href": "https://go.projectbabbage.com/",
       "tooltip": "Info for creating app on BRC-100; turn your app into revenue",
       "img": "icon/babbage.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "documentation script",
       "text": "Babbage Go",
       "info": ";;;"
@@ -488,7 +488,7 @@
       "href": "https://traceport.io/",
       "tooltip": "1. Submit your data, 2. Hash it client-side, 3. Verification when you need it",
       "img": "app/traceport.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "independent verification",
       "text": "Traceport",
       "info": ";;;"
@@ -498,7 +498,7 @@
       "href": "https://zanaadu.com/",
       "tooltip": "A Social Web Unchained",
       "img": "app/zanaadu.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "decentralizes decentalised social media",
       "text": "Zanaadu",
       "info": ";;beta.svg;"
@@ -508,7 +508,7 @@
       "href": "https://bitgenius.net/",
       "tooltip": "Your intelligent assistant.",
       "img": "app/geniuss.svg",
-      "zoom": "0.85",
+      "zoom": "1.0",
       "alt": "ai",
       "text": "Genius System",
       "info": ";;;"
@@ -518,7 +518,7 @@
       "href": "https://bsvhackathon.com/",
       "tooltip": "Hackathon info, events, registration",
       "img": "icon/hackathon.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "devs win prise competition",
       "text": "BSV Hackathon",
       "info": ";;;"
@@ -526,7 +526,7 @@
     {
       "tab": "doc",
       "href": "https://metanetacademy.com/",
-      "tooltip": "Learn to build real applications with these primitives — the version of the web the early engineers never got to finish.",
+      "tooltip": "Learn to build real applications with these primitives \u2014 the version of the web the early engineers never got to finish.",
       "img": "icon/metanet_academy.png",
       "zoom": "0.9",
       "alt": "documentation inscraction script coding",
@@ -558,7 +558,7 @@
       "href": "https://linktr.ee/BsvGodfather",
       "tooltip": "Spreading awareness of satoshis vision with the power of memes.",
       "img": "social/bsv-godfather.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "social media",
       "text": "BsvGodfather",
       "info": ";;;"
@@ -578,7 +578,7 @@
       "href": "https://www.rockwallet.com/",
       "tooltip": "KYC mobile wallet that supports BSV and in wallet swaps.",
       "img": "icon/rock.svg",
-      "zoom": "0.85",
+      "zoom": "1.0",
       "alt": "ROCKWALLET",
       "text": "ROCKWALLET",
       "info": ";;;"
@@ -588,7 +588,7 @@
       "href": "https://teragun.com/",
       "tooltip": "Demo app for simultaneous transactions on BSV.",
       "img": "icon/teragun.svg",
-      "zoom": "0.85",
+      "zoom": "1.0",
       "alt": "demo",
       "text": "TERAGUN",
       "info": ";;;"
@@ -598,7 +598,7 @@
       "href": "https://guarda.com/",
       "tooltip": "Multi-chain wallet that also supports BSV.",
       "img": "icon/guarda.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "milti chain",
       "text": "Wallet",
       "info": ";;;"
@@ -608,7 +608,7 @@
       "href": "https://bsvsearch.com/",
       "tooltip": "BSV Search is a website for people to find others with whom to transact in BSVs.",
       "img": "social/bsvsearch.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "market place buy",
       "text": "BSV Search",
       "info": ";;;"
@@ -618,7 +618,7 @@
       "href": "https://www.nftana.com/",
       "tooltip": "Nftana is a next-gen open source NFT Exchange marketplace that anyone can contribute to develop or use this marketplace as their framework.",
       "img": "icon/nftana.svg",
-      "zoom": "0.85",
+      "zoom": "1.0",
       "alt": "market place buy",
       "text": "Nftana",
       "info": ";;;"
@@ -628,7 +628,7 @@
       "href": "https://1satordinals.com/",
       "tooltip": "Website provides resources and links in relation to Ordinals/NFTs on BSV",
       "img": "icon/ordinals.svg",
-      "zoom": "0.8",
+      "zoom": "1.0",
       "alt": "market-place NFT",
       "text": "1Sat Ordinals",
       "info": ";;;"
@@ -638,7 +638,7 @@
       "href": "https://1sat.market/",
       "tooltip": "Ordinals, BSV20 and BSV21 marketpalce",
       "img": "icon/ordinals.svg",
-      "zoom": "0.8",
+      "zoom": "1.0",
       "alt": "market place NFT buy",
       "text": "1sat.market",
       "info": ";;beta.svg;"
@@ -648,7 +648,7 @@
       "href": "https://www.kucoin.com/",
       "tooltip": "KYC exchange where you can buy BSV.",
       "img": "icon/kucoin.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "exchange",
       "text": "Exchange",
       "info": ";;;"
@@ -658,7 +658,7 @@
       "href": "https://www.orangegateway.com/",
       "tooltip": "Orange Gateway, an exchange based in Iceland where you can but BSV in several fiat currencies.",
       "img": "icon/orange.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "exchange",
       "text": "Orange Gateway",
       "info": ";;;"
@@ -688,7 +688,7 @@
       "href": "https://thatsbtcnotbitcoin.com/",
       "tooltip": "Site explains why BTC is not Bitcoin",
       "img": "icon/not_bitcoin.svg",
-      "zoom": "1.1",
+      "zoom": "1.0",
       "alt": "explenation blog",
       "text": "BTC != Bitcoin",
       "info": ";;;"
@@ -728,7 +728,7 @@
       "href": "https://toolbsv.com/",
       "tooltip": "Personal Pay per Prompt AI",
       "img": "app/tool.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "",
       "text": "TOOL on BSV",
       "info": ";;;"
@@ -748,7 +748,7 @@
       "href": "https://gloss.metanet.app/",
       "tooltip": "Real-time updates from people building cool things. Share your work, learn from others!",
       "img": "app/gloss.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "",
       "text": "Gloss",
       "info": ";;;"
@@ -756,7 +756,7 @@
     {
       "tab": "app",
       "href": "https://truelink.metanet.app/",
-      "tooltip": "Build your personal page that lives on the Metanet — permanent, portable, and truly yours.",
+      "tooltip": "Build your personal page that lives on the Metanet \u2014 permanent, portable, and truly yours.",
       "img": "app/truelink.svg",
       "zoom": "1.0",
       "alt": "",
@@ -771,7 +771,7 @@
       "href": "https://bitails.io/",
       "tooltip": "Bitails is the API service provider and blockchain explorer for the BSV blockchain, focusing on scalability.",
       "img": "icon/bitails.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "block explorer",
       "text": "Bitails",
       "info": ";;;"
@@ -781,7 +781,7 @@
       "href": "https://hypertypist.com/",
       "tooltip": "Test your typing speed and save immutable records to the blockchain. Compete on the global leaderboard.",
       "img": "app/hypertypist.svg",
-      "zoom": "1.6",
+      "zoom": "1.0",
       "alt": "",
       "text": "HyperTypist",
       "info": ";;;"
@@ -791,7 +791,7 @@
       "href": "https://microblog.bitspv.com/",
       "tooltip": "Experience the future of social media with Metanet Microblog, a decentralized platform where your posts are stored directly on the Bitcoin SV blockchain. Connect your wallet, share your thoughts.",
       "img": "app/metanet_microblog.svg",
-      "zoom": "1.3",
+      "zoom": "1.0",
       "alt": "",
       "text": "Metanet Microblog",
       "info": ";;;"
@@ -811,7 +811,7 @@
       "href": "https://calendar.metanet.app/",
       "tooltip": "Own your events",
       "img": "app/metanet_calendar.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "",
       "text": "Metanet Calendar",
       "info": ";;;"
@@ -821,7 +821,7 @@
       "href": "https://todo.metanet.app/",
       "tooltip": "Create and complete TODO items, with a reward.",
       "img": "app/todo.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "",
       "text": "ToDo",
       "info": ";;;"
@@ -841,7 +841,7 @@
       "href": "https://uhrp-ui.bapp.dev/",
       "tooltip": "Easily upload and download content using the Universal Hash Resolution Protocol (UHRP).",
       "img": "app/uhrp.svg",
-      "zoom": "1.2",
+      "zoom": "1.0",
       "alt": "",
       "text": "UHRP Storage",
       "info": ";;;"
@@ -851,7 +851,7 @@
       "href": "https://bsvbetter.org/",
       "tooltip": "BSV Better is dedicated to exploring, and educating others about the revolutionary potential of Bitcoin SV (BSV).",
       "img": "icon/bsvbetter.svg",
-      "zoom": "1.4",
+      "zoom": "1.0",
       "alt": "",
       "text": "BSV Better",
       "info": ";;;"
@@ -861,7 +861,7 @@
       "href": "https://coinflip.babbage.systems/",
       "tooltip": "Flip a coin, earn some sats.",
       "img": "app/coinflip.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "",
       "text": "Coinflip",
       "info": ";;;"
@@ -871,7 +871,7 @@
       "href": "https://metanethighway.com/",
       "tooltip": "Our app generates fresh, secure addresses for your Metanet wallet, letting you receive BSV from any external wallet with ease.",
       "img": "app/metanet_highway.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "",
       "text": "Metanet Highway",
       "info": ";;;"
@@ -881,7 +881,7 @@
       "href": "https://marscast.babbage.systems/",
       "tooltip": "Micropayment-powered martian weather data for Cool people",
       "img": "app/marscast.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "",
       "text": "MarsCast",
       "info": ";;;"
@@ -891,7 +891,7 @@
       "href": "https://legacy.atx.systems/",
       "tooltip": "For taking and making payments using traditional Bitcoin addresses.",
       "img": "icon/qr.svg",
-      "zoom": "0.7",
+      "zoom": "1.0",
       "alt": "",
       "text": "Legacy Payments",
       "info": ";;;"
@@ -911,7 +911,7 @@
       "href": "https://pensona.metanet.app/",
       "tooltip": "On-chain note-taking app.",
       "img": "app/pensona.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "",
       "text": "Pensona",
       "info": ";;;"
@@ -931,7 +931,7 @@
       "href": "https://pay-quickr.atx.systems/",
       "tooltip": "Fast and secure phone to phone BSV payments using QR codes.",
       "img": "app/pay-quickr.svg",
-      "zoom": "1.1",
+      "zoom": "1.0",
       "alt": "",
       "text": "Pay-QuickR",
       "info": ";;;"
@@ -941,7 +941,7 @@
       "href": "https://secure.atx.systems/",
       "tooltip": "Generate a cryptographically secure random key using your browser's crypto API and divide that into multiple shares using Shamir's Secret Sharing Scheme.",
       "img": "app/SBR.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "",
       "text": "Secure Backup & Recovery",
       "info": ";;;"
@@ -951,7 +951,7 @@
       "href": "https://fast.brc.dev/",
       "tooltip": "This allows developers to read code, run the snippet as is, and see the output in an easily read format for testing out the different functionality of the WalletClient.",
       "img": "app/quickstart-docs.svg",
-      "zoom": "1.2",
+      "zoom": "1.0",
       "alt": "",
       "text": "Quickstart Docs",
       "info": ";;;",
@@ -962,7 +962,7 @@
       "href": "http://paymail.us/",
       "tooltip": "For registering a paymail alias and collecting inbound payments from external wallets which use paymail p2p destinations and rawtx / beef delivery.",
       "img": "app/paymail-bridge.svg",
-      "zoom": "1.1",
+      "zoom": "1.0",
       "alt": "",
       "text": "Paymail Bridge",
       "info": ";;;",
@@ -974,7 +974,7 @@
       "href": "https://mnemonic-brc100.vercel.app/",
       "tooltip": "This tool can help you retrieve funds stuck in old BSV wallets which used BIP39 BIP32 style HD keys.",
       "img": "app/mnemonic.svg",
-      "zoom": "3.0",
+      "zoom": "1.0",
       "alt": "",
       "text": "Mnemonic",
       "info": ";;;"
@@ -994,7 +994,7 @@
       "href": "https://wordpress.org/plugins/bsvanon-bitcoin-sv-payments/#description",
       "tooltip": "This plugin enables your WooCommerce store to accept Bitcoin SV (BSV) payments directly to your wallet using BIP32 address derivation. No third-party payment processors, no monthly fees, complete self-custody.",
       "img": "app/woocommerce.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "",
       "text": "WooCommerce",
       "info": ";;;"
@@ -1012,9 +1012,9 @@
     {
       "tab": "social",
       "href": "https://x.com/KanoTheTruth",
-      "tooltip": "𝗕𝗶𝘁𝗰𝗼𝗶𝗻ˢᵛ : On-Chain Layer 1 Bitcoin Scaling",
+      "tooltip": "\ud835\uddd5\ud835\uddf6\ud835\ude01\ud835\uddf0\ud835\uddfc\ud835\uddf6\ud835\uddfb\u02e2\u1d5b : On-Chain Layer 1 Bitcoin Scaling",
       "img": "social/kano.svg",
-      "zoom": "1.4",
+      "zoom": "1.0",
       "alt": "",
       "text": "@KanoTheTruth",
       "info": ";;twitter.svg;"
@@ -1024,7 +1024,7 @@
       "href": "https://pollr.gg/",
       "tooltip": "On-chain polls",
       "img": "app/pollr.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "",
       "text": "Pollr",
       "info": ";;;"
@@ -1053,8 +1053,8 @@
       "tab": "video",
       "href": "https://www.youtube.com/@todobitcoin3167/videos",
       "tooltip": "Bitcoin channel in Spanish",
-      "img": "social/todo.png",
-      "zoom": "1.1",
+      "img": "social/todo.svg",
+      "zoom": "1.0",
       "alt": "",
       "text": "TODO BITCOIN",
       "info": ";;yt.svg;spain.svg"
@@ -1074,7 +1074,7 @@
       "href": "https://scrypt.io",
       "tooltip": "The FULL STACK Web3 development platform for Bitcoin Compatible Blockchains",
       "img": "icon/scrypt.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "scripting code development programming",
       "text": "sCrypt",
       "info": ";;;"
@@ -1114,7 +1114,7 @@
       "href": "https://bitcoinschema.org",
       "tooltip": "The universal standard for data structure. Build interoperable applications that share a single global database.",
       "img": "icon/bitcoinschema.svg",
-      "zoom": "1.1",
+      "zoom": "1.0",
       "alt": "",
       "text": "Bitcoin Schema",
       "info": ";;;"
@@ -1124,7 +1124,7 @@
       "href": "https://firesat.io",
       "tooltip": "Discover FireSat Wallet, your secure, non-custodial BSV wallet for effortless BSV20 token trading, feeless transactions, and intuitive asset management.",
       "img": "icon/firesat.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "ordinals NFT BSV20",
       "text": "FireSat Wallet",
       "info": ";;;"
@@ -1134,7 +1134,7 @@
       "href": "https://peerjump.fun/",
       "tooltip": "A simple game where you climb through jumping to get the higest score",
       "img": "app/peerjump.svg",
-      "zoom": "0.9",
+      "zoom": "1.0",
       "alt": "",
       "text": "PeerJump",
       "info": ";;;"
@@ -1144,7 +1144,7 @@
       "href": "https://www.beymo.app",
       "tooltip": "Peer to Peer Bitcoin BSV trading platform",
       "img": "icon/beymo.svg",
-      "zoom": "1.3",
+      "zoom": "1.0",
       "alt": "",
       "text": "Beymo",
       "info": ";;new.svg;"
@@ -1152,7 +1152,7 @@
     {
       "tab": "tool;app",
       "href": "https://b0ase.com/bcorp-mint",
-      "tooltip": "Design, print, stamp, and mint currency on BSV. A desktop currency designer with 11 security layers (guilloche, rosette, microprint, watermark), SHA-256 file stamping with Description │ on-chain OP_RETURN inscription, and BSV-20/21 token minting.",
+      "tooltip": "Design, print, stamp, and mint currency on BSV. A desktop currency designer with 11 security layers (guilloche, rosette, microprint, watermark), SHA-256 file stamping with Description \u2502 on-chain OP_RETURN inscription, and BSV-20/21 token minting.",
       "img": "app/bitcoin_mint.avif",
       "zoom": "1.0",
       "alt": "",
@@ -1164,7 +1164,7 @@
       "href": "https://metamarket.bapp.dev/",
       "tooltip": "Micropayment powered marketplace for buying and selling 3D model files.",
       "img": "app/metamarket.svg",
-      "zoom": "1.8",
+      "zoom": "1.0",
       "alt": "",
       "text": "MetaMarket",
       "info": ";;new.svg;"
@@ -1174,7 +1174,7 @@
       "href": "https://bitcoin-os.vercel.app/",
       "tooltip": "A revolutionary Bitcoin-based operating system that integrates cryptocurrency functionality directly into the desktop environment.",
       "img": "app/bitcoin_os.svg",
-      "zoom": "2.0",
+      "zoom": "1.0",
       "alt": "",
       "text": "Bitcoin OS",
       "info": ";;new.svg;",
@@ -1194,6 +1194,5 @@
       "colour2": "gray",
       "opacity": "0.85"
     }
-    
   ]
 }
