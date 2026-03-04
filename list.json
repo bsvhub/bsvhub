@@ -829,9 +829,9 @@
     {
       "tab": "app",
       "href": "https://your-files-and-stuff.lovable.app/",
-      "tooltip": "On-chain stuff",
-      "img": "app/stuff.png",
-      "zoom": "1.3",
+      "tooltip": "On-chain simple Dropbox like application",
+      "img": "app/stuff.svg",
+      "zoom": "1.0",
       "alt": "",
       "text": "Stuff",
       "info": ";;;"
@@ -874,7 +874,10 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Metanet Highway",
-      "info": ";;;"
+      "info": ";;;",
+      "colour1": "gray",
+      "colour2": "white",
+      "opacity": "0.5"
     },
     {
       "tab": "app",
@@ -1192,6 +1195,19 @@
       "info": ";;new.svg;",
       "colour1": "black",
       "colour2": "gray",
+      "opacity": "0.85"
+    },
+    {
+      "tab": "app",
+      "href": "https://immutify.metanet.app",
+      "tooltip": "Publish your ideas with cryptographic proof of existence. Create a verifiable timestamp without revealing your content to the world.",
+      "img": "app/immutify.svg",
+      "zoom": "1.0",
+      "alt": "",
+      "text": "Immutify",
+      "info": ";;",
+      "colour1": "skyblue",
+      "colour2": "purple",
       "opacity": "0.85"
     }
   ]
