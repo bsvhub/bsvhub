@@ -261,13 +261,50 @@ document.addEventListener("mouseleave", (e) => {
 }, true);
 
 /* ============================================================
-   9 — MOBILE DOUBLE-TAP (event delegation)
-   Three explicit cases — no ambiguous state:
-     Case A: tapping the ALREADY selected icon  → navigate
-     Case B: tapping a DIFFERENT icon           → switch selection
-     Case C: tapping with nothing selected      → first tap
+   9 — MOBILE DOUBLE-TAP
+   ============================================================
+   Two completely separate pipelines — they never interfere:
+
+   PIPELINE A — real touch devices (phones/tablets)
+     Listens on touchend. Handles the tap immediately and calls
+     preventDefault() which cancels the browser's synthetic
+     click event entirely. The click handler below never fires
+     for genuine touch input.
+
+   PIPELINE B — desktop in mobile-mode (mouse clicks)
+     No touch events exist so the click handler runs instead.
+     The handledByTouch flag ensures Pipeline A events that
+     somehow also fire a click (some hybrid devices) are ignored.
+
+   In both cases the logic is the same three explicit cases:
+     Case A — tapping the ALREADY selected icon  → navigate
+     Case B — tapping a DIFFERENT icon           → switch
+     Case C — tapping with nothing selected      → first select
 ============================================================ */
-document.addEventListener("click", (e) => {
+
+let handledByTouch = false;
+
+function handleIconTap(link, wrap, allowNavigate) {
+    // Case A — second tap on the same icon → navigate
+    if (link === lastTappedLink) {
+        clearDoubleTapSelection();
+        return allowNavigate;   // true = let browser follow href
+    }
+
+    // Cases B & C — new icon: always block, switch selection
+    if (lastTappedLink) {
+        lastTappedLink.classList.remove("mobile-selected");
+        lastTappedLink = null;
+    }
+
+    link.classList.add("mobile-selected");
+    lastTappedLink = link;
+    setTooltipText(wrap.dataset.tooltip || wrap.textContent || "Tap again to open");
+    return false;   // block navigation
+}
+
+/* ── PIPELINE A: touchend ────────────────────────────────── */
+document.addEventListener("touchend", (e) => {
     if (!isMobileMode()) return;
 
     const wrap = e.target.closest(".icon-wrapper");
@@ -276,26 +313,32 @@ document.addEventListener("click", (e) => {
     const link = wrap.closest("a");
     if (!link) return;
 
-    // Case A — second tap on the same icon → let browser navigate
-    if (link === lastTappedLink) {
-        clearDoubleTapSelection();
-        return;  // no e.preventDefault() — browser follows the link
+    handledByTouch = true;
+    // Small timeout to reset the flag after the synthetic
+    // click window has passed (~350ms)
+    setTimeout(() => { handledByTouch = false; }, 400);
+
+    const navigate = handleIconTap(link, wrap, true);
+    if (!navigate) {
+        e.preventDefault();   // cancels the synthetic click
     }
+}, { capture: true, passive: false });
 
-    // Cases B & C — new icon tapped → always block navigation
-    e.preventDefault();
+/* ── PIPELINE B: click (desktop mobile-mode only) ───────── */
+document.addEventListener("click", (e) => {
+    if (!isMobileMode()) return;
+    if (handledByTouch) return;   // already handled by Pipeline A
 
-    // Clear any existing selection cleanly before setting new one
-    if (lastTappedLink) {
-        lastTappedLink.classList.remove("mobile-selected");
-        lastTappedLink = null;
+    const wrap = e.target.closest(".icon-wrapper");
+    if (!wrap) return;
+
+    const link = wrap.closest("a");
+    if (!link) return;
+
+    const navigate = handleIconTap(link, wrap, true);
+    if (!navigate) {
+        e.preventDefault();
     }
-
-    // Select the new icon
-    link.classList.add("mobile-selected");
-    lastTappedLink = link;
-    setTooltipText(wrap.dataset.tooltip || wrap.textContent || "Tap again to open");
-
 }, true);
 
 /* ============================================================
@@ -311,9 +354,11 @@ function clearDoubleTapSelection() {
 
 /* ============================================================
    11 — AUTO-CLEAR TRIGGERS
-   NOTE: window blur deliberately removed — on mobile it fires
-   too readily (address bar, focus shifts) and was wiping the
-   selection immediately after it was set.
+   pointerdown outside an icon clears selection.
+   visibilitychange clears when user switches away.
+   No blur listener — fires too readily on mobile.
+   No keydown Escape needed on touch but kept for desktop
+   mobile-mode keyboard users.
 ============================================================ */
 document.addEventListener("pointerdown", (e) => {
     if (!isMobileMode()) return;
