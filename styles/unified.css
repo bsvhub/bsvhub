@@ -188,6 +188,19 @@ body {
     min-width: fit-content;
 }
 
+/* SVG logo — sized to match the text height it replaces     */
+.header-logo-img {
+    height: clamp(1rem, 5vw, 3.2rem);  /* same as font-size above  */
+    width: auto;                         /* preserve 5:1 aspect ratio */
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Fallback text — hidden by default, shown via onerror      */
+.header-logo-fallback {
+    display: none;
+}
+
 .header-icons {
     display: flex;
     gap: 10px;
@@ -838,6 +851,11 @@ html.mobile-mode-loading .tab-bar {
 body.mobile-mode .header-title,
 html.mobile-mode-loading .header-title {
     font-size: calc(3.2rem * var(--header-buttons-scale));
+}
+
+body.mobile-mode .header-logo-img,
+html.mobile-mode-loading .header-logo-img {
+    height: calc(3.2rem * var(--header-buttons-scale));
 }
 
 body.mobile-mode .header-icon,
