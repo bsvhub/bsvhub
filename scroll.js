@@ -262,8 +262,10 @@ document.addEventListener("mouseleave", (e) => {
 
 /* ============================================================
    9 — MOBILE DOUBLE-TAP (event delegation)
-   First tap  → show tooltip
-   Second tap → navigate + reset tooltip to default
+   Three explicit cases — no ambiguous state:
+     Case A: tapping the ALREADY selected icon  → navigate
+     Case B: tapping a DIFFERENT icon           → switch selection
+     Case C: tapping with nothing selected      → first tap
 ============================================================ */
 document.addEventListener("click", (e) => {
     if (!isMobileMode()) return;
@@ -274,22 +276,26 @@ document.addEventListener("click", (e) => {
     const link = wrap.closest("a");
     if (!link) return;
 
-    // Clear previous selection if a different icon was tapped
-    if (lastTappedLink && lastTappedLink !== link) {
+    // Case A — second tap on the same icon → let browser navigate
+    if (link === lastTappedLink) {
+        clearDoubleTapSelection();
+        return;  // no e.preventDefault() — browser follows the link
+    }
+
+    // Cases B & C — new icon tapped → always block navigation
+    e.preventDefault();
+
+    // Clear any existing selection cleanly before setting new one
+    if (lastTappedLink) {
         lastTappedLink.classList.remove("mobile-selected");
+        lastTappedLink = null;
     }
 
-    // First tap — show tooltip
-    if (!link.classList.contains("mobile-selected")) {
-        e.preventDefault();
-        link.classList.add("mobile-selected");
-        lastTappedLink = link;
-        setTooltipText(wrap.dataset.tooltip || wrap.textContent || "Tap again to open");
-        return;
-    }
+    // Select the new icon
+    link.classList.add("mobile-selected");
+    lastTappedLink = link;
+    setTooltipText(wrap.dataset.tooltip || wrap.textContent || "Tap again to open");
 
-    // Second tap — navigate and reset tooltip
-    clearDoubleTapSelection();
 }, true);
 
 /* ============================================================
@@ -305,6 +311,9 @@ function clearDoubleTapSelection() {
 
 /* ============================================================
    11 — AUTO-CLEAR TRIGGERS
+   NOTE: window blur deliberately removed — on mobile it fires
+   too readily (address bar, focus shifts) and was wiping the
+   selection immediately after it was set.
 ============================================================ */
 document.addEventListener("pointerdown", (e) => {
     if (!isMobileMode()) return;
@@ -314,8 +323,6 @@ document.addEventListener("pointerdown", (e) => {
 document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") clearDoubleTapSelection();
 });
-
-window.addEventListener("blur", clearDoubleTapSelection);
 
 document.addEventListener("visibilitychange", () => {
     if (document.hidden) clearDoubleTapSelection();
