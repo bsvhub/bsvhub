@@ -681,6 +681,7 @@ function startPlugin(){
         if(!_layer){
             _layer=document.createElement('div');
             _layer.id='particle-layer';
+            _layer.style.cssText='position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;overflow:hidden;';
             var bg=document.getElementById('background-layer');
             if(!bg) return;
             bg.insertAdjacentElement('afterend',_layer);
