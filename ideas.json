@@ -7,6 +7,31 @@
 	{
 	  "title": "GeoProof Photo Map",
 	  "body": "A BSV-powered app that allows users to take photos with integrated GPS data and upload them to a global map. Each photo is cryptographically verified on the BSV blockchain, creating an immutable record of its existence at a specific time and location. Users can tag photos with categories such as 'nature', 'sports', 'history', or 'architecture' for easy searching and browsing. The app includes an interactive **world map** where users can **zoom in and navigate** clusters of photos, and click on a specific area to view individual images. Users can filter photos based on category, rating, or location. Every rating submitted by users (whether for photo quality, location accuracy, or trustworthiness) is treated as a **microtransaction**, with users paying a small fee in BSV for each rating. This ensures that ratings are valuable and thoughtful, reducing spam and increasing the quality of reviews. Public photos are available to everyone, while private images can be shared only with specific users. A built-in moderation system allows inappropriate content to be flagged by the community, flagged photos while still on-chain are automatically hidden from public view within the app. The platform offers a secure, transparent, and verifiable method for users to share location-based images while ensuring the integrity of content through blockchain technology."
+	},
+	{
+	  "title": "I Said It First",
+	  "body": "A simple prediction/claim timestamper. Write a prediction, idea, or accusation, pay a micro-fee, and it's permanently dated. No account needed. Useful for forecasters, inventors, journalists sitting on a story, or anyone who wants proof they knew something before it became public."
+	},
+	{
+	  "title": "Dead Man's Switch",
+	  "body": "You check in weekly with a micro-payment. If you stop, a pre-written message (to family, a lawyer, a journalist) gets automatically published on-chain. Useful for sensitive disclosures, inheritance instructions, or activists in risky situations."
+	},
+	{
+	  "title": "Unsellable Reviews",
+	  "body": "A review platform where businesses cannot pay to remove negative feedback. The review is on-chain the moment it's written. Simple front-end, but the trust model is fundamentally different from Yelp or Google Reviews."
+	},
+	{
+	  "title": "Secondhand Ownership Chain",
+	  "body": "When you sell a physical item (bike, guitar, watch), you transfer a lightweight on-chain record to the buyer. Over time the item builds a verified ownership and condition history. Solves the 'stolen goods' and 'odometer fraud' problem for private sales without needing a company in the middle."
+	},
+	{
+	  "title": "Public Commitments with Stakes",
+	  "body": "Write a goal publicly, lock a small amount of BSV against it, set a deadline. If you don't mark it complete by then, the BSV goes to a wallet you nominated (charity, a friend, whoever). The permanence makes the commitment real — you can't quietly delete it."
+	},
+	{
+	  "title": "blank",
+	  "body": "blank"
 	}
+
   ]
 }
