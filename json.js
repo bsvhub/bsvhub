@@ -9,10 +9,35 @@
    ============================================================ */
 
 /* ============================================================
+   HELPER — resolveColorToRgb
+   Converts ANY valid CSS colour string (including named colours
+   like "blue", "white", hsl(), etc.) to "rgb(r,g,b)" using a
+   1×1 off-screen canvas. Returns null if the colour is invalid.
+============================================================ */
+var _colorCanvas = null;
+var _colorCtx    = null;
+
+function resolveColorToRgb(color) {
+    if (!_colorCanvas) {
+        _colorCanvas        = document.createElement('canvas');
+        _colorCanvas.width  = 1;
+        _colorCanvas.height = 1;
+        _colorCtx           = _colorCanvas.getContext('2d');
+    }
+    // Reset to transparent, then paint the colour
+    _colorCtx.clearRect(0, 0, 1, 1);
+    _colorCtx.fillStyle = '#000';   // sentinel — so an invalid colour stays black
+    _colorCtx.fillStyle = color;    // browser normalises the value here
+    _colorCtx.fillRect(0, 0, 1, 1);
+    var d = _colorCtx.getImageData(0, 0, 1, 1).data;
+    return 'rgb(' + d[0] + ',' + d[1] + ',' + d[2] + ')';
+}
+
+/* ============================================================
    HELPER — applyOpacityToColor
    Embeds an opacity (0.0–1.0) into a CSS colour string.
-   Handles: #rgb  #rrggbb  rgb()  rgba()
-   Named colours / other formats are returned unchanged.
+   Handles: #rgb  #rrggbb  rgb()  rgba()  and ANY named colour
+   (blue, white, tomato, hsl(…), etc.) via canvas resolution.
 ============================================================ */
 function applyOpacityToColor(color, opacity) {
     color = color.trim();
@@ -42,8 +67,9 @@ function applyOpacityToColor(color, opacity) {
         return color.replace(/,\s*[\d.]+\s*\)$/, ',' + opacity + ')');
     }
 
-    // Unrecognised format (named colour, hsl, etc.) — return unchanged
-    return color;
+    // Named colour, hsl(), hwb(), etc. — resolve via canvas then recurse once
+    var resolved = resolveColorToRgb(color);
+    return resolved.replace('rgb(', 'rgba(').replace(')', ',' + opacity + ')');
 }
 
 /* ============================================================
