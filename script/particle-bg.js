@@ -43,7 +43,7 @@ var PARTICLE_CRT_COLOURS = {
    ============================================================ */
 var CFG = {
     HUB_COUNT:       8,
-    SATS_PER_HUB:    6,
+    SATS_PER_HUB:    11,
     CLUSTER_RADIUS:  130,
     HUB_LINK_DIST:   420,
     SAT_LINK_DIST:   85,
@@ -414,6 +414,7 @@ if (document.readyState === 'loading') {
 
 /* ============================================================
    7 — CRT MODE OBSERVER
+   Recolours particles live when the swatch changes.
    ============================================================ */
 (function() {
     function attach() {
@@ -428,6 +429,47 @@ if (document.readyState === 'loading') {
             attributes: true, attributeFilter: ['data-crt-mode']
         });
     }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', attach);
+    } else {
+        attach();
+    }
+})();
+
+
+/* ============================================================
+   8 — MOBILE MODE OBSERVER
+   Watches body.mobile-mode class and actually stops/starts
+   the rAF loop — display:none alone doesn't stop JS execution.
+   ============================================================ */
+(function() {
+    function isMobile() {
+        return document.body.classList.contains('mobile-mode');
+    }
+
+    function attach() {
+        if (typeof MutationObserver === 'undefined') return;
+        var wasMobile = isMobile();
+
+        /* Stop immediately if already in mobile mode on load */
+        if (wasMobile) engineStop();
+
+        new MutationObserver(function() {
+            var nowMobile = isMobile();
+            if (nowMobile === wasMobile) return;
+            wasMobile = nowMobile;
+            if (nowMobile) {
+                engineStop();
+            } else {
+                /* Resume — only restart loop if engine is initialised */
+                if (_canvas && !_animId) engineLoop();
+            }
+        }).observe(document.body, {
+            attributes:      true,
+            attributeFilter: ['class']
+        });
+    }
+
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', attach);
     } else {
