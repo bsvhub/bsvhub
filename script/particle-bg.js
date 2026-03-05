@@ -43,7 +43,7 @@ var PARTICLE_CRT_COLOURS = {
    ============================================================ */
 var CFG = {
     HUB_COUNT:       8,
-    SATS_PER_HUB:    11,
+    SATS_PER_HUB:    6,
     CLUSTER_RADIUS:  130,
     HUB_LINK_DIST:   420,
     SAT_LINK_DIST:   85,
