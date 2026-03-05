@@ -9,35 +9,10 @@
    ============================================================ */
 
 /* ============================================================
-   HELPER — resolveColorToRgb
-   Converts ANY valid CSS colour string (including named colours
-   like "blue", "white", hsl(), etc.) to "rgb(r,g,b)" using a
-   1×1 off-screen canvas. Returns null if the colour is invalid.
-============================================================ */
-var _colorCanvas = null;
-var _colorCtx    = null;
-
-function resolveColorToRgb(color) {
-    if (!_colorCanvas) {
-        _colorCanvas        = document.createElement('canvas');
-        _colorCanvas.width  = 1;
-        _colorCanvas.height = 1;
-        _colorCtx           = _colorCanvas.getContext('2d');
-    }
-    // Reset to transparent, then paint the colour
-    _colorCtx.clearRect(0, 0, 1, 1);
-    _colorCtx.fillStyle = '#000';   // sentinel — so an invalid colour stays black
-    _colorCtx.fillStyle = color;    // browser normalises the value here
-    _colorCtx.fillRect(0, 0, 1, 1);
-    var d = _colorCtx.getImageData(0, 0, 1, 1).data;
-    return 'rgb(' + d[0] + ',' + d[1] + ',' + d[2] + ')';
-}
-
-/* ============================================================
    HELPER — applyOpacityToColor
    Embeds an opacity (0.0–1.0) into a CSS colour string.
-   Handles: #rgb  #rrggbb  rgb()  rgba()  and ANY named colour
-   (blue, white, tomato, hsl(…), etc.) via canvas resolution.
+   Handles: #rgb  #rrggbb  rgb()  rgba()
+   Named colours / other formats are returned unchanged.
 ============================================================ */
 function applyOpacityToColor(color, opacity) {
     color = color.trim();
@@ -67,9 +42,8 @@ function applyOpacityToColor(color, opacity) {
         return color.replace(/,\s*[\d.]+\s*\)$/, ',' + opacity + ')');
     }
 
-    // Named colour, hsl(), hwb(), etc. — resolve via canvas then recurse once
-    var resolved = resolveColorToRgb(color);
-    return resolved.replace('rgb(', 'rgba(').replace(')', ',' + opacity + ')');
+    // Unrecognised format (named colour, hsl, etc.) — return unchanged
+    return color;
 }
 
 /* ============================================================
@@ -116,9 +90,29 @@ function buildIconBackground(colour1, colour2, opacity) {
                    + alpha + ')';
 }
 
+/* ── list.json fetch — capture Last-Modified header alongside JSON ── */
+var _listLastModified = null;
+
 Promise.all([
     fetch("about.json").then(function (r) { return r.json(); }),
-    fetch("list.json").then(function (r) { return r.json(); }),
+    fetch("list.json").then(function (r) {
+        /* Grab the Last-Modified header before consuming the body */
+        var lm = r.headers.get("Last-Modified");
+        if (lm) {
+            var d = new Date(lm);
+            if (!isNaN(d)) {
+                /* Format: "2nd March 2026" */
+                var day    = d.getDate();
+                var suffix = (day === 1 || day === 21 || day === 31) ? "st"
+                           : (day === 2 || day === 22)               ? "nd"
+                           : (day === 3 || day === 23)               ? "rd" : "th";
+                var months = ["January","February","March","April","May","June",
+                              "July","August","September","October","November","December"];
+                _listLastModified = day + suffix + " " + months[d.getMonth()] + " " + d.getFullYear();
+            }
+        }
+        return r.json();
+    }),
     fetch("ideas.json").then(function (r) { return r.json(); })
 ])
 .then(function (results) {
@@ -141,6 +135,14 @@ Promise.all([
         if (section.html) sec.innerHTML = section.html;
         container.appendChild(sec);
     });
+
+    /* Overwrite the hardcoded date with the list.json file timestamp.
+       Falls back gracefully — if the header isn't available (e.g. some
+       hosts strip it) the date from about.json stays as-is.           */
+    if (_listLastModified) {
+        var el = document.getElementById("last-update-date");
+        if (el) el.textContent = _listLastModified;
+    }
 
     /* --------------------------------------------------------
        2. ICON-GRID TAB SECTIONS
