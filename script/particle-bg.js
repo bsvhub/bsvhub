@@ -108,6 +108,10 @@ var CFG = {
     /* ── Placement ───────────────────────────────────────── */
     MARGIN:          160,   /* px buffer from screen edges             */
     SPAWN_CANDS:      80,   /* positions sampled for best placement    */
+
+    /* ── Visibility ─────────────────────────────────────── */
+    OPACITY:         0.5,   /* overall animation opacity  (0.0 – 1.0)
+                               0.0 = invisible, 1.0 = fully visible   */
 };
 
 /* Internal constants — do not edit */
@@ -672,6 +676,15 @@ function engineDraw(){
 function engineStop(){if(_animId){cancelAnimationFrame(_animId);_animId=null;}}
 function engineLoop(){engineUpdate();engineDraw();_animId=requestAnimationFrame(engineLoop);}
 
+/* ============================================================
+   PUBLIC API
+   ============================================================ */
+/* particleBgSetOpacity(0.4) — change visibility at any time   */
+function particleBgSetOpacity(v){
+    CFG.OPACITY=Math.max(0,Math.min(1,+v||0));
+    if(_layer) _layer.style.opacity=CFG.OPACITY;
+}
+
 
 /* ============================================================
    LAYER INJECTION & START
@@ -686,6 +699,7 @@ function startPlugin(){
             if(!bg) return;
             bg.insertAdjacentElement('afterend',_layer);
         }
+        _layer.style.opacity=CFG.OPACITY;
         engineStop();
         var mode=document.documentElement.getAttribute('data-crt-mode')||'default';
         setColour(PARTICLE_CRT_COLOURS[mode]||PARTICLE_CRT_COLOURS['default']);
