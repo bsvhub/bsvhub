@@ -1,0 +1,101 @@
+/* ============================================================
+   LAYER MAP — BSVhub.io
+   ============================================================
+   Full stacking order from bottom to top.
+   "Stacking context" means z-index values inside that element
+   are local — they only compete with siblings inside the same
+   parent context, not with the page as a whole.
+   ============================================================
+
+
+   ── PAGE LEVEL (viewport stacking context) ─────────────────
+
+   z-index   0   #background-layer      fixed, full viewport
+                   └─ gradient background (JS-generated)
+
+   z-index   0   #firefly-layer         fixed, full viewport
+                   └─ firefly particles (JS-generated divs)
+
+   z-index 200   #content-area          relative, scrollable
+                   └─ see CONTENT AREA section below
+
+   z-index 5000  #top-ui                fixed, full width
+                   └─ see TOP-UI section below
+
+
+   ── TOP-UI  (z-index 5000, creates stacking context) ───────
+
+   #top-ui
+   │
+   ├─ .header-container           (flow — no z-index)
+   │   ├─ .header-icons-left      (flex row)
+   │   │   ├─ .header-icon-link   (inline-flex, position:relative ← crt-effect.css)
+   │   │   │   └─ .header-icon    img
+   │   │   │   └─ ::after z:10    ← CRT SCANLINES (crt-effect.css)
+   │   │   └─ .header-icon-link   (same as above)
+   │   │
+   │   ├─ .header-title           (h1, position:relative ← crt-effect.css)
+   │   │   └─ ::after z:10        ← CRT SCANLINES (crt-effect.css)
+   │   │
+   │   └─ .header-icons-right     (flex row)
+   │       ├─ .header-icon-link   (same as left icons)
+   │       └─ .header-icon-link   (mobile/desktop toggle)
+   │
+   ├─ .tab-bar                    (flow — no z-index)
+   │   ├─ .tab-btn  ×10           (position:relative ← crt-effect.css)
+   │   │   └─ ::after z:10        ← CRT SCANLINES (crt-effect.css)
+   │   └─ .search-container       (position:relative ← crt-effect.css)
+   │       ├─ #search-box         input — cannot have ::after, covered by parent
+   │       └─ ::after z:10        ← CRT SCANLINES (crt-effect.css)
+   │
+   └─ #tooltip-display            (position:relative ← crt-effect.css)
+       └─ ::after z:10            ← CRT SCANLINES (crt-effect.css)
+
+
+   ── CONTENT AREA  (z-index 200, creates stacking context) ──
+
+   #content-area
+   └─ #content-scale              (transform:scale in mobile mode)
+       └─ .tab-content            (display:none / block)
+           └─ ul.icon-grid        (flex-wrap grid)
+               └─ li
+                   └─ a           (position:relative, overflow:hidden ← crt-effect.css)
+                       │           background = colour1/colour2 from JSON
+                       │
+                       └─ .icon-wrapper        (position:relative, overflow:visible)
+                           │
+                           ├─ main img          (position:absolute, no z-index)
+                           │   └─ the 160×160 icon image
+                           │
+                           ├─ .icon-badge-pos1  (position:absolute, z-index:2)
+                           ├─ .icon-badge-pos2  (position:absolute, z-index:2)
+                           ├─ .icon-badge-pos3  (position:absolute, z-index:2)
+                           ├─ .icon-badge-pos4  (position:absolute, z-index:2)
+                           │   └─ small corner badge images
+                           │
+                           └─ .icon-text        (position:absolute, no z-index)
+                               └─ label text, rgba(0,0,0,0.2) bg
+
+                       └─ ::after z:10          ← CRT SCANLINES (crt-effect.css)
+                           sits above all icon-wrapper children
+                           clipped by overflow:hidden on <a>
+
+
+   ── WHAT THE CRT ::after COVERS vs SKIPS ───────────────────
+
+   COVERED  (has ::after scanlines)
+   ✅  .header-icon-link      each header icon
+   ✅  .header-title           ₿SVhub.io title text
+   ✅  .tab-btn                each tab button
+   ✅  .search-container       search input area
+   ✅  #tooltip-display        marquee / tooltip bar
+   ✅  ul.icon-grid li a       icon tile — colour bg, main image,
+                                badges, label text — all in one shot
+
+   SKIPPED  (no ::after)
+   ❌  .header-container bg    semi-transparent dark bar behind header
+   ❌  .tab-bar bg             semi-transparent dark bar behind tabs
+   ❌  #background-layer       gradient background
+   ❌  #firefly-layer          particle layer
+
+   ============================================================ */
