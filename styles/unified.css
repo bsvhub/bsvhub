@@ -575,10 +575,11 @@ ul.icon-grid li a:hover .icon-text {
 
 .header-tab-text {
     margin: 0 auto;
-    font-size: 2rem;
+    font-size: 1.2rem;
     color: #ffd700;
     text-align: center;
-    font-family: var(--font-header-content);
+    /*font-family: var(--font-header-content);*/
+    font-family: var(--font-tooltip);
 }
 
 /* --- COPY BUTTON ------------------------------------------- */
