@@ -18,7 +18,10 @@
       "zoom": "1.0",
       "alt": "BSV Association",
       "text": "BSV Association",
-      "info": ";;;"
+      "info": ";;;",
+      "colour1": "blue",
+      "colour2": "white",
+      "opacity": "0"
     },
     {
       "tab": "bsv;doc",
@@ -58,7 +61,10 @@
       "zoom": "1.0",
       "alt": "bsvblockchain.org",
       "text": "BSV Blockchain",
-      "info": ";;;"
+      "info": ";;;",
+      "colour1": "blue",
+      "colour2": "white",
+      "opacity": "1"
     },
     {
       "tab": "bsv;doc",
@@ -166,7 +172,7 @@
       "tooltip": "Gorilla Pool Mining",
       "img": "icon/gorillapool.svg",
       "zoom": "1.0",
-      "alt": "Gorilla Pool",
+      "alt": "",
       "text": "Gorilla Pool",
       "info": ";;;"
     },
@@ -176,7 +182,7 @@
       "tooltip": "Join Gorilla Pool",
       "img": "icon/gorillaminer.svg",
       "zoom": "1.0",
-      "alt": "Gorilla Miner",
+      "alt": "",
       "text": "Gorilla Miner",
       "info": ";;;"
     },
@@ -248,7 +254,10 @@
       "zoom": "1.0",
       "alt": "apps wallet",
       "text": "Metanet Wallet",
-      "info": ";;;"
+      "info": ";;;",
+      "colour1": "skyblue",
+      "colour2": "pink",
+      "opacity": "0.5"
     },
     {
       "tab": "bsv",
@@ -256,7 +265,7 @@
       "tooltip": "MyBSV.io: an on-chain wallet and more",
       "img": "icon/mybsv.svg",
       "zoom": "1.0",
-      "alt": "MyBSV.io",
+      "alt": "",
       "text": "MyBSV.io",
       "info": ";;;"
     },
@@ -266,7 +275,7 @@
       "tooltip": "Creators of BRC-100 Wallet Standard",
       "img": "icon/babbage.svg",
       "zoom": "1.0",
-      "alt": "Project Babbage",
+      "alt": "",
       "text": "Project Babbage",
       "info": ";;;"
     },
@@ -306,7 +315,7 @@
       "tooltip": "documentation for getting started with BSV development.",
       "img": "icon/babbage.svg",
       "zoom": "1.0",
-      "alt": "Project Babbage Docs",
+      "alt": "",
       "text": "Project Babbage Docs",
       "info": ";;;"
     },
@@ -376,7 +385,7 @@
       "tooltip": "An on-chain Dictionary of unique terms/word",
       "img": "icon/slictionary.png",
       "zoom": "1.0",
-      "alt": "Slictionary",
+      "alt": "",
       "text": "Slictionary",
       "info": ";;;"
     },
@@ -396,7 +405,7 @@
       "tooltip": "Social network on BSV, alternative to X (Twitter)",
       "img": "app/treechat.svg",
       "zoom": "1.0",
-      "alt": "TreeChat",
+      "alt": "social media",
       "text": "TreeChat",
       "info": ";;;"
     },
@@ -426,7 +435,7 @@
       "tooltip": "Chrome-based BSV wallet extension",
       "img": "icon/yours.svg",
       "zoom": "1.0",
-      "alt": "Wallet",
+      "alt": "",
       "text": "Wallet",
       "info": ";;;"
     },
@@ -439,7 +448,8 @@
       "alt": "videos upload tip",
       "text": "BSVTube",
       "info": ";;;",
-      "colour1": "#ff6c02ff"
+      "colour1": "#ff6c02ff",
+      "opacity": "0.6"
     },
     {
       "tab": "app",
@@ -469,7 +479,7 @@
       "tooltip": "Create pixel art on blockchain, interact with others on same canvas",
       "img": "app/pixelwar.svg",
       "zoom": "1.0",
-      "alt": "pixelart",
+      "alt": "pixel art",
       "text": "PixelWar",
       "info": ";;;"
     },
@@ -499,7 +509,7 @@
       "tooltip": "A Social Web Unchained",
       "img": "app/zanaadu.svg",
       "zoom": "1.0",
-      "alt": "decentralizes decentalised social media",
+      "alt": "decentalised social media",
       "text": "Zanaadu",
       "info": ";;beta.svg;"
     },
@@ -529,7 +539,7 @@
       "tooltip": "Learn to build real applications with these primitives \u2014 the version of the web the early engineers never got to finish.",
       "img": "icon/metanet_academy.png",
       "zoom": "1.0",
-      "alt": "documentation inscraction script coding",
+      "alt": "documentation instruction script coding",
       "text": "Metanet Academy",
       "info": ";;;"
     },
@@ -546,7 +556,7 @@
     {
       "tab": "social",
       "href": "https://x.com/hbgnostic",
-      "tooltip": "Bridget D talks about Bitcoin and blockchain tech. Prponent of Bitcoin in it's original design.",
+      "tooltip": "Bridget D talks about Bitcoin and blockchain tech. Proponent of Bitcoin in it's original design.",
       "img": "social/bridgetd.png",
       "zoom": "1.0",
       "alt": "",
@@ -571,7 +581,10 @@
       "zoom": "1.0",
       "alt": "Live scoring, leaderboards, AI caddy, 170+ player events",
       "text": "BSVGolf",
-      "info": ";;;"
+      "info": ";;;",
+      "colour1": "green",
+      "colour2": "white",
+      "opacity": "0.5"
     },
     {
       "tab": "wallet;exchange",
@@ -579,7 +592,7 @@
       "tooltip": "KYC mobile wallet that supports BSV and in wallet swaps.",
       "img": "icon/rock.svg",
       "zoom": "1.0",
-      "alt": "ROCKWALLET",
+      "alt": "buy exchange",
       "text": "ROCKWALLET",
       "info": ";;;"
     },
@@ -616,7 +629,7 @@
     {
       "tab": "market",
       "href": "https://www.nftana.com/",
-      "tooltip": "Nftana is a next-gen open source NFT Exchange marketplace that anyone can contribute to develop or use this marketplace as their framework.",
+      "tooltip": "Nftana open source NFT Exchange marketplace that anyone can contribute to develop or use this marketplace as their framework.",
       "img": "icon/nftana.svg",
       "zoom": "1.0",
       "alt": "market place buy",
@@ -636,7 +649,7 @@
     {
       "tab": "market; tool",
       "href": "https://1sat.market/",
-      "tooltip": "Ordinals, BSV20 and BSV21 marketpalce",
+      "tooltip": "Ordinals, BSV20 and BSV21 marketplace",
       "img": "icon/ordinals.svg",
       "zoom": "1.0",
       "alt": "market place NFT buy",
@@ -649,7 +662,7 @@
       "tooltip": "KYC exchange where you can buy BSV.",
       "img": "icon/kucoin.svg",
       "zoom": "1.0",
-      "alt": "exchange",
+      "alt": "",
       "text": "Exchange",
       "info": ";;;"
     },
@@ -669,7 +682,7 @@
       "tooltip": "Gavin Mehl articles and videos on Blogspot",
       "img": "social/gavinm.png",
       "zoom": "1.0",
-      "alt": "articles",
+      "alt": "articles flippening",
       "text": "Gavin Mehl",
       "info": ";;blogspot.svg;"
     },
@@ -739,7 +752,7 @@
       "tooltip": "Simple Peer-to-peer Payments",
       "img": "app/peerpay.svg",
       "zoom": "1.0",
-      "alt": "",
+      "alt": "transaction send payment",
       "text": "PeerPay",
       "info": ";;;"
     },
@@ -789,7 +802,7 @@
     {
       "tab": "app",
       "href": "https://microblog.bitspv.com/",
-      "tooltip": "Experience the future of social media with Metanet Microblog, a decentralized platform where your posts are stored directly on the Bitcoin SV blockchain. Connect your wallet, share your thoughts.",
+      "tooltip": "Metanet Microblog, a decentralized platform where your posts are stored directly on the Bitcoin SV blockchain. Connect your wallet, share your thoughts.",
       "img": "app/metanet_microblog.svg",
       "zoom": "1.0",
       "alt": "",
@@ -824,7 +837,10 @@
       "zoom": "1.0",
       "alt": "",
       "text": "ToDo",
-      "info": ";;;"
+      "info": ";;;",
+      "colour1": "skyblue",
+      "colour2": "white",
+      "opacity": "0.5"
     },
     {
       "tab": "app",
@@ -834,7 +850,10 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Stuff",
-      "info": ";;;"
+      "info": ";;;",
+      "colour1": "gray",
+      "colour2": "skyblue",
+      "opacity": "0.5"
     },
     {
       "tab": "app",
@@ -844,7 +863,10 @@
       "zoom": "1.0",
       "alt": "",
       "text": "UHRP Storage",
-      "info": ";;;"
+      "info": ";;;",
+      "colour1": "skyblue",
+      "colour2": "white",
+      "opacity": "0.5"
     },
     {
       "tab": "bsv;doc",
@@ -869,7 +891,7 @@
     {
       "tab": "app",
       "href": "https://metanethighway.com/",
-      "tooltip": "Our app generates fresh, secure addresses for your Metanet wallet, letting you receive BSV from any external wallet with ease.",
+      "tooltip": "Generates fresh, secure addresses for your Metanet wallet, letting you receive BSV from any external wallet with ease.",
       "img": "app/metanet_highway.svg",
       "zoom": "1.0",
       "alt": "",
@@ -892,7 +914,7 @@
     {
       "tab": "app",
       "href": "https://legacy.atx.systems/",
-      "tooltip": "For taking and making payments using traditional Bitcoin addresses.",
+      "tooltip": "Address Based BSV Payments to and from BRC-100 Wallets",
       "img": "icon/qr.svg",
       "zoom": "1.0",
       "alt": "",
@@ -1088,7 +1110,7 @@
       "tooltip": "Ordinals on BSV",
       "img": "icon/bubblemint.png",
       "zoom": "1.0",
-      "alt": "ordinals NFT",
+      "alt": "ordinals NFT buy make",
       "text": "bubblemint.io",
       "info": ";;;"
     },
@@ -1113,9 +1135,9 @@
       "info": ";;;"
     },
     {
-      "tab": "tool",
+      "tab": "tool;app",
       "href": "https://bitcoinschema.org",
-      "tooltip": "The universal standard for data structure. Build interoperable applications that share a single global database.",
+      "tooltip": "Build interoperable applications that share a single global database. Data written by one app is instantly readable by any other Bitcoin Schema compliant application.",
       "img": "icon/bitcoinschema.svg",
       "zoom": "1.0",
       "alt": "",
@@ -1125,7 +1147,7 @@
     {
       "tab": "tool;wallet",
       "href": "https://firesat.io",
-      "tooltip": "Discover FireSat Wallet, your secure, non-custodial BSV wallet for effortless BSV20 token trading, feeless transactions, and intuitive asset management.",
+      "tooltip": "Secure, non-custodial BSV wallet for effortless BSV20 token trading, feeless transactions, and intuitive asset management.",
       "img": "icon/firesat.svg",
       "zoom": "1.0",
       "alt": "ordinals NFT BSV20",
@@ -1169,20 +1191,20 @@
       "img": "app/metamarket.svg",
       "zoom": "1.0",
       "alt": "",
-      "text": "MetaMarket",
+      "text": "MetaMarket buy sell",
       "info": ";;new.svg;"
     },
     {
       "tab": "tool;app",
       "href": "https://bitcoin-os.vercel.app/",
-      "tooltip": "A revolutionary Bitcoin-based operating system that integrates cryptocurrency functionality directly into the desktop environment.",
+      "tooltip": "Bitcoin-based operating system that integrates cryptocurrency functionality directly into the desktop environment.",
       "img": "app/bitcoin_os.svg",
       "zoom": "1.0",
       "alt": "",
       "text": "Bitcoin OS",
       "info": ";;new.svg;",
-      "colour1": "black",
-      "colour2": "gray"
+      "colour1": "darkgray",
+      "opacity": "0.6"
     },
     {
       "tab": "tool;app",
@@ -1195,7 +1217,7 @@
       "info": ";;new.svg;",
       "colour1": "black",
       "colour2": "gray",
-      "opacity": "0.85"
+      "opacity": "0.6"
     },
     {
       "tab": "app",
@@ -1208,7 +1230,7 @@
       "info": ";;",
       "colour1": "skyblue",
       "colour2": "purple",
-      "opacity": "0.85"
+      "opacity": "0.8"
     }
   ]
 }
