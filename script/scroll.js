@@ -44,7 +44,6 @@ async function fetchBSVPrice() {
         const cachedPrice = localStorage.getItem(BSV_CACHE_KEY);
         if (cachedPrice) {
             bsvPricePrefix = `— BSV $${cachedPrice} —`;
-            showDefaultTooltip();
             return;
         }
     }
@@ -62,7 +61,6 @@ async function fetchBSVPrice() {
         const cached = localStorage.getItem(BSV_CACHE_KEY);
         bsvPricePrefix = cached ? `— BSV $${cached} —` : "— BSV $? —";
     }
-    showDefaultTooltip();
 }
 
 /* ============================================================
@@ -87,7 +85,6 @@ async function fetchBTCPrice() {
         const cachedPrice = localStorage.getItem(BTC_CACHE_KEY);
         if (cachedPrice) {
             btcPricePrefix = `— BTC $${cachedPrice} —`;
-            showDefaultTooltip();
             return;
         }
     }
@@ -105,7 +102,6 @@ async function fetchBTCPrice() {
         const cached = localStorage.getItem(BTC_CACHE_KEY);
         btcPricePrefix = cached ? `— BTC $${cached} —` : "— BTC $? —";
     }
-    showDefaultTooltip();
 }
 
 /* ============================================================
@@ -140,7 +136,6 @@ async function fetchFearGreed() {
         const cachedClass = localStorage.getItem(FGI_CACHE_CLASS_KEY);
         if (cachedVal && cachedClass) {
             fgiPrefix = `— F&G ${cachedVal} ${cachedClass} —`;
-            showDefaultTooltip();
             return;
         }
     }
@@ -164,7 +159,6 @@ async function fetchFearGreed() {
             ? `— F&G ${cachedVal} ${cachedClass} —`
             : "— F&G ? —";
     }
-    showDefaultTooltip();
 }
 
 /* ============================================================
@@ -176,12 +170,14 @@ fetch("tooltip-message.txt")
     .then(r => r.text())
     .then(t => {
         defaultTooltipMessage = t.trim();
-        showDefaultTooltip();                                              // show text immediately
-        Promise.all([fetchBSVPrice(), fetchBTCPrice(), fetchFearGreed()]); // feeds load in parallel
+        showDefaultTooltip();                                                        // show text immediately
+        Promise.all([fetchBSVPrice(), fetchBTCPrice(), fetchFearGreed()])            // feeds load in parallel
+            .then(showDefaultTooltip);                                               // rebuild once with all data
     })
     .catch(() => {
         showDefaultTooltip();
-        Promise.all([fetchBSVPrice(), fetchBTCPrice(), fetchFearGreed()]);
+        Promise.all([fetchBSVPrice(), fetchBTCPrice(), fetchFearGreed()])
+            .then(showDefaultTooltip);
     });
 
 /* ============================================================
