@@ -134,8 +134,7 @@ body {
    4 – BACKGROUND LAYERS [LAYER 0]
    ============================================================ */
 
-#background-layer,
-#firefly-layer {
+#background-layer{
   position: fixed;
   inset: 0;
   overflow: hidden;
