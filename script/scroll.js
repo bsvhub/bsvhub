@@ -249,12 +249,14 @@ function setTooltipText(text) {
    8 — DESKTOP HOVER TOOLTIPS (event delegation)
 ============================================================ */
 document.addEventListener("mouseenter", (e) => {
+    if (!e.target || typeof e.target.closest !== "function") return;
     if (isMobileMode()) return;
     const wrap = e.target.closest(".icon-wrapper[data-tooltip]");
     if (wrap) setTooltipText(wrap.dataset.tooltip);
 }, true);
 
 document.addEventListener("mouseleave", (e) => {
+    if (!e.target || typeof e.target.closest !== "function") return;
     if (isMobileMode()) return;
     const wrap = e.target.closest(".icon-wrapper[data-tooltip]");
     if (wrap) setTooltipText("");
