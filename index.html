@@ -310,7 +310,11 @@ headerLinks.forEach(link =>
     fixScaleSpacing();
   }
   window.positionContent = positionContent;
-  window.addEventListener("resize", positionContent);
+  let _resizeTimer;
+  window.addEventListener("resize", function () {
+      clearTimeout(_resizeTimer);
+      _resizeTimer = setTimeout(positionContent, 100);
+  });
   requestAnimationFrame(positionContent);
 })();
 
@@ -366,7 +370,10 @@ const searchBox = document.getElementById("search-box");
 const resultSec = document.getElementById("search-results");
 const excludedTabs = ["about-section", "tip-section", "contact-section"];
 
+let _searchTimer;
 searchBox.addEventListener("input", () => {
+    clearTimeout(_searchTimer);
+    _searchTimer = setTimeout(() => {
     clearDoubleTapSelection();
     const q = searchBox.value.toLowerCase();
 
@@ -470,6 +477,7 @@ searchBox.addEventListener("input", () => {
         resultSec.classList.remove("active");
     }
     requestAnimationFrame(() => { if (typeof fixScaleSpacing === 'function') fixScaleSpacing(); });
+    }, 150);
 });
 </script>
 
@@ -617,32 +625,12 @@ window.addEventListener("pageshow", () => {
     if (typeof positionContent === "function") positionContent();
 });
 
-// Auto-enable mobile mode on smartphones
-(function() {
-    const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    if (isMobileDevice && localStorage.getItem("ui-mode") !== "mobile") {
-        const state = captureUIState?.() || {};
-        enableMobileMode(state);
-    }
-})();
+
 
 </script>
 
 
-<!-- DIAGNOSTIC: Scroll height debugging -->
-<script>
-setTimeout(() => {
-    const area = document.getElementById('content-area');
-    const scale = document.getElementById('content-scale');
-    console.log('=== SCROLL DIAGNOSTIC ===');
-    console.log('content-area scrollHeight:', area.scrollHeight);
-    console.log('content-area clientHeight:', area.clientHeight);
-    console.log('content-scale offsetHeight:', scale.offsetHeight);
-    console.log('Difference (extra scroll):', area.scrollHeight - area.clientHeight);
-    console.log('Mobile mode active:', document.body.classList.contains('mobile-mode'));
-    console.log('Scale factor:', getComputedStyle(document.documentElement).getPropertyValue('--mobile-scale'));
-}, 2000);
-</script>
+
 
 </div>
 </body>
