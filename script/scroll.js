@@ -1,22 +1,30 @@
 /* ============================================================
    SCROLL.JS — Tooltip, Marquee, BSV Price, BTC Price, F&G Index & Mobile Double-Tap
    ------------------------------------------------------------
-   1.  TOOLTIP STATE
-   2.  BSV PRICE FETCH (localStorage fallback, refresh every 10 min)
-   3.  BTC PRICE FETCH (localStorage fallback, refresh every 10 min)
-   4.  FEAR & GREED INDEX FETCH (localStorage fallback, 1hr cache)
-   5.  INITIALISE — load all feeds then build marquee
-   6.  DEFAULT TOOLTIP (MARQUEE)
-   7.  SET TOOLTIP TEXT
-   8.  DESKTOP HOVER TOOLTIPS (event delegation)
-   9.  MOBILE DOUBLE-TAP (event delegation)
-   10. CLEAR SELECTION HELPERS
-   11. AUTO-CLEAR TRIGGERS
-   12. TOOLTIP HEIGHT TRANSITION HANDLER
+   1.  MOBILE MODE HELPER
+   2.  TOOLTIP STATE
+   3.  BSV PRICE FETCH (localStorage fallback, refresh every 10 min)
+   4.  BTC PRICE FETCH (localStorage fallback, refresh every 10 min)
+   5.  FEAR & GREED INDEX FETCH (localStorage fallback, 1hr cache)
+   6.  INITIALISE — load all feeds then build marquee
+   7.  DEFAULT TOOLTIP (MARQUEE)
+   8.  SET TOOLTIP TEXT
+   9.  DESKTOP HOVER TOOLTIPS (event delegation)
+   10. MOBILE DOUBLE-TAP (event delegation)
+   11. CLEAR SELECTION HELPERS
+   12. AUTO-CLEAR TRIGGERS
+   13. TOOLTIP HEIGHT TRANSITION HANDLER
 ============================================================ */
 
 /* ============================================================
-   1 — TOOLTIP STATE
+   1 — MOBILE MODE HELPER
+============================================================ */
+function isMobileMode() {
+    return document.body.classList.contains("mobile-mode");
+}
+
+/* ============================================================
+   2 — TOOLTIP STATE
 ============================================================ */
 const tooltipBox        = document.getElementById("tooltip-display");
 let defaultTooltipMessage = "Loading...";
