@@ -31,10 +31,6 @@
    2 – GLOBAL / RESET / BASE FONTS / VARIABLES
    ============================================================ */
 @font-face {
-    font-family: 'vt323';
-    src: url('assets/vt323.ttf') format('truetype');
-}
-@font-face {
     font-family: 'dotm';
     src: url('assets/dotm.ttf') format('truetype');
 }
@@ -72,7 +68,6 @@
     --font-tab: 'jbm', monospace;
     --font-tooltip: 'jb', monospace;
     --font-icon-grid: 'jb', monospace;
-    --font-header-content: 'vt323', monospace;
     
     /* ============================================================
        🎯 ICON SIZE CONFIGURATION - CHANGE ONLY THESE TWO VALUES!
@@ -570,7 +565,7 @@ ul.icon-grid li a:hover .icon-text {
 
 .header-tab-content {
     text-align: center;
-    font-family: var(--font-header-content);
+    font-family: var(--font-tooltip);
 }
 
 .header-tab-text {
@@ -578,7 +573,6 @@ ul.icon-grid li a:hover .icon-text {
     font-size: 1.2rem;
     color: #ffd700;
     text-align: center;
-    /*font-family: var(--font-header-content);*/
     font-family: var(--font-tooltip);
 }
 
@@ -586,9 +580,9 @@ ul.icon-grid li a:hover .icon-text {
 
 .copy-btn {
     margin-left: 12px;
-    padding: 8px 14px;
+    padding: 3px 14px;
     font-size: 1.4rem;
-    font-family: var(--font-header-content);
+    font-family: var(--font-tooltip);
     background: #ffcc66;
     border: 2px solid #b8860b;
     color: black;
