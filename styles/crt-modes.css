@@ -255,19 +255,24 @@ html[data-crt-mode] .header-logo-fallback {
 
 /* SVG logo tinted to match the mode — each mode has its own
    filter because CSS color doesn't apply to <img>           */
-html[data-crt-mode="amber"] .header-logo-img {
-    filter: sepia(1) saturate(4) hue-rotate(5deg) brightness(1.1);
+html[data-crt-mode="amber"] .header-logo-img,
+html[data-crt-mode="amber"] .header-icon {
+    filter: sepia(1) saturate(15) hue-rotate(345deg) brightness(1.1);
 }
-html[data-crt-mode="green"] .header-logo-img {
-    filter: sepia(1) saturate(8) hue-rotate(90deg) brightness(1.1);
+html[data-crt-mode="green"] .header-logo-img,
+html[data-crt-mode="green"] .header-icon {
+    filter: sepia(1) saturate(10) hue-rotate(90deg) brightness(0.8);
 }
-html[data-crt-mode="white"] .header-logo-img {
+html[data-crt-mode="white"] .header-logo-img,
+html[data-crt-mode="white"] .header-icon {
     filter: grayscale(1) brightness(1.6) saturate(0.5) hue-rotate(200deg);
 }
-html[data-crt-mode="blue"] .header-logo-img {
-    filter: sepia(1) saturate(6) hue-rotate(195deg) brightness(1.2);
+html[data-crt-mode="blue"] .header-logo-img,
+html[data-crt-mode="blue"] .header-icon {
+    filter: sepia(1) saturate(5) hue-rotate(175deg) brightness(0.95);
 }
-html[data-crt-mode="cyan"] .header-logo-img {
+html[data-crt-mode="cyan"] .header-logo-img,
+html[data-crt-mode="cyan"] .header-icon {
     filter: sepia(1) saturate(6) hue-rotate(155deg) brightness(1.2);
 }
 
