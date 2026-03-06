@@ -19,10 +19,10 @@
       iframe.style.border        = "none";
       iframe.style.display       = "inline-block"; // inline context for vertical-align/baseline
       iframe.style.width         = "auto";         // do not stretch to container width
-      iframe.style.height        = "30px";         // a touch shorter than before (tweak as needed)
+      iframe.style.height        = "33px";         // a touch shorter than before (tweak as needed)
       iframe.style.verticalAlign = "baseline";     // align with text baseline
       iframe.style.margin        = "0";            // remove top margin
-      iframe.style.transform = "translate(-98px, -5px)"; // left 200px, up 5px
+      iframe.style.transform = "translate(-98px, -2px)"; // left 200px, up 5px
       // If you want a tad more visual balance, you can also add:
       // iframe.style.marginLeft = "4px";
 
