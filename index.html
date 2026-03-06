@@ -340,7 +340,7 @@ headerLinks.forEach(link =>
             
             const iframeDoc = iframe.contentWindow.document;
             iframeDoc.open();
-            iframeDoc.write('<html><body style="margin:0;padding:0;font-family:VT323,monospace;font-size:2rem;color:#ffd700;text-align:center;"><script src="https://counter.websiteout.com/js/7/6/0/0"><\/script></body></html>');
+            iframeDoc.write('<!DOCTYPE html><html><body style="margin:0;padding:0;font-family:monospace;font-size:2rem;color:#ffd700;text-align:center;"><script src="https://counter.websiteout.com/js/7/6/0/0"><\/script></body></html>');
             iframeDoc.close();
         } else {
             setTimeout(loadCounter, 100);
