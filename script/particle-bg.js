@@ -77,9 +77,9 @@ var CFG = {
 
     /* ── Device shape sizes (px) ────────────────────────── */
     SZ_COMPUTER:      2.0,  /* half-width of computer square           */
-    SZ_SERVER:        3.5,  /* half-width of server square             */
-    SZ_ROUTER:        3.0,  /* radius of router circle                 */
-    SZ_SWITCH:        4.0,  /* half-span of switch diamond             */
+    SZ_SERVER:        3.0,  /* half-width of server square             */
+    SZ_ROUTER:        4.0,  /* radius of router circle                 */
+    SZ_SWITCH:        3.5,  /* half-span of switch diamond             */
 
     /* ── WAN packets (router → router) ──────────────────── */
     WAN_INTERVAL:    140,   /* frames between WAN packet spawns (~2.3s)
