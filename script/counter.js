@@ -3,6 +3,6 @@
     .then(function (res) { return res.json(); })
     .then(function (data) {
       var el = document.getElementById("visit-counter");
-      if (el) el.textContent = Number(data.value).toLocaleString();
+      if (el) el.textContent = Number(data.count).toLocaleString();
     });
 })();
