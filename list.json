@@ -1158,6 +1158,26 @@
       "info": ";;new.svg;"
     },
     {
+      "tab": "tool;doc",
+      "href": "https://runcraft.io",
+      "tooltip": "A token protocol for anything you can dream up — run on Bitcoin.",
+      "img": "icon/runcroft.webp",
+      "zoom": "1.0",
+      "alt": "",
+      "text": "RunCraft.io",
+      "info": ";;;"
+    },
+    {
+      "tab": "app",
+      "href": "https://metastore.app/",
+      "tooltip": "MetaStore (in development or abandoned) the free collaborative app store",
+      "img": "icon/bsv.svg",
+      "zoom": "1.0",
+      "alt": "",
+      "text": "MetaStore",
+      "info": ";;;"
+    },
+    {
       "tab": "tool;app",
       "href": "https://b0ase.com/bcorp-mint",
       "tooltip": "Design, print, stamp, and mint currency on BSV. On-Chain OP_RETURN inscription, and BSV-20/21 token minting.",
