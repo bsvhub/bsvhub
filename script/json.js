@@ -136,6 +136,19 @@ Promise.all([
         container.appendChild(sec);
     });
 
+    /* ── Counters — spans now exist in the DOM ───────────────── */
+    /* Link count: data already loaded above, no extra fetch needed */
+    var lcEl = document.getElementById("link-counter");
+    if (lcEl) lcEl.textContent = Number(data.items.length).toLocaleString();
+
+    /* Visitor count: single fetch on page load via Cloudflare Worker */
+    fetch("/api/count")
+        .then(function (res) { return res.json(); })
+        .then(function (d) {
+            var vcEl = document.getElementById("visit-counter");
+            if (vcEl) vcEl.textContent = Number(d.count).toLocaleString();
+        });
+
     /* Overwrite the hardcoded date with the list.json file timestamp.
        Falls back gracefully — if the header isn't available (e.g. some
        hosts strip it) the date from about.json stays as-is.           */
