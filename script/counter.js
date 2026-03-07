@@ -6,7 +6,7 @@
       if (el) el.textContent = Number(data.count).toLocaleString();
     });
 
-  fetch("/list.json")
+  fetch("/list.json?v=" + Date.now())
     .then(function (res) { return res.json(); })
     .then(function (data) {
       var el = document.getElementById("link-counter");
