@@ -110,7 +110,7 @@ var CFG = {
     SPAWN_CANDS:      80,   /* positions sampled for best placement    */
 
     /* ── Visibility ─────────────────────────────────────── */
-    OPACITY:         0.5,   /* overall animation opacity  (0.0 – 1.0)
+    OPACITY:         0.8,   /* overall animation opacity  (0.0 – 1.0)
                                0.0 = invisible, 1.0 = fully visible   */
 };
 
