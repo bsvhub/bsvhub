@@ -7,14 +7,21 @@
 
 (function () {
   function loadCounter() {
-    const counterSpan = document.getElementById("visit-counter");
+    var counterSpan = document.getElementById("visit-counter");
     if (counterSpan) {
       fetch("https://api.counterapi.dev/v1/bsvhubio/visits/up")
         .then(function (res) { return res.json(); })
         .then(function (data) {
-          counterSpan.textContent = data.count.toLocaleString();
+          console.log("CounterAPI response:", data);
+          // API may return count under data.value, data.count, or data.data.value
+          var count = (data.value !== undefined) ? data.value
+                    : (data.count !== undefined) ? data.count
+                    : (data.data && data.data.value !== undefined) ? data.data.value
+                    : null;
+          counterSpan.textContent = count !== null ? Number(count).toLocaleString() : "—";
         })
-        .catch(function () {
+        .catch(function (err) {
+          console.error("CounterAPI error:", err);
           counterSpan.textContent = "—";
         });
     } else {
