@@ -165,11 +165,13 @@ document.getElementById("background-layer").style.background =
 <script src="script/tabs.js"></script>
 
 <!-- PARTICLE BG — on when about or contact is open, off for everything else -->
+<!-- ABOUT STATS — visitor count + link count loaded fresh on about click -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+
+    /* ── Particle triggers ───────────────────────────────── */
     var ON  = 'a[data-target="about-section"], a[data-target="contact-section"]';
     var OFF = '.tab-btn, a.header-text-link:not([data-target="about-section"]):not([data-target="contact-section"]):not(#mobile-toggle)';
-
     document.querySelectorAll(ON).forEach(function (el) {
         el.addEventListener('click', function () { particleBgStart(); });
     });
@@ -177,29 +179,34 @@ document.addEventListener('DOMContentLoaded', function () {
         el.addEventListener('click', function () { particleBgStop(); });
     });
 
-    /* Fetch link count fresh each time about is opened */
+    /* ── About stats — fetched fresh each time about is opened ── */
+    function setText(id, value) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = value;
+    }
+
+    function loadAboutStats() {
+        fetch('/api/count')
+            .then(function (res) { return res.json(); })
+            .then(function (data) { setText('visit-counter', Number(data.count).toLocaleString()); });
+
+        fetch('/list.json')
+            .then(function (res) { return res.json(); })
+            .then(function (data) { setText('link-counter', Number(data.items.length).toLocaleString()); });
+    }
+
     document.querySelector('a[data-target="about-section"]')
-        .addEventListener('click', function () {
-            fetch('/list.json')
-                .then(function (res) { return res.json(); })
-                .then(function (data) {
-                    var el = document.getElementById('link-counter');
-                    if (el) el.textContent = Number(data.items.length).toLocaleString();
-                });
-        });
+        .addEventListener('click', loadAboutStats);
 });
 </script>
 
 <!-- JS SECTION 4 — UNIFIED JSON LOADER (see json.js) -->
 <script src="script/json.js"></script>
 
-<!-- JS SECTION 5 — VISITOR COUNTER -->
-<script src="script/counter.js"></script>
-
-<!-- JS SECTION 6 — SEARCH -->
+<!-- JS SECTION 5 — SEARCH -->
 <script src="script/search.js"></script>
 
-<!-- JS SECTION 7 — MOBILE / DESKTOP MODE TOGGLE -->
+<!-- JS SECTION 6 — MOBILE / DESKTOP MODE TOGGLE -->
 <script src="script/mobile.js"></script>
 
 
