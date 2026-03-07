@@ -707,12 +707,18 @@ function startPlugin(){
         engineLoop();
     } catch(e){ /* silent fail */ }
 }
-function scheduleStart(){
-    if('requestIdleCallback' in window) requestIdleCallback(startPlugin,{timeout:1500});
-    else setTimeout(startPlugin,300);
+
+/* PUBLIC START / STOP — called externally (e.g. from about-section show/hide) */
+function particleBgStart(){
+    if(_animId) return;  /* already running */
+    startPlugin();
 }
-if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',scheduleStart);
-else scheduleStart();
+function particleBgStop(){
+    engineStop();
+    if(_layer) _layer.style.opacity=0;
+}
+
+/* Auto-start is intentionally disabled — started on demand via particleBgStart() */
 
 
 /* ============================================================
@@ -733,22 +739,4 @@ else scheduleStart();
 })();
 
 
-/* ============================================================
-   MOBILE MODE OBSERVER — stops rAF, not just display:none
-   ============================================================ */
-(function(){
-    function isMobile(){return document.body.classList.contains('mobile-mode');}
-    function attach(){
-        if(typeof MutationObserver==='undefined') return;
-        var was=isMobile();
-        if(was) engineStop();
-        new MutationObserver(function(){
-            var now=isMobile();
-            if(now===was) return; was=now;
-            if(now) engineStop();
-            else if(_canvas&&!_animId) engineLoop();
-        }).observe(document.body,{attributes:true,attributeFilter:['class']});
-    }
-    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',attach);
-    else attach();
-})();
+
