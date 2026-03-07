@@ -573,19 +573,6 @@
       "info": ";;;"
     },
     {
-      "tab": "app",
-      "href": "https://bsvgolf.com/",
-      "tooltip": "Golf Tournament Software onchain",
-      "img": "icon/bsvgolf.svg",
-      "zoom": "1.0",
-      "alt": "Live scoring, leaderboards, AI caddy, 170+ player events",
-      "text": "BSVGolf",
-      "info": ";;;",
-      "colour1": "green",
-      "colour2": "white",
-      "opacity": "0.7"
-    },
-    {
       "tab": "wallet;exchange",
       "href": "https://www.rockwallet.com/",
       "tooltip": "KYC mobile wallet that supports BSV and in wallet swaps.",
@@ -1173,7 +1160,7 @@
     {
       "tab": "tool;app",
       "href": "https://b0ase.com/bcorp-mint",
-      "tooltip": "Design, print, stamp, and mint currency on BSV. A desktop currency designer with 11 security layers (guilloche, rosette, microprint, watermark), SHA-256 file stamping with Description \u2502 on-chain OP_RETURN inscription, and BSV-20/21 token minting.",
+      "tooltip": "Design, print, stamp, and mint currency on BSV. On-Chain OP_RETURN inscription, and BSV-20/21 token minting.",
       "img": "app/bitcoin_mint.webp",
       "zoom": "1.0",
       "alt": "",
@@ -1227,6 +1214,84 @@
       "colour1": "skyblue",
       "colour2": "purple",
       "opacity": "0.8"
+    },
+    {
+      "tab": "app",
+      "href": "https://bsvgolf.com/",
+      "tooltip": "Free tournament software for golf clubs. Create events, track scores, manage leaderboards, and get AI caddy recommendations.",
+      "img": "app/bsvgolf.svg",
+      "zoom": "1.0",
+      "alt": "Live scoring, leaderboards, AI caddy, 170+ player events",
+      "text": "BSV Golf",
+      "info": ";;;",
+      "colour1": "green",
+      "colour2": "white",
+      "opacity": "0.7"
+    },
+    {
+      "tab": "app",
+      "href": "https://bsvchat.com/",
+      "tooltip": "Community chat rooms, trading boards, and prediction markets. Connect, share ideas, and trade with zero platform fees.",
+      "img": "app/bsvchat.svg",
+      "zoom": "1.0",
+      "alt": "Public & private rooms, Trading boards & signals, Tip users instantly",
+      "text": "BSV Chat",
+      "info": ";;;",
+      "colour1": "pink",
+      "colour2": "purple",
+      "opacity": "0.7"
+    },
+    {
+      "tab": "app",
+      "href": "https://bsvbusiness.com/",
+      "tooltip": "White pages, yellow pages, and blue pages for the BSV economy. List your business and connect with communities.",
+      "img": "app/bsv_business.svg",
+      "zoom": "1.0",
+      "alt": "Business listings & profiles, QR code business cards, Accept BSV payments",
+      "text": "BSV Business",
+      "info": ";;;",
+      "colour1": "purple",
+      "colour2": "orange",
+      "opacity": "0.7"
+    },
+    {
+      "tab": "app;marker",
+      "href": "https://bsvbsv.com/museum.html",
+      "tooltip": "Historical NFT collections and digital artifacts preserved on blockchain. Browse, collect, and trade unique pieces.",
+      "img": "app/bsvmuseum.svg",
+      "zoom": "1.0",
+      "alt": "Curated NFT collections, Historical artifacts, Buy, sell & trade",
+      "text": "BSV Museum",
+      "info": ";;;",
+      "colour1": "#CC1100",
+      "colour2": "pink",
+      "opacity": "0.7"
+    },
+    {
+      "tab": "tool",
+      "href": "https://bsvwebhosting.com/",
+      "tooltip": "Host your website on blockchain forever. Pay once, never pay monthly fees again. Your site lives on-chain permanently.",
+      "img": "app/bsv_web_hosting.svg",
+      "zoom": "1.0",
+      "alt": "One-time fee, host forever, No servers to maintain, 100% uptime guarantee",
+      "text": "BSV Web Hosting",
+      "info": ";;;",
+      "colour1": "#CC1100",
+      "colour2": "#FFFDD0",
+      "opacity": "0.7"
+    },
+    {
+      "tab": "tool",
+      "href": "https://mybsv.io/wallet.html",
+      "tooltip": "Background agents that watch blockchain 24/7. Automate payments, deliver content, respond to transactions while you sleep.",
+      "img": "app/sentinel.svg",
+      "zoom": "1.0",
+      "alt": "24/7 blockchain monitoring, Automated payments, Custom action scripting",
+      "text": "Sentinel",
+      "info": ";;;",
+      "colour1": "#000080",
+      "colour2": "purple",
+      "opacity": "0.7"
     }
   ]
 }

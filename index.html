@@ -28,7 +28,7 @@
     <script defer src="script/crt-modes.js"></script>
 
     <!-- PARTICLE NETWORK BACKGROUND PLUGIN (remove lines to disable) -->
-    <!--script defer src="script/particle-bg.js"></script -->
+    <script defer src="script/particle-bg.js"></script>
     
     <!-- EARLY MOBILE DETECTION - Prevents flash of desktop content -->
     <script>
@@ -163,6 +163,21 @@ document.getElementById("background-layer").style.background =
 
 <!-- JS SECTION 3 — TAB SYSTEM, HEADER LINKS & COPY SOUND -->
 <script src="script/tabs.js"></script>
+
+<!-- PARTICLE BG — on when about or contact is open, off for everything else -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var ON  = 'a[data-target="about-section"], a[data-target="contact-section"]';
+    var OFF = '.tab-btn, a.header-text-link:not([data-target="about-section"]):not([data-target="contact-section"]):not(#mobile-toggle)';
+
+    document.querySelectorAll(ON).forEach(function (el) {
+        el.addEventListener('click', function () { particleBgStart(); });
+    });
+    document.querySelectorAll(OFF).forEach(function (el) {
+        el.addEventListener('click', function () { particleBgStop(); });
+    });
+});
+</script>
 
 <!-- JS SECTION 4 — UNIFIED JSON LOADER (see json.js) -->
 <script src="script/json.js"></script>
