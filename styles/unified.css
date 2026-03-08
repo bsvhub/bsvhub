@@ -438,18 +438,52 @@ ul.icon-grid li {
 
 ul.icon-grid li a {
     padding: 0;
-    border: 4px solid #2e3f66; /* icon border colour */
-    background: rgba(90, 110, 165, 0.5); /* icon colour */
+    border: 4px solid #2e3f66;            /* LAYER 0 — default border */
+    background: rgba(90, 110, 165, 0.5);  /* LAYER 0 — base blue-grey, always visible */
     border-radius: 20px;
     text-decoration: none;
     color: rgba(135,206,235,0.8);
-    transition: background 0.25s, border-color 0.25s, transform 0.25s;
+    transition: border-color 0.25s, transform 0.25s;
     overflow: hidden;
+    position: relative;                   /* required for ::before and ::after */
+}
+
+/* ── colour1/colour2 gradient from json.js — sits above base bg, below image ──
+   json.js sets --tile-bg and --tile-opacity on each <a> via setTileColour().
+   z-index: 0 keeps it below .icon-wrapper (z-index: 1) and all content.
+──────────────────────────────────────────────────────────────────── */
+ul.icon-grid li a::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--tile-bg, transparent);
+    opacity: var(--tile-opacity, 1);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ── amber hover tint via ::after — sits above all existing layers ───
+   Applied via ::after so it overlays the image, text, and badges
+   without replacing or touching any layer beneath it.
+──────────────────────────────────────────────────────────────────── */
+ul.icon-grid li a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: transparent;
+    transition: background 0.25s;
+    pointer-events: none;
+    z-index: 10;                              /* above image (z2), text, badges */
 }
 
 ul.icon-grid li a:hover {
-    background: rgba(15, 175, 240, 0.6); /* icon colour when hover */
-    border-color: #EAB300;
+    border-color: #EAB300;                    /* gold border on hover */
+}
+
+ul.icon-grid li a:hover::after {
+    background: rgba(235, 155, 20, 0.35);     /* amber/gold tint over everything */
 }
 
 /* ============================================================
@@ -471,6 +505,7 @@ ul.icon-grid li a:hover {
     height: var(--wrapper-size);          /* Square proportions maintained */
     overflow: visible;
     padding: 0 var(--horizontal-padding); /* Proportional padding (9.375% of size) */
+    z-index: 1;                           /* above ::before colour1/2 layer (z0), below ::after hover (z10) */
 }
 
 /* ============================================================
@@ -821,13 +856,13 @@ html.mobile-mode-loading #content-area {
     padding-bottom: 4px;  /* Same 4px as desktop - NOT SCALED */
 }
 
-/* Mobile: content-scale applies transform + inverse scaling */
+/* Mobile: content-scale applies zoom scaling.
+   Unlike transform:scale(), zoom DOES affect layout — the scroll
+   container naturally sees the scaled height, so no margin-bottom
+   compensation is needed at all. Width auto-adjusts with zoom. */
 body.mobile-mode #content-scale,
 html.mobile-mode-loading #content-scale {
-    transform: scale(var(--mobile-scale));
-    transform-origin: top left;
-    width: calc(100vw / var(--mobile-scale));
-    /* padding-top removed - now on content-area instead */
+    zoom: var(--mobile-scale);
 }
 
 /* 📱 MOBILE - Remove ALL desktop min-width constraints */
@@ -903,9 +938,12 @@ body.mobile-mode .icon-text {
 /* 📱 MOBILE - Double-tap selected state */
 /* Visual feedback for first tap (shows tooltip) */
 body.mobile-mode ul.icon-grid li a.mobile-selected {
-    background: rgba(15, 175, 240, 0.6);  /* Same as desktop :hover */
     border-color: #00ff00;                /* 👈 GREEN border for mobile selection */
     transform: scale(1.04);
+}
+
+body.mobile-mode ul.icon-grid li a.mobile-selected::after {
+    background: rgba(235, 155, 20, 0.35); /* same amber overlay as desktop :hover */
 }
 
 /* 📱 MOBILE - Touch optimization */
