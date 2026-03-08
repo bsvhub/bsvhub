@@ -149,6 +149,20 @@ Promise.all([
             if (vcEl) vcEl.textContent = Number(d.count).toLocaleString();
         });
 
+    /* Broken link count */
+    fetch("/api/linkcheck")
+        .then(function (res) { return res.json(); })
+        .then(function (d) {
+            var el = document.getElementById("broken-counter");
+            if (!el) return;
+            el.textContent = d.broken === 0 ? "none ✓" : d.broken;
+            if (d.broken > 0) el.style.color = "#ff6b6b";
+        })
+        .catch(function () {
+            var el = document.getElementById("broken-counter");
+            if (el) el.textContent = "unavailable";
+        });
+
     /* Overwrite the hardcoded date with the list.json file timestamp.
        Falls back gracefully — if the header isn't available (e.g. some
        hosts strip it) the date from about.json stays as-is.           */
@@ -241,6 +255,39 @@ Promise.all([
 
         sec.appendChild(ul);
         container.appendChild(sec);
+    });
+
+    /* --------------------------------------------------------
+       2b. 404 REPORTER — intercept icon-grid link clicks
+           HEAD-checks the href; if 404, silently reports to
+           the Worker. Does not delay or block navigation.
+    -------------------------------------------------------- */
+    document.getElementById("content-scale").addEventListener("click", function (e) {
+        var a = e.target.closest("a[href]");
+        if (!a || !a.href || a.href === "#" || a.dataset.target) return;
+
+        var href = a.href;
+        var text = (a.querySelector(".icon-text") || {}).textContent || href;
+
+        fetch(href, { method: "HEAD" })
+            .then(function (r) {
+                if (r.status === 404) {
+                    // Report broken
+                    fetch("/api/report-broken", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ href: href, text: text }),
+                    }).catch(function () {});
+                } else {
+                    // Link is healthy — remove from log if it was there
+                    fetch("/api/report-fixed", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ href: href }),
+                    }).catch(function () {});
+                }
+            })
+            .catch(function () {});
     });
 
     /* --------------------------------------------------------
