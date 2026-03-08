@@ -9,85 +9,27 @@
    ============================================================ */
 
 /* ============================================================
-   HELPER — applyOpacityToColor
-   Embeds an opacity (0.0–1.0) into a CSS colour string.
-   Handles: #rgb  #rrggbb  rgb()  rgba()
-   Named colours / other formats are returned unchanged.
+   HELPER — setTileColour
+   Passes colour1, colour2, opacity from list.json down to the
+   CSS ::before layer via custom properties on the <a> element.
+   Named colours, hex, rgb, rgba all work natively — no parsing
+   needed. CSS handles opacity independently on the ::before layer.
 ============================================================ */
-function applyOpacityToColor(color, opacity) {
-    color = color.trim();
+function setTileColour(a, colour1, colour2, opacity) {
+    var hasC1 = colour1 && colour1.trim();
+    var hasC2 = colour2 && colour2.trim();
 
-    // #rgb → #rrggbb shorthand expand then fall through
-    if (/^#[0-9a-fA-F]{3}$/.test(color)) {
-        color = '#' + color[1] + color[1]
-                    + color[2] + color[2]
-                    + color[3] + color[3];
+    if (!hasC1 && !hasC2) return;   // nothing to set — CSS default applies
+
+    var bg = hasC1 && hasC2
+        ? 'linear-gradient(135deg, ' + colour1.trim() + ', ' + colour2.trim() + ')'
+        : colour1.trim();
+
+    a.style.setProperty('--tile-bg', bg);
+
+    if (opacity !== undefined && opacity !== null && opacity !== '') {
+        a.style.setProperty('--tile-opacity', opacity);
     }
-
-    // #rrggbb
-    if (/^#[0-9a-fA-F]{6}$/.test(color)) {
-        var r = parseInt(color.slice(1, 3), 16);
-        var g = parseInt(color.slice(3, 5), 16);
-        var b = parseInt(color.slice(5, 7), 16);
-        return 'rgba(' + r + ',' + g + ',' + b + ',' + opacity + ')';
-    }
-
-    // rgb(r,g,b) → rgba(r,g,b,opacity)
-    if (/^rgb\(/.test(color)) {
-        return color.replace('rgb(', 'rgba(').replace(')', ',' + opacity + ')');
-    }
-
-    // rgba(r,g,b,a) → replace existing alpha
-    if (/^rgba\(/.test(color)) {
-        return color.replace(/,\s*[\d.]+\s*\)$/, ',' + opacity + ')');
-    }
-
-    // Unrecognised format (named colour, hsl, etc.) — return unchanged
-    return color;
-}
-
-/* ============================================================
-   HELPER — buildIconBackground
-   Combines colour1, colour2, and opacity into a CSS background
-   string to apply to the icon tile <a> element.
-
-   Rules:
-     colour1 + colour2          → linear-gradient (135deg)
-     colour1 only               → solid colour
-     neither + opacity only     → default tile colour with new alpha
-     opacity not set            → colours used as-is (no alpha change)
-     nothing set                → returns null (CSS default applies)
-============================================================ */
-var DEFAULT_ICON_COLOUR = [121, 139, 178];   // matches CSS rgba(121,139,178,0.5)
-
-function buildIconBackground(colour1, colour2, opacity) {
-    var hasC1      = colour1 && colour1.trim();
-    var hasC2      = colour2 && colour2.trim();
-    var hasOpacity = (opacity !== undefined && opacity !== null && opacity !== '');
-    var alpha      = hasOpacity ? parseFloat(opacity) : null;
-
-    // Nothing specified — let CSS default handle it
-    if (!hasC1 && !hasC2 && !hasOpacity) return null;
-
-    // Apply opacity to colours if provided
-    var c1 = hasC1 ? (alpha !== null ? applyOpacityToColor(colour1, alpha) : colour1.trim()) : null;
-    var c2 = hasC2 ? (alpha !== null ? applyOpacityToColor(colour2, alpha) : colour2.trim()) : null;
-
-    if (c1 && c2) {
-        // Two colours → gradient
-        return 'linear-gradient(135deg, ' + c1 + ', ' + c2 + ')';
-    }
-
-    if (c1) {
-        // One colour → solid
-        return c1;
-    }
-
-    // Opacity only → apply to the default tile colour
-    return 'rgba(' + DEFAULT_ICON_COLOUR[0] + ','
-                   + DEFAULT_ICON_COLOUR[1] + ','
-                   + DEFAULT_ICON_COLOUR[2] + ','
-                   + alpha + ')';
 }
 
 /* ── list.json fetch — capture Last-Modified header alongside JSON ── */
@@ -139,7 +81,7 @@ Promise.all([
     /* ── Counters — spans now exist in the DOM ───────────────── */
     /* Link count: data already loaded above, no extra fetch needed */
     var lcEl = document.getElementById("link-counter");
-    if (lcEl) lcEl.textContent = Number(data.items.length - 1).toLocaleString(); /* -1 because of broken link test */
+    if (lcEl) lcEl.textContent = Number(data.items.length).toLocaleString();
 
     /* Visitor count: single fetch on page load via Cloudflare Worker */
     fetch("/api/count")
@@ -155,7 +97,7 @@ Promise.all([
         .then(function (d) {
             var el = document.getElementById("broken-counter");
             if (!el) return;
-            var count = Math.max(0, d.broken - 1); // subtract 1 for permanent test entry
+            var count = d.broken;
             el.textContent = count === 0 ? "none ✓" : count;
             if (count > 0) el.style.color = "#ff6b6b";
         })
@@ -219,10 +161,10 @@ Promise.all([
 
             // ---- colour / opacity --------------------------------
             // colour1, colour2, opacity are all optional JSON fields.
-            // buildIconBackground() returns null when nothing is set,
-            // leaving the CSS default background intact.
-            var bg = buildIconBackground(item.colour1, item.colour2, item.opacity);
-            if (bg) a.style.background = bg;
+            // setTileColour() sets CSS custom properties on <a> which
+            // are read by the ::before colour layer in unified.css.
+            // Named colours, hex, rgb, rgba all work natively.
+            setTileColour(a, item.colour1, item.colour2, item.opacity);
 
             // Main icon image
             var img = document.createElement("img");
