@@ -155,8 +155,9 @@ Promise.all([
         .then(function (d) {
             var el = document.getElementById("broken-counter");
             if (!el) return;
-            el.textContent = d.broken === 0 ? "none ✓" : d.broken;
-            if (d.broken > 0) el.style.color = "#ff6b6b";
+            var count = Math.max(0, d.broken - 1); // subtract 1 for permanent test entry
+            el.textContent = count === 0 ? "none ✓" : count;
+            if (count > 0) el.style.color = "#ff6b6b";
         })
         .catch(function () {
             var el = document.getElementById("broken-counter");
