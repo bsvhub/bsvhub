@@ -139,7 +139,7 @@ Promise.all([
     /* ── Counters — spans now exist in the DOM ───────────────── */
     /* Link count: data already loaded above, no extra fetch needed */
     var lcEl = document.getElementById("link-counter");
-    if (lcEl) lcEl.textContent = Number(data.items.length).toLocaleString();
+    if (lcEl) lcEl.textContent = Number(data.items.length - 1).toLocaleString(); /* -1 because of broken link test */
 
     /* Visitor count: single fetch on page load via Cloudflare Worker */
     fetch("/api/count")
