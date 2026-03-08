@@ -270,17 +270,20 @@ Promise.all([
         var href = a.href;
         var text = (a.querySelector(".icon-text") || {}).textContent || href;
 
-        fetch(href, { method: "HEAD" })
-            .then(function (r) {
-                if (r.status === 404) {
-                    // Report broken
+        fetch("/api/check-link", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ href: href }),
+        })
+            .then(function (res) { return res.json(); })
+            .then(function (d) {
+                if (d.status === 404) {
                     fetch("/api/report-broken", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ href: href, text: text }),
                     }).catch(function () {});
-                } else {
-                    // Link is healthy — remove from log if it was there
+                } else if (d.status !== "error") {
                     fetch("/api/report-fixed", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
