@@ -1,14 +1,6 @@
 {
   "items": [
     {
-      "href": "https://httpstat.us/404",
-      "text": "Test Broken Link",
-      "alt": "Test Broken Link",
-      "img": "icon/404.webp",
-      "tab": "404 test",
-      "tooltip": "This is to test Cloudflair worker for broken links detection"
-    },
-    {
       "tab": "tool;app",
       "href": "https://3dordi.io/",
       "tooltip": "Cutting-edge web3 application for exploring, managing and inscribing Ordinals (NFTs) on BSV blockchain",
