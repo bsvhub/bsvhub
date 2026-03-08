@@ -456,11 +456,11 @@ ul.icon-grid li a::before {
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: inherit;
     background: var(--tile-bg, transparent);
     opacity: var(--tile-opacity, 1);
     pointer-events: none;
     z-index: 0;
+    /* no border-radius needed — overflow:hidden on <a> clips the corners */
 }
 
 /* ── amber hover tint via ::after — sits above all existing layers ───
@@ -471,11 +471,11 @@ ul.icon-grid li a::after {
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: inherit;
     background: transparent;
     transition: background 0.25s;
     pointer-events: none;
-    z-index: 10;                              /* above image (z2), text, badges */
+    z-index: 10;
+    /* no border-radius needed — overflow:hidden on <a> clips the corners */
 }
 
 ul.icon-grid li a:hover {
