@@ -1139,7 +1139,7 @@
       "info": ";;;"
     },
     {
-      "tab": "tool;wallet",
+      "tab": "tool;app;wallet",
       "href": "https://firesat.io",
       "tooltip": "Secure, non-custodial BSV wallet for effortless BSV20 token trading, feeless transactions, and intuitive asset management.",
       "img": "icon/firesat.svg",
@@ -1345,6 +1345,16 @@
       "zoom": "1.0",
       "alt": "AI config personality",
       "text": "AGiD",
+      "info": ";;;"
+    },
+    {
+      "tab": "app",
+      "href": "https://thryll.online/",
+      "tooltip": "Ad-free blockchain gaming where every play auto-enters you into a transparent raffle. Powered by BSV micropayments for seamless, rewarding fun.",
+      "img": "app/thryll.webp",
+      "zoom": "1.4",
+      "alt": "clasic arcade games",
+      "text": "Thryll",
       "info": ";;;"
     },
     {
