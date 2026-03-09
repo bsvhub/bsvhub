@@ -90,7 +90,7 @@ Promise.all([
     /* ── Counters — spans now exist in the DOM ───────────────── */
     /* Link count: data already loaded above, no extra fetch needed */
     var lcEl = document.getElementById("link-counter");
-    if (lcEl) lcEl.textContent = Number(data.items.length - 1).toLocaleString(); /* -1 because of broken link test */
+    var _totalLinks = data.items.length;
 
     /* Visitor count: single fetch on page load via Cloudflare Worker */
     fetch("/api/count")
@@ -106,7 +106,8 @@ Promise.all([
         .then(function (d) {
             var el = document.getElementById("broken-counter");
             if (!el) return;
-            var count = Math.max(0, d.broken - 1); // subtract 1 for permanent test entry
+            var count = d.broken;
+            if (lcEl) lcEl.textContent = (_totalLinks - count).toLocaleString();
             el.textContent = count === 0 ? "none ✓" : count;
             if (count > 0) el.style.color = "#ff6b6b";
         })
@@ -295,7 +296,7 @@ Promise.all([
     requestAnimationFrame(function () {
         requestAnimationFrame(function () {
             var appsBtn = document.querySelector('.tab-btn[data-target="app"]');
-            if (appsBtn && typeof activateTab === "function") activateTab(appsBtn.dataset.target, appsBtn);
+            if (appsBtn) activateTab(appsBtn.dataset.target, appsBtn);
             if (typeof positionContent === "function") positionContent();
         });
     });
