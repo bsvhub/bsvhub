@@ -1361,6 +1361,32 @@
       "colour1": "white",
       "colour2": "blue",
       "opacity": "0.5"
+    },
+    {
+      "tab": "tool;app",
+      "href": "https://bsvbible.club",
+      "tooltip": "Application-layer protocol for storing structured text documents permanently on the BSV blockchain.",
+      "img": "app/bible.svg",
+      "zoom": "1.0",
+      "alt": "bible scripture books storage",
+      "text": "BSV BIBLE",
+      "info": ";;;",
+      "colour1": "skyblue",
+      "colour2": "purple",
+      "opacity": "0.8"
+    },
+    {
+      "tab": "tool;app",
+      "href": "https://indelible.one",
+      "tooltip": "AI that never forgets. Conversations are written onto the blockchain — permanently, owned by you.",
+      "img": "app/indelible.svg",
+      "zoom": "1.0",
+      "alt": "storage privet owned",
+      "text": "Indelible",
+      "info": ";;;",
+      "colour1": "#c736ff",
+      "colour2": "#fea94f",
+      "opacity": "1"
     }
   ]
 }
