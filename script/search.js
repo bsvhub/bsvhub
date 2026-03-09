@@ -14,7 +14,7 @@ let _searchTimer;
 searchBox.addEventListener("input", () => {
     clearTimeout(_searchTimer);
     _searchTimer = setTimeout(() => {
-        clearDoubleTapSelection();
+        if (typeof clearDoubleTapSelection === "function") clearDoubleTapSelection();
         const q = searchBox.value.toLowerCase();
 
         // Clear previous results

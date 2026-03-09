@@ -59,7 +59,7 @@ function activateTab(targetId, source) {
 ============================================================ */
 tabButtons.forEach(btn =>
     btn.addEventListener("click", () => {
-        clearDoubleTapSelection();
+        if (typeof clearDoubleTapSelection === "function") clearDoubleTapSelection();
         resetSearch();
         activateTab(btn.dataset.target, btn);
     })
@@ -71,7 +71,7 @@ tabButtons.forEach(btn =>
 headerLinks.forEach(link =>
     link.addEventListener("click", (e) => {
         e.preventDefault();
-        clearDoubleTapSelection();
+        if (typeof clearDoubleTapSelection === "function") clearDoubleTapSelection();
         resetSearch();
         activateTab(link.dataset.target, link);
     })

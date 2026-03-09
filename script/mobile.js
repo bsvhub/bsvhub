@@ -44,6 +44,14 @@ function enableMobileMode(state) {
         requestAnimationFrame(() => {
             restoreUIState(state);
             if (typeof positionContent === "function") positionContent();
+            /* fixScaleSpacing is called inside positionContent above, but
+               that runs synchronously while restoreUIState may have just
+               finished its clear-then-restore cycle. A deferred call via
+               setTimeout(0) ensures the browser has completed layout for
+               the restored active section before we measure its height.   */
+            setTimeout(function () {
+                if (typeof fixScaleSpacing === "function") fixScaleSpacing();
+            }, 0);
         });
     });
 }

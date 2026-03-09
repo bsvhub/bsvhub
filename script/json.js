@@ -12,8 +12,17 @@
    HELPER — setTileColour
    Passes colour1, colour2, opacity from list.json down to the
    CSS ::before layer via custom properties on the <a> element.
-   Named colours, hex, rgb, rgba all work natively — no parsing
-   needed. CSS handles opacity independently on the ::before layer.
+
+   The ::before layer in unified.css reads:
+     background: var(--tile-bg, transparent)
+     opacity:    var(--tile-opacity, 1)
+
+   Rules:
+     colour1 + colour2  → linear-gradient(135deg, c1, c2)
+     colour1 only       → solid colour
+     neither            → --tile-bg not set (transparent, base shows)
+     opacity            → --tile-opacity (0.0–1.0), any CSS colour format
+                          including named colours work natively here
 ============================================================ */
 function setTileColour(a, colour1, colour2, opacity) {
     var hasC1 = colour1 && colour1.trim();
@@ -81,7 +90,7 @@ Promise.all([
     /* ── Counters — spans now exist in the DOM ───────────────── */
     /* Link count: data already loaded above, no extra fetch needed */
     var lcEl = document.getElementById("link-counter");
-    if (lcEl) lcEl.textContent = Number(data.items.length).toLocaleString();
+    if (lcEl) lcEl.textContent = Number(data.items.length - 1).toLocaleString(); /* -1 because of broken link test */
 
     /* Visitor count: single fetch on page load via Cloudflare Worker */
     fetch("/api/count")
@@ -97,7 +106,7 @@ Promise.all([
         .then(function (d) {
             var el = document.getElementById("broken-counter");
             if (!el) return;
-            var count = d.broken;
+            var count = Math.max(0, d.broken - 1); // subtract 1 for permanent test entry
             el.textContent = count === 0 ? "none ✓" : count;
             if (count > 0) el.style.color = "#ff6b6b";
         })
@@ -164,6 +173,7 @@ Promise.all([
             // setTileColour() sets CSS custom properties on <a> which
             // are read by the ::before colour layer in unified.css.
             // Named colours, hex, rgb, rgba all work natively.
+            // No-op when nothing is set — CSS default applies.
             setTileColour(a, item.colour1, item.colour2, item.opacity);
 
             // Main icon image
@@ -285,7 +295,7 @@ Promise.all([
     requestAnimationFrame(function () {
         requestAnimationFrame(function () {
             var appsBtn = document.querySelector('.tab-btn[data-target="app"]');
-            if (appsBtn) activateTab(appsBtn.dataset.target, appsBtn);
+            if (appsBtn && typeof activateTab === "function") activateTab(appsBtn.dataset.target, appsBtn);
             if (typeof positionContent === "function") positionContent();
         });
     });

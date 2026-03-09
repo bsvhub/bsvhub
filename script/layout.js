@@ -11,25 +11,13 @@
   const content = document.getElementById("content-area");
   const topUI   = document.getElementById("top-ui");
 
-  /* Fix extra blank space below icon-grid when --mobile-scale < 1.
-     CSS transforms don't affect layout, so the scroll container sees the
-     full pre-transform height. Compensate with a negative margin-bottom
-     equal to: naturalHeight × (scale - 1), which is negative when scale < 1. */
+  /* fixScaleSpacing — previously compensated for transform:scale() not
+     affecting layout. Now that mobile uses zoom (which DOES affect layout)
+     the scroll container sees the correct height natively. Kept for
+     backwards compatibility with call sites in other scripts. */
   function fixScaleSpacing() {
-    const isMobile = document.body.classList.contains("mobile-mode")
-                  || document.documentElement.classList.contains("mobile-mode-loading");
-    const cs = document.getElementById("content-scale");
-    if (!cs) return;
-    if (isMobile) {
-      const scale = parseFloat(
-        getComputedStyle(document.documentElement).getPropertyValue("--mobile-scale")
-      ) || 1;
-      const activeTab = cs.querySelector(".tab-content.active");
-      const height    = activeTab ? activeTab.offsetHeight : cs.offsetHeight;
-      cs.style.marginBottom = height * (scale - 1) + "px";
-    } else {
-      cs.style.marginBottom = "";
-    }
+    var cs = document.getElementById("content-scale");
+    if (cs) cs.style.marginBottom = "";
   }
   window.fixScaleSpacing = fixScaleSpacing;
 
