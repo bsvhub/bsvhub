@@ -152,7 +152,7 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 5000;
+    z-index: 1000;
     display: flex;
     flex-direction: column;
     background: transparent;
@@ -505,7 +505,8 @@ ul.icon-grid li a:hover::after {
     height: var(--wrapper-size);          /* Square proportions maintained */
     overflow: visible;
     padding: 0 var(--horizontal-padding); /* Proportional padding (9.375% of size) */
-    z-index: 1;                           /* above ::before colour1/2 layer (z0), below ::after hover (z10) */
+    /* z-index intentionally omitted — no stacking context created here;
+       .icon-text uses z-index: 11 directly in <a>'s context to sit above ::after (z10) */
 }
 
 /* ============================================================
@@ -569,9 +570,7 @@ ul.icon-grid li a:hover .icon-wrapper img:not([class*="icon-badge-pos"]) {
     bottom: 4px;
     left: 0;
     width: 100%;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
+    display: block;          /* flex disabled — ::first-letter requires block */
     text-align: center;
     white-space: normal;
     overflow-wrap: break-word;
@@ -583,13 +582,22 @@ ul.icon-grid li a:hover .icon-wrapper img:not([class*="icon-badge-pos"]) {
     pointer-events: none;
     background-color: rgba(0, 0, 0, 0.5); /*icon text background colour*/
     transition: color 0.2s ease, transform 0.2s ease;
+    z-index: 11;                           /* above ::after amber hover layer (z10) */
 }
 
-/* Text hover effect */
+
+
+/* Text hover effect — white bold label (DOS look) */
 ul.icon-grid li a:hover .icon-text {
-    color: #fdfdfd;
+    color: #ffffff;
+    font-weight: bold;
     background-color: rgba(0, 0, 0, 0.4);
     transform: scale(1.15);
+}
+
+/* First character of the label turns red on hover */
+ul.icon-grid li a:hover .icon-text::first-letter {
+    color: #ff2200;
 }
 
 
