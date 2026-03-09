@@ -1,23 +1,30 @@
 /* ============================================================
-   PARTICLE NETWORK PLUGIN — particle-bg.js  v8.0
+   PARTICLE NETWORK PLUGIN — particle-bg.js  v9.0
    ============================================================
-   LAN/WAN network diagram background animation.
+   Blockchain network diagram background animation.
 
    DEVICE SHAPES (all solid/filled):
-     Computer  — small filled square
-     Server    — larger filled square
-     Router    — filled circle  (WAN gateway)
-     Switch    — filled diamond (LAN hub)
+     Computer   — small filled square
+     Server     — larger filled square
+     Router     — filled circle      (WAN gateway)
+     Switch     — filled diamond     (LAN hub)
+     Miner      — filled hexagon     (mining node)
+     Validator  — filled triangle    (full validation node)
+     IoT        — filled cross/plus  (micropayment device)
 
    TOPOLOGY TYPES:
-     Small   — star   : router → switch → computers
-     Medium  — ring   : router → nodes in a ring
-     Large   — mesh   : router + nodes cross-connected
-                        by proximity (2-3 links each)
+     Small    — star       : router → switch → endpoints
+     Medium A — ring       : router + nodes in a ring
+     Medium B — tree       : router → servers → computers (binary tree)
+     Large A  — hex grid   : hexagonal lattice, up to 6 links per node
+     Large B  — dbl ring   : inner + outer ring with spoke bridges
+     Large C  — radial     : hub + N arms with cross-links at tips
+     Large D  — fat tree   : 2-tier core/aggregate/edge mesh
+     Large E  — organic    : proximity MST + extra cross-links
 
    PACKETS:
      WAN  — large glowing dot, travels router → router
-            along dashed backbone lines
+            along dashed backbone lines (brightens on active route)
      LAN  — small dot, travels node → node within a LAN
             along LAN edges; destination node flashes
    ============================================================ */
@@ -51,15 +58,18 @@ var CFG = {
     /* ── How many LAN diagrams on screen at once ─────────── */
     MAX_NETWORKS:     8,   /* total simultaneous networks             */
 
-    /* ── Topology mix (must sum to ≤ 1.0) ───────────────── */
-    PROB_SMALL:      0.30,  /* probability a network is small/SOHO     */
-    PROB_MEDIUM:     0.40,  /* probability a network is medium/office  */
-                            /* remainder = large/enterprise mesh       */
+    /* ── Topology mix ────────────────────────────────────── */
+    /* Small / Medium each get a fixed share; Large fills the rest  */
+    /* Medium splits evenly between ring and tree                   */
+    /* Large splits evenly across 5 geometric variants              */
+    PROB_SMALL:      0.20,  /* probability a network is small/SOHO     */
+    PROB_MEDIUM:     0.35,  /* probability a network is medium          */
+                            /* remainder = large geometric mesh         */
 
     /* ── Physical radius of each topology (px) ──────────── */
     SIZE_SMALL:       85,   /* radius of small  (SOHO) network         */
     SIZE_MEDIUM:     125,   /* radius of medium (office) network       */
-    SIZE_LARGE:      170,   /* radius of large  (enterprise) network   */
+    SIZE_LARGE:      180,   /* radius of large  (enterprise) network   */
 
     /* ── Node counts per topology ───────────────────────── */
     PC_SMALL_MIN:     2,    /* computers in a small star               */
@@ -68,55 +78,67 @@ var CFG = {
     PC_MED_MIN:       5,    /* nodes in a medium ring (excl. router)   */
     PC_MED_MAX:       9,
 
-    MESH_NODES_MIN:  10,    /* total nodes in a large mesh (excl. router) */
+    MESH_NODES_MIN:  10,    /* total nodes in organic mesh (excl. router) */
     MESH_NODES_MAX:  18,
     MESH_SRV_MIN:     1,    /* servers scattered in the mesh           */
     MESH_SRV_MAX:     3,
     MESH_LINKS:       2,    /* extra cross-links per node beyond MST   */
-                            /* higher = denser mesh (1-3 recommended)  */
+
+    /* ── Hex grid topology ───────────────────────────────── */
+    HEX_RINGS:        3,    /* rings of hexagons around centre (2=19n, 3=37n) */
+
+    /* ── Double ring topology ────────────────────────────── */
+    DRING_INNER:      6,    /* nodes on the inner ring                 */
+    DRING_OUTER:     10,    /* nodes on the outer ring                 */
+
+    /* ── Radial arms topology ────────────────────────────── */
+    RADIAL_ARMS:      6,    /* number of radiating arms                */
+    RADIAL_LEN:       3,    /* nodes per arm                           */
+
+    /* ── Fat tree topology ───────────────────────────────── */
+    FATTREE_CORE:     3,    /* fully-connected core nodes              */
+    FATTREE_AGG:      5,    /* aggregate nodes (each links 2 core)     */
+    FATTREE_EDGE:     3,    /* edge nodes hanging off each aggregate   */
 
     /* ── Device shape sizes (px) ────────────────────────── */
     SZ_COMPUTER:      2.0,  /* half-width of computer square           */
     SZ_SERVER:        3.0,  /* half-width of server square             */
     SZ_ROUTER:        4.0,  /* radius of router circle                 */
     SZ_SWITCH:        3.5,  /* half-span of switch diamond             */
+    SZ_MINER:         4.0,  /* circumradius of miner hexagon           */
+    SZ_VALIDATOR:     3.8,  /* circumradius of validator triangle      */
+    SZ_IOT:           2.5,  /* arm half-length of IoT cross            */
 
     /* ── WAN packets (router → router) ──────────────────── */
-    WAN_INTERVAL:    140,   /* frames between WAN packet spawns (~2.3s)
-                               lower = more WAN packets on screen      */
-    WAN_SPEED:       300,   /* frames to cross from router to router
-                               lower = faster WAN packets              */
+    WAN_INTERVAL:    140,   /* frames between WAN packet spawns (~2.3s)*/
+    WAN_SPEED:       300,   /* frames to cross from router to router   */
     WAN_TRAIL:        16,   /* trail length (frames)                   */
     BACKBONE_DIST:   540,   /* max px router-to-router for a WAN link  */
 
     /* ── LAN packets (node → node within same network) ───── */
-    LAN_INTERVAL:    240,   /* frames between LAN packet spawns (~3s)
-                               lower = more intra-LAN activity         */
-    LAN_SPEED:       400,   /* frames to travel one LAN edge
-                               lower = faster LAN packets              */
+    LAN_INTERVAL:    240,   /* frames between LAN packet spawns (~3s)  */
+    LAN_SPEED:       400,   /* frames to travel one LAN edge           */
     LAN_TRAIL:        10,   /* trail length (frames)                   */
 
     /* ── Node flash decay ────────────────────────────────── */
-    FLASH_DECAY:     0.030, /* per-frame flash reduction
-                               lower = longer glow after packet hit    */
+    FLASH_DECAY:     0.030,
 
     /* ── Lifecycle timing ────────────────────────────────── */
-    FADE_FRAMES:     240,   /* frames to fade in OR out  (~4s)         */
-    ALIVE_MIN:      2400,   /* min frames alive  (~40s)                */
-    ALIVE_MAX:      5400,   /* max frames alive  (~90s)                */
+    FADE_FRAMES:     240,
+    ALIVE_MIN:      2400,
+    ALIVE_MAX:      5400,
 
     /* ── Placement ───────────────────────────────────────── */
-    MARGIN:          160,   /* px buffer from screen edges             */
-    SPAWN_CANDS:      80,   /* positions sampled for best placement    */
+    MARGIN:          160,
+    SPAWN_CANDS:      80,
 
     /* ── Visibility ─────────────────────────────────────── */
-    OPACITY:         0.8,   /* overall animation opacity  (0.0 – 1.0)
-                               0.0 = invisible, 1.0 = fully visible   */
+    OPACITY:         0.8,
 };
 
 /* Internal constants — do not edit */
 var ST = { FADE_IN:0, ALIVE:1, FADE_OUT:2, DEAD:3 };
-var DT = { COMPUTER:0, SERVER:1, ROUTER:2, SWITCH:3 };
+var DT = { COMPUTER:0, SERVER:1, ROUTER:2, SWITCH:3, MINER:4, VALIDATOR:5, IOT:6 };
 
 
 /* ============================================================
@@ -224,6 +246,65 @@ function drawDevice(ctx, dev, alpha) {
         ctx.fillRect(dev.x-s,dev.y-s,s*2,s*2);
         return;
     }
+
+    /* ── Miner — filled hexagon + strong glow ──────────── */
+    if (dev.type === DT.MINER) {
+        if (fl > 0.02) {
+            var gr = ctx.createRadialGradient(dev.x,dev.y,0,dev.x,dev.y,18+fl*14);
+            gr.addColorStop(0, col(fl*0.60));
+            gr.addColorStop(1, col(0));
+            ctx.beginPath(); ctx.arc(dev.x,dev.y,18+fl*14,0,Math.PI*2);
+            ctx.fillStyle=gr; ctx.fill();
+        }
+        var r=CFG.SZ_MINER;
+        ctx.beginPath();
+        for (var i=0;i<6;i++) {
+            var ang = Math.PI/6 + i*Math.PI/3;   /* flat-top orientation */
+            var px = dev.x + Math.cos(ang)*r;
+            var py = dev.y + Math.sin(ang)*r;
+            if (i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+        }
+        ctx.closePath();
+        ctx.fillStyle=col(Math.min(1,a*0.88+fl*0.45));
+        ctx.fill();
+        return;
+    }
+
+    /* ── Validator — filled equilateral triangle ────────── */
+    if (dev.type === DT.VALIDATOR) {
+        if (fl > 0.02) {
+            var gr = ctx.createRadialGradient(dev.x,dev.y,0,dev.x,dev.y,16+fl*12);
+            gr.addColorStop(0, col(fl*0.55));
+            gr.addColorStop(1, col(0));
+            ctx.beginPath(); ctx.arc(dev.x,dev.y,16+fl*12,0,Math.PI*2);
+            ctx.fillStyle=gr; ctx.fill();
+        }
+        var r=CFG.SZ_VALIDATOR;
+        ctx.beginPath();
+        ctx.moveTo(dev.x,              dev.y - r);          /* apex up */
+        ctx.lineTo(dev.x + r*0.866,    dev.y + r*0.5);
+        ctx.lineTo(dev.x - r*0.866,    dev.y + r*0.5);
+        ctx.closePath();
+        ctx.fillStyle=col(Math.min(1,a*0.85+fl*0.40));
+        ctx.fill();
+        return;
+    }
+
+    /* ── IoT — filled cross/plus ────────────────────────── */
+    if (dev.type === DT.IOT) {
+        if (fl > 0.02) {
+            var gr = ctx.createRadialGradient(dev.x,dev.y,0,dev.x,dev.y,10+fl*8);
+            gr.addColorStop(0, col(fl*0.40));
+            gr.addColorStop(1, col(0));
+            ctx.beginPath(); ctx.arc(dev.x,dev.y,10+fl*8,0,Math.PI*2);
+            ctx.fillStyle=gr; ctx.fill();
+        }
+        var arm=CFG.SZ_IOT, thick=0.9;
+        ctx.fillStyle=col(Math.min(1,a*0.75+fl*0.30));
+        ctx.fillRect(dev.x-arm,  dev.y-thick, arm*2, thick*2); /* horizontal */
+        ctx.fillRect(dev.x-thick,dev.y-arm,   thick*2, arm*2); /* vertical   */
+        return;
+    }
 }
 
 
@@ -244,9 +325,21 @@ function Network(cx, cy) {
     this.lanTimer  = Math.floor(Math.random()*CFG.LAN_INTERVAL); /* stagger */
 
     var rnd = Math.random();
-    if      (rnd < CFG.PROB_SMALL)                       this._buildSmall();
-    else if (rnd < CFG.PROB_SMALL+CFG.PROB_MEDIUM)       this._buildMedium();
-    else                                                  this._buildMesh();
+    if (rnd < CFG.PROB_SMALL) {
+        this._buildSmall();
+    } else if (rnd < CFG.PROB_SMALL + CFG.PROB_MEDIUM) {
+        /* Medium: coin-flip between ring and tree */
+        if (Math.random() < 0.5) this._buildMediumRing();
+        else                      this._buildMediumTree();
+    } else {
+        /* Large: 5 geometric variants chosen equally */
+        var v = Math.floor(Math.random()*5);
+        if      (v===0) this._buildHexGrid();
+        else if (v===1) this._buildDoubleRing();
+        else if (v===2) this._buildRadialArms();
+        else if (v===3) this._buildFatTree();
+        else            this._buildMesh();
+    }
 }
 
 /* ── Helpers ─────────────────────────────────────────────── */
@@ -255,7 +348,6 @@ Network.prototype._add = function(x,y,type) {
     return this.devices.length-1;
 };
 Network.prototype._edge = function(a,b,t) {
-    /* avoid duplicate edges */
     for (var i=0;i<this.edges.length;i++) {
         var e=this.edges[i];
         if((e.a===a&&e.b===b)||(e.a===b&&e.b===a)) return;
@@ -274,16 +366,18 @@ Network.prototype._buildSmall = function() {
     this.routerIdx=rIdx;
     this._edge(rIdx,swIdx,'uplink');
     var n=CFG.PC_SMALL_MIN+Math.floor(Math.random()*(CFG.PC_SMALL_MAX-CFG.PC_SMALL_MIN+1));
+    /* Mix of computers and IoT devices */
     for (var i=0;i<n;i++) {
         var a=ra+Math.PI+(i-(n-1)/2)*(Math.PI*0.75/Math.max(n-1,1));
         var d=sp*(0.48+Math.random()*0.38);
+        var type = (Math.random()<0.4) ? DT.IOT : DT.COMPUTER;
         this._edge(swIdx,this._add(
-            this.cx+Math.cos(a)*d,this.cy+Math.sin(a)*d,DT.COMPUTER),'access');
+            this.cx+Math.cos(a)*d,this.cy+Math.sin(a)*d, type),'access');
     }
 };
 
-/* ── MEDIUM — ring topology ──────────────────────────────── */
-Network.prototype._buildMedium = function() {
+/* ── MEDIUM A — ring topology ────────────────────────────── */
+Network.prototype._buildMediumRing = function() {
     var sp=CFG.SIZE_MEDIUM;
     var ra=Math.random()*Math.PI*2;
     var rIdx=this._add(
@@ -291,64 +385,362 @@ Network.prototype._buildMedium = function() {
         this.cy+Math.sin(ra)*sp*0.72, DT.ROUTER);
     this.routerIdx=rIdx;
     var n=CFG.PC_MED_MIN+Math.floor(Math.random()*(CFG.PC_MED_MAX-CFG.PC_MED_MIN+1));
-    /* distribute nodes around a ring, gap opposite to router */
     var ringIdxs=[];
-    var gapAngle=ra; /* router side — ring opens toward router */
+    var gapAngle=ra;
     var arcSpan =Math.PI*1.5;
     for (var i=0;i<n;i++) {
         var frac=n>1?i/(n-1):0.5;
         var a=gapAngle+Math.PI-arcSpan/2+frac*arcSpan;
         var jitter=sp*(0.08+Math.random()*0.12);
         var dist=sp*(0.62+Math.random()*0.22);
-        /* alternate servers and computers */
-        var type= (i===Math.floor(n/2)) ? DT.SERVER : DT.COMPUTER;
+        /* Mix of validators, miners, and computers on a ring */
+        var type;
+        if (i===Math.floor(n/2))        type=DT.SERVER;
+        else if (i%3===0)               type=DT.VALIDATOR;
+        else                            type=DT.COMPUTER;
         var idx=this._add(
             this.cx+Math.cos(a)*dist+Math.cos(a+Math.PI/2)*jitter,
             this.cy+Math.sin(a)*dist+Math.sin(a+Math.PI/2)*jitter,
             type);
         ringIdxs.push(idx);
     }
-    /* ring connections — each node to next */
     for (var i=0;i<ringIdxs.length;i++) {
-        var next=(i+1)%ringIdxs.length;
-        this._edge(ringIdxs[i],ringIdxs[next],'access');
+        this._edge(ringIdxs[i],ringIdxs[(i+1)%ringIdxs.length],'access');
     }
-    /* router connects to the two nearest ring nodes */
     var rp=this.devices[rIdx];
-    var dists=ringIdxs.map(function(ri,i){
+    var dists=ringIdxs.map(function(ri){
         var nd=this.devices[ri];
         var dx=nd.x-rp.x,dy=nd.y-rp.y;
-        return {i:i,ri:ri,d:Math.sqrt(dx*dx+dy*dy)};
+        return {ri:ri,d:Math.sqrt(dx*dx+dy*dy)};
     },this);
     dists.sort(function(a,b){return a.d-b.d;});
     this._edge(rIdx,dists[0].ri,'uplink');
     if(dists.length>1) this._edge(rIdx,dists[1].ri,'uplink');
 };
 
-/* ── LARGE — proximity mesh topology ────────────────────── */
+/* ── MEDIUM B — hierarchical tree topology ───────────────── */
+Network.prototype._buildMediumTree = function() {
+    var sp=CFG.SIZE_MEDIUM;
+    var ra=Math.random()*Math.PI*2;
+    /* Router at edge */
+    var rIdx=this._add(
+        this.cx+Math.cos(ra)*sp*0.78,
+        this.cy+Math.sin(ra)*sp*0.78, DT.ROUTER);
+    this.routerIdx=rIdx;
+    /* Two aggregate servers equidistant from router */
+    var aggIdxs=[];
+    for (var i=0;i<2;i++) {
+        var a=ra+Math.PI+(-0.45+i*0.90);
+        var aIdx=this._add(
+            this.cx+Math.cos(a)*sp*0.40,
+            this.cy+Math.sin(a)*sp*0.40, DT.SERVER);
+        aggIdxs.push(aIdx);
+        this._edge(rIdx,aIdx,'uplink');
+    }
+    /* 2-3 leaf nodes per aggregate */
+    var leafTypes=[DT.COMPUTER, DT.IOT, DT.COMPUTER, DT.IOT, DT.COMPUTER];
+    for (var ai=0;ai<aggIdxs.length;ai++) {
+        var aNode=this.devices[aggIdxs[ai]];
+        var nLeaves=2+Math.floor(Math.random()*2);
+        for (var li=0;li<nLeaves;li++) {
+            var spread=(nLeaves-1)*0.28;
+            var baseA=ra+Math.PI;
+            var la=baseA+(ai===0?-1:1)*0.55+(li-(nLeaves-1)/2)*(spread/Math.max(nLeaves-1,1));
+            var ld=sp*(0.55+Math.random()*0.25);
+            var lIdx=this._add(
+                this.cx+Math.cos(la)*ld,
+                this.cy+Math.sin(la)*ld,
+                leafTypes[li%leafTypes.length]);
+            this._edge(aggIdxs[ai],lIdx,'access');
+        }
+    }
+    /* Cross-link between the two aggregates */
+    this._edge(aggIdxs[0],aggIdxs[1],'trunk');
+};
+
+/* ── LARGE A — hexagonal grid ────────────────────────────── */
+Network.prototype._buildHexGrid = function() {
+    var sp=CFG.SIZE_LARGE;
+    var rings=CFG.HEX_RINGS;
+    /* Flat-top hex: spacing between centres = sz*sqrt(3) horiz, sz*1.5 vert */
+    var hexSz = Math.floor(sp / (rings + 0.5)) * 0.95;
+    var nodeMap={};  /* "q,r" → device index */
+
+    /* Generate axial hex coords within rings steps of origin */
+    var coords=[];
+    for (var q=-rings;q<=rings;q++) {
+        for (var r=-rings;r<=rings;r++) {
+            var s=-q-r;
+            if (Math.abs(q)<=rings && Math.abs(r)<=rings && Math.abs(s)<=rings) {
+                coords.push({q:q,r:r});
+            }
+        }
+    }
+
+    /* Place nodes — mix of miners and validators; center is a switch */
+    var typePool=[DT.MINER,DT.MINER,DT.VALIDATOR,DT.MINER,DT.MINER,DT.VALIDATOR,DT.IOT];
+    for (var i=0;i<coords.length;i++) {
+        var q=coords[i].q, r=coords[i].r;
+        /* Flat-top axial to pixel */
+        var px = this.cx + hexSz*(1.732*q + 0.866*r);
+        var py = this.cy + hexSz*(1.5*r);
+        var type = (q===0&&r===0) ? DT.SWITCH : typePool[i%typePool.length];
+        nodeMap[q+','+r] = this._add(px, py, type);
+    }
+
+    /* Connect each node to its 6 axial neighbours if both exist */
+    var hexDirs=[{q:1,r:0},{q:1,r:-1},{q:0,r:-1},{q:-1,r:0},{q:-1,r:1},{q:0,r:1}];
+    for (var i=0;i<coords.length;i++) {
+        var q=coords[i].q, r=coords[i].r;
+        var aIdx=nodeMap[q+','+r];
+        for (var d=0;d<3;d++) { /* only 3 of 6 dirs to avoid duplicates */
+            var nq=q+hexDirs[d].q, nr=r+hexDirs[d].r;
+            var key=nq+','+nr;
+            if (nodeMap[key]!==undefined) {
+                var t=(q===0&&r===0)?'uplink':'access';
+                this._edge(aIdx, nodeMap[key], t);
+            }
+        }
+    }
+
+    /* Router sits just outside the grid, connects to nearest perimeter node */
+    var ra=Math.random()*Math.PI*2;
+    var rIdx=this._add(
+        this.cx+Math.cos(ra)*(sp+hexSz*1.8),
+        this.cy+Math.sin(ra)*(sp+hexSz*1.8), DT.ROUTER);
+    this.routerIdx=rIdx;
+    /* Find the device closest to the router */
+    var rDev=this.devices[rIdx];
+    var bestD=Infinity, bestI=-1;
+    for (var i=0;i<this.devices.length-1;i++) {
+        var dx=this.devices[i].x-rDev.x, dy=this.devices[i].y-rDev.y;
+        var d=Math.sqrt(dx*dx+dy*dy);
+        if(d<bestD){bestD=d;bestI=i;}
+    }
+    if(bestI>=0) this._edge(rIdx,bestI,'uplink');
+};
+
+/* ── LARGE B — double ring ───────────────────────────────── */
+Network.prototype._buildDoubleRing = function() {
+    var sp=CFG.SIZE_LARGE;
+    var nInner=CFG.DRING_INNER, nOuter=CFG.DRING_OUTER;
+    var rInner=sp*0.38, rOuter=sp*0.78;
+    var rot=Math.random()*Math.PI*2;
+
+    /* Inner ring — validators */
+    var innerIdxs=[];
+    for (var i=0;i<nInner;i++) {
+        var a=rot+i*(Math.PI*2/nInner);
+        innerIdxs.push(this._add(
+            this.cx+Math.cos(a)*rInner,
+            this.cy+Math.sin(a)*rInner, DT.VALIDATOR));
+    }
+    /* Inner ring connections */
+    for (var i=0;i<nInner;i++) {
+        this._edge(innerIdxs[i], innerIdxs[(i+1)%nInner], 'trunk');
+    }
+
+    /* Outer ring — miners */
+    var outerIdxs=[];
+    for (var i=0;i<nOuter;i++) {
+        var a=rot+i*(Math.PI*2/nOuter);
+        outerIdxs.push(this._add(
+            this.cx+Math.cos(a)*rOuter,
+            this.cy+Math.sin(a)*rOuter, DT.MINER));
+    }
+    /* Outer ring connections */
+    for (var i=0;i<nOuter;i++) {
+        this._edge(outerIdxs[i], outerIdxs[(i+1)%nOuter], 'access');
+    }
+
+    /* Spokes: each inner node connects to its 2 nearest outer nodes */
+    for (var i=0;i<nInner;i++) {
+        var id=this.devices[innerIdxs[i]];
+        var sorted=outerIdxs.slice().sort(function(a,b){
+            var da=this.devices[a], db=this.devices[b];
+            var dxa=da.x-id.x, dya=da.y-id.y;
+            var dxb=db.x-id.x, dyb=db.y-id.y;
+            return (dxa*dxa+dya*dya)-(dxb*dxb+dyb*dyb);
+        }.bind(this));
+        this._edge(innerIdxs[i], sorted[0], 'uplink');
+        this._edge(innerIdxs[i], sorted[1], 'uplink');
+    }
+
+    /* Center switch hub */
+    var hubIdx=this._add(this.cx, this.cy, DT.SWITCH);
+    for (var i=0;i<nInner;i++) this._edge(hubIdx, innerIdxs[i], 'trunk');
+
+    /* Router just outside outer ring */
+    var ra=Math.random()*Math.PI*2;
+    var rIdx=this._add(
+        this.cx+Math.cos(ra)*(rOuter+sp*0.22),
+        this.cy+Math.sin(ra)*(rOuter+sp*0.22), DT.ROUTER);
+    this.routerIdx=rIdx;
+    /* Connect router to nearest two outer nodes */
+    var rDev=this.devices[rIdx];
+    var sorted2=outerIdxs.slice().sort(function(a,b){
+        var da=this.devices[a], db=this.devices[b];
+        var dxa=da.x-rDev.x,dya=da.y-rDev.y;
+        var dxb=db.x-rDev.x,dyb=db.y-rDev.y;
+        return (dxa*dxa+dya*dya)-(dxb*dxb+dyb*dyb);
+    }.bind(this));
+    this._edge(rIdx, sorted2[0], 'uplink');
+    this._edge(rIdx, sorted2[1], 'uplink');
+};
+
+/* ── LARGE C — radial arms ───────────────────────────────── */
+Network.prototype._buildRadialArms = function() {
+    var sp=CFG.SIZE_LARGE;
+    var nArms=CFG.RADIAL_ARMS, armLen=CFG.RADIAL_LEN;
+    var rot=Math.random()*Math.PI*2;
+
+    /* Central hub */
+    var hubIdx=this._add(this.cx, this.cy, DT.SWITCH);
+
+    /* Build each arm */
+    var tipIdxs=[];
+    var armNodeIdxs=[];
+    for (var ai=0;ai<nArms;ai++) {
+        var armAngle=rot+ai*(Math.PI*2/nArms);
+        var prevIdx=hubIdx;
+        var armIdxs=[];
+        for (var li=0;li<armLen;li++) {
+            var frac=(li+1)/armLen;
+            var dist=sp*0.25 + frac*sp*0.68;
+            var jitter=(Math.random()-0.5)*sp*0.10;
+            var perp=armAngle+Math.PI/2;
+            var type = (li===armLen-1) ? DT.MINER :
+                       (li===0)        ? DT.VALIDATOR : DT.COMPUTER;
+            var nIdx=this._add(
+                this.cx + Math.cos(armAngle)*dist + Math.cos(perp)*jitter,
+                this.cy + Math.sin(armAngle)*dist + Math.sin(perp)*jitter,
+                type);
+            var t=(prevIdx===hubIdx)?'uplink':'access';
+            this._edge(prevIdx, nIdx, t);
+            prevIdx=nIdx;
+            armIdxs.push(nIdx);
+        }
+        tipIdxs.push(prevIdx);
+        armNodeIdxs.push(armIdxs);
+    }
+
+    /* Cross-link adjacent arm tips for redundancy */
+    for (var ai=0;ai<nArms;ai++) {
+        var nextAi=(ai+1)%nArms;
+        this._edge(tipIdxs[ai], tipIdxs[nextAi], 'access');
+    }
+
+    /* Router sits off one arm tip */
+    var raArm=Math.floor(Math.random()*nArms);
+    var tipDev=this.devices[tipIdxs[raArm]];
+    var armAngle=rot+raArm*(Math.PI*2/nArms);
+    var rIdx=this._add(
+        tipDev.x + Math.cos(armAngle)*sp*0.22,
+        tipDev.y + Math.sin(armAngle)*sp*0.22, DT.ROUTER);
+    this.routerIdx=rIdx;
+    this._edge(rIdx, tipIdxs[raArm], 'uplink');
+};
+
+/* ── LARGE D — fat tree (core/aggregate/edge) ────────────── */
+Network.prototype._buildFatTree = function() {
+    var sp=CFG.SIZE_LARGE;
+    var nCore=CFG.FATTREE_CORE, nAgg=CFG.FATTREE_AGG, nEdge=CFG.FATTREE_EDGE;
+    var rot=Math.random()*Math.PI*2;
+
+    /* Core layer — small fully-connected cluster at centre */
+    var coreIdxs=[];
+    for (var i=0;i<nCore;i++) {
+        var a=rot+i*(Math.PI*2/nCore);
+        coreIdxs.push(this._add(
+            this.cx+Math.cos(a)*sp*0.18,
+            this.cy+Math.sin(a)*sp*0.18, DT.SERVER));
+    }
+    /* Fully connect core */
+    for (var i=0;i<nCore;i++) {
+        for (var j=i+1;j<nCore;j++) {
+            this._edge(coreIdxs[i], coreIdxs[j], 'trunk');
+        }
+    }
+
+    /* Aggregate layer — ring around core, each connects to 2 core nodes */
+    var aggIdxs=[];
+    for (var i=0;i<nAgg;i++) {
+        var a=rot+i*(Math.PI*2/nAgg);
+        aggIdxs.push(this._add(
+            this.cx+Math.cos(a)*sp*0.48,
+            this.cy+Math.sin(a)*sp*0.48, DT.VALIDATOR));
+    }
+    for (var i=0;i<nAgg;i++) {
+        /* Connect each aggregate to 2 nearest core nodes */
+        var ad=this.devices[aggIdxs[i]];
+        var sorted=coreIdxs.slice().sort(function(a,b){
+            var da=this.devices[a],db=this.devices[b];
+            var dxa=da.x-ad.x,dya=da.y-ad.y;
+            var dxb=db.x-ad.x,dyb=db.y-ad.y;
+            return (dxa*dxa+dya*dya)-(dxb*dxb+dyb*dyb);
+        }.bind(this));
+        this._edge(aggIdxs[i], sorted[0], 'trunk');
+        this._edge(aggIdxs[i], sorted[1], 'trunk');
+        /* Also ring-connect aggregates */
+        this._edge(aggIdxs[i], aggIdxs[(i+1)%nAgg], 'trunk');
+    }
+
+    /* Edge layer — miners hanging off each aggregate */
+    var edgeIdxs=[];
+    for (var i=0;i<nAgg;i++) {
+        var ad=this.devices[aggIdxs[i]];
+        var outAngle=Math.atan2(ad.y-this.cy, ad.x-this.cx);
+        for (var ei=0;ei<nEdge;ei++) {
+            var spread=(nEdge-1)*0.30;
+            var ea=outAngle+(ei-(nEdge-1)/2)*(spread/Math.max(nEdge-1,1));
+            var eIdx=this._add(
+                ad.x+Math.cos(ea)*sp*0.32,
+                ad.y+Math.sin(ea)*sp*0.32, DT.MINER);
+            this._edge(aggIdxs[i], eIdx, 'access');
+            edgeIdxs.push(eIdx);
+        }
+    }
+
+    /* Router off the outermost edge — connects to 2 nearest edge nodes */
+    var ra=rot+Math.random()*Math.PI*2;
+    var rIdx=this._add(
+        this.cx+Math.cos(ra)*(sp*0.95),
+        this.cy+Math.sin(ra)*(sp*0.95), DT.ROUTER);
+    this.routerIdx=rIdx;
+    var rDev=this.devices[rIdx];
+    var sortedEdge=edgeIdxs.slice().sort(function(a,b){
+        var da=this.devices[a],db=this.devices[b];
+        var dxa=da.x-rDev.x,dya=da.y-rDev.y;
+        var dxb=db.x-rDev.x,dyb=db.y-rDev.y;
+        return (dxa*dxa+dya*dya)-(dxb*dxb+dyb*dyb);
+    }.bind(this));
+    this._edge(rIdx, sortedEdge[0], 'uplink');
+    if(sortedEdge.length>1) this._edge(rIdx, sortedEdge[1], 'uplink');
+};
+
+/* ── LARGE E — organic proximity mesh ───────────────────── */
 Network.prototype._buildMesh = function() {
     var sp=CFG.SIZE_LARGE;
-    /* Router at a random edge position */
     var ra=Math.random()*Math.PI*2;
     var rIdx=this._add(
         this.cx+Math.cos(ra)*sp*0.80,
         this.cy+Math.sin(ra)*sp*0.80, DT.ROUTER);
     this.routerIdx=rIdx;
 
-    /* Scatter nodes randomly within radius */
     var n=CFG.MESH_NODES_MIN+Math.floor(Math.random()*(CFG.MESH_NODES_MAX-CFG.MESH_NODES_MIN+1));
     var ns=CFG.MESH_SRV_MIN+Math.floor(Math.random()*(CFG.MESH_SRV_MAX-CFG.MESH_SRV_MIN+1));
     var nodeIdxs=[];
+    var typePool=[DT.MINER,DT.VALIDATOR,DT.COMPUTER,DT.MINER,DT.IOT,DT.VALIDATOR,DT.COMPUTER];
     for (var i=0;i<n;i++) {
         var angle=Math.random()*Math.PI*2;
         var dist =Math.sqrt(Math.random())*sp*0.88;
-        var type =(i<ns)?DT.SERVER:DT.COMPUTER;
+        var type =(i<ns)?DT.SERVER:typePool[i%typePool.length];
         nodeIdxs.push(this._add(
             this.cx+Math.cos(angle)*dist,
             this.cy+Math.sin(angle)*dist, type));
     }
 
-    /* Build MST (Prim's) to guarantee full connectivity */
+    /* Build MST (Prim's) */
     var allIdxs=[rIdx].concat(nodeIdxs);
     var inMST=[rIdx];
     var notIn=nodeIdxs.slice();
@@ -370,10 +762,9 @@ Network.prototype._buildMesh = function() {
         notIn.splice(notIn.indexOf(bestB),1);
     }
 
-    /* Add MESH_LINKS extra proximity links per node for cross-links */
+    /* Extra cross-links */
     for(var i=0;i<nodeIdxs.length;i++){
         var da=this.devices[nodeIdxs[i]];
-        /* find nearest neighbours not already connected */
         var neighbours=allIdxs.filter(function(idx){return idx!==nodeIdxs[i];});
         neighbours.sort(function(a,b){
             var dxa=this.devices[a].x-da.x,dya=this.devices[a].y-da.y;
@@ -384,7 +775,6 @@ Network.prototype._buildMesh = function() {
         for(var k=0;k<neighbours.length&&added<CFG.MESH_LINKS;k++){
             var ni=neighbours[k];
             var t=(ni===rIdx||nodeIdxs[i]===rIdx)?'uplink':'access';
-            /* _edge() deduplicates so safe to call freely */
             this._edge(nodeIdxs[i],ni,t);
             added++;
         }
@@ -592,6 +982,16 @@ function engineDraw(){
     var live=_networks.filter(function(n){return n.state!==ST.DEAD;});
 
     /* 1 — WAN dashed backbone lines */
+    /* Build a set of active routes (router pairs with a WAN packet in flight) */
+    var activeRoutes=[];
+    _pulses.filter(function(p){return p.isWan;}).forEach(function(p){
+        activeRoutes.push({
+            fx:p.fx,fy:p.fy,tx:p.tx,ty:p.ty,
+            /* brightness peaks at mid-journey, fades at start/end */
+            boost: Math.sin(p.t*Math.PI)*0.55
+        });
+    });
+
     _ctx.setLineDash([4,7]);
     for(var i=0;i<live.length;i++){
         for(var j=i+1;j<live.length;j++){
@@ -599,10 +999,25 @@ function engineDraw(){
             var dx=rp1.x-rp2.x, dy=rp1.y-rp2.y;
             var d=Math.sqrt(dx*dx+dy*dy);
             if(d>=CFG.BACKBONE_DIST) continue;
-            var a=Math.pow(1-d/CFG.BACKBONE_DIST,2.5)*0.20*live[i].alpha*live[j].alpha;
+            var baseA=Math.pow(1-d/CFG.BACKBONE_DIST,2.5)*0.38*live[i].alpha*live[j].alpha;
+
+            /* Check if a WAN packet is currently travelling this exact route */
+            var routeBoost=0;
+            for(var k=0;k<activeRoutes.length;k++){
+                var ar=activeRoutes[k];
+                /* match in either direction */
+                var fwd=(Math.abs(ar.fx-rp1.x)<2&&Math.abs(ar.fy-rp1.y)<2&&
+                         Math.abs(ar.tx-rp2.x)<2&&Math.abs(ar.ty-rp2.y)<2);
+                var rev=(Math.abs(ar.fx-rp2.x)<2&&Math.abs(ar.fy-rp2.y)<2&&
+                         Math.abs(ar.tx-rp1.x)<2&&Math.abs(ar.ty-rp1.y)<2);
+                if(fwd||rev){ routeBoost=Math.max(routeBoost,ar.boost); break; }
+            }
+
+            var a=Math.min(0.85, baseA+routeBoost);
             if(a<0.004) continue;
+            var lw = routeBoost>0 ? 1.1 : 0.7;
             _ctx.beginPath();
-            _ctx.strokeStyle=col(a); _ctx.lineWidth=0.6;
+            _ctx.strokeStyle=col(a); _ctx.lineWidth=lw;
             _ctx.moveTo(rp1.x,rp1.y); _ctx.lineTo(rp2.x,rp2.y);
             _ctx.stroke();
         }
