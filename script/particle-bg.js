@@ -1,8 +1,28 @@
 /* ============================================================
-   PARTICLE NETWORK PLUGIN — particle-bg.js  v9.0
+   PARTICLE NETWORK PLUGIN — particle-bg.js  v9.1
    ============================================================
-   Blockchain network diagram background animation.
+   CHANGELOG
+   v9.1  – Per-network WAN timer (every network guaranteed to
+           communicate independently of scene size)
+         – CFG fully annotated with ranges, sweet spots, and
+           dependency warnings (⚠) for safe manual editing
+         – Complexity presets decoupled from MAX_NETWORKS
+         – Network count increase spawns delta immediately;
+           decrease drains naturally without hard reset
+         – Canvas injected into document.body to avoid
+           contain:layout paint clipping on background-layer
+   v9.0  – 7 new device shapes: miner (hex), validator (tri),
+           IoT (cross) added alongside original 4
+         – 8 topology variants: hex grid, double ring, radial
+           arms, fat tree, organic mesh, star, ring, tree
+         – WAN backbone lines visible + active route highlight
+         – Bottom-right easter egg control (networks + complexity)
+         – Complexity presets 1–5 (structural params only)
+         – CRT colour mode observer
+   v8.0  – Initial LAN/WAN network diagram animation
+   ============================================================ */
 
+/* ============================================================
    DEVICE SHAPES (all solid/filled):
      Computer   — small filled square
      Server     — larger filled square
@@ -52,6 +72,8 @@ var PARTICLE_CRT_COLOURS = {
                            300 frames =  5s
                           1200 frames = 20s
                           3600 frames = 60s
+
+   RANGE NOTATION:  min → max   (safe sweet spot in brackets)
    ============================================================ */
 var CFG = {
 
@@ -59,144 +81,158 @@ var CFG = {
        LAYER 1 — SCENE  (biggest visual impact)
        ════════════════════════════════════════════════════════ */
 
-    MAX_NETWORKS:     4,    /* total simultaneous networks on screen      */
+    MAX_NETWORKS:     6,    /* total simultaneous networks on screen
+                               range : 4 → 16  [4–10]
+                               ⚠ minimum is 4 (rule 6 — type diversity)
+                               ⚠ also set via bottom-right easter egg  */
 
-    OPACITY:         0.8,   /* master opacity  0.0 (off) → 1.0 (full)    */
+    OPACITY:         0.8,   /* master canvas opacity
+                               range : 0.0 → 1.0  [0.4–0.9]
+                               0.0 = invisible,  1.0 = full brightness */
 
-    BACKBONE_DIST:   540,   /* max px router-to-router for a WAN link     */
-                            /* lower = sparser inter-network connections  */
+    BACKBONE_DIST:   540,   /* max px between routers for a WAN link
+                               range : 150 → 900  [400–650]
+                               lower = islands,  higher = everything connected
+                               ⚠ affects WAN packet frequency visibly  */
 
     /* ════════════════════════════════════════════════════════
        LAYER 2 — ANIMATION  (timing & motion feel)
        ════════════════════════════════════════════════════════ */
 
     /* WAN packets — large glowing dot, router → router */
-    WAN_INTERVAL:    140,   /* frames between spawns  (lower = busier)    */
-    WAN_SPEED:       300,   /* frames to cross router→router (lower=fast) */
-    WAN_TRAIL:        16,   /* trail length in frames                     */
+    WAN_INTERVAL:    400,   /* frames between each network's WAN spawn
+                               range : 40 → 600  [80–200]
+                               40 = constant stream,  600 = rare events  */
+    WAN_SPEED:       300,   /* frames to travel full router→router distance
+                               range : 60 → 800  [150–400]
+                               60 = very fast,  800 = slow crawl          */
+    WAN_TRAIL:        16,   /* trail length behind WAN dot (frames)
+                               range : 0 → 40  [8–24]
+                               0 = no trail,  40 = long comet tail        */
 
     /* LAN packets — small dot, node → node within a network */
-    LAN_INTERVAL:    240,   /* frames between spawns  (lower = busier)    */
-    LAN_SPEED:       400,   /* frames to travel one edge  (lower = fast)  */
-    LAN_TRAIL:        10,   /* trail length in frames                     */
+    LAN_INTERVAL:    240,   /* frames between LAN spawns per network
+                               range : 60 → 800  [120–360]
+                               60 = very busy,  800 = quiet networks      */
+    LAN_SPEED:       400,   /* frames to travel one LAN edge
+                               range : 80 → 1000  [200–500]
+                               80 = snappy,  1000 = sluggish              */
+    LAN_TRAIL:        10,   /* trail length behind LAN dot (frames)
+                               range : 0 → 24  [6–16]                     */
 
     /* Node flash when a packet arrives */
-    FLASH_DECAY:     0.030, /* per-frame decay  (lower = longer glow)     */
+    FLASH_DECAY:     0.030, /* alpha subtracted from flash per frame
+                               range : 0.005 → 0.10  [0.015–0.05]
+                               0.005 = very long glow,  0.10 = instant    */
 
     /* Network lifecycle */
-    FADE_FRAMES:     240,   /* frames to fade in OR out  (~4 s)           */
-    ALIVE_MIN:      1800,   /* min frames alive  (~40 s)                  */
-    ALIVE_MAX:      3200,   /* max frames alive  (~90 s)                  */
+    FADE_FRAMES:     240,   /* frames to fade a network in OR out
+                               range : 60 → 600  [120–360]
+                               60 = abrupt,  600 = very slow dissolve     */
+    ALIVE_MIN:      1800,   /* minimum frames a network stays alive
+                               range : 600 → 7200  [1200–3600]
+                               ⚠ must be less than ALIVE_MAX              */
+    ALIVE_MAX:      3200,   /* maximum frames a network stays alive
+                               range : 1200 → 10800  [2400–6000]
+                               ⚠ must be greater than ALIVE_MIN           */
 
     /* ════════════════════════════════════════════════════════
-       LAYER 3 — TOPOLOGY MIX & SIZES  (structural complexity)
+       LAYER 3 — TOPOLOGY SIZES  (structural complexity)
        ════════════════════════════════════════════════════════ */
 
-    /* Probability split — must sum to ≤ 1.0                             */
-    /* Large fills the remainder and is split equally across 5 variants  */
-    PROB_SMALL:      0.20,  /* small SOHO star networks                   */
-    PROB_MEDIUM:     0.35,  /* medium ring + tree (50/50 between them)    */
-                            /* remainder → large geometric meshes         */
-
-    /* Physical radius of each class (px) */
-    SIZE_SMALL:       85,
-    SIZE_MEDIUM:     125,
-    SIZE_LARGE:      180,
+    /* Physical radius of each topology class (px)
+       ⚠ keep SIZE_SMALL < SIZE_MEDIUM < SIZE_LARGE
+         too large = networks overlap on small screens                    */
+    SIZE_SMALL:       85,   /* range : 50 → 150  [70–110]                 */
+    SIZE_MEDIUM:     125,   /* range : 80 → 200  [100–160]                */
+    SIZE_LARGE:      180,   /* range : 120 → 280  [150–220]               */
 
     /* Placement budget */
-    MARGIN:          160,   /* px buffer from screen edges                */
-    SPAWN_CANDS:      80,   /* candidate positions sampled for best fit   */
+    MARGIN:          160,   /* px kept clear from screen edges
+                               range : 60 → 300  [100–200]
+                               lower = networks spawn closer to edges     */
+    SPAWN_CANDS:      80,   /* candidate positions tried when placing a new
+                               network — higher = better spacing but tiny
+                               CPU cost at spawn time only
+                               range : 20 → 200  [40–100]                 */
 
     /* ════════════════════════════════════════════════════════
        LAYER 4 — NODE COUNTS PER TOPOLOGY
+       ⚠ always keep _MIN ≤ _MAX within each pair
        ════════════════════════════════════════════════════════ */
 
-    /* Small star */
-    PC_SMALL_MIN:     2,
-    PC_SMALL_MAX:     5,
+    /* Small star topology */
+    PC_SMALL_MIN:     2,    /* range : 1 → 8    ⚠ ≤ PC_SMALL_MAX          */
+    PC_SMALL_MAX:     5,    /* range : 2 → 12   ⚠ ≥ PC_SMALL_MIN          */
 
-    /* Medium ring */
-    PC_MED_MIN:       5,
-    PC_MED_MAX:       9,
+    /* Medium ring topology */
+    PC_MED_MIN:       5,    /* range : 3 → 12   ⚠ ≤ PC_MED_MAX            */
+    PC_MED_MAX:       9,    /* range : 4 → 18   ⚠ ≥ PC_MED_MIN            */
 
     /* Large E — organic proximity mesh */
-    MESH_NODES_MIN:  10,
-    MESH_NODES_MAX:  18,
-    MESH_SRV_MIN:     1,
-    MESH_SRV_MAX:     3,
-    MESH_LINKS:       2,    /* extra cross-links per node beyond MST      */
+    MESH_NODES_MIN:  10,    /* range : 4 → 24   ⚠ ≤ MESH_NODES_MAX        */
+    MESH_NODES_MAX:  18,    /* range : 6 → 32   ⚠ ≥ MESH_NODES_MIN        */
+    MESH_SRV_MIN:     1,    /* server nodes in mesh
+                               range : 0 → 4    ⚠ ≤ MESH_SRV_MAX          */
+    MESH_SRV_MAX:     3,    /* range : 1 → 6    ⚠ ≥ MESH_SRV_MIN          */
+    MESH_LINKS:       2,    /* extra cross-links per node beyond the MST
+                               range : 0 → 4  [1–3]
+                               0 = sparse tree,  4 = very dense mesh      */
 
     /* Large A — hex grid */
-    HEX_RINGS:        3,    /* rings around centre (2=19 nodes, 3=37)     */
+    HEX_RINGS:        3,    /* rings of hexagons around the centre node
+                               range : 1 → 5  [2–3]
+                               1 = 7 nodes,  2 = 19,  3 = 37,  4 = 61
+                               ⚠ 4+ is CPU-heavy, keep ≤ 4               */
 
     /* Large B — double ring */
-    DRING_INNER:      6,    /* nodes on inner ring                        */
-    DRING_OUTER:     10,    /* nodes on outer ring                        */
+    DRING_INNER:      6,    /* nodes on inner ring
+                               range : 3 → 12  [4–8]
+                               ⚠ ≤ DRING_OUTER                            */
+    DRING_OUTER:     10,    /* nodes on outer ring
+                               range : 4 → 20  [6–14]
+                               ⚠ ≥ DRING_INNER                            */
 
     /* Large C — radial arms */
-    RADIAL_ARMS:      6,    /* number of arms                             */
-    RADIAL_LEN:       3,    /* nodes per arm                              */
+    RADIAL_ARMS:      6,    /* number of arms radiating from hub
+                               range : 3 → 10  [4–8]                      */
+    RADIAL_LEN:       3,    /* nodes per arm (not counting hub)
+                               range : 1 → 6  [2–4]                       */
 
     /* Large D — fat tree */
-    FATTREE_CORE:     3,    /* fully-connected core servers               */
-    FATTREE_AGG:      5,    /* aggregate validator nodes                  */
-    FATTREE_EDGE:     3,    /* miner edge nodes per aggregate             */
+    FATTREE_CORE:     3,    /* fully-connected core servers
+                               range : 2 → 6  [2–4]
+                               ⚠ core is fully connected: 4 nodes = 6 edges,
+                                 6 nodes = 15 edges — keep ≤ 5            */
+    FATTREE_AGG:      5,    /* aggregate (validator) nodes around core
+                               range : 2 → 10  [3–7]                      */
+    FATTREE_EDGE:     3,    /* miner edge nodes hanging off each aggregate
+                               range : 1 → 6  [2–4]
+                               ⚠ total nodes = CORE + AGG + (AGG×EDGE)
+                                 e.g. 3+5+(5×3) = 23 nodes               */
 
     /* ════════════════════════════════════════════════════════
        LAYER 5 — DEVICE SHAPE SIZES (px)
+       all values are the key geometric radius/half-span
        ════════════════════════════════════════════════════════ */
 
-    SZ_COMPUTER:      2.0,  /* half-width of computer square              */
-    SZ_SERVER:        3.0,  /* half-width of server square                */
-    SZ_ROUTER:        4.0,  /* radius of router circle                    */
-    SZ_SWITCH:        3.5,  /* half-span of switch diamond                */
-    SZ_MINER:         4.0,  /* circumradius of miner hexagon              */
-    SZ_VALIDATOR:     3.8,  /* circumradius of validator triangle         */
-    SZ_IOT:           2.5,  /* arm half-length of IoT cross               */
+    SZ_COMPUTER:      2.0,  /* small square half-width
+                               range : 1.0 → 5.0  [1.5–3.0]              */
+    SZ_SERVER:        3.0,  /* large square half-width
+                               range : 1.5 → 6.0  [2.0–4.0]
+                               ⚠ keep > SZ_COMPUTER for visual hierarchy  */
+    SZ_ROUTER:        4.0,  /* circle radius
+                               range : 2.0 → 8.0  [3.0–6.0]              */
+    SZ_SWITCH:        3.5,  /* diamond half-span
+                               range : 2.0 → 7.0  [2.5–5.0]              */
+    SZ_MINER:         4.0,  /* hexagon circumradius
+                               range : 2.0 → 8.0  [3.0–6.0]              */
+    SZ_VALIDATOR:     3.8,  /* triangle circumradius
+                               range : 2.0 → 8.0  [3.0–6.0]              */
+    SZ_IOT:           2.5,  /* cross arm half-length
+                               range : 1.0 → 5.0  [1.5–3.5]              */
 };
 
-
-/* ============================================================
-   COMPLEXITY PRESETS  (1 = minimal … 5 = maximum)
-   Each preset overrides a slice of CFG — applied by the
-   bottom-right easter-egg control at runtime.
-   ============================================================ */
-var COMPLEXITY_PRESETS = [
-    /* 1 — minimal */
-    { HEX_RINGS:2, MESH_NODES_MIN:5,  MESH_NODES_MAX:10,
-      DRING_INNER:4, DRING_OUTER:6, RADIAL_ARMS:4, RADIAL_LEN:2,
-      FATTREE_CORE:2, FATTREE_AGG:3, FATTREE_EDGE:2, MESH_LINKS:1,
-      PC_MED_MIN:3, PC_MED_MAX:6, SIZE_LARGE:140 },
-    /* 2 — light */
-    { HEX_RINGS:2, MESH_NODES_MIN:7,  MESH_NODES_MAX:13,
-      DRING_INNER:5, DRING_OUTER:8, RADIAL_ARMS:5, RADIAL_LEN:2,
-      FATTREE_CORE:2, FATTREE_AGG:4, FATTREE_EDGE:2, MESH_LINKS:1,
-      PC_MED_MIN:4, PC_MED_MAX:7, SIZE_LARGE:155 },
-    /* 3 — default */
-    { HEX_RINGS:3, MESH_NODES_MIN:10, MESH_NODES_MAX:18,
-      DRING_INNER:6, DRING_OUTER:10, RADIAL_ARMS:6, RADIAL_LEN:3,
-      FATTREE_CORE:3, FATTREE_AGG:5, FATTREE_EDGE:3, MESH_LINKS:2,
-      PC_MED_MIN:5, PC_MED_MAX:9, SIZE_LARGE:180 },
-    /* 4 — dense */
-    { HEX_RINGS:3, MESH_NODES_MIN:13, MESH_NODES_MAX:22,
-      DRING_INNER:7, DRING_OUTER:12, RADIAL_ARMS:7, RADIAL_LEN:4,
-      FATTREE_CORE:4, FATTREE_AGG:6, FATTREE_EDGE:3, MESH_LINKS:3,
-      PC_MED_MIN:6, PC_MED_MAX:10, SIZE_LARGE:195 },
-    /* 5 — maximum */
-    { HEX_RINGS:4, MESH_NODES_MIN:16, MESH_NODES_MAX:26,
-      DRING_INNER:8, DRING_OUTER:14, RADIAL_ARMS:8, RADIAL_LEN:4,
-      FATTREE_CORE:4, FATTREE_AGG:7, FATTREE_EDGE:4, MESH_LINKS:3,
-      PC_MED_MIN:7, PC_MED_MAX:11, SIZE_LARGE:210 },
-];
-var _complexityLevel = 2; /* 0-based index into COMPLEXITY_PRESETS (default = level 3) */
-
-function applyComplexity(level) {
-    _complexityLevel = Math.max(0, Math.min(COMPLEXITY_PRESETS.length-1, level));
-    var p = COMPLEXITY_PRESETS[_complexityLevel];
-    Object.keys(p).forEach(function(k){ CFG[k] = p[k]; });
-}
-/* Apply default (level 3) on load */
-applyComplexity(2);
 
 /* Internal constants — do not edit */
 var ST = { FADE_IN:0, ALIVE:1, FADE_OUT:2, DEAD:3 };
@@ -371,6 +407,41 @@ function drawDevice(ctx, dev, alpha) {
 
 
 /* ============================================================
+   _pickTopoType — type-diversity topology selector
+   ─────────────────────────────────────────────────────────
+   8 topology types (0–7). On each spawn:
+   1. Find which types are NOT currently alive on screen.
+   2. If any missing types exist, pick randomly from those
+      (guarantees all types appear before any repeats).
+   3. If all 8 types are already present, pick the least
+      represented type (fewest live instances), breaking
+      ties randomly — prevents any one type dominating.
+
+   This replaces the old PROB_SMALL / PROB_MEDIUM system.
+   ============================================================ */
+var TOPO_COUNT = 8;
+function _pickTopoType() {
+    var counts = [];
+    var i;
+    for(i=0; i<TOPO_COUNT; i++) counts[i]=0;
+    _networks.forEach(function(n){
+        if(n.state !== ST.DEAD && n.topoType !== undefined)
+            counts[n.topoType]++;
+    });
+    /* Types with zero instances — fill gaps first */
+    var missing = [];
+    for(i=0; i<TOPO_COUNT; i++){ if(counts[i]===0) missing.push(i); }
+    if(missing.length > 0)
+        return missing[Math.floor(Math.random()*missing.length)];
+    /* All types present — pick least-used, random tiebreak */
+    var minCount = Math.min.apply(null, counts);
+    var leastUsed = [];
+    for(i=0; i<TOPO_COUNT; i++){ if(counts[i]===minCount) leastUsed.push(i); }
+    return leastUsed[Math.floor(Math.random()*leastUsed.length)];
+}
+
+
+/* ============================================================
    NETWORK CLASS
    ============================================================ */
 function Network(cx, cy) {
@@ -385,23 +456,18 @@ function Network(cx, cy) {
     this.edges     = [];   /* { a, b, t } — precomputed, never changes */
     this.routerIdx = 0;
     this.lanTimer  = Math.floor(Math.random()*CFG.LAN_INTERVAL); /* stagger */
+    this.wanTimer  = 9999; /* start high — fires on first eligible check  */
 
-    var rnd = Math.random();
-    if (rnd < CFG.PROB_SMALL) {
-        this._buildSmall();
-    } else if (rnd < CFG.PROB_SMALL + CFG.PROB_MEDIUM) {
-        /* Medium: coin-flip between ring and tree */
-        if (Math.random() < 0.5) this._buildMediumRing();
-        else                      this._buildMediumTree();
-    } else {
-        /* Large: 5 geometric variants chosen equally */
-        var v = Math.floor(Math.random()*5);
-        if      (v===0) this._buildHexGrid();
-        else if (v===1) this._buildDoubleRing();
-        else if (v===2) this._buildRadialArms();
-        else if (v===3) this._buildFatTree();
-        else            this._buildMesh();
-    }
+    /* Topology type assigned by _pickTopoType() — ensures all 8
+       types are represented before any type repeats.
+       0=star  1=ring  2=tree  3=hex  4=dring  5=radial  6=fattree  7=mesh */
+    this.topoType = _pickTopoType();
+    var builders = [
+        '_buildSmall', '_buildMediumRing', '_buildMediumTree',
+        '_buildHexGrid', '_buildDoubleRing', '_buildRadialArms',
+        '_buildFatTree', '_buildMesh'
+    ];
+    this[builders[this.topoType]]();
 }
 
 /* ── Helpers ─────────────────────────────────────────────── */
@@ -863,7 +929,7 @@ Network.prototype.update = function() {
 };
 
 Network.prototype.canReceive=function(){return this.state===ST.FADE_IN||this.state===ST.ALIVE;};
-Network.prototype.canSend   =function(){return this.state===ST.ALIVE;};
+Network.prototype.canSend   =function(){return this.state===ST.FADE_IN||this.state===ST.ALIVE;};
 Network.prototype.routerPos =function(){
     var r=this.devices[this.routerIdx];
     return r?{x:r.x,y:r.y}:{x:this.cx,y:this.cy};
@@ -872,14 +938,17 @@ Network.prototype.routerPos =function(){
 
 /* ============================================================
    WAN PULSE — large glowing dot, router → router
+   forwards=true  → arrival triggers rule 3 (send onward)
+   forwards=false → terminates at destination (rule 4)
    ============================================================ */
-function WanPulse(fromNet, toNet) {
+function WanPulse(fromNet, toNet, forwards) {
     var fp=fromNet.routerPos(), tp=toNet.routerPos();
     this.fromNet=fromNet; this.toNet=toNet;
     this.fx=fp.x; this.fy=fp.y; this.tx=tp.x; this.ty=tp.y;
     this.t=0; this.speed=1/CFG.WAN_SPEED;
     this.alive=true; this.cx=this.fx; this.cy=this.fy;
     this.trail=[]; this.isWan=true;
+    this.forwards=(forwards===true);
 }
 WanPulse.prototype.update=function(){
     if(this.t>0){
@@ -889,8 +958,14 @@ WanPulse.prototype.update=function(){
     this.t+=this.speed;
     if(this.t>=1){
         this.alive=false;
+        /* Flash destination router */
         var r=this.toNet.devices[this.toNet.routerIdx];
         if(r) r.flash=1.0;
+        /* Rule 3 — receiver forwards onward, excluding original sender
+           Rule 5 — fromNet is passed as exclude so it can't be chosen */
+        if(this.forwards && this.toNet.canSend()){
+            _wanSendFrom(this.toNet, this.fromNet);
+        }
         return;
     }
     this.cx=this.fx+(this.tx-this.fx)*this.t;
@@ -988,64 +1063,145 @@ function engineInit(){
     }
 }
 
+/* ============================================================
+   _wanSendFrom  — core of the 5-rule WAN system
+   ─────────────────────────────────────────────────────────
+   Called by:
+     • engineTickWAN  (rules 1 & 2 — periodic/spawn send)
+     • WanPulse.update (rule 3 — forwarded arrival)
+
+   net     : the network that is sending
+   exclude : network to remove from the lottery (rule 5)
+             pass null for rules 1 & 2 (no exclusion)
+   ============================================================ */
+function _wanSendFrom(net, exclude) {
+    if(!net._wanCooldown) net._wanCooldown={};
+
+    /* WAN_PAIR_COOLDOWN — frames before the same pair can
+       exchange again.  Prevents two close networks locking
+       onto each other exclusively.
+       range : 300 → 1200  [500–800]                        */
+    var PAIR_COOLDOWN = 600;
+
+    var rp = net.routerPos();
+
+    /* Build candidate list — reachable, eligible, not on cooldown */
+    var candidates = _networks.filter(function(r){
+        if(r===net)            return false;  /* not self          */
+        if(r===exclude)        return false;  /* rule 5            */
+        if(!r.canReceive())    return false;  /* must be alive     */
+        var tp=r.routerPos();
+        var dx=rp.x-tp.x, dy=rp.y-tp.y;
+        if(Math.sqrt(dx*dx+dy*dy) >= CFG.BACKBONE_DIST) return false;
+        var lastSent = net._wanCooldown[r.cx+'_'+r.cy] || 0;
+        return (_frame - lastSent) >= PAIR_COOLDOWN;
+    });
+
+    /* Cooldown fallback — if every candidate is on cooldown,
+       relax it so the network never goes permanently silent  */
+    if(candidates.length === 0){
+        candidates = _networks.filter(function(r){
+            if(r===net||r===exclude||!r.canReceive()) return false;
+            var tp=r.routerPos();
+            var dx=rp.x-tp.x, dy=rp.y-tp.y;
+            return Math.sqrt(dx*dx+dy*dy) < CFG.BACKBONE_DIST;
+        });
+    }
+    if(candidates.length === 0) return;
+
+    /* Weighted random pick — larger networks attract more traffic */
+    var total=0;
+    candidates.forEach(function(c){ total += c.edges.length||1; });
+    var rv=Math.random()*total, cum=0, target=candidates[candidates.length-1];
+    for(var i=0;i<candidates.length;i++){
+        cum += candidates[i].edges.length||1;
+        if(cum >= rv){ target=candidates[i]; break; }
+    }
+
+    /* Record send time for cooldown */
+    net._wanCooldown[target.cx+'_'+target.cy] = _frame;
+
+    /* Rule 4 — 40% chance this pulse forwards on arrival (rule 3)
+                60% chance it terminates at destination             */
+    var forwards = (Math.random() < 0.40);
+    _pulses.push(new WanPulse(net, target, forwards));
+}
+
+
+/* ============================================================
+   engineTickWAN  — WAN communication (rules 1 & 2)
+   ─────────────────────────────────────────────────────────
+   Completely self-contained. Reads CFG.WAN_INTERVAL only.
+   No knowledge of LAN internals.
+
+   Rule 1: network fires immediately on first tick
+           (wanTimer initialised to 9999 in constructor)
+   Rule 2: larger networks fire more frequently
+           effInterval = WAN_INTERVAL * 10 / edges
+           clamped to 240f minimum (~4s fastest)
+           Small (5 edges)  → full WAN_INTERVAL
+           Large (91 edges) → ~240f
+   ============================================================ */
+function engineTickWAN(){
+    _networks.forEach(function(net){
+        if(!net.canSend()) return;
+        var edges       = net.edges.length || 5;
+        var effInterval = Math.max(240, Math.floor(CFG.WAN_INTERVAL * 10 / Math.max(edges, 10)));
+        net.wanTimer    = (net.wanTimer||0) + 1;
+        if(net.wanTimer < effInterval) return;
+        net.wanTimer = 0;
+        _wanSendFrom(net, null);   /* null = no exclusion for periodic sends */
+    });
+}
+
+
+/* ============================================================
+   engineTickLAN  — internal LAN communication
+   ─────────────────────────────────────────────────────────
+   Completely self-contained. Reads CFG.LAN_INTERVAL only.
+   No knowledge of WAN internals.
+
+   Size-proportional activity:
+     1 packet per ~8 edges per interval, min 1, max 6.
+     Small star (5 edges)  → 1 packet
+     Hex grid  (91 edges)  → 6 packets
+   ============================================================ */
+function engineTickLAN(){
+    _networks.forEach(function(net){
+        if(net.state!==ST.ALIVE && net.state!==ST.FADE_IN) return;
+        if(net.edges.length===0) return;
+        net.lanTimer = (net.lanTimer||0) + 1;
+        if(net.lanTimer < CFG.LAN_INTERVAL) return;
+        net.lanTimer = 0;
+        var count = Math.min(6, Math.max(1, Math.round(net.edges.length/8)));
+        for(var c=0; c<count; c++){
+            var eIdx = Math.floor(Math.random()*net.edges.length);
+            var fwd  = Math.random()<0.5;
+            _pulses.push(new LanPulse(net, eIdx, fwd));
+        }
+    });
+}
+
+
 function engineUpdate(){
     _frame++;
     _networks.forEach(function(n){n.update();});
 
-    /* ── Remove dead networks ─────────────────────────────
-       Count how many died this frame, then decide whether
-       to spawn replacements based on current vs target.     */
-    var before = _networks.length;
-    _networks = _networks.filter(function(n){ return n.state !== ST.DEAD; });
-    var died   = before - _networks.length;
-
-    /* Spawn logic:
-       - If we're below MAX_NETWORKS, fill up (handles both natural
-         expiry AND the delta from an immediate increase click).
-       - If we're at or above MAX_NETWORKS, do NOT spawn — let the
-         count drift down naturally to the new (lower) target.       */
+    /* ── Remove dead, spawn replacements ─────────────────── */
+    var before  = _networks.length;
+    _networks   = _networks.filter(function(n){ return n.state !== ST.DEAD; });
     var deficit = CFG.MAX_NETWORKS - _networks.length;
-    var toSpawn = Math.max(0, deficit);          /* never spawn above target */
-    /* When decreasing: died > 0 but deficit < 0, so toSpawn = 0 — correct */
-    for (var s = 0; s < toSpawn; s++) {
+    var toSpawn = Math.max(0, deficit);
+    for(var s=0; s<toSpawn; s++){
         var pt = bestSpawn();
         _networks.push(new Network(pt.x, pt.y));
     }
 
     _pulses.forEach(function(p){p.update();});
-    _pulses=_pulses.filter(function(p){return p.alive;});
+    _pulses = _pulses.filter(function(p){return p.alive;});
 
-    /* ── WAN packets ──────────────────────────────────── */
-    if(_frame%CFG.WAN_INTERVAL===0){
-        var senders  =_networks.filter(function(n){return n.canSend();});
-        var receivers=_networks.filter(function(n){return n.canReceive();});
-        var pairs=[];
-        senders.forEach(function(s){
-            receivers.forEach(function(r){
-                if(s===r) return;
-                var sp=s.routerPos(),rp=r.routerPos();
-                var dx=sp.x-rp.x,dy=sp.y-rp.y;
-                if(Math.sqrt(dx*dx+dy*dy)<CFG.BACKBONE_DIST) pairs.push({s:s,r:r});
-            });
-        });
-        if(pairs.length>0){
-            var pair=pairs[Math.floor(Math.random()*pairs.length)];
-            _pulses.push(new WanPulse(pair.s,pair.r));
-        }
-    }
-
-    /* ── LAN packets — one per network on its own timer ─ */
-    _networks.forEach(function(net){
-        if(net.state!==ST.ALIVE&&net.state!==ST.FADE_IN) return;
-        if(net.edges.length===0) return;
-        net.lanTimer=(net.lanTimer||0)+1;
-        if(net.lanTimer>=CFG.LAN_INTERVAL){
-            net.lanTimer=0;
-            var eIdx=Math.floor(Math.random()*net.edges.length);
-            var fwd =Math.random()<0.5;
-            _pulses.push(new LanPulse(net,eIdx,fwd));
-        }
-    });
+    engineTickWAN();   /* ── inter-network communication ──── */
+    engineTickLAN();   /* ── intra-network communication ──── */
 }
 
 function engineDraw(){
@@ -1160,6 +1316,9 @@ function engineDraw(){
 
     /* 6 — Easter egg control pulse */
     _ctrlAnimatePulse();
+
+    /* 7 — Network monitor table */
+    _monitorUpdate();
 }
 
 function engineStop(){if(_animId){cancelAnimationFrame(_animId);_animId=null;}}
@@ -1241,27 +1400,150 @@ function _ctrlRow(labelFn, onDec, onInc) {
              fade-out. Existing networks expire naturally
              and engineUpdate won't replace them until the
              live count has drifted back down to the new
-             target.                                        */
+             target.
+   ⚠ minimum is 4 — rule 6 requires at least 4 network
+     types visible at all times.                           */
 function _ctrlChangeNetworks(delta) {
     var prev = CFG.MAX_NETWORKS;
-    CFG.MAX_NETWORKS = Math.max(2, Math.min(16, CFG.MAX_NETWORKS + delta));
+    CFG.MAX_NETWORKS = Math.max(4, Math.min(16, CFG.MAX_NETWORKS + delta));
     if (delta > 0) {
-        /* Spawn the delta immediately so they fade in now */
         var toAdd = CFG.MAX_NETWORKS - prev;
         for (var i = 0; i < toAdd; i++) {
             var pt = bestSpawn();
             _networks.push(new Network(pt.x, pt.y));
         }
     }
-    /* Decrease: nothing else to do — engineUpdate handles it */
 }
 
-/* ── Complexity change ────────────────────────────────────
-   No reinit. Just updates CFG structural parameters.
-   Takes effect on the next natural respawn.               */
-function _ctrlChangeComplexity(delta) {
-    applyComplexity(_complexityLevel + delta);
+/* ============================================================
+   NETWORK MONITOR — bottom-left overlay
+   ─────────────────────────────────────────────────────────
+   A live table showing every active network, its topology
+   type, a draining life bar, and seconds remaining.
+
+   Mirrors the easter egg control in style (monospace, dim,
+   same colour as animation) — barely reads as UI.
+
+   Layout per row:
+     type-name  ████████░░  42s
+     type-name  ██░░░░░░░░   8s ↓   (↓ = fading out)
+     type-name  ░░░░░░░░░░  --s     (fading in, not yet timed)
+
+   Life bar is 10 chars wide, drains left-to-right.
+   Uses block chars: █ (filled) ░ (empty).
+   ============================================================ */
+var _monitor     = null;   /* outer div                        */
+var _monitorRows = [];     /* pool of row divs                 */
+
+/* Topology display names — index matches topoType 0–7 */
+var TOPO_NAMES = ['star','ring','tree','hex','dbl-ring','radial','fat-tree','mesh'];
+
+function injectMonitor() {
+    if (_monitor) { _monitor.remove(); _monitor = null; }
+    _monitorRows = [];
+
+    _monitor = document.createElement('div');
+    _monitor.id = 'pbg-monitor';
+    _monitor.style.cssText = [
+        'position:fixed',
+        'bottom:14px',
+        'left:16px',
+        'z-index:9999',
+        'pointer-events:none',
+        'display:flex',
+        'flex-direction:column',
+        'gap:2px',
+        'align-items:flex-start',
+    ].join(';');
+
+    /* Pre-create 16 row slots — show/hide as needed */
+    for (var i = 0; i < 16; i++) {
+        var row = document.createElement('div');
+        row.style.cssText = [
+            'font:10px/1 monospace',
+            'letter-spacing:0.04em',
+            'white-space:pre',
+            'display:none',
+        ].join(';');
+        _monitor.appendChild(row);
+        _monitorRows.push(row);
+    }
+
+    if (_layer) _layer.insertAdjacentElement('afterend', _monitor);
+    else document.body.appendChild(_monitor);
 }
+
+function _monitorUpdate() {
+    if (!_monitor) return;
+    var c = 'rgba('+_r+','+_g+','+_b+',';
+
+    /* Collect live networks sorted by remaining life descending */
+    var live = _networks.filter(function(n){ return n.state !== ST.DEAD; });
+    live.sort(function(a, b){
+        return _netRemaining(b) - _netRemaining(a);
+    });
+
+    for (var i = 0; i < _monitorRows.length; i++) {
+        var row = _monitorRows[i];
+        if (i >= live.length) {
+            row.style.display = 'none';
+            continue;
+        }
+        var net = live[i];
+        var rem = _netRemaining(net);       /* seconds remaining    */
+        var prog = _netProgress(net);       /* 0 (new) → 1 (dying) */
+
+        /* Life bar — 10 chars, drains as prog increases */
+        var filled = Math.round((1 - prog) * 10);
+        var bar = '';
+        for (var b = 0; b < 10; b++) bar += (b < filled ? '█' : '░');
+
+        /* Status glyph */
+        var glyph = net.state === ST.FADE_IN  ? ' ↑' :
+                    net.state === ST.FADE_OUT ? ' ↓' : '  ';
+
+        /* Type name padded to 8 chars */
+        var name = (TOPO_NAMES[net.topoType] || '???');
+        while (name.length < 8) name += ' ';
+
+        /* Time — blank during fade-in (not yet fully alive) */
+        var timeStr = net.state === ST.FADE_IN
+            ? '  --s'
+            : (rem < 10 ? '   ' : rem < 100 ? '  ' : ' ') + Math.ceil(rem) + 's';
+
+        row.textContent = name + '  ' + bar + '  ' + timeStr + glyph;
+
+        /* Opacity: fade-in/out rows are dimmer */
+        var alpha = net.state === ST.ALIVE ? 0.40 :
+                    net.state === ST.FADE_IN ? 0.22 : 0.18;
+        row.style.color   = c + alpha + ')';
+        row.style.display = 'block';
+    }
+}
+
+/* Total life span in frames for a network */
+function _netTotalSpan(net) {
+    return CFG.FADE_FRAMES + net.aliveDuration + CFG.FADE_FRAMES;
+}
+
+/* Elapsed frames into total lifespan */
+function _netElapsed(net) {
+    if (net.state === ST.FADE_IN)   return net.stf;
+    if (net.state === ST.ALIVE)     return CFG.FADE_FRAMES + net.stf;
+    if (net.state === ST.FADE_OUT)  return CFG.FADE_FRAMES + net.aliveDuration + net.stf;
+    return _netTotalSpan(net);
+}
+
+/* Progress 0 → 1 across full lifespan */
+function _netProgress(net) {
+    return Math.min(1, _netElapsed(net) / _netTotalSpan(net));
+}
+
+/* Seconds remaining in lifespan */
+function _netRemaining(net) {
+    return Math.max(0, (_netTotalSpan(net) - _netElapsed(net)) / 60);
+}
+
 
 function injectControls() {
     if (_ctrl) { _ctrl.remove(); _ctrl = null; }
@@ -1273,33 +1555,23 @@ function injectControls() {
         'bottom:14px',
         'right:16px',
         'z-index:9999',
-        'pointer-events:none',   /* wrapper transparent to clicks */
+        'pointer-events:none',
         'display:flex',
         'flex-direction:column',
         'gap:3px',
         'align-items:flex-end',
     ].join(';');
 
-    /* Row 1 — Networks */
+    /* Networks row — only control remaining */
     var rowNets = _ctrlRow(
         function(){ return 'networks: ' + CFG.MAX_NETWORKS; },
         function(){ _ctrlChangeNetworks(-1); },
         function(){ _ctrlChangeNetworks(+1); }
     );
 
-    /* Row 2 — Complexity */
-    var complexLabels = ['minimal','light','default','dense','maximum'];
-    var rowCplx = _ctrlRow(
-        function(){ return 'complexity: ' + complexLabels[_complexityLevel]; },
-        function(){ _ctrlChangeComplexity(-1); },
-        function(){ _ctrlChangeComplexity(+1); }
-    );
-
     _ctrl.appendChild(rowNets);
-    _ctrl.appendChild(rowCplx);
-    _ctrl._rows = [rowNets, rowCplx];
+    _ctrl._rows = [rowNets];
 
-    /* Attach after the particle layer so it stacks above it */
     if (_layer) _layer.insertAdjacentElement('afterend', _ctrl);
     else document.body.appendChild(_ctrl);
 
@@ -1346,6 +1618,7 @@ function startPlugin(){
         engineInit();
         engineLoop();
         injectControls();
+        injectMonitor();
     } catch(e){ /* silent fail */ }
 }
 
@@ -1356,8 +1629,9 @@ function particleBgStart(){
 }
 function particleBgStop(){
     engineStop();
-    if(_layer) _layer.style.opacity=0;
-    if(_ctrl)  _ctrl.style.opacity=0;
+    if(_layer)   _layer.style.opacity=0;
+    if(_ctrl)    _ctrl.style.opacity=0;
+    if(_monitor) _monitor.style.opacity=0;
 }
 
 /* Auto-start is intentionally disabled — started on demand via particleBgStart() */
