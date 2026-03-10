@@ -45,7 +45,7 @@ var PARTICLE_CRT_COLOURS = {
 
 /* ============================================================
    ██████████████████████████████████████████████████████████
-   CONFIG — ALL TUNABLE VALUES ARE HERE
+   CONFIG — ALL TUNABLE VALUES, LAYERED BY IMPORTANCE
    ██████████████████████████████████████████████████████████
 
    TIME NOTE: at 60fps —   60 frames =  1s
@@ -55,86 +55,148 @@ var PARTICLE_CRT_COLOURS = {
    ============================================================ */
 var CFG = {
 
-    /* ── How many LAN diagrams on screen at once ─────────── */
-    MAX_NETWORKS:     8,   /* total simultaneous networks             */
+    /* ════════════════════════════════════════════════════════
+       LAYER 1 — SCENE  (biggest visual impact)
+       ════════════════════════════════════════════════════════ */
 
-    /* ── Topology mix ────────────────────────────────────── */
-    /* Small / Medium each get a fixed share; Large fills the rest  */
-    /* Medium splits evenly between ring and tree                   */
-    /* Large splits evenly across 5 geometric variants              */
-    PROB_SMALL:      0.20,  /* probability a network is small/SOHO     */
-    PROB_MEDIUM:     0.35,  /* probability a network is medium          */
-                            /* remainder = large geometric mesh         */
+    MAX_NETWORKS:     4,    /* total simultaneous networks on screen      */
 
-    /* ── Physical radius of each topology (px) ──────────── */
-    SIZE_SMALL:       85,   /* radius of small  (SOHO) network         */
-    SIZE_MEDIUM:     125,   /* radius of medium (office) network       */
-    SIZE_LARGE:      180,   /* radius of large  (enterprise) network   */
+    OPACITY:         0.8,   /* master opacity  0.0 (off) → 1.0 (full)    */
 
-    /* ── Node counts per topology ───────────────────────── */
-    PC_SMALL_MIN:     2,    /* computers in a small star               */
+    BACKBONE_DIST:   540,   /* max px router-to-router for a WAN link     */
+                            /* lower = sparser inter-network connections  */
+
+    /* ════════════════════════════════════════════════════════
+       LAYER 2 — ANIMATION  (timing & motion feel)
+       ════════════════════════════════════════════════════════ */
+
+    /* WAN packets — large glowing dot, router → router */
+    WAN_INTERVAL:    140,   /* frames between spawns  (lower = busier)    */
+    WAN_SPEED:       300,   /* frames to cross router→router (lower=fast) */
+    WAN_TRAIL:        16,   /* trail length in frames                     */
+
+    /* LAN packets — small dot, node → node within a network */
+    LAN_INTERVAL:    240,   /* frames between spawns  (lower = busier)    */
+    LAN_SPEED:       400,   /* frames to travel one edge  (lower = fast)  */
+    LAN_TRAIL:        10,   /* trail length in frames                     */
+
+    /* Node flash when a packet arrives */
+    FLASH_DECAY:     0.030, /* per-frame decay  (lower = longer glow)     */
+
+    /* Network lifecycle */
+    FADE_FRAMES:     240,   /* frames to fade in OR out  (~4 s)           */
+    ALIVE_MIN:      1800,   /* min frames alive  (~40 s)                  */
+    ALIVE_MAX:      3200,   /* max frames alive  (~90 s)                  */
+
+    /* ════════════════════════════════════════════════════════
+       LAYER 3 — TOPOLOGY MIX & SIZES  (structural complexity)
+       ════════════════════════════════════════════════════════ */
+
+    /* Probability split — must sum to ≤ 1.0                             */
+    /* Large fills the remainder and is split equally across 5 variants  */
+    PROB_SMALL:      0.20,  /* small SOHO star networks                   */
+    PROB_MEDIUM:     0.35,  /* medium ring + tree (50/50 between them)    */
+                            /* remainder → large geometric meshes         */
+
+    /* Physical radius of each class (px) */
+    SIZE_SMALL:       85,
+    SIZE_MEDIUM:     125,
+    SIZE_LARGE:      180,
+
+    /* Placement budget */
+    MARGIN:          160,   /* px buffer from screen edges                */
+    SPAWN_CANDS:      80,   /* candidate positions sampled for best fit   */
+
+    /* ════════════════════════════════════════════════════════
+       LAYER 4 — NODE COUNTS PER TOPOLOGY
+       ════════════════════════════════════════════════════════ */
+
+    /* Small star */
+    PC_SMALL_MIN:     2,
     PC_SMALL_MAX:     5,
 
-    PC_MED_MIN:       5,    /* nodes in a medium ring (excl. router)   */
+    /* Medium ring */
+    PC_MED_MIN:       5,
     PC_MED_MAX:       9,
 
-    MESH_NODES_MIN:  10,    /* total nodes in organic mesh (excl. router) */
+    /* Large E — organic proximity mesh */
+    MESH_NODES_MIN:  10,
     MESH_NODES_MAX:  18,
-    MESH_SRV_MIN:     1,    /* servers scattered in the mesh           */
+    MESH_SRV_MIN:     1,
     MESH_SRV_MAX:     3,
-    MESH_LINKS:       2,    /* extra cross-links per node beyond MST   */
+    MESH_LINKS:       2,    /* extra cross-links per node beyond MST      */
 
-    /* ── Hex grid topology ───────────────────────────────── */
-    HEX_RINGS:        3,    /* rings of hexagons around centre (2=19n, 3=37n) */
+    /* Large A — hex grid */
+    HEX_RINGS:        3,    /* rings around centre (2=19 nodes, 3=37)     */
 
-    /* ── Double ring topology ────────────────────────────── */
-    DRING_INNER:      6,    /* nodes on the inner ring                 */
-    DRING_OUTER:     10,    /* nodes on the outer ring                 */
+    /* Large B — double ring */
+    DRING_INNER:      6,    /* nodes on inner ring                        */
+    DRING_OUTER:     10,    /* nodes on outer ring                        */
 
-    /* ── Radial arms topology ────────────────────────────── */
-    RADIAL_ARMS:      6,    /* number of radiating arms                */
-    RADIAL_LEN:       3,    /* nodes per arm                           */
+    /* Large C — radial arms */
+    RADIAL_ARMS:      6,    /* number of arms                             */
+    RADIAL_LEN:       3,    /* nodes per arm                              */
 
-    /* ── Fat tree topology ───────────────────────────────── */
-    FATTREE_CORE:     3,    /* fully-connected core nodes              */
-    FATTREE_AGG:      5,    /* aggregate nodes (each links 2 core)     */
-    FATTREE_EDGE:     3,    /* edge nodes hanging off each aggregate   */
+    /* Large D — fat tree */
+    FATTREE_CORE:     3,    /* fully-connected core servers               */
+    FATTREE_AGG:      5,    /* aggregate validator nodes                  */
+    FATTREE_EDGE:     3,    /* miner edge nodes per aggregate             */
 
-    /* ── Device shape sizes (px) ────────────────────────── */
-    SZ_COMPUTER:      2.0,  /* half-width of computer square           */
-    SZ_SERVER:        3.0,  /* half-width of server square             */
-    SZ_ROUTER:        4.0,  /* radius of router circle                 */
-    SZ_SWITCH:        3.5,  /* half-span of switch diamond             */
-    SZ_MINER:         4.0,  /* circumradius of miner hexagon           */
-    SZ_VALIDATOR:     3.8,  /* circumradius of validator triangle      */
-    SZ_IOT:           2.5,  /* arm half-length of IoT cross            */
+    /* ════════════════════════════════════════════════════════
+       LAYER 5 — DEVICE SHAPE SIZES (px)
+       ════════════════════════════════════════════════════════ */
 
-    /* ── WAN packets (router → router) ──────────────────── */
-    WAN_INTERVAL:    140,   /* frames between WAN packet spawns (~2.3s)*/
-    WAN_SPEED:       300,   /* frames to cross from router to router   */
-    WAN_TRAIL:        16,   /* trail length (frames)                   */
-    BACKBONE_DIST:   540,   /* max px router-to-router for a WAN link  */
-
-    /* ── LAN packets (node → node within same network) ───── */
-    LAN_INTERVAL:    240,   /* frames between LAN packet spawns (~3s)  */
-    LAN_SPEED:       400,   /* frames to travel one LAN edge           */
-    LAN_TRAIL:        10,   /* trail length (frames)                   */
-
-    /* ── Node flash decay ────────────────────────────────── */
-    FLASH_DECAY:     0.030,
-
-    /* ── Lifecycle timing ────────────────────────────────── */
-    FADE_FRAMES:     240,
-    ALIVE_MIN:      2400,
-    ALIVE_MAX:      5400,
-
-    /* ── Placement ───────────────────────────────────────── */
-    MARGIN:          160,
-    SPAWN_CANDS:      80,
-
-    /* ── Visibility ─────────────────────────────────────── */
-    OPACITY:         0.8,
+    SZ_COMPUTER:      2.0,  /* half-width of computer square              */
+    SZ_SERVER:        3.0,  /* half-width of server square                */
+    SZ_ROUTER:        4.0,  /* radius of router circle                    */
+    SZ_SWITCH:        3.5,  /* half-span of switch diamond                */
+    SZ_MINER:         4.0,  /* circumradius of miner hexagon              */
+    SZ_VALIDATOR:     3.8,  /* circumradius of validator triangle         */
+    SZ_IOT:           2.5,  /* arm half-length of IoT cross               */
 };
+
+
+/* ============================================================
+   COMPLEXITY PRESETS  (1 = minimal … 5 = maximum)
+   Each preset overrides a slice of CFG — applied by the
+   bottom-right easter-egg control at runtime.
+   ============================================================ */
+var COMPLEXITY_PRESETS = [
+    /* 1 — minimal */
+    { HEX_RINGS:2, MESH_NODES_MIN:5,  MESH_NODES_MAX:10,
+      DRING_INNER:4, DRING_OUTER:6, RADIAL_ARMS:4, RADIAL_LEN:2,
+      FATTREE_CORE:2, FATTREE_AGG:3, FATTREE_EDGE:2, MESH_LINKS:1,
+      PC_MED_MIN:3, PC_MED_MAX:6, SIZE_LARGE:140 },
+    /* 2 — light */
+    { HEX_RINGS:2, MESH_NODES_MIN:7,  MESH_NODES_MAX:13,
+      DRING_INNER:5, DRING_OUTER:8, RADIAL_ARMS:5, RADIAL_LEN:2,
+      FATTREE_CORE:2, FATTREE_AGG:4, FATTREE_EDGE:2, MESH_LINKS:1,
+      PC_MED_MIN:4, PC_MED_MAX:7, SIZE_LARGE:155 },
+    /* 3 — default */
+    { HEX_RINGS:3, MESH_NODES_MIN:10, MESH_NODES_MAX:18,
+      DRING_INNER:6, DRING_OUTER:10, RADIAL_ARMS:6, RADIAL_LEN:3,
+      FATTREE_CORE:3, FATTREE_AGG:5, FATTREE_EDGE:3, MESH_LINKS:2,
+      PC_MED_MIN:5, PC_MED_MAX:9, SIZE_LARGE:180 },
+    /* 4 — dense */
+    { HEX_RINGS:3, MESH_NODES_MIN:13, MESH_NODES_MAX:22,
+      DRING_INNER:7, DRING_OUTER:12, RADIAL_ARMS:7, RADIAL_LEN:4,
+      FATTREE_CORE:4, FATTREE_AGG:6, FATTREE_EDGE:3, MESH_LINKS:3,
+      PC_MED_MIN:6, PC_MED_MAX:10, SIZE_LARGE:195 },
+    /* 5 — maximum */
+    { HEX_RINGS:4, MESH_NODES_MIN:16, MESH_NODES_MAX:26,
+      DRING_INNER:8, DRING_OUTER:14, RADIAL_ARMS:8, RADIAL_LEN:4,
+      FATTREE_CORE:4, FATTREE_AGG:7, FATTREE_EDGE:4, MESH_LINKS:3,
+      PC_MED_MIN:7, PC_MED_MAX:11, SIZE_LARGE:210 },
+];
+var _complexityLevel = 2; /* 0-based index into COMPLEXITY_PRESETS (default = level 3) */
+
+function applyComplexity(level) {
+    _complexityLevel = Math.max(0, Math.min(COMPLEXITY_PRESETS.length-1, level));
+    var p = COMPLEXITY_PRESETS[_complexityLevel];
+    Object.keys(p).forEach(function(k){ CFG[k] = p[k]; });
+}
+/* Apply default (level 3) on load */
+applyComplexity(2);
 
 /* Internal constants — do not edit */
 var ST = { FADE_IN:0, ALIVE:1, FADE_OUT:2, DEAD:3 };
@@ -930,15 +992,24 @@ function engineUpdate(){
     _frame++;
     _networks.forEach(function(n){n.update();});
 
-    /* Replace dead networks */
-    var dead=false;
-    _networks=_networks.filter(function(n){
-        if(n.state===ST.DEAD){dead=true;return false;}
-        return true;
-    });
-    if(dead){
-        var pt=bestSpawn();
-        _networks.push(new Network(pt.x,pt.y));
+    /* ── Remove dead networks ─────────────────────────────
+       Count how many died this frame, then decide whether
+       to spawn replacements based on current vs target.     */
+    var before = _networks.length;
+    _networks = _networks.filter(function(n){ return n.state !== ST.DEAD; });
+    var died   = before - _networks.length;
+
+    /* Spawn logic:
+       - If we're below MAX_NETWORKS, fill up (handles both natural
+         expiry AND the delta from an immediate increase click).
+       - If we're at or above MAX_NETWORKS, do NOT spawn — let the
+         count drift down naturally to the new (lower) target.       */
+    var deficit = CFG.MAX_NETWORKS - _networks.length;
+    var toSpawn = Math.max(0, deficit);          /* never spawn above target */
+    /* When decreasing: died > 0 but deficit < 0, so toSpawn = 0 — correct */
+    for (var s = 0; s < toSpawn; s++) {
+        var pt = bestSpawn();
+        _networks.push(new Network(pt.x, pt.y));
     }
 
     _pulses.forEach(function(p){p.update();});
@@ -1086,6 +1157,9 @@ function engineDraw(){
         _ctx.beginPath(); _ctx.arc(p.cx,p.cy,1.6,0,Math.PI*2);
         _ctx.fillStyle=col(env*0.90*na); _ctx.fill();
     });
+
+    /* 6 — Easter egg control pulse */
+    _ctrlAnimatePulse();
 }
 
 function engineStop(){if(_animId){cancelAnimationFrame(_animId);_animId=null;}}
@@ -1102,17 +1176,168 @@ function particleBgSetOpacity(v){
 
 
 /* ============================================================
-   LAYER INJECTION & START
+   EASTER EGG CONTROL — bottom-right corner
+   ─────────────────────────────────────────────────────────
+   A self-contained overlay div injected by this plugin.
+   Styled entirely with the animation's own colour so it
+   barely reads as UI — intentionally subtle.
+
+   ARCHITECTURE:
+     • A fixed-position <div> sits above the canvas layer
+       (z-index 9999) but uses pointer-events:none on the
+       wrapper; only the inner button strip gets pointer-
+       events:auto, so it never steals clicks from the page.
+     • Two rows:
+         [◀]  Networks: N  [▶]
+         [◀]  Complexity: L  [▶]
+       Clicking either arrow immediately updates CFG and
+       calls a soft-reinit (existing networks fade out
+       naturally; new ones spawn with fresh params).
+     • Colours driven by col() so they update with CRT mode.
    ============================================================ */
+var _ctrl = null;   /* the injected control div */
+var _ctrlPulse = 0; /* frame counter for button breathing */
+
+function _ctrlCell(text, onClick) {
+    var el = document.createElement('span');
+    el.textContent = text;
+    el.style.cssText = [
+        'display:inline-block',
+        'cursor:pointer',
+        'padding:2px 5px',
+        'font:11px/1 monospace',
+        'letter-spacing:0.05em',
+        'user-select:none',
+        '-webkit-user-select:none',
+        'pointer-events:auto',
+    ].join(';');
+    el.addEventListener('click', onClick);
+    /* Hover brightens the glyph */
+    el.addEventListener('mouseenter', function(){ el.style.opacity='0.85'; });
+    el.addEventListener('mouseleave', function(){ el.style.opacity=''; });
+    return el;
+}
+
+function _ctrlRow(labelFn, onDec, onInc) {
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:4px;justify-content:flex-end;';
+    var lbl = document.createElement('span');
+    lbl.style.cssText = 'font:10px/1 monospace;letter-spacing:0.04em;opacity:0.7;';
+    lbl.dataset.lbl = '1';  /* mark for colour updates */
+    function refresh(){ lbl.textContent = labelFn(); }
+    refresh();
+    var dec = _ctrlCell('◀', function(){ onDec(); refresh(); });
+    var inc = _ctrlCell('▶', function(){ onInc(); refresh(); });
+    dec.dataset.arrow='1'; inc.dataset.arrow='1';
+    row.appendChild(lbl); row.appendChild(dec); row.appendChild(inc);
+    row._refresh = refresh;
+    return row;
+}
+
+/* ── Network count change ─────────────────────────────────
+   Increase: immediately spawn the delta so new networks
+             fade in right away; MAX_NETWORKS raised.
+   Decrease: just lower MAX_NETWORKS; no reinit, no forced
+             fade-out. Existing networks expire naturally
+             and engineUpdate won't replace them until the
+             live count has drifted back down to the new
+             target.                                        */
+function _ctrlChangeNetworks(delta) {
+    var prev = CFG.MAX_NETWORKS;
+    CFG.MAX_NETWORKS = Math.max(2, Math.min(16, CFG.MAX_NETWORKS + delta));
+    if (delta > 0) {
+        /* Spawn the delta immediately so they fade in now */
+        var toAdd = CFG.MAX_NETWORKS - prev;
+        for (var i = 0; i < toAdd; i++) {
+            var pt = bestSpawn();
+            _networks.push(new Network(pt.x, pt.y));
+        }
+    }
+    /* Decrease: nothing else to do — engineUpdate handles it */
+}
+
+/* ── Complexity change ────────────────────────────────────
+   No reinit. Just updates CFG structural parameters.
+   Takes effect on the next natural respawn.               */
+function _ctrlChangeComplexity(delta) {
+    applyComplexity(_complexityLevel + delta);
+}
+
+function injectControls() {
+    if (_ctrl) { _ctrl.remove(); _ctrl = null; }
+
+    _ctrl = document.createElement('div');
+    _ctrl.id = 'pbg-ctrl';
+    _ctrl.style.cssText = [
+        'position:fixed',
+        'bottom:14px',
+        'right:16px',
+        'z-index:9999',
+        'pointer-events:none',   /* wrapper transparent to clicks */
+        'display:flex',
+        'flex-direction:column',
+        'gap:3px',
+        'align-items:flex-end',
+    ].join(';');
+
+    /* Row 1 — Networks */
+    var rowNets = _ctrlRow(
+        function(){ return 'networks: ' + CFG.MAX_NETWORKS; },
+        function(){ _ctrlChangeNetworks(-1); },
+        function(){ _ctrlChangeNetworks(+1); }
+    );
+
+    /* Row 2 — Complexity */
+    var complexLabels = ['minimal','light','default','dense','maximum'];
+    var rowCplx = _ctrlRow(
+        function(){ return 'complexity: ' + complexLabels[_complexityLevel]; },
+        function(){ _ctrlChangeComplexity(-1); },
+        function(){ _ctrlChangeComplexity(+1); }
+    );
+
+    _ctrl.appendChild(rowNets);
+    _ctrl.appendChild(rowCplx);
+    _ctrl._rows = [rowNets, rowCplx];
+
+    /* Attach after the particle layer so it stacks above it */
+    if (_layer) _layer.insertAdjacentElement('afterend', _ctrl);
+    else document.body.appendChild(_ctrl);
+
+    _ctrlUpdateColour();
+}
+
+function _ctrlUpdateColour() {
+    if (!_ctrl) return;
+    var c = 'rgba('+_r+','+_g+','+_b+',';
+    _ctrl.querySelectorAll('[data-lbl]').forEach(function(el){
+        el.style.color = c + '0.45)';
+    });
+    _ctrl.querySelectorAll('[data-arrow]').forEach(function(el){
+        el.style.color  = c + '0.35)';
+        el.style.border = '1px solid ' + c + '0.18)';
+    });
+}
+
+/* Called each draw frame to make the arrows breathe subtly */
+function _ctrlAnimatePulse() {
+    if (!_ctrl) return;
+    _ctrlPulse++;
+    var breathe = 0.28 + Math.sin(_ctrlPulse * 0.018) * 0.10;
+    var c = 'rgba('+_r+','+_g+','+_b+',';
+    _ctrl.querySelectorAll('[data-arrow]').forEach(function(el){
+        if (!el.matches(':hover')) el.style.color = c + breathe + ')';
+    });
+}
+
 function startPlugin(){
     try {
         if(!_layer){
             _layer=document.createElement('div');
             _layer.id='particle-layer';
             _layer.style.cssText='position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;overflow:hidden;';
-            var bg=document.getElementById('background-layer');
-            if(!bg) return;
-            bg.insertAdjacentElement('afterend',_layer);
+            /* Append to body — avoids being affected by contain:layout paint
+               on #background-layer and any stacking context on #page-wrapper */
+            document.body.appendChild(_layer);
         }
         _layer.style.opacity=CFG.OPACITY;
         engineStop();
@@ -1120,6 +1345,7 @@ function startPlugin(){
         setColour(PARTICLE_CRT_COLOURS[mode]||PARTICLE_CRT_COLOURS['default']);
         engineInit();
         engineLoop();
+        injectControls();
     } catch(e){ /* silent fail */ }
 }
 
@@ -1131,6 +1357,7 @@ function particleBgStart(){
 function particleBgStop(){
     engineStop();
     if(_layer) _layer.style.opacity=0;
+    if(_ctrl)  _ctrl.style.opacity=0;
 }
 
 /* Auto-start is intentionally disabled — started on demand via particleBgStart() */
@@ -1147,6 +1374,7 @@ function particleBgStop(){
             var now=document.documentElement.getAttribute('data-crt-mode')||'default';
             if(now===last) return; last=now;
             setColour(PARTICLE_CRT_COLOURS[now]||PARTICLE_CRT_COLOURS['default']);
+            _ctrlUpdateColour();
         }).observe(document.documentElement,{attributes:true,attributeFilter:['data-crt-mode']});
     }
     if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',attach);
