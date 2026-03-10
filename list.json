@@ -4,8 +4,8 @@
       "tab": "tool;app",
       "href": "https://3dordi.io/",
       "tooltip": "Cutting-edge web3 application for exploring, managing and inscribing Ordinals (NFTs) on BSV blockchain",
-      "img": "app/3d-.webp",
-      "zoom": "1.2",
+      "img": "app/3d.webp",
+      "zoom": "1.0",
       "alt": "nft tool app",
       "text": "3D Ordi",
       "info": ";;;"
@@ -461,7 +461,7 @@
       "zoom": "1.0",
       "alt": "sign authanticate",
       "text": "AuthSig",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "app",
@@ -471,7 +471,7 @@
       "zoom": "1.0",
       "alt": "pixel art",
       "text": "Everdraw",
-      "info": ";;;",
+      "info": "brc100.svg;;;",
       "colour1": "black",
       "colour2": "darkblue"
     },
@@ -483,7 +483,7 @@
       "zoom": "1.0",
       "alt": "pixel art",
       "text": "PixelWar",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "doc",
@@ -503,7 +503,7 @@
       "zoom": "1.0",
       "alt": "independent verification",
       "text": "Traceport",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "app;social",
@@ -523,7 +523,7 @@
       "zoom": "1.0",
       "alt": "ai",
       "text": "Genius System",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "doc",
@@ -593,7 +593,7 @@
       "zoom": "1.0",
       "alt": "demo",
       "text": "TERAGUN",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "wallet",
@@ -733,7 +733,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "TOOL on BSV",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "app",
@@ -743,7 +743,7 @@
       "zoom": "1.0",
       "alt": "transaction send payment",
       "text": "PeerPay",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "app",
@@ -753,7 +753,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Gloss",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "app",
@@ -763,7 +763,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "TrueLink",
-      "info": ";;;",
+      "info": "brc100.svg;;;",
       "colour1": "#1f0d32ff",
       "colour2": "#d7523eff",
       "opacity": "0.85"
@@ -786,7 +786,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "HyperTypist",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "app",
@@ -796,7 +796,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Metanet Microblog",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "app",
@@ -806,7 +806,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "SocialCert",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "app",
@@ -816,7 +816,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Metanet Calendar",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "app",
@@ -826,7 +826,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "ToDo",
-      "info": ";;;",
+      "info": "brc100.svg;;;",
       "colour1": "skyblue",
       "colour2": "white",
       "opacity": "0.5"
@@ -839,7 +839,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Stuff",
-      "info": ";;;",
+      "info": "brc100.svg;;;",
       "colour1": "gray",
       "colour2": "skyblue",
       "opacity": "0.5"
@@ -852,7 +852,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "UHRP Storage",
-      "info": ";;;",
+      "info": "brc100.svg;;;",
       "colour1": "skyblue",
       "colour2": "white",
       "opacity": "0.5"
@@ -875,7 +875,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Coinflip",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "app",
@@ -885,7 +885,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Metanet Highway",
-      "info": ";;;",
+      "info": "brc100.svg;;;",
       "colour1": "gray",
       "colour2": "white",
       "opacity": "0.5"
@@ -898,7 +898,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "MarsCast",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "app",
@@ -908,7 +908,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Legacy Payments",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "app",
@@ -918,7 +918,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "CoolCert",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "app",
@@ -928,7 +928,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Pensona",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "app",
@@ -938,7 +938,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "DropBlocks",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "app",
@@ -948,7 +948,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Pay-QuickR",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "app",
@@ -958,7 +958,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Secure Backup & Recovery",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "app",
@@ -968,7 +968,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Quickstart Docs",
-      "info": ";;;",
+      "info": "brc100.svg;;;",
       "colour1": "#5500aaff"
     },
     {
@@ -979,7 +979,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Paymail Bridge",
-      "info": ";;;",
+      "info": "brc100.svg;;;",
       "colour1": "#6793b4ff",
       "opacity": "0"
     },
@@ -991,7 +991,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Mnemonic",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "social",
@@ -1041,7 +1041,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Pollr",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "video",
@@ -1124,14 +1124,14 @@
       "info": ";;;"
     },
     {
-      "tab": "tool;app",
+      "tab": "tool;doc",
       "href": "https://bitcoinschema.org",
       "tooltip": "Build interoperable applications that share a single global database. Data written by one app is instantly readable by any other Bitcoin Schema compliant application.",
       "img": "icon/bitcoinschema.svg",
       "zoom": "1.0",
       "alt": "",
       "text": "Bitcoin Schema",
-      "info": ";;;"
+      "info": ";;code.svg;"
     },
     {
       "tab": "tool;app;wallet",
@@ -1151,7 +1151,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "PeerJump",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "app;exchange;market",
@@ -1191,7 +1191,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Bitcoin Mint",
-      "info": ";;new.svg;"
+      "info": "brc100.svg;;new.svg;"
     },
     {
       "tab": "market",
@@ -1223,7 +1223,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Bit Sign",
-      "info": ";;new.svg;",
+      "info": "brc100.svg;;new.svg;",
       "colour1": "black",
       "colour2": "gray",
       "opacity": "0.6"
@@ -1236,7 +1236,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Immutify",
-      "info": ";;",
+      "info": "brc100.svg;;;",
       "colour1": "skyblue",
       "colour2": "purple",
       "opacity": "0.8"
@@ -1327,7 +1327,7 @@
       "zoom": "1.0",
       "alt": "music microplayments",
       "text": "ZedVibe",
-      "info": ";;;",
+      "info": "brc100.svg;;;",
       "colour1": "#000080",
       "colour2": "purple",
       "opacity": "0.7"
@@ -1340,7 +1340,7 @@
       "zoom": "1.0",
       "alt": "AI config personality",
       "text": "AGiD",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "broken",
@@ -1350,7 +1350,7 @@
       "zoom": "1.4",
       "alt": "clasic arcade games",
       "text": "Thryll",
-      "info": ";;;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "exchange",

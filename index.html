@@ -27,8 +27,17 @@
     <link rel="stylesheet" href="styles/crt-modes.css">
     <script defer src="script/crt-modes.js"></script>
 
-    <!-- PARTICLE NETWORK BACKGROUND PLUGIN (remove lines to disable) -->
-    <script defer src="script/particle-bg.js"></script>
+    <!-- BACKGROUND ANIMATION — randomly loads one of two variants -->
+    <script>
+    (function () {
+        var scripts = ['script/network-bg.js', 'script/mandala-bg.js'];
+        var chosen  = scripts[Math.floor(Math.random() * scripts.length)];
+        var s = document.createElement('script');
+        s.src = chosen;
+        s.defer = true;
+        document.head.appendChild(s);
+    })();
+    </script>
     
     <!-- EARLY MOBILE DETECTION - Prevents flash of desktop content -->
     <script>
