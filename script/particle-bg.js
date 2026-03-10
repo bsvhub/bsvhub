@@ -77,9 +77,9 @@
             diversity logic observable without affecting it.
    ─────────────────────────────────────────────────────────
    LAN activity is independent of all WAN rules. Tweaking any
-   WAN parameter (WAN_INTERVAL, BACKBONE_DIST, forward rate)
-   has zero effect on internal LAN packet behaviour and vice
-   versa. See engineTickWAN() and engineTickLAN().
+   WAN parameter (WAN_INTERVAL, forward rate) has zero effect
+   on internal LAN packet behaviour and vice versa.
+   See engineTickWAN() and engineTickLAN().
    ============================================================ */
 
 /* ============================================================
@@ -152,11 +152,6 @@ var CFG = {
     OPACITY:         0.8,   /* master canvas opacity
                                range : 0.0 → 1.0  [0.4–0.9]
                                0.0 = invisible,  1.0 = full brightness */
-
-    BACKBONE_DIST:   540,   /* max px between routers for a WAN link
-                               range : 150 → 900  [400–650]
-                               lower = islands,  higher = everything connected
-                               ⚠ affects WAN packet frequency visibly  */
 
     /* ════════════════════════════════════════════════════════
        LAYER 2 — ANIMATION  (timing & motion feel)
@@ -243,7 +238,8 @@ var CFG = {
                                0 = sparse tree,  4 = very dense mesh      */
 
     /* Large A — hex grid */
-    HEX_RINGS:        3,    /* rings of hexagons around the centre node
+    SIZE_HEX:          90,   /* hex-grid radius only — ~50% of SIZE_LARGE. range: 60→180 */
+    HEX_RINGS:         2,    /* rings of hexagons around the centre node
                                range : 1 → 5  [2–3]
                                1 = 7 nodes,  2 = 19,  3 = 37,  4 = 61
                                ⚠ 4+ is CPU-heavy, keep ≤ 4               */
@@ -327,9 +323,78 @@ function setColour(hex) {
             colour.r=d[0];colour.g=d[1];colour.b=d[2];
         } catch(e){}
     }
+    /* Glow sprites bake the colour in — discard on change */
+    _glowCacheInvalidate();
 }
 function col(a){ return 'rgba('+colour.r+','+colour.g+','+colour.b+','+a+')'; }
 function smooth(t){ t=t<0?0:t>1?1:t; return t*t*(3-2*t); }
+
+
+/* ============================================================
+   GLOW SPRITE CACHE
+   ─────────────────────────────────────────────────────────
+   Radial gradients are among the most expensive canvas 2D
+   operations.  Every device flash and every packet halo
+   previously created a new gradient object each frame.
+
+   Instead, we bake each unique (outerRadius, peakAlpha)
+   combination into a small offscreen canvas once and reuse
+   it with ctx.drawImage — a cheap bitmap blit.
+
+   Cache key:  "<qR>:<qA>"
+     qR  — outer radius rounded to the nearest integer (px)
+     qA  — peak (centre) alpha rounded to 0.05 steps
+
+   Invalidation: the cache is keyed on colour too.  When
+   setColour() is called (e.g. CRT mode switch), all entries
+   are discarded and rebuilt lazily on the next draw.
+
+   _drawGlow(ctx, x, y, outerR, peakAlpha)
+     Drop-in replacement for the inline createRadialGradient
+     pattern.  Transparent at the edge so no arc clip needed.
+   ============================================================ */
+var _glowCache    = {};
+var _glowColourKey = '';
+
+/* Invalidate all cached sprites — called by setColour() and
+   particleBgDestroy() so stale bitmaps are never reused.   */
+function _glowCacheInvalidate() { _glowCache = {}; _glowColourKey = ''; }
+
+/* Return (or build) a cached offscreen-canvas glyph.       */
+function _glowSprite(outerR, peakAlpha) {
+    /* Auto-invalidate on colour change */
+    var ck = colour.r + ',' + colour.g + ',' + colour.b;
+    if (ck !== _glowColourKey) { _glowCache = {}; _glowColourKey = ck; }
+
+    /* Quantise to bound cache size:
+       radius → nearest integer  |  alpha → nearest 0.05   */
+    var qR  = Math.round(outerR);
+    var qA  = Math.round(peakAlpha * 20) / 20;
+    var key = qR + ':' + qA;
+
+    if (!_glowCache[key]) {
+        var dim = qR * 2 + 2;          /* +2 so edge anti-alias has room */
+        var oc  = document.createElement('canvas');
+        oc.width = oc.height = dim;
+        var ox  = oc.getContext('2d');
+        var cx  = dim * 0.5, cy = dim * 0.5;
+        var gr  = ox.createRadialGradient(cx, cy, 0, cx, cy, qR);
+        gr.addColorStop(0, 'rgba('+colour.r+','+colour.g+','+colour.b+','+qA+')');
+        gr.addColorStop(1, 'rgba('+colour.r+','+colour.g+','+colour.b+',0)');
+        ox.beginPath(); ox.arc(cx, cy, qR, 0, Math.PI*2);
+        ox.fillStyle = gr; ox.fill();
+        _glowCache[key] = oc;
+    }
+    return _glowCache[key];
+}
+
+/* Draw a cached glow centred at (x, y).  No-op below 0.005 */
+function _drawGlow(ctx, x, y, outerR, peakAlpha) {
+    if (peakAlpha < 0.005) return;
+    var s = _glowSprite(outerR, peakAlpha);
+    var h = s.width * 0.5;
+    ctx.drawImage(s, x - h, y - h);
+}
 
 
 /* ============================================================
@@ -344,11 +409,7 @@ function drawDevice(ctx, dev, alpha) {
     /* ── Router — filled circle + arrival glow ─────────── */
     if (dev.type === DT.ROUTER) {
         if (fl > 0.02) {
-            var gr = ctx.createRadialGradient(dev.x,dev.y,0,dev.x,dev.y,20+fl*18);
-            gr.addColorStop(0, col(fl*0.65));
-            gr.addColorStop(1, col(0));
-            ctx.beginPath(); ctx.arc(dev.x,dev.y,20+fl*18,0,Math.PI*2);
-            ctx.fillStyle=gr; ctx.fill();
+            _drawGlow(ctx, dev.x, dev.y, 20+fl*18, fl*0.65);
         }
         ctx.beginPath();
         ctx.arc(dev.x,dev.y,CFG.SZ_ROUTER,0,Math.PI*2);
@@ -360,11 +421,7 @@ function drawDevice(ctx, dev, alpha) {
     /* ── Switch — filled diamond + soft glow ───────────── */
     if (dev.type === DT.SWITCH) {
         if (fl > 0.02) {
-            var gr = ctx.createRadialGradient(dev.x,dev.y,0,dev.x,dev.y,14+fl*10);
-            gr.addColorStop(0, col(fl*0.50));
-            gr.addColorStop(1, col(0));
-            ctx.beginPath(); ctx.arc(dev.x,dev.y,14+fl*10,0,Math.PI*2);
-            ctx.fillStyle=gr; ctx.fill();
+            _drawGlow(ctx, dev.x, dev.y, 14+fl*10, fl*0.50);
         }
         var s=CFG.SZ_SWITCH;
         ctx.beginPath();
@@ -381,11 +438,7 @@ function drawDevice(ctx, dev, alpha) {
     /* ── Computer — small filled square + soft glow ────── */
     if (dev.type === DT.COMPUTER) {
         if (fl > 0.02) {
-            var gr = ctx.createRadialGradient(dev.x,dev.y,0,dev.x,dev.y,12+fl*8);
-            gr.addColorStop(0, col(fl*0.45));
-            gr.addColorStop(1, col(0));
-            ctx.beginPath(); ctx.arc(dev.x,dev.y,12+fl*8,0,Math.PI*2);
-            ctx.fillStyle=gr; ctx.fill();
+            _drawGlow(ctx, dev.x, dev.y, 12+fl*8, fl*0.45);
         }
         var s=CFG.SZ_COMPUTER;
         ctx.fillStyle=col(Math.min(1,a*0.80+fl*0.35));
@@ -396,11 +449,7 @@ function drawDevice(ctx, dev, alpha) {
     /* ── Server — larger filled square + soft glow ─────── */
     if (dev.type === DT.SERVER) {
         if (fl > 0.02) {
-            var gr = ctx.createRadialGradient(dev.x,dev.y,0,dev.x,dev.y,14+fl*10);
-            gr.addColorStop(0, col(fl*0.48));
-            gr.addColorStop(1, col(0));
-            ctx.beginPath(); ctx.arc(dev.x,dev.y,14+fl*10,0,Math.PI*2);
-            ctx.fillStyle=gr; ctx.fill();
+            _drawGlow(ctx, dev.x, dev.y, 14+fl*10, fl*0.48);
         }
         var s=CFG.SZ_SERVER;
         ctx.fillStyle=col(Math.min(1,a*0.85+fl*0.35));
@@ -411,11 +460,7 @@ function drawDevice(ctx, dev, alpha) {
     /* ── Miner — filled hexagon + strong glow ──────────── */
     if (dev.type === DT.MINER) {
         if (fl > 0.02) {
-            var gr = ctx.createRadialGradient(dev.x,dev.y,0,dev.x,dev.y,18+fl*14);
-            gr.addColorStop(0, col(fl*0.60));
-            gr.addColorStop(1, col(0));
-            ctx.beginPath(); ctx.arc(dev.x,dev.y,18+fl*14,0,Math.PI*2);
-            ctx.fillStyle=gr; ctx.fill();
+            _drawGlow(ctx, dev.x, dev.y, 18+fl*14, fl*0.60);
         }
         var r=CFG.SZ_MINER;
         ctx.beginPath();
@@ -434,11 +479,7 @@ function drawDevice(ctx, dev, alpha) {
     /* ── Validator — filled equilateral triangle ────────── */
     if (dev.type === DT.VALIDATOR) {
         if (fl > 0.02) {
-            var gr = ctx.createRadialGradient(dev.x,dev.y,0,dev.x,dev.y,16+fl*12);
-            gr.addColorStop(0, col(fl*0.55));
-            gr.addColorStop(1, col(0));
-            ctx.beginPath(); ctx.arc(dev.x,dev.y,16+fl*12,0,Math.PI*2);
-            ctx.fillStyle=gr; ctx.fill();
+            _drawGlow(ctx, dev.x, dev.y, 16+fl*12, fl*0.55);
         }
         var r=CFG.SZ_VALIDATOR;
         ctx.beginPath();
@@ -454,11 +495,7 @@ function drawDevice(ctx, dev, alpha) {
     /* ── IoT — filled cross/plus ────────────────────────── */
     if (dev.type === DT.IOT) {
         if (fl > 0.02) {
-            var gr = ctx.createRadialGradient(dev.x,dev.y,0,dev.x,dev.y,10+fl*8);
-            gr.addColorStop(0, col(fl*0.40));
-            gr.addColorStop(1, col(0));
-            ctx.beginPath(); ctx.arc(dev.x,dev.y,10+fl*8,0,Math.PI*2);
-            ctx.fillStyle=gr; ctx.fill();
+            _drawGlow(ctx, dev.x, dev.y, 10+fl*8, fl*0.40);
         }
         var arm=CFG.SZ_IOT, thick=0.9;
         ctx.fillStyle=col(Math.min(1,a*0.75+fl*0.30));
@@ -663,7 +700,7 @@ Network.prototype._buildMediumTree = function() {
 
 /* ── LARGE A — hexagonal grid ────────────────────────────── */
 Network.prototype._buildHexGrid = function() {
-    var sp    = CFG.SIZE_LARGE;
+    var sp    = CFG.SIZE_HEX;
     var rings = CFG.HEX_RINGS;
     var hexSz = Math.floor(sp/(rings+0.5))*0.95;
     var nodeMap = {}, coords = [];
@@ -932,19 +969,40 @@ function bestSpawn(){
     return best;
 }
 
+/* ============================================================
+   _resizeCanvas — hi-DPI / Retina backing-store scaling
+   ─────────────────────────────────────────────────────────
+   Sizes the canvas backing store at physical pixels (CSS px
+   × devicePixelRatio) while keeping the CSS layout size at
+   logical pixels, then applies a matching context transform
+   so every drawing call still uses logical coordinates.
+
+   Called from engineInit() and on every window resize.
+   Also invalidates the glow-sprite cache because the colour
+   objects embedded in the bitmaps have not changed, but the
+   destination canvas resolution has — old sprites are reused
+   safely at any DPR because they are drawn via drawImage.
+   ============================================================ */
+function _resizeCanvas() {
+    var dpr = Math.max(1, window.devicePixelRatio || 1);
+    scene.W = window.innerWidth;
+    scene.H = window.innerHeight;
+    scene.canvas.width  = Math.floor(scene.W * dpr);
+    scene.canvas.height = Math.floor(scene.H * dpr);
+    scene.canvas.style.width  = scene.W + 'px';
+    scene.canvas.style.height = scene.H + 'px';
+    scene.ctx = scene.canvas.getContext('2d');
+    scene.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
 function engineInit(){
-    scene.W=window.innerWidth; scene.H=window.innerHeight;
     if(!scene.canvas){
         scene.canvas=document.createElement('canvas');
-        scene.canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;';
+        scene.canvas.style.cssText='position:absolute;inset:0;pointer-events:none;z-index:2;';
         scene.layer.appendChild(scene.canvas);
-        window.addEventListener('resize',function(){
-            scene.W=scene.canvas.width=window.innerWidth;
-            scene.H=scene.canvas.height=window.innerHeight;
-        });
+        window.addEventListener('resize', _resizeCanvas);
     }
-    scene.canvas.width=scene.W; scene.canvas.height=scene.H;
-    scene.ctx=scene.canvas.getContext('2d');
+    _resizeCanvas();   /* sets W, H, width, height, ctx, and DPR transform */
     sim.networks=[]; sim.pulses=[]; sim.frame=0; sim.netIdCounter=0;
 
     var cycle=CFG.FADE_FRAMES*2+CFG.ALIVE_MIN;
@@ -988,14 +1046,13 @@ function _wanSendFrom(net, exclude) {
 
     var rp = net.routerPos();
 
-    /* Build candidate list — reachable, eligible, not on cooldown */
+    /* Build candidate list — alive, eligible, not on cooldown.
+       No distance limit: all live networks are reachable.
+       Rules 4, 5, and pair-cooldown handle variety instead.  */
     var candidates = sim.networks.filter(function(r){
         if(r===net)            return false;  /* not self          */
         if(r===exclude)        return false;  /* rule 5            */
         if(!r.canReceive())    return false;  /* must be alive     */
-        var tp=r.routerPos();
-        var dx=rp.x-tp.x, dy=rp.y-tp.y;
-        if(Math.sqrt(dx*dx+dy*dy) >= CFG.BACKBONE_DIST) return false;
         var lastSent = net._wanCooldown[r.id] || 0;
         return (sim.frame - lastSent) >= PAIR_COOLDOWN;
     });
@@ -1005,9 +1062,7 @@ function _wanSendFrom(net, exclude) {
     if(candidates.length === 0){
         candidates = sim.networks.filter(function(r){
             if(r===net||r===exclude||!r.canReceive()) return false;
-            var tp=r.routerPos();
-            var dx=rp.x-tp.x, dy=rp.y-tp.y;
-            return Math.sqrt(dx*dx+dy*dy) < CFG.BACKBONE_DIST;
+            return true;
         });
     }
     if(candidates.length === 0) return;
@@ -1111,7 +1166,12 @@ function engineDraw(){
     scene.ctx.clearRect(0,0,scene.W,scene.H);
     var live=sim.networks.filter(function(n){return n.state!==ST.DEAD;});
 
-    /* 1 — WAN dashed backbone lines */
+    /* 1 — WAN dashed backbone lines
+          All live network pairs get a line; opacity falls off with
+          distance so close pairs are bright and distant pairs fade
+          to near-invisible.  The screen diagonal is used as the
+          falloff scale so the result adapts to every screen size.
+          Lines below 0.004 alpha are skipped (no-op draw).        */
     /* Build a set of active routes (router pairs with a WAN packet in flight) */
     var activeRoutes=[];
     sim.pulses.filter(function(p){return p.isWan;}).forEach(function(p){
@@ -1122,14 +1182,18 @@ function engineDraw(){
         });
     });
 
+    var diag = Math.sqrt(scene.W*scene.W + scene.H*scene.H) || 1;
+
     scene.ctx.setLineDash([4,7]);
     for(var i=0;i<live.length;i++){
         for(var j=i+1;j<live.length;j++){
             var rp1=live[i].routerPos(), rp2=live[j].routerPos();
             var dx=rp1.x-rp2.x, dy=rp1.y-rp2.y;
             var d=Math.sqrt(dx*dx+dy*dy);
-            if(d>=CFG.BACKBONE_DIST) continue;
-            var baseA=Math.pow(1-d/CFG.BACKBONE_DIST,2.5)*0.38*live[i].alpha*live[j].alpha;
+            /* Proximity falloff — same power curve as before, now
+               scaled against the full diagonal instead of a fixed
+               pixel cap.  Networks at ~35% diagonal ≈ old 540px.  */
+            var baseA=Math.pow(1-d/diag,2.5)*0.38*live[i].alpha*live[j].alpha;
 
             /* Check if a WAN packet is currently travelling this exact route */
             var routeBoost=0;
@@ -1186,11 +1250,7 @@ function engineDraw(){
             scene.ctx.fillStyle=col(frac*0.55); scene.ctx.fill();
         }
         var env=Math.sin(p.t*Math.PI);
-        var grad=scene.ctx.createRadialGradient(p.cx,p.cy,0,p.cx,p.cy,13);
-        grad.addColorStop(0,col(env*0.65));
-        grad.addColorStop(1,col(0));
-        scene.ctx.beginPath(); scene.ctx.arc(p.cx,p.cy,13,0,Math.PI*2);
-        scene.ctx.fillStyle=grad; scene.ctx.fill();
+        _drawGlow(scene.ctx, p.cx, p.cy, 13, env*0.65);
         scene.ctx.beginPath(); scene.ctx.arc(p.cx,p.cy,2.6,0,Math.PI*2);
         scene.ctx.fillStyle=col(env*0.95); scene.ctx.fill();
     });
@@ -1207,11 +1267,7 @@ function engineDraw(){
         }
         var env=Math.sin(p.t*Math.PI);
         /* small soft halo */
-        var grad=scene.ctx.createRadialGradient(p.cx,p.cy,0,p.cx,p.cy,6);
-        grad.addColorStop(0,col(env*0.55*na));
-        grad.addColorStop(1,col(0));
-        scene.ctx.beginPath(); scene.ctx.arc(p.cx,p.cy,6,0,Math.PI*2);
-        scene.ctx.fillStyle=grad; scene.ctx.fill();
+        _drawGlow(scene.ctx, p.cx, p.cy, 6, env*0.55*na);
         /* core dot */
         scene.ctx.beginPath(); scene.ctx.arc(p.cx,p.cy,1.6,0,Math.PI*2);
         scene.ctx.fillStyle=col(env*0.90*na); scene.ctx.fill();
@@ -1257,7 +1313,15 @@ function particleBgSetOpacity(v){
        naturally; new ones spawn with fresh params).
      • Colours driven by col() so they update with CRT mode.
    ============================================================ */
-var ui = { ctrl:null, ctrlPulse:0, monitor:null, monitorRows:[] };
+var ui = { ctrl:null, ctrlPulse:0, monitor:null, monitorRows:[], observer:null };
+
+/* ── Reduced-motion preference — read once at load time ──────
+   If the user has requested reduced motion (system accessibility
+   setting), trails are disabled and packet intervals are doubled
+   so the animation stays functional but far less distracting.
+   Applied inside startPlugin() before engineInit().            */
+var _prefersReducedMotion = (typeof window.matchMedia === 'function') &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function _ctrlCell(text, onClick) {
     var el = document.createElement('span');
@@ -1506,7 +1570,18 @@ function startPlugin(){
             document.body.appendChild(scene.layer);
         }
         scene.layer.style.opacity=CFG.OPACITY;
+
+        /* Honour prefers-reduced-motion — suppress trails and slow packets.
+           Applied before engineInit so LAN/WAN timers are set correctly.  */
+        if (_prefersReducedMotion) {
+            CFG.WAN_TRAIL    = 0;
+            CFG.LAN_TRAIL    = 0;
+            CFG.WAN_INTERVAL = Math.max(CFG.WAN_INTERVAL, 600);
+            CFG.LAN_INTERVAL = Math.max(CFG.LAN_INTERVAL, 600);
+        }
+
         engineStop();
+        scene.running = true;   /* visibility-pause guard — see visibilitychange handler */
         var mode=document.documentElement.getAttribute('data-crt-mode')||'default';
         setColour(PARTICLE_CRT_COLOURS[mode]||PARTICLE_CRT_COLOURS['default']);
         engineInit();
@@ -1522,11 +1597,49 @@ function particleBgStart(){
     startPlugin();
 }
 function particleBgStop(){
+    scene.running = false;   /* mark as intentionally stopped */
     engineStop();
     if(scene.layer)   scene.layer.style.opacity=0;
     if(ui.ctrl)    ui.ctrl.style.opacity=0;
     if(ui.monitor) ui.monitor.style.opacity=0;
 }
+
+/* ── particleBgDestroy — full teardown ───────────────────────
+   Removes every DOM node this plugin created, cancels the RAF
+   loop, clears all simulation state, disconnects the mutation
+   observer, and flushes the glow sprite cache.
+
+   Use this when navigating away from the section entirely, or
+   to fully reset the plugin before a clean re-init.
+   After calling destroy, particleBgStart() may be called again
+   to bring everything back up from scratch.                   */
+function particleBgDestroy(){
+    engineStop();
+    scene.running = false;
+    if(scene.layer)  { scene.layer.remove();  scene.layer  = null; }
+    if(ui.ctrl)      { ui.ctrl.remove();      ui.ctrl      = null; }
+    if(ui.monitor)   { ui.monitor.remove();   ui.monitor   = null; }
+    if(ui.observer)  { ui.observer.disconnect(); ui.observer = null; }
+    scene.canvas = null; scene.ctx = null;
+    sim.networks = []; sim.pulses = []; sim.frame = 0;
+    ui.monitorRows = [];
+    _glowCacheInvalidate();   /* free offscreen bitmaps */
+}
+
+/* ── Page Visibility pause ───────────────────────────────────
+   When the browser tab is hidden the RAF loop is still called
+   but nothing is displayed — pure wasted CPU/GPU.  We stop the
+   loop on hide and resume it on return, but only when the
+   animation was actually running (scene.running) so that a
+   deliberate particleBgStop() is not accidentally reversed.   */
+document.addEventListener('visibilitychange', function(){
+    if(!scene.running) return;
+    if(document.hidden){
+        engineStop();
+    } else {
+        if(!scene.animId) engineLoop();
+    }
+});
 
 /* Auto-start is intentionally disabled — started on demand via particleBgStart() */
 
@@ -1537,22 +1650,27 @@ function particleBgStop(){
 (function(){
     function attach(){
         if(typeof MutationObserver==='undefined') return;
+        /* Disconnect any previously attached observer so repeated
+           startPlugin() calls do not accumulate orphaned observers */
+        if(ui.observer) ui.observer.disconnect();
         var last=document.documentElement.getAttribute('data-crt-mode')||'default';
-        new MutationObserver(function(){
+        ui.observer = new MutationObserver(function(){
             var now=document.documentElement.getAttribute('data-crt-mode')||'default';
             if(now===last) return; last=now;
             setColour(PARTICLE_CRT_COLOURS[now]||PARTICLE_CRT_COLOURS['default']);
             _ctrlUpdateColour();
-        }).observe(document.documentElement,{attributes:true,attributeFilter:['data-crt-mode']});
+        });
+        ui.observer.observe(document.documentElement,{attributes:true,attributeFilter:['data-crt-mode']});
     }
     if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',attach);
     else attach();
 })();
 
 /* ── Public API — only these symbols reach the global scope ── */
-global.CFG                = CFG;
-global.particleBgStart    = particleBgStart;
-global.particleBgStop     = particleBgStop;
+global.CFG                  = CFG;
+global.particleBgStart      = particleBgStart;
+global.particleBgStop       = particleBgStop;
+global.particleBgDestroy    = particleBgDestroy;
 global.particleBgSetOpacity = particleBgSetOpacity;
 
 }(window));
