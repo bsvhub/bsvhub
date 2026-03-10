@@ -110,6 +110,9 @@
    ============================================================ */
 
 
+(function(global){
+'use strict';
+
 /* ============================================================
    COLOUR MAP  (ids match crt-modes.js swatch ids)
    ============================================================ */
@@ -302,18 +305,18 @@ var DT = { COMPUTER:0, SERVER:1, ROUTER:2, SWITCH:3, MINER:4, VALIDATOR:5, IOT:6
 /* ============================================================
    COLOUR HELPERS
    ============================================================ */
-var _r=122, _g=143, _b=168;
+var colour = { r:122, g:143, b:168 };
 
 function setColour(hex) {
     var c=(hex||'').trim();
     if(/^#[0-9a-fA-F]{6}$/i.test(c)){
-        _r=parseInt(c.slice(1,3),16);
-        _g=parseInt(c.slice(3,5),16);
-        _b=parseInt(c.slice(5,7),16);
+        colour.r=parseInt(c.slice(1,3),16);
+        colour.g=parseInt(c.slice(3,5),16);
+        colour.b=parseInt(c.slice(5,7),16);
     } else if(/^#[0-9a-fA-F]{3}$/i.test(c)){
-        _r=parseInt(c[1]+c[1],16);
-        _g=parseInt(c[2]+c[2],16);
-        _b=parseInt(c[3]+c[3],16);
+        colour.r=parseInt(c[1]+c[1],16);
+        colour.g=parseInt(c[2]+c[2],16);
+        colour.b=parseInt(c[3]+c[3],16);
     } else {
         try {
             var t=document.createElement('canvas');
@@ -321,11 +324,11 @@ function setColour(hex) {
             var x=t.getContext('2d');
             x.fillStyle=c; x.fillRect(0,0,1,1);
             var d=x.getImageData(0,0,1,1).data;
-            _r=d[0];_g=d[1];_b=d[2];
+            colour.r=d[0];colour.g=d[1];colour.b=d[2];
         } catch(e){}
     }
 }
-function col(a){ return 'rgba('+_r+','+_g+','+_b+','+a+')'; }
+function col(a){ return 'rgba('+colour.r+','+colour.g+','+colour.b+','+a+')'; }
 function smooth(t){ t=t<0?0:t>1?1:t; return t*t*(3-2*t); }
 
 
@@ -484,7 +487,7 @@ function _pickTopoType() {
     var counts = [];
     var i;
     for(i=0; i<TOPO_COUNT; i++) counts[i]=0;
-    _networks.forEach(function(n){
+    sim.networks.forEach(function(n){
         if(n.state !== ST.DEAD && n.topoType !== undefined)
             counts[n.topoType]++;
     });
@@ -504,7 +507,10 @@ function _pickTopoType() {
 /* ============================================================
    NETWORK CLASS
    ============================================================ */
+var sim = { netIdCounter:0, networks:[], pulses:[], frame:0 };
+
 function Network(cx, cy) {
+    this.id     = ++sim.netIdCounter;  /* unique identity — used by cooldown map  */
     this.cx    = cx;
     this.cy    = cy;
     this.alpha = 0;
@@ -516,7 +522,8 @@ function Network(cx, cy) {
     this.edges     = [];   /* { a, b, t } — precomputed, never changes */
     this.routerIdx = 0;
     this.lanTimer  = Math.floor(Math.random()*CFG.LAN_INTERVAL); /* stagger */
-    this.wanTimer  = 9999; /* start high — fires on first eligible check  */
+    this.wanTimer         = 0;
+    this.wanPendingFirst  = true;  /* rule 1 — fire as soon as a target exists */
 
     /* Topology type assigned by _pickTopoType() — ensures all 8
        types are represented before any type repeats.
@@ -543,429 +550,266 @@ Network.prototype._edge = function(a,b,t) {
     this.edges.push({a:a,b:b,t:t||'access'});
 };
 
+/* ── Shared geometry primitives ──────────────────────────────
+   Five patterns repeated across all 8 builders, extracted once.
+   ──────────────────────────────────────────────────────────── */
+
+/* Return copy of pool sorted ascending by distance from devices[fromIdx] */
+Network.prototype._sortByDist = function(fromIdx, pool) {
+    var ref = this.devices[fromIdx];
+    return pool.slice().sort(function(a, b) {
+        var da=this.devices[a], db=this.devices[b];
+        return (da.x-ref.x)*(da.x-ref.x)+(da.y-ref.y)*(da.y-ref.y) -
+               ((db.x-ref.x)*(db.x-ref.x)+(db.y-ref.y)*(db.y-ref.y));
+    }.bind(this));
+};
+
+/* Connect fromIdx to its n nearest neighbours in pool */
+Network.prototype._connectNearest = function(fromIdx, pool, n, edgeType) {
+    var sorted = this._sortByDist(fromIdx, pool);
+    for (var i=0; i<Math.min(n, sorted.length); i++)
+        this._edge(fromIdx, sorted[i], edgeType||'uplink');
+};
+
+/* Place n nodes evenly on a circle; return their device indices */
+Network.prototype._placeRing = function(n, radius, rot, type) {
+    var idxs = [];
+    for (var i=0; i<n; i++) {
+        var a = rot + i*(Math.PI*2/n);
+        idxs.push(this._add(this.cx+Math.cos(a)*radius, this.cy+Math.sin(a)*radius, type));
+    }
+    return idxs;
+};
+
+/* Connect a ring sequentially, wrapping last node back to first */
+Network.prototype._connectRing = function(idxs, edgeType) {
+    for (var i=0; i<idxs.length; i++)
+        this._edge(idxs[i], idxs[(i+1)%idxs.length], edgeType||'access');
+};
+
+/* Place router at network edge (random angle), set routerIdx, return index */
+Network.prototype._routerAtEdge = function(size, factor) {
+    var ra  = Math.random()*Math.PI*2;
+    var idx = this._add(this.cx+Math.cos(ra)*size*factor, this.cy+Math.sin(ra)*size*factor, DT.ROUTER);
+    this.routerIdx = idx;
+    return idx;
+};
+
+
 /* ── SMALL — star topology ───────────────────────────────── */
 Network.prototype._buildSmall = function() {
-    var sp=CFG.SIZE_SMALL;
-    var swIdx=this._add(this.cx,this.cy,DT.SWITCH);
-    var ra=Math.random()*Math.PI*2;
-    var rIdx=this._add(
-        this.cx+Math.cos(ra)*sp*0.72,
-        this.cy+Math.sin(ra)*sp*0.72, DT.ROUTER);
-    this.routerIdx=rIdx;
-    this._edge(rIdx,swIdx,'uplink');
-    var n=CFG.PC_SMALL_MIN+Math.floor(Math.random()*(CFG.PC_SMALL_MAX-CFG.PC_SMALL_MIN+1));
-    /* Mix of computers and IoT devices */
-    for (var i=0;i<n;i++) {
-        var a=ra+Math.PI+(i-(n-1)/2)*(Math.PI*0.75/Math.max(n-1,1));
-        var d=sp*(0.48+Math.random()*0.38);
-        var type = (Math.random()<0.4) ? DT.IOT : DT.COMPUTER;
-        this._edge(swIdx,this._add(
-            this.cx+Math.cos(a)*d,this.cy+Math.sin(a)*d, type),'access');
+    var sp = CFG.SIZE_SMALL;
+    var sw = this._add(this.cx, this.cy, DT.SWITCH);
+    var r  = this._routerAtEdge(sp, 0.72);
+    this._edge(r, sw, 'uplink');
+    var n  = CFG.PC_SMALL_MIN + Math.floor(Math.random()*(CFG.PC_SMALL_MAX-CFG.PC_SMALL_MIN+1));
+    var ra = Math.atan2(this.devices[r].y-this.cy, this.devices[r].x-this.cx);
+    for (var i=0; i<n; i++) {
+        var a    = ra+Math.PI + (i-(n-1)/2)*(Math.PI*0.75/Math.max(n-1,1));
+        var d    = sp*(0.48+Math.random()*0.38);
+        var type = Math.random()<0.4 ? DT.IOT : DT.COMPUTER;
+        this._edge(sw, this._add(this.cx+Math.cos(a)*d, this.cy+Math.sin(a)*d, type), 'access');
     }
 };
 
 /* ── MEDIUM A — ring topology ────────────────────────────── */
 Network.prototype._buildMediumRing = function() {
-    var sp=CFG.SIZE_MEDIUM;
-    var ra=Math.random()*Math.PI*2;
-    var rIdx=this._add(
-        this.cx+Math.cos(ra)*sp*0.72,
-        this.cy+Math.sin(ra)*sp*0.72, DT.ROUTER);
-    this.routerIdx=rIdx;
-    var n=CFG.PC_MED_MIN+Math.floor(Math.random()*(CFG.PC_MED_MAX-CFG.PC_MED_MIN+1));
-    var ringIdxs=[];
-    var gapAngle=ra;
-    var arcSpan =Math.PI*1.5;
-    for (var i=0;i<n;i++) {
-        var frac=n>1?i/(n-1):0.5;
-        var a=gapAngle+Math.PI-arcSpan/2+frac*arcSpan;
-        var jitter=sp*(0.08+Math.random()*0.12);
-        var dist=sp*(0.62+Math.random()*0.22);
-        /* Mix of validators, miners, and computers on a ring */
-        var type;
-        if (i===Math.floor(n/2))        type=DT.SERVER;
-        else if (i%3===0)               type=DT.VALIDATOR;
-        else                            type=DT.COMPUTER;
-        var idx=this._add(
-            this.cx+Math.cos(a)*dist+Math.cos(a+Math.PI/2)*jitter,
-            this.cy+Math.sin(a)*dist+Math.sin(a+Math.PI/2)*jitter,
-            type);
-        ringIdxs.push(idx);
+    var sp  = CFG.SIZE_MEDIUM;
+    var r   = this._routerAtEdge(sp, 0.72);
+    var ra  = Math.atan2(this.devices[r].y-this.cy, this.devices[r].x-this.cx);
+    var n   = CFG.PC_MED_MIN + Math.floor(Math.random()*(CFG.PC_MED_MAX-CFG.PC_MED_MIN+1));
+    var arc = Math.PI*1.5;
+    var ringIdxs = [];
+    for (var i=0; i<n; i++) {
+        var frac = n>1 ? i/(n-1) : 0.5;
+        var a    = ra+Math.PI - arc/2 + frac*arc;
+        var jit  = sp*(0.08+Math.random()*0.12);
+        var dist = sp*(0.62+Math.random()*0.22);
+        var type = i===Math.floor(n/2) ? DT.SERVER : i%3===0 ? DT.VALIDATOR : DT.COMPUTER;
+        ringIdxs.push(this._add(
+            this.cx+Math.cos(a)*dist + Math.cos(a+Math.PI/2)*jit,
+            this.cy+Math.sin(a)*dist + Math.sin(a+Math.PI/2)*jit, type));
     }
-    for (var i=0;i<ringIdxs.length;i++) {
-        this._edge(ringIdxs[i],ringIdxs[(i+1)%ringIdxs.length],'access');
-    }
-    var rp=this.devices[rIdx];
-    var dists=ringIdxs.map(function(ri){
-        var nd=this.devices[ri];
-        var dx=nd.x-rp.x,dy=nd.y-rp.y;
-        return {ri:ri,d:Math.sqrt(dx*dx+dy*dy)};
-    },this);
-    dists.sort(function(a,b){return a.d-b.d;});
-    this._edge(rIdx,dists[0].ri,'uplink');
-    if(dists.length>1) this._edge(rIdx,dists[1].ri,'uplink');
+    this._connectRing(ringIdxs, 'access');
+    this._connectNearest(r, ringIdxs, 2, 'uplink');
 };
 
 /* ── MEDIUM B — hierarchical tree topology ───────────────── */
 Network.prototype._buildMediumTree = function() {
-    var sp=CFG.SIZE_MEDIUM;
-    var ra=Math.random()*Math.PI*2;
-    /* Router at edge */
-    var rIdx=this._add(
-        this.cx+Math.cos(ra)*sp*0.78,
-        this.cy+Math.sin(ra)*sp*0.78, DT.ROUTER);
-    this.routerIdx=rIdx;
-    /* Two aggregate servers equidistant from router */
-    var aggIdxs=[];
-    for (var i=0;i<2;i++) {
-        var a=ra+Math.PI+(-0.45+i*0.90);
-        var aIdx=this._add(
-            this.cx+Math.cos(a)*sp*0.40,
-            this.cy+Math.sin(a)*sp*0.40, DT.SERVER);
-        aggIdxs.push(aIdx);
-        this._edge(rIdx,aIdx,'uplink');
+    var sp  = CFG.SIZE_MEDIUM;
+    var r   = this._routerAtEdge(sp, 0.78);
+    var ra  = Math.atan2(this.devices[r].y-this.cy, this.devices[r].x-this.cx);
+    var agg = [];
+    for (var i=0; i<2; i++) {
+        var a  = ra+Math.PI + (-0.45+i*0.90);
+        var ai = this._add(this.cx+Math.cos(a)*sp*0.40, this.cy+Math.sin(a)*sp*0.40, DT.SERVER);
+        agg.push(ai);
+        this._edge(r, ai, 'uplink');
     }
-    /* 2-3 leaf nodes per aggregate */
-    var leafTypes=[DT.COMPUTER, DT.IOT, DT.COMPUTER, DT.IOT, DT.COMPUTER];
-    for (var ai=0;ai<aggIdxs.length;ai++) {
-        var aNode=this.devices[aggIdxs[ai]];
-        var nLeaves=2+Math.floor(Math.random()*2);
-        for (var li=0;li<nLeaves;li++) {
-            var spread=(nLeaves-1)*0.28;
-            var baseA=ra+Math.PI;
-            var la=baseA+(ai===0?-1:1)*0.55+(li-(nLeaves-1)/2)*(spread/Math.max(nLeaves-1,1));
-            var ld=sp*(0.55+Math.random()*0.25);
-            var lIdx=this._add(
-                this.cx+Math.cos(la)*ld,
-                this.cy+Math.sin(la)*ld,
-                leafTypes[li%leafTypes.length]);
-            this._edge(aggIdxs[ai],lIdx,'access');
+    var leafTypes = [DT.COMPUTER, DT.IOT, DT.COMPUTER, DT.IOT, DT.COMPUTER];
+    for (var ai=0; ai<agg.length; ai++) {
+        var nL = 2+Math.floor(Math.random()*2);
+        for (var li=0; li<nL; li++) {
+            var spread = (nL-1)*0.28;
+            var la = ra+Math.PI + (ai===0?-1:1)*0.55 + (li-(nL-1)/2)*(spread/Math.max(nL-1,1));
+            var ld = sp*(0.55+Math.random()*0.25);
+            this._edge(agg[ai], this._add(
+                this.cx+Math.cos(la)*ld, this.cy+Math.sin(la)*ld,
+                leafTypes[li%leafTypes.length]), 'access');
         }
     }
-    /* Cross-link between the two aggregates */
-    this._edge(aggIdxs[0],aggIdxs[1],'trunk');
+    this._edge(agg[0], agg[1], 'trunk');
 };
 
 /* ── LARGE A — hexagonal grid ────────────────────────────── */
 Network.prototype._buildHexGrid = function() {
-    var sp=CFG.SIZE_LARGE;
-    var rings=CFG.HEX_RINGS;
-    /* Flat-top hex: spacing between centres = sz*sqrt(3) horiz, sz*1.5 vert */
-    var hexSz = Math.floor(sp / (rings + 0.5)) * 0.95;
-    var nodeMap={};  /* "q,r" → device index */
-
-    /* Generate axial hex coords within rings steps of origin */
-    var coords=[];
-    for (var q=-rings;q<=rings;q++) {
-        for (var r=-rings;r<=rings;r++) {
-            var s=-q-r;
-            if (Math.abs(q)<=rings && Math.abs(r)<=rings && Math.abs(s)<=rings) {
-                coords.push({q:q,r:r});
-            }
+    var sp    = CFG.SIZE_LARGE;
+    var rings = CFG.HEX_RINGS;
+    var hexSz = Math.floor(sp/(rings+0.5))*0.95;
+    var nodeMap = {}, coords = [];
+    for (var q=-rings; q<=rings; q++)
+        for (var rv=-rings; rv<=rings; rv++)
+            if (Math.abs(q)<=rings && Math.abs(rv)<=rings && Math.abs(-q-rv)<=rings)
+                coords.push({q:q, r:rv});
+    var typePool = [DT.MINER,DT.MINER,DT.VALIDATOR,DT.MINER,DT.MINER,DT.VALIDATOR,DT.IOT];
+    for (var i=0; i<coords.length; i++) {
+        var q=coords[i].q, r=coords[i].r;
+        nodeMap[q+','+r] = this._add(
+            this.cx + hexSz*(1.732*q + 0.866*r),
+            this.cy + hexSz*1.5*r,
+            (q===0&&r===0) ? DT.SWITCH : typePool[i%typePool.length]);
+    }
+    var hexDirs = [{q:1,r:0},{q:1,r:-1},{q:0,r:-1}]; /* 3 of 6 avoids duplicate edges */
+    for (var i=0; i<coords.length; i++) {
+        var q=coords[i].q, r=coords[i].r, aIdx=nodeMap[q+','+r];
+        for (var d=0; d<hexDirs.length; d++) {
+            var key=(q+hexDirs[d].q)+','+(r+hexDirs[d].r);
+            if (nodeMap[key]!==undefined)
+                this._edge(aIdx, nodeMap[key], (q===0&&r===0)?'uplink':'access');
         }
     }
-
-    /* Place nodes — mix of miners and validators; center is a switch */
-    var typePool=[DT.MINER,DT.MINER,DT.VALIDATOR,DT.MINER,DT.MINER,DT.VALIDATOR,DT.IOT];
-    for (var i=0;i<coords.length;i++) {
-        var q=coords[i].q, r=coords[i].r;
-        /* Flat-top axial to pixel */
-        var px = this.cx + hexSz*(1.732*q + 0.866*r);
-        var py = this.cy + hexSz*(1.5*r);
-        var type = (q===0&&r===0) ? DT.SWITCH : typePool[i%typePool.length];
-        nodeMap[q+','+r] = this._add(px, py, type);
-    }
-
-    /* Connect each node to its 6 axial neighbours if both exist */
-    var hexDirs=[{q:1,r:0},{q:1,r:-1},{q:0,r:-1},{q:-1,r:0},{q:-1,r:1},{q:0,r:1}];
-    for (var i=0;i<coords.length;i++) {
-        var q=coords[i].q, r=coords[i].r;
-        var aIdx=nodeMap[q+','+r];
-        for (var d=0;d<3;d++) { /* only 3 of 6 dirs to avoid duplicates */
-            var nq=q+hexDirs[d].q, nr=r+hexDirs[d].r;
-            var key=nq+','+nr;
-            if (nodeMap[key]!==undefined) {
-                var t=(q===0&&r===0)?'uplink':'access';
-                this._edge(aIdx, nodeMap[key], t);
-            }
-        }
-    }
-
-    /* Router sits just outside the grid, connects to nearest perimeter node */
-    var ra=Math.random()*Math.PI*2;
-    var rIdx=this._add(
-        this.cx+Math.cos(ra)*(sp+hexSz*1.8),
-        this.cy+Math.sin(ra)*(sp+hexSz*1.8), DT.ROUTER);
-    this.routerIdx=rIdx;
-    /* Find the device closest to the router */
-    var rDev=this.devices[rIdx];
-    var bestD=Infinity, bestI=-1;
-    for (var i=0;i<this.devices.length-1;i++) {
-        var dx=this.devices[i].x-rDev.x, dy=this.devices[i].y-rDev.y;
-        var d=Math.sqrt(dx*dx+dy*dy);
-        if(d<bestD){bestD=d;bestI=i;}
-    }
-    if(bestI>=0) this._edge(rIdx,bestI,'uplink');
+    var allIdxs = coords.map(function(c){ return nodeMap[c.q+','+c.r]; });
+    var r = this._routerAtEdge(sp+hexSz*1.8, 1.0);
+    this._connectNearest(r, allIdxs, 1, 'uplink');
 };
 
 /* ── LARGE B — double ring ───────────────────────────────── */
 Network.prototype._buildDoubleRing = function() {
-    var sp=CFG.SIZE_LARGE;
-    var nInner=CFG.DRING_INNER, nOuter=CFG.DRING_OUTER;
-    var rInner=sp*0.38, rOuter=sp*0.78;
-    var rot=Math.random()*Math.PI*2;
-
-    /* Inner ring — validators */
-    var innerIdxs=[];
-    for (var i=0;i<nInner;i++) {
-        var a=rot+i*(Math.PI*2/nInner);
-        innerIdxs.push(this._add(
-            this.cx+Math.cos(a)*rInner,
-            this.cy+Math.sin(a)*rInner, DT.VALIDATOR));
-    }
-    /* Inner ring connections */
-    for (var i=0;i<nInner;i++) {
-        this._edge(innerIdxs[i], innerIdxs[(i+1)%nInner], 'trunk');
-    }
-
-    /* Outer ring — miners */
-    var outerIdxs=[];
-    for (var i=0;i<nOuter;i++) {
-        var a=rot+i*(Math.PI*2/nOuter);
-        outerIdxs.push(this._add(
-            this.cx+Math.cos(a)*rOuter,
-            this.cy+Math.sin(a)*rOuter, DT.MINER));
-    }
-    /* Outer ring connections */
-    for (var i=0;i<nOuter;i++) {
-        this._edge(outerIdxs[i], outerIdxs[(i+1)%nOuter], 'access');
-    }
-
-    /* Spokes: each inner node connects to its 2 nearest outer nodes */
-    for (var i=0;i<nInner;i++) {
-        var id=this.devices[innerIdxs[i]];
-        var sorted=outerIdxs.slice().sort(function(a,b){
-            var da=this.devices[a], db=this.devices[b];
-            var dxa=da.x-id.x, dya=da.y-id.y;
-            var dxb=db.x-id.x, dyb=db.y-id.y;
-            return (dxa*dxa+dya*dya)-(dxb*dxb+dyb*dyb);
-        }.bind(this));
-        this._edge(innerIdxs[i], sorted[0], 'uplink');
-        this._edge(innerIdxs[i], sorted[1], 'uplink');
-    }
-
-    /* Center switch hub */
-    var hubIdx=this._add(this.cx, this.cy, DT.SWITCH);
-    for (var i=0;i<nInner;i++) this._edge(hubIdx, innerIdxs[i], 'trunk');
-
-    /* Router just outside outer ring */
-    var ra=Math.random()*Math.PI*2;
-    var rIdx=this._add(
-        this.cx+Math.cos(ra)*(rOuter+sp*0.22),
-        this.cy+Math.sin(ra)*(rOuter+sp*0.22), DT.ROUTER);
-    this.routerIdx=rIdx;
-    /* Connect router to nearest two outer nodes */
-    var rDev=this.devices[rIdx];
-    var sorted2=outerIdxs.slice().sort(function(a,b){
-        var da=this.devices[a], db=this.devices[b];
-        var dxa=da.x-rDev.x,dya=da.y-rDev.y;
-        var dxb=db.x-rDev.x,dyb=db.y-rDev.y;
-        return (dxa*dxa+dya*dya)-(dxb*dxb+dyb*dyb);
-    }.bind(this));
-    this._edge(rIdx, sorted2[0], 'uplink');
-    this._edge(rIdx, sorted2[1], 'uplink');
+    var sp  = CFG.SIZE_LARGE;
+    var rot = Math.random()*Math.PI*2;
+    var inner = this._placeRing(CFG.DRING_INNER, sp*0.38, rot, DT.VALIDATOR);
+    this._connectRing(inner, 'trunk');
+    var outer = this._placeRing(CFG.DRING_OUTER, sp*0.78, rot, DT.MINER);
+    this._connectRing(outer, 'access');
+    for (var i=0; i<inner.length; i++) this._connectNearest(inner[i], outer, 2, 'uplink');
+    var hub = this._add(this.cx, this.cy, DT.SWITCH);
+    for (var i=0; i<inner.length; i++) this._edge(hub, inner[i], 'trunk');
+    var r = this._routerAtEdge(sp, 1.18);
+    this._connectNearest(r, outer, 2, 'uplink');
 };
 
 /* ── LARGE C — radial arms ───────────────────────────────── */
 Network.prototype._buildRadialArms = function() {
-    var sp=CFG.SIZE_LARGE;
-    var nArms=CFG.RADIAL_ARMS, armLen=CFG.RADIAL_LEN;
-    var rot=Math.random()*Math.PI*2;
-
-    /* Central hub */
-    var hubIdx=this._add(this.cx, this.cy, DT.SWITCH);
-
-    /* Build each arm */
-    var tipIdxs=[];
-    var armNodeIdxs=[];
-    for (var ai=0;ai<nArms;ai++) {
-        var armAngle=rot+ai*(Math.PI*2/nArms);
-        var prevIdx=hubIdx;
-        var armIdxs=[];
-        for (var li=0;li<armLen;li++) {
-            var frac=(li+1)/armLen;
-            var dist=sp*0.25 + frac*sp*0.68;
-            var jitter=(Math.random()-0.5)*sp*0.10;
-            var perp=armAngle+Math.PI/2;
-            var type = (li===armLen-1) ? DT.MINER :
-                       (li===0)        ? DT.VALIDATOR : DT.COMPUTER;
-            var nIdx=this._add(
-                this.cx + Math.cos(armAngle)*dist + Math.cos(perp)*jitter,
-                this.cy + Math.sin(armAngle)*dist + Math.sin(perp)*jitter,
-                type);
-            var t=(prevIdx===hubIdx)?'uplink':'access';
-            this._edge(prevIdx, nIdx, t);
-            prevIdx=nIdx;
-            armIdxs.push(nIdx);
+    var sp    = CFG.SIZE_LARGE;
+    var nArms = CFG.RADIAL_ARMS, armLen = CFG.RADIAL_LEN;
+    var rot   = Math.random()*Math.PI*2;
+    var hub   = this._add(this.cx, this.cy, DT.SWITCH);
+    var tipIdxs = [];
+    for (var ai=0; ai<nArms; ai++) {
+        var armAngle = rot + ai*(Math.PI*2/nArms);
+        var prev = hub;
+        for (var li=0; li<armLen; li++) {
+            var frac = (li+1)/armLen;
+            var dist = sp*0.25 + frac*sp*0.68;
+            var jit  = (Math.random()-0.5)*sp*0.10;
+            var type = li===armLen-1 ? DT.MINER : li===0 ? DT.VALIDATOR : DT.COMPUTER;
+            var nIdx = this._add(
+                this.cx + Math.cos(armAngle)*dist + Math.cos(armAngle+Math.PI/2)*jit,
+                this.cy + Math.sin(armAngle)*dist + Math.sin(armAngle+Math.PI/2)*jit, type);
+            this._edge(prev, nIdx, prev===hub ? 'uplink' : 'access');
+            prev = nIdx;
         }
-        tipIdxs.push(prevIdx);
-        armNodeIdxs.push(armIdxs);
+        tipIdxs.push(prev);
     }
-
-    /* Cross-link adjacent arm tips for redundancy */
-    for (var ai=0;ai<nArms;ai++) {
-        var nextAi=(ai+1)%nArms;
-        this._edge(tipIdxs[ai], tipIdxs[nextAi], 'access');
-    }
-
-    /* Router sits off one arm tip */
-    var raArm=Math.floor(Math.random()*nArms);
-    var tipDev=this.devices[tipIdxs[raArm]];
-    var armAngle=rot+raArm*(Math.PI*2/nArms);
-    var rIdx=this._add(
+    this._connectRing(tipIdxs, 'access');   /* cross-link arm tips */
+    var raArm    = Math.floor(Math.random()*nArms);
+    var tipDev   = this.devices[tipIdxs[raArm]];
+    var armAngle = rot + raArm*(Math.PI*2/nArms);
+    var rIdx     = this._add(
         tipDev.x + Math.cos(armAngle)*sp*0.22,
         tipDev.y + Math.sin(armAngle)*sp*0.22, DT.ROUTER);
-    this.routerIdx=rIdx;
+    this.routerIdx = rIdx;
     this._edge(rIdx, tipIdxs[raArm], 'uplink');
 };
 
 /* ── LARGE D — fat tree (core/aggregate/edge) ────────────── */
 Network.prototype._buildFatTree = function() {
-    var sp=CFG.SIZE_LARGE;
-    var nCore=CFG.FATTREE_CORE, nAgg=CFG.FATTREE_AGG, nEdge=CFG.FATTREE_EDGE;
-    var rot=Math.random()*Math.PI*2;
-
-    /* Core layer — small fully-connected cluster at centre */
-    var coreIdxs=[];
-    for (var i=0;i<nCore;i++) {
-        var a=rot+i*(Math.PI*2/nCore);
-        coreIdxs.push(this._add(
-            this.cx+Math.cos(a)*sp*0.18,
-            this.cy+Math.sin(a)*sp*0.18, DT.SERVER));
-    }
-    /* Fully connect core */
-    for (var i=0;i<nCore;i++) {
-        for (var j=i+1;j<nCore;j++) {
-            this._edge(coreIdxs[i], coreIdxs[j], 'trunk');
-        }
-    }
-
-    /* Aggregate layer — ring around core, each connects to 2 core nodes */
-    var aggIdxs=[];
-    for (var i=0;i<nAgg;i++) {
-        var a=rot+i*(Math.PI*2/nAgg);
-        aggIdxs.push(this._add(
-            this.cx+Math.cos(a)*sp*0.48,
-            this.cy+Math.sin(a)*sp*0.48, DT.VALIDATOR));
-    }
-    for (var i=0;i<nAgg;i++) {
-        /* Connect each aggregate to 2 nearest core nodes */
-        var ad=this.devices[aggIdxs[i]];
-        var sorted=coreIdxs.slice().sort(function(a,b){
-            var da=this.devices[a],db=this.devices[b];
-            var dxa=da.x-ad.x,dya=da.y-ad.y;
-            var dxb=db.x-ad.x,dyb=db.y-ad.y;
-            return (dxa*dxa+dya*dya)-(dxb*dxb+dyb*dyb);
-        }.bind(this));
-        this._edge(aggIdxs[i], sorted[0], 'trunk');
-        this._edge(aggIdxs[i], sorted[1], 'trunk');
-        /* Also ring-connect aggregates */
-        this._edge(aggIdxs[i], aggIdxs[(i+1)%nAgg], 'trunk');
-    }
-
-    /* Edge layer — miners hanging off each aggregate */
-    var edgeIdxs=[];
-    for (var i=0;i<nAgg;i++) {
-        var ad=this.devices[aggIdxs[i]];
-        var outAngle=Math.atan2(ad.y-this.cy, ad.x-this.cx);
-        for (var ei=0;ei<nEdge;ei++) {
-            var spread=(nEdge-1)*0.30;
-            var ea=outAngle+(ei-(nEdge-1)/2)*(spread/Math.max(nEdge-1,1));
-            var eIdx=this._add(
-                ad.x+Math.cos(ea)*sp*0.32,
-                ad.y+Math.sin(ea)*sp*0.32, DT.MINER);
-            this._edge(aggIdxs[i], eIdx, 'access');
+    var sp  = CFG.SIZE_LARGE;
+    var rot = Math.random()*Math.PI*2;
+    /* Core — fully-connected small cluster */
+    var core = this._placeRing(CFG.FATTREE_CORE, sp*0.18, rot, DT.SERVER);
+    for (var i=0; i<core.length; i++)
+        for (var j=i+1; j<core.length; j++)
+            this._edge(core[i], core[j], 'trunk');
+    /* Aggregate ring — each connects to 2 nearest core nodes */
+    var agg = this._placeRing(CFG.FATTREE_AGG, sp*0.48, rot, DT.VALIDATOR);
+    this._connectRing(agg, 'trunk');
+    for (var i=0; i<agg.length; i++) this._connectNearest(agg[i], core, 2, 'trunk');
+    /* Edge miners hanging off each aggregate */
+    var edgeIdxs = [];
+    for (var i=0; i<agg.length; i++) {
+        var ad       = this.devices[agg[i]];
+        var outAngle = Math.atan2(ad.y-this.cy, ad.x-this.cx);
+        for (var ei=0; ei<CFG.FATTREE_EDGE; ei++) {
+            var spread = (CFG.FATTREE_EDGE-1)*0.30;
+            var ea     = outAngle + (ei-(CFG.FATTREE_EDGE-1)/2)*(spread/Math.max(CFG.FATTREE_EDGE-1,1));
+            var eIdx   = this._add(ad.x+Math.cos(ea)*sp*0.32, ad.y+Math.sin(ea)*sp*0.32, DT.MINER);
+            this._edge(agg[i], eIdx, 'access');
             edgeIdxs.push(eIdx);
         }
     }
-
-    /* Router off the outermost edge — connects to 2 nearest edge nodes */
-    var ra=rot+Math.random()*Math.PI*2;
-    var rIdx=this._add(
-        this.cx+Math.cos(ra)*(sp*0.95),
-        this.cy+Math.sin(ra)*(sp*0.95), DT.ROUTER);
-    this.routerIdx=rIdx;
-    var rDev=this.devices[rIdx];
-    var sortedEdge=edgeIdxs.slice().sort(function(a,b){
-        var da=this.devices[a],db=this.devices[b];
-        var dxa=da.x-rDev.x,dya=da.y-rDev.y;
-        var dxb=db.x-rDev.x,dyb=db.y-rDev.y;
-        return (dxa*dxa+dya*dya)-(dxb*dxb+dyb*dyb);
-    }.bind(this));
-    this._edge(rIdx, sortedEdge[0], 'uplink');
-    if(sortedEdge.length>1) this._edge(rIdx, sortedEdge[1], 'uplink');
+    var r = this._routerAtEdge(sp, 0.95);
+    this._connectNearest(r, edgeIdxs, 2, 'uplink');
 };
 
 /* ── LARGE E — organic proximity mesh ───────────────────── */
 Network.prototype._buildMesh = function() {
-    var sp=CFG.SIZE_LARGE;
-    var ra=Math.random()*Math.PI*2;
-    var rIdx=this._add(
-        this.cx+Math.cos(ra)*sp*0.80,
-        this.cy+Math.sin(ra)*sp*0.80, DT.ROUTER);
-    this.routerIdx=rIdx;
-
-    var n=CFG.MESH_NODES_MIN+Math.floor(Math.random()*(CFG.MESH_NODES_MAX-CFG.MESH_NODES_MIN+1));
-    var ns=CFG.MESH_SRV_MIN+Math.floor(Math.random()*(CFG.MESH_SRV_MAX-CFG.MESH_SRV_MIN+1));
-    var nodeIdxs=[];
-    var typePool=[DT.MINER,DT.VALIDATOR,DT.COMPUTER,DT.MINER,DT.IOT,DT.VALIDATOR,DT.COMPUTER];
-    for (var i=0;i<n;i++) {
-        var angle=Math.random()*Math.PI*2;
-        var dist =Math.sqrt(Math.random())*sp*0.88;
-        var type =(i<ns)?DT.SERVER:typePool[i%typePool.length];
+    var sp       = CFG.SIZE_LARGE;
+    var r        = this._routerAtEdge(sp, 0.80);
+    var n        = CFG.MESH_NODES_MIN + Math.floor(Math.random()*(CFG.MESH_NODES_MAX-CFG.MESH_NODES_MIN+1));
+    var ns       = CFG.MESH_SRV_MIN  + Math.floor(Math.random()*(CFG.MESH_SRV_MAX-CFG.MESH_SRV_MIN+1));
+    var typePool = [DT.MINER,DT.VALIDATOR,DT.COMPUTER,DT.MINER,DT.IOT,DT.VALIDATOR,DT.COMPUTER];
+    var nodeIdxs = [];
+    for (var i=0; i<n; i++) {
+        var angle = Math.random()*Math.PI*2;
+        var dist  = Math.sqrt(Math.random())*sp*0.88;
         nodeIdxs.push(this._add(
-            this.cx+Math.cos(angle)*dist,
-            this.cy+Math.sin(angle)*dist, type));
+            this.cx+Math.cos(angle)*dist, this.cy+Math.sin(angle)*dist,
+            i<ns ? DT.SERVER : typePool[i%typePool.length]));
     }
-
-    /* Build MST (Prim's) */
-    var allIdxs=[rIdx].concat(nodeIdxs);
-    var inMST=[rIdx];
-    var notIn=nodeIdxs.slice();
-    while(notIn.length>0) {
-        var bestD=Infinity,bestA=-1,bestB=-1;
-        for(var i=0;i<inMST.length;i++){
-            for(var j=0;j<notIn.length;j++){
-                var da=this.devices[inMST[i]];
-                var db=this.devices[notIn[j]];
-                var dx=da.x-db.x,dy=da.y-db.y;
-                var d=Math.sqrt(dx*dx+dy*dy);
-                if(d<bestD){bestD=d;bestA=inMST[i];bestB=notIn[j];}
+    /* Prim's MST from router outward */
+    var inMST=[r], notIn=nodeIdxs.slice();
+    while (notIn.length>0) {
+        var bestD=Infinity, bestA=-1, bestB=-1;
+        for (var i=0; i<inMST.length; i++) {
+            for (var j=0; j<notIn.length; j++) {
+                var da=this.devices[inMST[i]], db=this.devices[notIn[j]];
+                var dx=da.x-db.x, dy=da.y-db.y, d=dx*dx+dy*dy;
+                if (d<bestD){ bestD=d; bestA=inMST[i]; bestB=notIn[j]; }
             }
         }
-        if(bestA===-1) break;
-        var t=(bestA===rIdx||bestB===rIdx)?'uplink':'access';
-        this._edge(bestA,bestB,t);
+        if (bestA===-1) break;
+        this._edge(bestA, bestB, (bestA===r||bestB===r)?'uplink':'access');
         inMST.push(bestB);
         notIn.splice(notIn.indexOf(bestB),1);
     }
-
-    /* Extra cross-links */
-    for(var i=0;i<nodeIdxs.length;i++){
-        var da=this.devices[nodeIdxs[i]];
-        var neighbours=allIdxs.filter(function(idx){return idx!==nodeIdxs[i];});
-        neighbours.sort(function(a,b){
-            var dxa=this.devices[a].x-da.x,dya=this.devices[a].y-da.y;
-            var dxb=this.devices[b].x-da.x,dyb=this.devices[b].y-da.y;
-            return (dxa*dxa+dya*dya)-(dxb*dxb+dyb*dyb);
-        }.bind(this));
-        var added=0;
-        for(var k=0;k<neighbours.length&&added<CFG.MESH_LINKS;k++){
-            var ni=neighbours[k];
-            var t=(ni===rIdx||nodeIdxs[i]===rIdx)?'uplink':'access';
-            this._edge(nodeIdxs[i],ni,t);
-            added++;
-        }
+    /* Extra cross-links — use _sortByDist to find nearest neighbours */
+    var allIdxs = [r].concat(nodeIdxs);
+    for (var i=0; i<nodeIdxs.length; i++) {
+        var pool    = allIdxs.filter(function(x){ return x!==nodeIdxs[i]; });
+        var nearest = this._sortByDist(nodeIdxs[i], pool);
+        for (var k=0; k<Math.min(CFG.MESH_LINKS, nearest.length); k++)
+            this._edge(nodeIdxs[i], nearest[k], (nearest[k]===r||nodeIdxs[i]===r)?'uplink':'access');
     }
 };
 
@@ -1068,16 +912,15 @@ LanPulse.prototype.update=function(){
 /* ============================================================
    ENGINE
    ============================================================ */
-var _canvas=null,_ctx=null,_animId=null,_layer=null;
-var _W=0,_H=0,_networks=[],_pulses=[],_frame=0;
+var scene = { canvas:null, ctx:null, animId:null, layer:null, W:0, H:0 };
 
 function bestSpawn(){
     var M=CFG.MARGIN;
-    var live=_networks.filter(function(n){return n.state!==ST.DEAD;});
-    var best={x:M+Math.random()*(_W-M*2),y:M+Math.random()*(_H-M*2)};
+    var live=sim.networks.filter(function(n){return n.state!==ST.DEAD;});
+    var best={x:M+Math.random()*(scene.W-M*2),y:M+Math.random()*(scene.H-M*2)};
     var bestD=-1;
     for(var i=0;i<CFG.SPAWN_CANDS;i++){
-        var px=M+Math.random()*(_W-M*2), py=M+Math.random()*(_H-M*2);
+        var px=M+Math.random()*(scene.W-M*2), py=M+Math.random()*(scene.H-M*2);
         var minD=Infinity;
         for(var j=0;j<live.length;j++){
             var dx=live[j].cx-px,dy=live[j].cy-py;
@@ -1090,19 +933,19 @@ function bestSpawn(){
 }
 
 function engineInit(){
-    _W=window.innerWidth; _H=window.innerHeight;
-    if(!_canvas){
-        _canvas=document.createElement('canvas');
-        _canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;';
-        _layer.appendChild(_canvas);
+    scene.W=window.innerWidth; scene.H=window.innerHeight;
+    if(!scene.canvas){
+        scene.canvas=document.createElement('canvas');
+        scene.canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;';
+        scene.layer.appendChild(scene.canvas);
         window.addEventListener('resize',function(){
-            _W=_canvas.width=window.innerWidth;
-            _H=_canvas.height=window.innerHeight;
+            scene.W=scene.canvas.width=window.innerWidth;
+            scene.H=scene.canvas.height=window.innerHeight;
         });
     }
-    _canvas.width=_W; _canvas.height=_H;
-    _ctx=_canvas.getContext('2d');
-    _networks=[]; _pulses=[]; _frame=0;
+    scene.canvas.width=scene.W; scene.canvas.height=scene.H;
+    scene.ctx=scene.canvas.getContext('2d');
+    sim.networks=[]; sim.pulses=[]; sim.frame=0; sim.netIdCounter=0;
 
     var cycle=CFG.FADE_FRAMES*2+CFG.ALIVE_MIN;
     for(var i=0;i<CFG.MAX_NETWORKS;i++){
@@ -1119,7 +962,7 @@ function engineInit(){
             net.stf=off-CFG.FADE_FRAMES-CFG.ALIVE_MIN;
             net.alpha=1-smooth(net.stf/CFG.FADE_FRAMES);
         }
-        _networks.push(net);
+        sim.networks.push(net);
     }
 }
 
@@ -1146,21 +989,21 @@ function _wanSendFrom(net, exclude) {
     var rp = net.routerPos();
 
     /* Build candidate list — reachable, eligible, not on cooldown */
-    var candidates = _networks.filter(function(r){
+    var candidates = sim.networks.filter(function(r){
         if(r===net)            return false;  /* not self          */
         if(r===exclude)        return false;  /* rule 5            */
         if(!r.canReceive())    return false;  /* must be alive     */
         var tp=r.routerPos();
         var dx=rp.x-tp.x, dy=rp.y-tp.y;
         if(Math.sqrt(dx*dx+dy*dy) >= CFG.BACKBONE_DIST) return false;
-        var lastSent = net._wanCooldown[r.cx+'_'+r.cy] || 0;
-        return (_frame - lastSent) >= PAIR_COOLDOWN;
+        var lastSent = net._wanCooldown[r.id] || 0;
+        return (sim.frame - lastSent) >= PAIR_COOLDOWN;
     });
 
     /* Cooldown fallback — if every candidate is on cooldown,
        relax it so the network never goes permanently silent  */
     if(candidates.length === 0){
-        candidates = _networks.filter(function(r){
+        candidates = sim.networks.filter(function(r){
             if(r===net||r===exclude||!r.canReceive()) return false;
             var tp=r.routerPos();
             var dx=rp.x-tp.x, dy=rp.y-tp.y;
@@ -1179,12 +1022,12 @@ function _wanSendFrom(net, exclude) {
     }
 
     /* Record send time for cooldown */
-    net._wanCooldown[target.cx+'_'+target.cy] = _frame;
+    net._wanCooldown[target.id] = sim.frame;
 
     /* Rule 4 — 40% chance this pulse forwards on arrival (rule 3)
                 60% chance it terminates at destination             */
     var forwards = (Math.random() < 0.40);
-    _pulses.push(new WanPulse(net, target, forwards));
+    sim.pulses.push(new WanPulse(net, target, forwards));
     return true;   /* packet was sent */
 }
 
@@ -1196,15 +1039,22 @@ function _wanSendFrom(net, exclude) {
    Called once per frame from engineUpdate().
    ============================================================ */
 function engineTickWAN(){
-    _networks.forEach(function(net){
+    sim.networks.forEach(function(net){
         if(!net.canSend()) return;
+
+        /* Rule 1 — fire immediately on first eligible frame */
+        if(net.wanPendingFirst){
+            var sent = _wanSendFrom(net, null);
+            if(sent) net.wanPendingFirst = false;
+            return;
+        }
+
+        /* Rule 2 — periodic send scaled by network size */
         var edges       = net.edges.length || 5;
         var effInterval = Math.max(240, Math.floor(CFG.WAN_INTERVAL * 10 / Math.max(edges, 10)));
-        net.wanTimer    = (net.wanTimer||0) + 1;
+        net.wanTimer++;
         if(net.wanTimer < effInterval) return;
-        /* Only reset timer if a packet was actually sent.
-           If no candidates exist this frame, keep wanTimer
-           high so it retries next frame — rule 1 guaranteed. */
+        /* Only reset timer on successful send — retries if no target */
         var sent = _wanSendFrom(net, null);
         if(sent) net.wanTimer = 0;
     });
@@ -1220,7 +1070,7 @@ function engineTickWAN(){
    per interval, min 1, max 6.
    ============================================================ */
 function engineTickLAN(){
-    _networks.forEach(function(net){
+    sim.networks.forEach(function(net){
         if(net.state!==ST.ALIVE && net.state!==ST.FADE_IN) return;
         if(net.edges.length===0) return;
         net.lanTimer = (net.lanTimer||0) + 1;
@@ -1230,41 +1080,41 @@ function engineTickLAN(){
         for(var c=0; c<count; c++){
             var eIdx = Math.floor(Math.random()*net.edges.length);
             var fwd  = Math.random()<0.5;
-            _pulses.push(new LanPulse(net, eIdx, fwd));
+            sim.pulses.push(new LanPulse(net, eIdx, fwd));
         }
     });
 }
 
 
 function engineUpdate(){
-    _frame++;
-    _networks.forEach(function(n){n.update();});
+    sim.frame++;
+    sim.networks.forEach(function(n){n.update();});
 
     /* ── Remove dead, spawn replacements ─────────────────── */
-    var before  = _networks.length;
-    _networks   = _networks.filter(function(n){ return n.state !== ST.DEAD; });
-    var deficit = CFG.MAX_NETWORKS - _networks.length;
+    var before  = sim.networks.length;
+    sim.networks   = sim.networks.filter(function(n){ return n.state !== ST.DEAD; });
+    var deficit = CFG.MAX_NETWORKS - sim.networks.length;
     var toSpawn = Math.max(0, deficit);
     for(var s=0; s<toSpawn; s++){
         var pt = bestSpawn();
-        _networks.push(new Network(pt.x, pt.y));
+        sim.networks.push(new Network(pt.x, pt.y));
     }
 
-    _pulses.forEach(function(p){p.update();});
-    _pulses = _pulses.filter(function(p){return p.alive;});
+    sim.pulses.forEach(function(p){p.update();});
+    sim.pulses = sim.pulses.filter(function(p){return p.alive;});
 
     engineTickWAN();   /* ── inter-network communication ──── */
     engineTickLAN();   /* ── intra-network communication ──── */
 }
 
 function engineDraw(){
-    _ctx.clearRect(0,0,_W,_H);
-    var live=_networks.filter(function(n){return n.state!==ST.DEAD;});
+    scene.ctx.clearRect(0,0,scene.W,scene.H);
+    var live=sim.networks.filter(function(n){return n.state!==ST.DEAD;});
 
     /* 1 — WAN dashed backbone lines */
     /* Build a set of active routes (router pairs with a WAN packet in flight) */
     var activeRoutes=[];
-    _pulses.filter(function(p){return p.isWan;}).forEach(function(p){
+    sim.pulses.filter(function(p){return p.isWan;}).forEach(function(p){
         activeRoutes.push({
             fx:p.fx,fy:p.fy,tx:p.tx,ty:p.ty,
             /* brightness peaks at mid-journey, fades at start/end */
@@ -1272,7 +1122,7 @@ function engineDraw(){
         });
     });
 
-    _ctx.setLineDash([4,7]);
+    scene.ctx.setLineDash([4,7]);
     for(var i=0;i<live.length;i++){
         for(var j=i+1;j<live.length;j++){
             var rp1=live[i].routerPos(), rp2=live[j].routerPos();
@@ -1296,13 +1146,13 @@ function engineDraw(){
             var a=Math.min(0.85, baseA+routeBoost);
             if(a<0.004) continue;
             var lw = routeBoost>0 ? 1.1 : 0.7;
-            _ctx.beginPath();
-            _ctx.strokeStyle=col(a); _ctx.lineWidth=lw;
-            _ctx.moveTo(rp1.x,rp1.y); _ctx.lineTo(rp2.x,rp2.y);
-            _ctx.stroke();
+            scene.ctx.beginPath();
+            scene.ctx.strokeStyle=col(a); scene.ctx.lineWidth=lw;
+            scene.ctx.moveTo(rp1.x,rp1.y); scene.ctx.lineTo(rp2.x,rp2.y);
+            scene.ctx.stroke();
         }
     }
-    _ctx.setLineDash([]);
+    scene.ctx.setLineDash([]);
 
     /* 2 — LAN edges */
     live.forEach(function(net){
@@ -1314,57 +1164,57 @@ function engineDraw(){
             var am=e.t==='uplink'?0.70:e.t==='trunk'?0.52:0.36;
             var a=net.alpha*am;
             if(a<0.004) return;
-            _ctx.beginPath();
-            _ctx.strokeStyle=col(a); _ctx.lineWidth=lw;
-            _ctx.moveTo(da.x,da.y); _ctx.lineTo(db.x,db.y);
-            _ctx.stroke();
+            scene.ctx.beginPath();
+            scene.ctx.strokeStyle=col(a); scene.ctx.lineWidth=lw;
+            scene.ctx.moveTo(da.x,da.y); scene.ctx.lineTo(db.x,db.y);
+            scene.ctx.stroke();
         });
     });
 
     /* 3 — Devices */
     live.forEach(function(net){
         if(net.alpha<0.004) return;
-        net.devices.forEach(function(dev){drawDevice(_ctx,dev,net.alpha);});
+        net.devices.forEach(function(dev){drawDevice(scene.ctx,dev,net.alpha);});
     });
 
     /* 4 — WAN packets (large glowing dot) */
-    _pulses.filter(function(p){return p.isWan;}).forEach(function(p){
+    sim.pulses.filter(function(p){return p.isWan;}).forEach(function(p){
         for(var k=0;k<p.trail.length;k++){
             var frac=k/p.trail.length;
-            _ctx.beginPath();
-            _ctx.arc(p.trail[k].x,p.trail[k].y,frac*2.2,0,Math.PI*2);
-            _ctx.fillStyle=col(frac*0.55); _ctx.fill();
+            scene.ctx.beginPath();
+            scene.ctx.arc(p.trail[k].x,p.trail[k].y,frac*2.2,0,Math.PI*2);
+            scene.ctx.fillStyle=col(frac*0.55); scene.ctx.fill();
         }
         var env=Math.sin(p.t*Math.PI);
-        var grad=_ctx.createRadialGradient(p.cx,p.cy,0,p.cx,p.cy,13);
+        var grad=scene.ctx.createRadialGradient(p.cx,p.cy,0,p.cx,p.cy,13);
         grad.addColorStop(0,col(env*0.65));
         grad.addColorStop(1,col(0));
-        _ctx.beginPath(); _ctx.arc(p.cx,p.cy,13,0,Math.PI*2);
-        _ctx.fillStyle=grad; _ctx.fill();
-        _ctx.beginPath(); _ctx.arc(p.cx,p.cy,2.6,0,Math.PI*2);
-        _ctx.fillStyle=col(env*0.95); _ctx.fill();
+        scene.ctx.beginPath(); scene.ctx.arc(p.cx,p.cy,13,0,Math.PI*2);
+        scene.ctx.fillStyle=grad; scene.ctx.fill();
+        scene.ctx.beginPath(); scene.ctx.arc(p.cx,p.cy,2.6,0,Math.PI*2);
+        scene.ctx.fillStyle=col(env*0.95); scene.ctx.fill();
     });
 
     /* 5 — LAN packets (small dot, no large halo) */
-    _pulses.filter(function(p){return !p.isWan;}).forEach(function(p){
+    sim.pulses.filter(function(p){return !p.isWan;}).forEach(function(p){
         var na=p.net.alpha;
         if(na<0.01) return;
         for(var k=0;k<p.trail.length;k++){
             var frac=k/p.trail.length;
-            _ctx.beginPath();
-            _ctx.arc(p.trail[k].x,p.trail[k].y,frac*1.2,0,Math.PI*2);
-            _ctx.fillStyle=col(frac*0.45*na); _ctx.fill();
+            scene.ctx.beginPath();
+            scene.ctx.arc(p.trail[k].x,p.trail[k].y,frac*1.2,0,Math.PI*2);
+            scene.ctx.fillStyle=col(frac*0.45*na); scene.ctx.fill();
         }
         var env=Math.sin(p.t*Math.PI);
         /* small soft halo */
-        var grad=_ctx.createRadialGradient(p.cx,p.cy,0,p.cx,p.cy,6);
+        var grad=scene.ctx.createRadialGradient(p.cx,p.cy,0,p.cx,p.cy,6);
         grad.addColorStop(0,col(env*0.55*na));
         grad.addColorStop(1,col(0));
-        _ctx.beginPath(); _ctx.arc(p.cx,p.cy,6,0,Math.PI*2);
-        _ctx.fillStyle=grad; _ctx.fill();
+        scene.ctx.beginPath(); scene.ctx.arc(p.cx,p.cy,6,0,Math.PI*2);
+        scene.ctx.fillStyle=grad; scene.ctx.fill();
         /* core dot */
-        _ctx.beginPath(); _ctx.arc(p.cx,p.cy,1.6,0,Math.PI*2);
-        _ctx.fillStyle=col(env*0.90*na); _ctx.fill();
+        scene.ctx.beginPath(); scene.ctx.arc(p.cx,p.cy,1.6,0,Math.PI*2);
+        scene.ctx.fillStyle=col(env*0.90*na); scene.ctx.fill();
     });
 
     /* 6 — Easter egg control pulse */
@@ -1374,8 +1224,8 @@ function engineDraw(){
     _monitorUpdate();
 }
 
-function engineStop(){if(_animId){cancelAnimationFrame(_animId);_animId=null;}}
-function engineLoop(){engineUpdate();engineDraw();_animId=requestAnimationFrame(engineLoop);}
+function engineStop(){if(scene.animId){cancelAnimationFrame(scene.animId);scene.animId=null;}}
+function engineLoop(){engineUpdate();engineDraw();scene.animId=requestAnimationFrame(engineLoop);}
 
 /* ============================================================
    PUBLIC API
@@ -1383,7 +1233,7 @@ function engineLoop(){engineUpdate();engineDraw();_animId=requestAnimationFrame(
 /* particleBgSetOpacity(0.4) — change visibility at any time   */
 function particleBgSetOpacity(v){
     CFG.OPACITY=Math.max(0,Math.min(1,+v||0));
-    if(_layer) _layer.style.opacity=CFG.OPACITY;
+    if(scene.layer) scene.layer.style.opacity=CFG.OPACITY;
 }
 
 
@@ -1407,8 +1257,7 @@ function particleBgSetOpacity(v){
        naturally; new ones spawn with fresh params).
      • Colours driven by col() so they update with CRT mode.
    ============================================================ */
-var _ctrl = null;   /* the injected control div */
-var _ctrlPulse = 0; /* frame counter for button breathing */
+var ui = { ctrl:null, ctrlPulse:0, monitor:null, monitorRows:[] };
 
 function _ctrlCell(text, onClick) {
     var el = document.createElement('span');
@@ -1463,7 +1312,7 @@ function _ctrlChangeNetworks(delta) {
         var toAdd = CFG.MAX_NETWORKS - prev;
         for (var i = 0; i < toAdd; i++) {
             var pt = bestSpawn();
-            _networks.push(new Network(pt.x, pt.y));
+            sim.networks.push(new Network(pt.x, pt.y));
         }
     }
 }
@@ -1485,19 +1334,17 @@ function _ctrlChangeNetworks(delta) {
    Life bar is 10 chars wide, drains left-to-right.
    Uses block chars: █ (filled) ░ (empty).
    ============================================================ */
-var _monitor     = null;   /* outer div                        */
-var _monitorRows = [];     /* pool of row divs                 */
 
 /* Topology display names — index matches topoType 0–7 */
 var TOPO_NAMES = ['star','ring','tree','hex','dbl-ring','radial','fat-tree','mesh'];
 
 function injectMonitor() {
-    if (_monitor) { _monitor.remove(); _monitor = null; }
-    _monitorRows = [];
+    if (ui.monitor) { ui.monitor.remove(); ui.monitor = null; }
+    ui.monitorRows = [];
 
-    _monitor = document.createElement('div');
-    _monitor.id = 'pbg-monitor';
-    _monitor.style.cssText = [
+    ui.monitor = document.createElement('div');
+    ui.monitor.id = 'pbg-monitor';
+    ui.monitor.style.cssText = [
         'position:fixed',
         'bottom:14px',
         'left:16px',
@@ -1509,68 +1356,62 @@ function injectMonitor() {
         'align-items:flex-start',
     ].join(';');
 
-    /* Pre-create 16 row slots — show/hide as needed */
-    for (var i = 0; i < 16; i++) {
-        var row = document.createElement('div');
-        row.style.cssText = [
-            'font:10px/1 monospace',
-            'letter-spacing:0.04em',
-            'white-space:pre',
-            'display:none',
-        ].join(';');
-        _monitor.appendChild(row);
-        _monitorRows.push(row);
-    }
+    if (scene.layer) scene.layer.insertAdjacentElement('afterend', ui.monitor);
+    else document.body.appendChild(ui.monitor);
+}
 
-    if (_layer) _layer.insertAdjacentElement('afterend', _monitor);
-    else document.body.appendChild(_monitor);
+function _monitorMakeRow() {
+    var row = document.createElement('div');
+    row.style.cssText = [
+        'font:10px/1 monospace',
+        'letter-spacing:0.04em',
+        'white-space:pre',
+    ].join(';');
+    ui.monitor.appendChild(row);
+    ui.monitorRows.push(row);
+    return row;
 }
 
 function _monitorUpdate() {
-    if (!_monitor) return;
-    var c = 'rgba('+_r+','+_g+','+_b+',';
+    if (!ui.monitor) return;
+    var c = 'rgba('+colour.r+','+colour.g+','+colour.b+',';
 
-    /* Collect live networks sorted by remaining life descending */
-    var live = _networks.filter(function(n){ return n.state !== ST.DEAD; });
-    live.sort(function(a, b){
-        return _netRemaining(b) - _netRemaining(a);
-    });
+    var live = sim.networks.filter(function(n){ return n.state !== ST.DEAD; });
+    live.sort(function(a, b){ return _netRemaining(b) - _netRemaining(a); });
 
-    for (var i = 0; i < _monitorRows.length; i++) {
-        var row = _monitorRows[i];
-        if (i >= live.length) {
-            row.style.display = 'none';
-            continue;
-        }
+    /* Grow row pool on demand */
+    while (ui.monitorRows.length < live.length) _monitorMakeRow();
+
+    /* Remove excess rows if network count shrank */
+    while (ui.monitorRows.length > live.length) {
+        var removed = ui.monitorRows.pop();
+        if (removed.parentNode) removed.parentNode.removeChild(removed);
+    }
+
+    for (var i = 0; i < live.length; i++) {
         var net = live[i];
-        var rem = _netRemaining(net);       /* seconds remaining    */
-        var prog = _netProgress(net);       /* 0 (new) → 1 (dying) */
+        var rem  = _netRemaining(net);
+        var prog = _netProgress(net);
 
-        /* Life bar — 10 chars, drains as prog increases */
         var filled = Math.round((1 - prog) * 10);
         var bar = '';
         for (var b = 0; b < 10; b++) bar += (b < filled ? '█' : '░');
 
-        /* Status glyph */
         var glyph = net.state === ST.FADE_IN  ? ' ↑' :
                     net.state === ST.FADE_OUT ? ' ↓' : '  ';
 
-        /* Type name padded to 8 chars */
         var name = (TOPO_NAMES[net.topoType] || '???');
         while (name.length < 8) name += ' ';
 
-        /* Time — blank during fade-in (not yet fully alive) */
         var timeStr = net.state === ST.FADE_IN
             ? '  --s'
             : (rem < 10 ? '   ' : rem < 100 ? '  ' : ' ') + Math.ceil(rem) + 's';
 
-        row.textContent = name + '  ' + bar + '  ' + timeStr + glyph;
+        ui.monitorRows[i].textContent = name + '  ' + bar + '  ' + timeStr + glyph;
 
-        /* Opacity: fade-in/out rows are dimmer */
-        var alpha = net.state === ST.ALIVE ? 0.40 :
-                    net.state === ST.FADE_IN ? 0.22 : 0.18;
-        row.style.color   = c + alpha + ')';
-        row.style.display = 'block';
+        var alpha = net.state === ST.ALIVE    ? 0.40 :
+                    net.state === ST.FADE_IN  ? 0.22 : 0.18;
+        ui.monitorRows[i].style.color = c + alpha + ')';
     }
 }
 
@@ -1599,11 +1440,11 @@ function _netRemaining(net) {
 
 
 function injectControls() {
-    if (_ctrl) { _ctrl.remove(); _ctrl = null; }
+    if (ui.ctrl) { ui.ctrl.remove(); ui.ctrl = null; }
 
-    _ctrl = document.createElement('div');
-    _ctrl.id = 'pbg-ctrl';
-    _ctrl.style.cssText = [
+    ui.ctrl = document.createElement('div');
+    ui.ctrl.id = 'pbg-ctrl';
+    ui.ctrl.style.cssText = [
         'position:fixed',
         'bottom:14px',
         'right:16px',
@@ -1622,22 +1463,22 @@ function injectControls() {
         function(){ _ctrlChangeNetworks(+1); }
     );
 
-    _ctrl.appendChild(rowNets);
-    _ctrl._rows = [rowNets];
+    ui.ctrl.appendChild(rowNets);
+    ui.ctrl._rows = [rowNets];
 
-    if (_layer) _layer.insertAdjacentElement('afterend', _ctrl);
-    else document.body.appendChild(_ctrl);
+    if (scene.layer) scene.layer.insertAdjacentElement('afterend', ui.ctrl);
+    else document.body.appendChild(ui.ctrl);
 
     _ctrlUpdateColour();
 }
 
 function _ctrlUpdateColour() {
-    if (!_ctrl) return;
-    var c = 'rgba('+_r+','+_g+','+_b+',';
-    _ctrl.querySelectorAll('[data-lbl]').forEach(function(el){
+    if (!ui.ctrl) return;
+    var c = 'rgba('+colour.r+','+colour.g+','+colour.b+',';
+    ui.ctrl.querySelectorAll('[data-lbl]').forEach(function(el){
         el.style.color = c + '0.45)';
     });
-    _ctrl.querySelectorAll('[data-arrow]').forEach(function(el){
+    ui.ctrl.querySelectorAll('[data-arrow]').forEach(function(el){
         el.style.color  = c + '0.35)';
         el.style.border = '1px solid ' + c + '0.18)';
     });
@@ -1645,26 +1486,26 @@ function _ctrlUpdateColour() {
 
 /* Called each draw frame to make the arrows breathe subtly */
 function _ctrlAnimatePulse() {
-    if (!_ctrl) return;
-    _ctrlPulse++;
-    var breathe = 0.28 + Math.sin(_ctrlPulse * 0.018) * 0.10;
-    var c = 'rgba('+_r+','+_g+','+_b+',';
-    _ctrl.querySelectorAll('[data-arrow]').forEach(function(el){
+    if (!ui.ctrl) return;
+    ui.ctrlPulse++;
+    var breathe = 0.28 + Math.sin(ui.ctrlPulse * 0.018) * 0.10;
+    var c = 'rgba('+colour.r+','+colour.g+','+colour.b+',';
+    ui.ctrl.querySelectorAll('[data-arrow]').forEach(function(el){
         if (!el.matches(':hover')) el.style.color = c + breathe + ')';
     });
 }
 
 function startPlugin(){
     try {
-        if(!_layer){
-            _layer=document.createElement('div');
-            _layer.id='particle-layer';
-            _layer.style.cssText='position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;overflow:hidden;';
+        if(!scene.layer){
+            scene.layer=document.createElement('div');
+            scene.layer.id='particle-layer';
+            scene.layer.style.cssText='position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;overflow:hidden;';
             /* Append to body — avoids being affected by contain:layout paint
                on #background-layer and any stacking context on #page-wrapper */
-            document.body.appendChild(_layer);
+            document.body.appendChild(scene.layer);
         }
-        _layer.style.opacity=CFG.OPACITY;
+        scene.layer.style.opacity=CFG.OPACITY;
         engineStop();
         var mode=document.documentElement.getAttribute('data-crt-mode')||'default';
         setColour(PARTICLE_CRT_COLOURS[mode]||PARTICLE_CRT_COLOURS['default']);
@@ -1677,14 +1518,14 @@ function startPlugin(){
 
 /* PUBLIC START / STOP — called externally (e.g. from about-section show/hide) */
 function particleBgStart(){
-    if(_animId) return;  /* already running */
+    if(scene.animId) return;  /* already running */
     startPlugin();
 }
 function particleBgStop(){
     engineStop();
-    if(_layer)   _layer.style.opacity=0;
-    if(_ctrl)    _ctrl.style.opacity=0;
-    if(_monitor) _monitor.style.opacity=0;
+    if(scene.layer)   scene.layer.style.opacity=0;
+    if(ui.ctrl)    ui.ctrl.style.opacity=0;
+    if(ui.monitor) ui.monitor.style.opacity=0;
 }
 
 /* Auto-start is intentionally disabled — started on demand via particleBgStart() */
@@ -1708,5 +1549,10 @@ function particleBgStop(){
     else attach();
 })();
 
+/* ── Public API — only these symbols reach the global scope ── */
+global.CFG                = CFG;
+global.particleBgStart    = particleBgStart;
+global.particleBgStop     = particleBgStop;
+global.particleBgSetOpacity = particleBgSetOpacity;
 
-
+}(window));
