@@ -347,7 +347,10 @@
       "zoom": "1.0",
       "alt": "developer tool",
       "text": "React-Onchain",
-      "info": ";;beta.svg;"
+      "info": ";;beta.svg;code.svg",
+      "colour1": "black",
+      "colour2": "gray",
+      "opacity": "0.8"
     },
     {
       "tab": "video",
@@ -630,7 +633,7 @@
       "zoom": "1.0",
       "alt": "market-place NFT",
       "text": "1Sat Ordinals",
-      "info": ";;;"
+      "info": ";;code.svg;"
     },
     {
       "tab": "market; tool",
@@ -1088,7 +1091,7 @@
       "zoom": "1.0",
       "alt": "scripting code development programming",
       "text": "sCrypt",
-      "info": ";;;"
+      "info": ";;code.svg;"
     },
     {
       "tab": "tool;market",
@@ -1396,7 +1399,7 @@
       "zoom": "1.0",
       "alt": "scrip documentation",
       "text": "Rúnar",
-      "info": ";;;"
+      "info": ";;code.svg;"
     }
   ]
 }
