@@ -1,25 +1,85 @@
 /* ============================================================
-   PARTICLE NETWORK PLUGIN — particle-bg.js  v9.1
+   PARTICLE NETWORK PLUGIN — particle-bg.js  v9.2
    ============================================================
    CHANGELOG
+   v9.2  – 7-rule communication system (see RULES below)
+         – WAN and LAN fully modular (engineTickWAN / engineTickLAN)
+         – Complexity presets removed — each network spawns with
+           its own random structural parameters
+         – Type-diversity spawn system (_pickTopoType) ensures
+           all 8 topology types appear before any repeats
+         – Minimum 4 networks enforced (rule 6)
+         – Network monitor table (bottom-left, rule 7)
+         – Rule 1 guaranteed: wanTimer retries until a target
+           exists rather than silently consuming first fire
    v9.1  – Per-network WAN timer (every network guaranteed to
            communicate independently of scene size)
          – CFG fully annotated with ranges, sweet spots, and
            dependency warnings (⚠) for safe manual editing
-         – Complexity presets decoupled from MAX_NETWORKS
          – Network count increase spawns delta immediately;
            decrease drains naturally without hard reset
          – Canvas injected into document.body to avoid
            contain:layout paint clipping on background-layer
-   v9.0  – 7 new device shapes: miner (hex), validator (tri),
-           IoT (cross) added alongside original 4
-         – 8 topology variants: hex grid, double ring, radial
-           arms, fat tree, organic mesh, star, ring, tree
-         – WAN backbone lines visible + active route highlight
-         – Bottom-right easter egg control (networks + complexity)
-         – Complexity presets 1–5 (structural params only)
-         – CRT colour mode observer
+   v9.0  – 7 device shapes, 8 topology variants, WAN backbone
+           lines, easter egg control, CRT colour observer
    v8.0  – Initial LAN/WAN network diagram animation
+   ============================================================ */
+
+/* ============================================================
+   COMMUNICATION RULES
+   ─────────────────────────────────────────────────────────
+   These 7 rules govern all network behaviour. Each rule is
+   annotated at its implementation site with "Rule N".
+
+   WAN (inter-network) rules — implemented in:
+     _wanSendFrom()       core send logic
+     engineTickWAN()      periodic firing (rules 1 & 2)
+     WanPulse.update()    arrival handling (rules 3, 4, 5)
+
+   Rule 1 — On spawn, a network immediately sends a WAN packet
+            to another network. wanTimer starts at 9999 so the
+            first engineTickWAN check fires instantly. Timer
+            only resets on successful send — retries every frame
+            until a reachable target exists.
+
+   Rule 2 — Larger networks send more frequently. Effective
+            interval scales down with edge count:
+            effInterval = WAN_INTERVAL * 10 / edges
+            clamped to 240 frames minimum (~4s).
+            Small star (5 edges) → full WAN_INTERVAL.
+            Hex grid (91 edges)  → ~240f (~4s).
+
+   Rule 3 — On receiving a WAN packet, the destination network
+            forwards a new packet onward to a different network
+            (40% of arrivals — see rule 4). Implemented in
+            WanPulse.update() on t >= 1.
+
+   Rule 4 — 60% of arriving packets terminate at destination.
+            40% trigger rule 3 (forward onward). This is a
+            convergent geometric series (avg 0.4 children per
+            packet) — chains die out naturally in 2–3 hops.
+
+   Rule 5 — The network that sent the original packet is
+            excluded from rule 3's target lottery. Prevents
+            immediate ping-pong. The pair-cooldown (600 frames)
+            further prevents exclusive back-and-forth loops.
+
+   LAN (intra-network) rules — implemented in engineTickLAN():
+
+   Rule 6 — At least 4 different topology types must be visible
+            at all times. _pickTopoType() fills missing types
+            before allowing repeats. Toggle minimum is also 4.
+            Enforced at spawn time — no runtime checks needed.
+
+   Rule 7 — Network monitor table (bottom-left) provides a live
+            window into rule 6: shows each network's type, a
+            draining life bar, and seconds remaining. Makes the
+            diversity logic observable without affecting it.
+   ─────────────────────────────────────────────────────────
+   LAN activity is independent of all WAN rules. Tweaking any
+   WAN parameter (WAN_INTERVAL, BACKBONE_DIST, forward rate)
+   has zero effect on internal LAN packet behaviour and vice
+   versa. See engineTickWAN() and engineTickLAN().
    ============================================================ */
 
 /* ============================================================
@@ -1064,15 +1124,15 @@ function engineInit(){
 }
 
 /* ============================================================
-   _wanSendFrom  — core of the 5-rule WAN system
+   _wanSendFrom  — core WAN send logic  (rules 1, 2, 3, 5)
    ─────────────────────────────────────────────────────────
-   Called by:
-     • engineTickWAN  (rules 1 & 2 — periodic/spawn send)
-     • WanPulse.update (rule 3 — forwarded arrival)
+   Called by engineTickWAN (rules 1 & 2) and WanPulse.update
+   (rule 3). Returns true if a packet was sent, false if no
+   reachable target existed this frame.
 
-   net     : the network that is sending
-   exclude : network to remove from the lottery (rule 5)
-             pass null for rules 1 & 2 (no exclusion)
+   net     : the network sending the packet
+   exclude : network removed from target lottery (rule 5)
+             null for periodic sends (rules 1 & 2)
    ============================================================ */
 function _wanSendFrom(net, exclude) {
     if(!net._wanCooldown) net._wanCooldown={};
@@ -1125,22 +1185,15 @@ function _wanSendFrom(net, exclude) {
                 60% chance it terminates at destination             */
     var forwards = (Math.random() < 0.40);
     _pulses.push(new WanPulse(net, target, forwards));
+    return true;   /* packet was sent */
 }
 
 
 /* ============================================================
-   engineTickWAN  — WAN communication (rules 1 & 2)
+   engineTickWAN  — inter-network communication  (rules 1 & 2)
    ─────────────────────────────────────────────────────────
-   Completely self-contained. Reads CFG.WAN_INTERVAL only.
-   No knowledge of LAN internals.
-
-   Rule 1: network fires immediately on first tick
-           (wanTimer initialised to 9999 in constructor)
-   Rule 2: larger networks fire more frequently
-           effInterval = WAN_INTERVAL * 10 / edges
-           clamped to 240f minimum (~4s fastest)
-           Small (5 edges)  → full WAN_INTERVAL
-           Large (91 edges) → ~240f
+   Self-contained. No knowledge of LAN internals.
+   Called once per frame from engineUpdate().
    ============================================================ */
 function engineTickWAN(){
     _networks.forEach(function(net){
@@ -1149,22 +1202,22 @@ function engineTickWAN(){
         var effInterval = Math.max(240, Math.floor(CFG.WAN_INTERVAL * 10 / Math.max(edges, 10)));
         net.wanTimer    = (net.wanTimer||0) + 1;
         if(net.wanTimer < effInterval) return;
-        net.wanTimer = 0;
-        _wanSendFrom(net, null);   /* null = no exclusion for periodic sends */
+        /* Only reset timer if a packet was actually sent.
+           If no candidates exist this frame, keep wanTimer
+           high so it retries next frame — rule 1 guaranteed. */
+        var sent = _wanSendFrom(net, null);
+        if(sent) net.wanTimer = 0;
     });
 }
 
 
 /* ============================================================
-   engineTickLAN  — internal LAN communication
+   engineTickLAN  — intra-network communication
    ─────────────────────────────────────────────────────────
-   Completely self-contained. Reads CFG.LAN_INTERVAL only.
-   No knowledge of WAN internals.
-
-   Size-proportional activity:
-     1 packet per ~8 edges per interval, min 1, max 6.
-     Small star (5 edges)  → 1 packet
-     Hex grid  (91 edges)  → 6 packets
+   Self-contained. No knowledge of WAN internals.
+   Called once per frame from engineUpdate().
+   Activity scales with edge count: 1 packet per ~8 edges
+   per interval, min 1, max 6.
    ============================================================ */
 function engineTickLAN(){
     _networks.forEach(function(net){
