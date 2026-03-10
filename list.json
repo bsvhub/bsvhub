@@ -1387,6 +1387,16 @@
       "colour1": "#c736ff",
       "colour2": "#fea94f",
       "opacity": "1"
+    },
+    {
+      "tab": "tool;doc",
+      "href": "https://github.com/icellan/runar",
+      "tooltip": "Write Bitcoin smart contracts in TypeScript, Go, Rust, Python, Solidity, or Move. Compile to Bitcoin Script.",
+      "img": "icon/github.svg",
+      "zoom": "1.0",
+      "alt": "scrip documentation",
+      "text": "Rúnar",
+      "info": ";;;"
     }
   ]
 }
