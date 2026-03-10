@@ -164,16 +164,28 @@ document.getElementById("background-layer").style.background =
 <!-- JS SECTION 3 — TAB SYSTEM, HEADER LINKS & COPY SOUND -->
 <script src="script/tabs.js"></script>
 
-<!-- PARTICLE BG — on when about or contact is open, off for everything else -->
+<!-- PARTICLE BG — desktop mode only; on when about or contact is open, off for everything else -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     var ON  = 'a[data-target="about-section"], a[data-target="contact-section"]';
-    var OFF = '.tab-btn, a.header-text-link:not([data-target="about-section"]):not([data-target="contact-section"]):not(#mobile-toggle)';
+    var OFF = '.tab-btn, a.header-text-link:not([data-target="about-section"]):not([data-target="contact-section"])';
     document.querySelectorAll(ON).forEach(function (el) {
-        el.addEventListener('click', function () { if (typeof particleBgStart === 'function') particleBgStart(); });
+        el.addEventListener('click', function () {
+            if (typeof particleBgStart === 'function' && !document.body.classList.contains('mobile-mode')) particleBgStart();
+        });
     });
     document.querySelectorAll(OFF).forEach(function (el) {
         el.addEventListener('click', function () { if (typeof particleBgStop === 'function') particleBgStop(); });
+    });
+
+    // Switching to desktop while on about/contact also starts particles
+    document.getElementById('mobile-toggle').addEventListener('click', function () {
+        if (document.body.classList.contains('mobile-mode')) {
+            var active = document.querySelector('.header-text-link.active');
+            if (active && (active.dataset.target === 'about-section' || active.dataset.target === 'contact-section')) {
+                setTimeout(function () { if (typeof particleBgStart === 'function') particleBgStart(); }, 250);
+            }
+        }
     });
 });
 </script>
