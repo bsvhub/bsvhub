@@ -367,8 +367,8 @@ function _drawGlow(ctx,x,y,outerR,peakAlpha,accent){
 function drawDevice(ctx, dev, alpha, inCore) {
     var a=alpha; if(a<0.005) return;
     var fl=(dev.flash||0)*a;
-    var ac=inCore && (dev.type===DT.VALIDATOR||dev.type===DT.GATEWAY);
-
+    //var ac=inCore && (dev.type===DT.VALIDATOR||dev.type===DT.GATEWAY);
+    var ac=inCore && (dev.type===DT.GATEWAY);
     /* ── GATEWAY — double ring (core perimeter / WAN anchor) ── */
     if(dev.type===DT.GATEWAY){
         if(fl>0.02) _drawGlow(ctx,dev.x,dev.y,32+fl*24,fl*0.82,true);
@@ -526,14 +526,20 @@ function _drawBSVSymbol(ctx, cx, cy, sz, step, alpha){
     ctx.save();
 
     ctx.fillStyle = col(bA,true);
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
 
     /* Use bold font so the ₿ looks strong inside the hex */
     ctx.font = "900 " + (sz*1.9) + "px system-ui, Segoe UI, Arial, sans-serif";
 
-    /* Unicode Bitcoin symbol */
-    ctx.fillText("₿", cx, cy);
+    /* Unicode Bitcoin symbol — centred on ink bounds, not font metrics */
+    var _m = ctx.measureText("₿");
+    var _w = _m.actualBoundingBoxLeft + _m.actualBoundingBoxRight;
+    var _h = _m.actualBoundingBoxAscent + _m.actualBoundingBoxDescent;
+    ctx.fillText("₿",
+        cx - _m.actualBoundingBoxLeft - _w / 2 - sz * 0.1,
+        cy + _m.actualBoundingBoxAscent - _h / 2
+    );
 
     ctx.restore();
 }
