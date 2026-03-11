@@ -1,6 +1,7 @@
 /* ============================================================
-   MANDALA NETWORK ANIMATION — mandala-bg.js  v1.0
+   MANDALA NETWORK ANIMATION — mandala-bg.js  v2.0
    ============================================================
+   BSV Node network visualisation.
    Drop-in replacement for particle-bg.js.
    Identical public API:
      particleBgStart()
@@ -20,12 +21,14 @@
    Three layers, always visible simultaneously:
 
    1. STABLE CORE CLUSTER
-      A permanent dense mesh at the scene centre that never
-      fades or dies. Built from octagonal CORE_NODEs and gold-
-      accented VALIDATORs, with GATEWAY nodes on its perimeter
-      acting as WAN attachment points. The core breathes with
-      a soft ambient halo that spikes on each block confirm.
-      Visual anchor — everything orbits and routes through it.
+      A permanent N-fold symmetric mesh at the scene centre.
+      N (6-12) is randomised each load — matching the face
+      count of the outer gateway polygon.  A floating BSV
+      hexagon at the dead centre is held in place by electric
+      arc force-fields (blue) to the inner ring.  Communication
+      between the hex and the gateway ring uses orange laser
+      pulses.  The core breathes with a soft ambient halo that
+      spikes on each BSV block confirmation.
 
    2. OVERLAY NETWORKS
       7 topology types (star, ring, tree, fat-tree, mesh,
@@ -36,11 +39,11 @@
       Minimum 3 different types enforced at all times (Rule 6).
 
    3. CONSENSUS CONFIRMATION SYSTEM
-      Core tracks incoming WAN arrivals in a rolling time
-      window. When the threshold (default 3) is met a golden
-      ring expands outward from the core, signalling a
-      confirmed transaction block. The block count increments
-      in the network monitor.
+      Core tracks incoming WAN arrivals; every 6th arrival
+      confirms a BSV block — the BSV symbol on the hex steps
+      through 6 brightness levels in sync, then at block
+      confirmation an orange ring expands from the hex centre
+      and the block counter increments in the monitor.
    ─────────────────────────────────────────────────────────
    COMMUNICATION RULES  (adapted from particle-bg.js v9.2)
 
@@ -84,15 +87,16 @@
    up in gold. Core LAN pulses are gold.
 
    DEVICE TYPES:
-     CORE_NODE  — filled octagon       (core processing node)
-     GATEWAY    — double ring          (core perimeter / WAN anchor)
-     VALIDATOR  — filled triangle      (validation node; gold in core)
-     MINER      — filled hexagon       (mining / edge node)
-     SERVER     — large filled square  (aggregate / storage)
-     SWITCH     — filled diamond       (LAN hub)
-     COMPUTER   — small filled square  (endpoint)
-     ROUTER     — filled circle        (overlay WAN gateway)
-     IoT        — filled cross         (micropayment device)
+     CORE_NODE   — filled octagon       (core processing node)
+     GATEWAY     — double ring          (core perimeter / WAN anchor)
+     VALIDATOR   — filled triangle      (validation node; gold in core)
+     MINER       — filled hexagon       (mining / edge node)
+     SERVER      — large filled square  (aggregate / storage)
+     SWITCH      — filled diamond       (LAN hub)
+     COMPUTER    — small filled square  (endpoint)
+     ROUTER      — filled circle        (overlay WAN gateway)
+     IoT         — filled cross         (micropayment device)
+     BSV_HEX     — large hexagon        (floating BSV node; centre)
 
    OVERLAY TOPOLOGY TYPES (0–6):
      0  star       — router → switch → endpoints
@@ -146,17 +150,17 @@ var CFG = {
        ════════════════════════════════════════════════════════ */
 
     /* WAN packets — large glowing dot, router ↔ core gateway */
-    WAN_INTERVAL:      360,   /* frames between each network's WAN spawn
+    WAN_INTERVAL:      432,   /* frames between each network's WAN spawn
                                  range : 60 → 600  [180–400]          */
-    WAN_SPEED:         280,   /* frames to travel full router→gateway
+    WAN_SPEED:         336,   /* frames to travel full router→gateway
                                  range : 60 → 800  [150–400]          */
     WAN_TRAIL:          18,   /* trail length behind WAN dot (frames)
                                  range : 0 → 40  [10–24]              */
 
     /* LAN packets — small dot, node → node within a network */
-    LAN_INTERVAL:      200,   /* frames between LAN spawns per network
+    LAN_INTERVAL:      240,   /* frames between LAN spawns per network
                                  range : 60 → 800  [120–300]          */
-    LAN_SPEED:         380,   /* frames to travel one LAN edge
+    LAN_SPEED:         456,   /* frames to travel one LAN edge
                                  range : 80 → 1000  [200–500]         */
     LAN_TRAIL:          11,   /* trail length behind LAN dot (frames)
                                  range : 0 → 24  [6–16]               */
@@ -166,12 +170,12 @@ var CFG = {
                                  range : 0.005 → 0.10  [0.015–0.04]  */
 
     /* Overlay network lifecycle */
-    FADE_FRAMES:       220,   /* frames to fade a network in OR out
+    FADE_FRAMES:       264,   /* frames to fade a network in OR out
                                  range : 60 → 600  [120–360]          */
-    ALIVE_MIN:        1800,   /* min frames an overlay stays alive
+    ALIVE_MIN:        2160,   /* min frames an overlay stays alive
                                  range : 600 → 7200  [1200–3600]
                                  ⚠ must be < ALIVE_MAX               */
-    ALIVE_MAX:        3400,   /* max frames an overlay stays alive
+    ALIVE_MAX:        4080,   /* max frames an overlay stays alive
                                  range : 1200 → 10800  [2400–6000]
                                  ⚠ must be > ALIVE_MIN               */
 
@@ -189,8 +193,9 @@ var CFG = {
                                  range : 80 → 220  [100–160]          */
     CORE_INNER_NODES:   12,   /* processing nodes in core interior
                                  range : 6 → 22  [8–16]               */
-    CORE_GATEWAYS:       4,   /* GATEWAY nodes on core perimeter
-                                 range : 2 → 8  [3–6]                 */
+    CORE_GATEWAYS:       4,   /* NOTE: overridden at runtime — actual count
+                                 equals nFaces (6–12) of the core polygon
+                                 range : 6 → 12  [8–10]                  */
     CORE_EXTRA_LINKS:    3,   /* extra cross-links per node beyond MST
                                  range : 0 → 5  [2–4]
                                  0 = sparse tree,  5 = very dense     */
@@ -230,7 +235,7 @@ var CFG = {
 
     CONSENSUS_THRESHOLD:  3,      /* core arrivals needed to confirm block
                                      range : 2 → 8  [2–4]               */
-    CONSENSUS_WINDOW:    200,     /* rolling frame window for counting
+    CONSENSUS_WINDOW:    240,     /* rolling frame window for counting
                                      range : 60 → 600  [120–300]         */
     CONSENSUS_RING_SPEED: 0.006,  /* ring expansion per frame (0→1)
                                      range : 0.002 → 0.015  [0.004–0.01] */
@@ -250,6 +255,7 @@ var CFG = {
     SZ_IOT:        2.5,
     SZ_GATEWAY:    5.2,   /* GATEWAY outer ring radius                    */
     SZ_CORE_NODE:  4.2,   /* CORE_NODE octagon circumradius               */
+    SZ_BSV_HEX:    15.2, /* Central BSV hexagon circumradius             */
 };
 
 
@@ -258,6 +264,7 @@ var ST = { FADE_IN:0, ALIVE:1, FADE_OUT:2, DEAD:3, CORE:4 };
 var DT = {
     COMPUTER:0, SERVER:1, ROUTER:2, SWITCH:3,
     MINER:4, VALIDATOR:5, IOT:6, GATEWAY:7, CORE_NODE:8,
+    BSV_HEX:9,
 };
 
 
@@ -467,6 +474,97 @@ function drawDevice(ctx, dev, alpha, inCore) {
         ctx.fillRect(dev.x-thick, dev.y-arm,   thick*2, arm*2);
         return;
     }
+
+    /* ── BSV_HEX — floating central BSV node ────────────────── */
+    if(dev.type===DT.BSV_HEX){
+        var step=(sim.consensus?sim.consensus.bsvStep:0)||0;
+        var pglow=(sim.consensus?sim.consensus.pendingGlow:0)||0;
+        var baseR=CFG.SZ_BSV_HEX;
+        var breath=0.05+Math.sin((sim?sim.frame:0)*0.022)*0.025;
+        _drawGlow(ctx,dev.x,dev.y,baseR*2.4,(breath+pglow*0.22)*a,false);
+        if(fl>0.02) _drawGlow(ctx,dev.x,dev.y,baseR*3.6,fl*0.45,true);
+        /* Outer hexagon — solid primary blue */
+        ctx.beginPath();
+        for(var i=0;i<6;i++){
+            var ang=Math.PI/6+i*Math.PI/3;
+            var px=dev.x+Math.cos(ang)*baseR, py=dev.y+Math.sin(ang)*baseR;
+            if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+        }
+        ctx.closePath();
+        ctx.fillStyle=col(Math.min(1,0.88*a),false);
+        ctx.fill();
+        ctx.strokeStyle=col(Math.min(1,0.96*a),false);
+        ctx.lineWidth=1.6; ctx.stroke();
+        /* Inner hexagon ring */
+        ctx.beginPath();
+        for(var i=0;i<6;i++){
+            var ang=Math.PI/6+i*Math.PI/3;
+            var px=dev.x+Math.cos(ang)*baseR*0.72, py=dev.y+Math.sin(ang)*baseR*0.72;
+            if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+        }
+        ctx.closePath();
+        ctx.strokeStyle=col(Math.min(1,0.36*a),false);
+        ctx.lineWidth=0.8; ctx.stroke();
+        /* BSV symbol — 6 brightness steps, ignites to orange at block */
+        _drawBSVSymbol(ctx, dev.x, dev.y, baseR*0.66, step, a);
+        return;
+    }
+}
+
+/* ── BSV Symbol — filled solid paths, standard bold ₿ form ────
+   sz   = half-height of the total symbol
+   step = 0-5  drives alpha: dim ember ignites to full orange
+   The symbol is all filled shapes: stem + two D-bumps + 3 bars
+   + top and bottom antenna ticks (the two short vertical
+   protrusions that make it an authentic Bitcoin ₿).
+   Lower bump is slightly wider than upper — canonical B form.
+   ─────────────────────────────────────────────────────────── */
+function _drawBSVSymbol(ctx, cx, cy, sz, step, alpha){
+    var levels=[0.08,0.22,0.40,0.58,0.78,0.97];
+    var bA=Math.min(1, levels[Math.min(5,Math.max(0,step))]*alpha);
+
+    ctx.save();
+
+    ctx.fillStyle = col(bA,true);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    /* Use bold font so the ₿ looks strong inside the hex */
+    ctx.font = "900 " + (sz*1.9) + "px system-ui, Segoe UI, Arial, sans-serif";
+
+    /* Unicode Bitcoin symbol */
+    ctx.fillText("₿", cx, cy);
+
+    ctx.restore();
+}
+
+
+/* ── Electric arc force-field between two points ──────────────
+   Two animated jagged passes in primary (blue) colour.
+   5-segment polylines displaced sinusoidally along the normal.
+   ─────────────────────────────────────────────────────────── */
+function _drawElectricArc(ctx, x1, y1, x2, y2, frame, alpha){
+    if(alpha<0.005) return;
+    var dx=x2-x1, dy=y2-y1;
+    var len=Math.sqrt(dx*dx+dy*dy); if(len<1) return;
+    var nx=-dy/len, ny=dx/len;
+    ctx.save(); ctx.lineCap='round';
+    for(var pass=0; pass<2; pass++){
+        var ph1=frame*0.13+pass*2.3, ph2=frame*0.09+pass*1.7+0.8, ph3=frame*0.07+pass*3.1+1.6;
+        var amp=len*0.13;
+        var d1=Math.sin(ph1)*amp, d2=Math.cos(ph2)*amp*0.7, d3=Math.sin(ph3)*amp*0.5;
+        ctx.beginPath();
+        ctx.moveTo(x1,y1);
+        ctx.lineTo(x1+dx*0.20+nx*d1, y1+dy*0.20+ny*d1);
+        ctx.lineTo(x1+dx*0.42+nx*d2, y1+dy*0.42+ny*d2);
+        ctx.lineTo(x1+dx*0.62+nx*d3, y1+dy*0.62+ny*d3);
+        ctx.lineTo(x1+dx*0.82+nx*d1*0.6, y1+dy*0.82+ny*d1*0.6);
+        ctx.lineTo(x2,y2);
+        ctx.strokeStyle=col(alpha*(pass===0?0.52:0.22),false);
+        ctx.lineWidth=pass===0?0.9:0.5;
+        ctx.stroke();
+    }
+    ctx.restore();
 }
 
 
@@ -503,7 +601,7 @@ function _pickTopoType(){
    ============================================================ */
 var sim = {
     netIdCounter: 0, networks:[], coreNet:null, pulses:[], frame:0,
-    consensus: { arrivals:[], rings:[], totalConfirmed:0, pendingGlow:0 },
+    consensus: { arrivals:[], rings:[], totalConfirmed:0, pendingGlow:0, bsvStep:0 },
 };
 
 function Network(cx, cy, isCore) {
@@ -605,59 +703,143 @@ Network.prototype.primaryGatewayPos = function(){
 };
 
 
-/* ── CORE CLUSTER TOPOLOGY ────────────────────────────────── */
+/* ── CORE CLUSTER TOPOLOGY ─────────────────────────────────────
+   Randomised N-fold symmetric design. N (6–12) is picked fresh
+   each load and controls BOTH the inner geometry pattern AND the
+   outer gateway count — so every gateway sits cleanly at a
+   polygon vertex, no antenna spokes.
+
+   Three structural patterns share the same pipeline:
+     0 SNOWFLAKE  — concentric N-fold rings + optional crystal tips
+     1 FLOWER     — inner N-ring + outer 2N petal ring + bridge layer
+     2 ATOM       — 2–3 nested concentric polygon shells
+
+   All patterns:
+     • Centre BSV hex floats — zero graph edges to it
+     • arcTargets → innerRing (for electric arc force-fields)
+     • gatewayIdxs → nF nodes at polygon vertices (for laser pulses)
+   ─────────────────────────────────────────────────────────── */
 Network.prototype._buildCore = function(){
-    var sp=CFG.SIZE_CORE;
-    var n=CFG.CORE_INNER_NODES;
-    var all=[];
+    var sp=CFG.SIZE_CORE, cx=this.cx, cy=this.cy;
 
-    /* Dense interior — mix of CORE_NODEs and VALIDATORs */
-    for(var i=0;i<n;i++){
-        var angle=Math.random()*Math.PI*2;
-        var dist=Math.sqrt(Math.random())*sp*0.68;
-        var type=(i%4===0)?DT.VALIDATOR:DT.CORE_NODE;
-        all.push(this._add(
-            this.cx+Math.cos(angle)*dist,
-            this.cy+Math.sin(angle)*dist, type));
-    }
+    /* Floating BSV hex — device 0, no edges ever attached */
+    var center=this._add(cx, cy, DT.BSV_HEX);
+    var all=[center];
 
-    /* Prim's MST — guarantees full connectivity */
-    var inMST=[all[0]], notIn=all.slice(1);
-    while(notIn.length>0){
-        var bestD=Infinity,bestA=-1,bestB=-1;
-        for(var i=0;i<inMST.length;i++)
-            for(var j=0;j<notIn.length;j++){
-                var da=this.devices[inMST[i]],db=this.devices[notIn[j]];
-                var dx=da.x-db.x,dy=da.y-db.y,d=dx*dx+dy*dy;
-                if(d<bestD){bestD=d;bestA=inMST[i];bestB=notIn[j];}
+    /* N-fold symmetry: 6–12 faces */
+    var nF = 6 + Math.floor(Math.random()*7);
+    var rot= Math.random()*(Math.PI*2/nF);
+    var pattern = Math.floor(Math.random()*3);
+
+    var innerRing=[], outerRing=[];
+
+    /* ── PATTERN 0: SNOWFLAKE ────────────────────────────────── */
+    if(pattern===0){
+        innerRing=this._placeRing(nF, sp*0.28, rot, DT.VALIDATOR);
+        all=all.concat(innerRing);
+        this._connectRing(innerRing,'trunk');
+
+        /* Optional crystal mid-ring — rotated half a step */
+        var midRing=[];
+        if(Math.random()>0.38){
+            midRing=this._placeRing(nF, sp*0.52, rot+Math.PI/nF, DT.CORE_NODE);
+            all=all.concat(midRing);
+            this._connectRing(midRing,'trunk');
+            for(var k=0;k<midRing.length;k++) this._connectNearest(midRing[k],innerRing,2,'trunk');
+        }
+
+        /* Optional spoke-tip extensions (fractal arms) */
+        if(Math.random()>0.45){
+            var tipR=sp*(midRing.length?0.70:0.54);
+            var tips=this._placeRing(nF, tipR, rot, DT.MINER);
+            all=all.concat(tips);
+            var src=midRing.length?midRing:innerRing;
+            for(var k=0;k<tips.length;k++) this._connectNearest(tips[k],src,2,'trunk');
+            outerRing=tips;
+        } else {
+            outerRing=midRing.length?midRing:innerRing;
+        }
+
+        /* Optional interstitial ring (doubles density, crystal facets) */
+        if(Math.random()>0.55){
+            var fRing=this._placeRing(nF, sp*0.42, rot+Math.PI/nF, DT.CORE_NODE);
+            all=all.concat(fRing);
+            this._connectRing(fRing,'trunk');
+            for(var k=0;k<fRing.length;k++){
+                this._connectNearest(fRing[k],innerRing,2,'trunk');
+                if(outerRing.length) this._connectNearest(fRing[k],outerRing,1,'trunk');
             }
-        if(bestA===-1) break;
-        this._edge(bestA,bestB,'trunk');
-        inMST.push(bestB);
-        notIn.splice(notIn.indexOf(bestB),1);
+        }
+
+    /* ── PATTERN 1: MANDALA FLOWER ───────────────────────────── */
+    } else if(pattern===1){
+        innerRing=this._placeRing(nF, sp*0.24, rot, DT.VALIDATOR);
+        all=all.concat(innerRing);
+        this._connectRing(innerRing,'trunk');
+
+        /* 2×nF petal ring at half-step offset — creates flower petals */
+        var petalRing=this._placeRing(nF*2, sp*0.50, rot+Math.PI/(nF*2), DT.CORE_NODE);
+        all=all.concat(petalRing);
+        this._connectRing(petalRing,'trunk');
+        for(var k=0;k<innerRing.length;k++) this._connectNearest(innerRing[k],petalRing,2,'trunk');
+
+        /* Optional second petal layer */
+        if(Math.random()>0.42){
+            var petal2=this._placeRing(nF, sp*0.70, rot+Math.PI/nF, DT.MINER);
+            all=all.concat(petal2);
+            for(var k=0;k<petal2.length;k++) this._connectNearest(petal2[k],petalRing,2,'trunk');
+            outerRing=petal2;
+        } else {
+            outerRing=petalRing;
+        }
+
+    /* ── PATTERN 2: ATOM — nested polygon shells ─────────────── */
+    } else {
+        var nShells=2+Math.floor(Math.random()*2);
+        var shellTypes=[DT.VALIDATOR,DT.CORE_NODE,DT.MINER];
+        var prevRing=[];
+        for(var ri=0;ri<nShells;ri++){
+            var r=sp*(0.22+ri*0.24);
+            var nN=nF+(ri%2===1?Math.floor(nF/2):0);
+            var rotOff=rot+(ri%2===1?Math.PI/nF:0);
+            var ring=this._placeRing(nN, r, rotOff, shellTypes[ri%3]);
+            all=all.concat(ring);
+            this._connectRing(ring,'trunk');
+            if(ri===0){ innerRing=ring; }
+            else { for(var k=0;k<ring.length;k++) this._connectNearest(ring[k],prevRing,2,'trunk'); }
+            prevRing=ring;
+        }
+        outerRing=prevRing;
     }
 
-    /* Extra cross-links — creates visual density */
-    for(var i=0;i<all.length;i++){
-        var pool=all.filter(function(x){return x!==all[i];});
-        var near=this._sortByDist(all[i],pool);
+    /* ── Extra cross-links on non-centre nodes ─────────────── */
+    var nonCtr=all.filter(function(i){return i!==center;});
+    for(var i=0;i<nonCtr.length;i++){
+        var pool=nonCtr.filter(function(x){return x!==nonCtr[i];});
+        var near=this._sortByDist(nonCtr[i],pool);
         for(var k=0;k<Math.min(CFG.CORE_EXTRA_LINKS,near.length);k++)
-            this._edge(all[i],near[k],'trunk');
+            this._edge(nonCtr[i],near[k],'trunk');
     }
 
-    /* GATEWAY nodes on perimeter — WAN attachment points */
-    var rot=Math.random()*Math.PI*2;
-    for(var i=0;i<CFG.CORE_GATEWAYS;i++){
-        var a=rot+i*(Math.PI*2/CFG.CORE_GATEWAYS);
-        var jit=(Math.random()-0.5)*0.18;
-        var gIdx=this._add(
-            this.cx+Math.cos(a+jit)*sp*1.10,
-            this.cy+Math.sin(a+jit)*sp*1.10, DT.GATEWAY);
+    /* ── GATEWAY ring — nF nodes at polygon face vertices ───────
+       One gateway per face, all at identical radius, connected
+       as a ring and to the outermost pattern layer.
+       No free-floating spokes — zero antenna appearance.        */
+    var gwConnect=outerRing.length?outerRing:(innerRing.length?innerRing:nonCtr);
+    for(var i=0;i<nF;i++){
+        var a=rot+i*(Math.PI*2/nF);
+        var gIdx=this._add(cx+Math.cos(a)*sp*1.08, cy+Math.sin(a)*sp*1.08, DT.GATEWAY);
         this.gatewayIdxs.push(gIdx);
-        this._connectNearest(gIdx,all,2,'uplink');
+        this._connectNearest(gIdx, gwConnect, 2, 'uplink');
     }
-
+    this._connectRing(this.gatewayIdxs,'uplink');
     this.routerIdx=this.gatewayIdxs[0];
+
+    /* ── Arc targets — innerRing nodes for electric force-fields */
+    var arcPool=innerRing.length?innerRing:nonCtr;
+    var sortedArc=this._sortByDist(center,arcPool);
+    this.arcTargets=sortedArc.slice(0, Math.min(nF, sortedArc.length));
+    this.laserTimer=0;
 };
 
 
@@ -897,9 +1079,21 @@ WanPulse.prototype.update=function(){
                 Math.floor(Math.random()*this.toNet.gatewayIdxs.length)];
             var gd=this.toNet.devices[gIdx];
             if(gd) gd.flash=1.0;
-            /* Record arrival for consensus system */
+            /* Advance bsvStep — 6 arrivals = 1 block, perfectly synced */
             sim.consensus.arrivals.push({frame:sim.frame});
-            _checkConsensus();
+            var step=(sim.consensus.bsvStep||0)+1;
+            if(step>=6 && sim.coreNet){
+                sim.consensus.totalConfirmed++;
+                sim.consensus.pendingGlow=1.0;
+                sim.consensus.rings.push({
+                    cx:sim.coreNet.cx, cy:sim.coreNet.cy,
+                    t:0, maxR:CFG.SIZE_CORE*CFG.CONSENSUS_RING_SCALE,
+                });
+                sim.consensus.bsvStep=0;
+                sim.consensus.arrivals=[];
+            } else {
+                sim.consensus.bsvStep=step;
+            }
         }
         /* Rule 3 / Rule 4 — forwarding */
         if(this.forwards && this.toNet.canSend())
@@ -935,6 +1129,39 @@ LanPulse.prototype.update=function(){
         this.alive=false;
         var dev=this.net.devices[this.dstDev];
         if(dev) dev.flash=0.85;
+        return;
+    }
+    this.cx=this.fx+(this.tx-this.fx)*this.t;
+    this.cy=this.fy+(this.ty-this.fy)*this.t;
+};
+
+
+/* ============================================================
+   LASER PULSE — fast orange beam, hex ↔ arc-target node
+   No edges needed — fires directly between device positions.
+   ============================================================ */
+function LaserPulse(net, fromIdx, toIdx){
+    var src=net.devices[fromIdx], dst=net.devices[toIdx];
+    if(!src||!dst){this.alive=false;return;}
+    this.net=net; this.dstDev=toIdx;
+    this.fx=src.x; this.fy=src.y;
+    this.tx=dst.x; this.ty=dst.y;
+    this.t=0;
+    this.speed=1/Math.max(30, CFG.LAN_SPEED*0.20); /* ~4-5× faster than LAN */
+    this.alive=true; this.cx=this.fx; this.cy=this.fy;
+    this.trail=[]; this.isWan=false; this.isLaser=true;
+}
+LaserPulse.prototype.update=function(){
+    var LASER_TRAIL=6;
+    if(this.t>0){
+        this.trail.push({x:this.cx,y:this.cy});
+        if(this.trail.length>LASER_TRAIL) this.trail.shift();
+    }
+    this.t+=this.speed;
+    if(this.t>=1){
+        this.alive=false;
+        var dev=this.net.devices[this.dstDev];
+        if(dev) dev.flash=0.90;
         return;
     }
     this.cx=this.fx+(this.tx-this.fx)*this.t;
@@ -1076,6 +1303,23 @@ function engineTickWAN(){
 function engineTickLAN(){
     sim.networks.forEach(function(net){
         if(net.state===ST.DEAD) return;
+
+        /* Core laser pulses — BSV hex centre ↔ GATEWAY nodes (orange laser comm) */
+        if(net.isCore && net.gatewayIdxs && net.gatewayIdxs.length>0){
+            net.laserTimer=(net.laserTimer||0)+1;
+            var laserInt=Math.floor(CFG.LAN_INTERVAL*0.45);
+            if(net.laserTimer>=laserInt){
+                net.laserTimer=0;
+                /* Pick a random gateway node as the laser target */
+                var gIdxs=net.gatewayIdxs;
+                var tIdx=gIdxs[Math.floor(Math.random()*gIdxs.length)];
+                var fromCentre=Math.random()<0.55;
+                var p=new LaserPulse(net, fromCentre?0:tIdx, fromCentre?tIdx:0);
+                if(p.alive) sim.pulses.push(p);
+            }
+        }
+
+        /* Regular LAN pulses on all edges (skip edges touching centre idx 0 in core) */
         if(net.edges.length===0) return;
         net.lanTimer=(net.lanTimer||0)+1;
         var interval=net.isCore
@@ -1086,6 +1330,11 @@ function engineTickLAN(){
         var count=Math.min(6,Math.max(1,Math.round(net.edges.length/8)));
         for(var c=0;c<count;c++){
             var eIdx=Math.floor(Math.random()*net.edges.length);
+            /* Skip any edge that touches the floating centre node (idx 0 in core) */
+            if(net.isCore){
+                var e=net.edges[eIdx];
+                if(e.a===0||e.b===0) continue;
+            }
             sim.pulses.push(new LanPulse(net,eIdx,Math.random()<0.5));
         }
     });
@@ -1157,6 +1406,7 @@ function engineInit(){
     sim.frame=0; sim.netIdCounter=0; sim.networks=[]; sim.pulses=[]; sim.coreNet=null;
     sim.consensus.arrivals=[]; sim.consensus.rings=[];
     sim.consensus.totalConfirmed=0; sim.consensus.pendingGlow=0;
+    sim.consensus.bsvStep=0;
 
     /* Permanent core at scene centre */
     var core=new Network(scene.W*0.5,scene.H*0.5,true);
@@ -1286,6 +1536,8 @@ function engineDraw(){
         net.edges.forEach(function(e){
             var da=net.devices[e.a], db=net.devices[e.b];
             if(!da||!db) return;
+            /* Skip any edge touching the floating centre hex (device 0 in core) */
+            if(net.isCore && (e.a===0||e.b===0)) return;
             var lw=e.t==='trunk'?1.25:e.t==='uplink'?0.90:0.52;
             var am=e.t==='trunk'?0.60:e.t==='uplink'?0.44:0.28;
             if(net.isCore){lw*=1.25;am*=1.35;}
@@ -1298,6 +1550,16 @@ function engineDraw(){
             ctx.stroke();
         });
     });
+
+    /* 4.5 — Electric arc force-fields (hex → inner ring nodes) */
+    if(sim.coreNet && sim.coreNet.arcTargets && sim.coreNet.devices[0]){
+        var hd=sim.coreNet.devices[0];
+        sim.coreNet.arcTargets.forEach(function(tIdx){
+            var td=sim.coreNet.devices[tIdx];
+            if(!td) return;
+            _drawElectricArc(ctx,hd.x,hd.y,td.x,td.y,sim.frame,0.46);
+        });
+    }
 
     /* 5 — Devices */
     live.forEach(function(net){
@@ -1325,7 +1587,7 @@ function engineDraw(){
     });
 
     /* 7 — LAN packets (small dot; gold in core) */
-    sim.pulses.filter(function(p){return !p.isWan;}).forEach(function(p){
+    sim.pulses.filter(function(p){return !p.isWan&&!p.isLaser;}).forEach(function(p){
         var na=p.net.alpha; if(na<0.01) return;
         var ac=p.net.isCore;
         for(var k=0;k<p.trail.length;k++){
@@ -1340,6 +1602,30 @@ function engineDraw(){
         ctx.beginPath(); ctx.arc(p.cx,p.cy,1.5,0,Math.PI*2);
         ctx.fillStyle=col(env*0.86*na,ac);
         ctx.fill();
+    });
+
+    /* 7.5 — Laser pulses (orange laser beams, BSV hex ↔ gateways) */
+    sim.pulses.filter(function(p){return p.isLaser;}).forEach(function(p){
+        if(!p.alive) return;
+        var env=Math.sin(p.t*Math.PI);
+        /* Compute full beam origin and current head */
+        var ox=p.fx, oy=p.fy;
+        /* Outer glow beam — wide, soft */
+        ctx.beginPath();
+        ctx.moveTo(ox,oy);
+        ctx.lineTo(p.cx,p.cy);
+        ctx.strokeStyle=col(env*0.32,true);
+        ctx.lineWidth=3.2; ctx.lineCap='round'; ctx.stroke();
+        /* Core beam — bright thin */
+        ctx.beginPath();
+        ctx.moveTo(ox,oy);
+        ctx.lineTo(p.cx,p.cy);
+        ctx.strokeStyle=col(env*0.88,true);
+        ctx.lineWidth=0.9; ctx.stroke();
+        /* Leading head glow + dot */
+        _drawGlow(ctx,p.cx,p.cy,10,env*0.72,true);
+        ctx.beginPath(); ctx.arc(p.cx,p.cy,1.8,0,Math.PI*2);
+        ctx.fillStyle=col(env*0.98,true); ctx.fill();
     });
 
     /* 8 — Easter egg control pulse */
@@ -1401,7 +1687,7 @@ function _monitorUpdate(){
 
     /* Header row — always index 0 */
     var ringActive=sim.consensus.rings.length>0;
-    var headerTxt='\u2b21 CORE STABLE  blocks: '+sim.consensus.totalConfirmed+
+    var headerTxt='\u2b21 BSV CORE  blocks: '+sim.consensus.totalConfirmed+
                   '  '+(ringActive?'\u25cf':'\u25cb');
     if(!ui.monitorRows[0]) _monitorMakeRow();
     ui.monitorRows[0].textContent=headerTxt;
@@ -1597,6 +1883,7 @@ function particleBgDestroy(){
     sim.networks=[]; sim.pulses=[]; sim.frame=0; sim.coreNet=null;
     sim.consensus.arrivals=[]; sim.consensus.rings=[];
     sim.consensus.totalConfirmed=0; sim.consensus.pendingGlow=0;
+    sim.consensus.bsvStep=0;
     ui.monitorRows=[];
     _glowCacheInvalidate();
 }
