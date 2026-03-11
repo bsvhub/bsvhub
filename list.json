@@ -1402,7 +1402,7 @@
       "info": ";;code.svg;"
     },
     {
-      "tab": "tool;app;market",
+      "tab": "tool;app",
       "href": "https://beta.peermark.online",
       "tooltip": "Harness blockchain technology to create secure, time-stamped registration records for your assets and documents.",
       "img": "app/peermark.svg",
@@ -1412,7 +1412,7 @@
       "info": ";;beta.svg;"
     },
     {
-      "tab": "tool;app",
+      "tab": "bsv",
       "href": "https://bitschool.online",
       "tooltip": "Learn Bitcoin SV from the ground up with hands-on simulations, clear explanations, and interactive assessments. Perfect for complete beginners.",
       "img": "app/bitschool.svg",
