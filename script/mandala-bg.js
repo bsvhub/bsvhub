@@ -1687,7 +1687,7 @@ function _monitorUpdate(){
 
     /* Header row — always index 0 */
     var ringActive=sim.consensus.rings.length>0;
-    var headerTxt='\u2b21 BSV CORE  blocks: '+sim.consensus.totalConfirmed+
+    var headerTxt='\u2b21 CORE  blocks: '+sim.consensus.totalConfirmed+
                   '  '+(ringActive?'\u25cf':'\u25cb');
     if(!ui.monitorRows[0]) _monitorMakeRow();
     ui.monitorRows[0].textContent=headerTxt;
