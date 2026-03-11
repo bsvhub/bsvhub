@@ -426,8 +426,8 @@
       "tab": "tool",
       "href": "https://gaia-explorer.com",
       "tooltip": "BSV image blockchain explorer",
-      "img": "app/gaia.svg",
-      "zoom": "1.0",
+      "img": "icon/gaiaexplorer.webp",
+      "zoom": "1.1",
       "alt": "tool explorer",
       "text": "Explorer",
       "info": ";;;"
@@ -1137,7 +1137,7 @@
       "tab": "tool;app;wallet",
       "href": "https://firesat.io",
       "tooltip": "Secure, non-custodial BSV wallet for effortless BSV20 token trading, feeless transactions, and intuitive asset management.",
-      "img": "icon/firesat.svg",
+      "img": "icon/firesat.webp",
       "zoom": "1.0",
       "alt": "ordinals NFT BSV20",
       "text": "FireSat Wallet",
@@ -1400,6 +1400,57 @@
       "alt": "scrip documentation",
       "text": "Rúnar",
       "info": ";;code.svg;"
+    },
+    {
+      "tab": "tool;app;market",
+      "href": "https://beta.peermark.online",
+      "tooltip": "Harness blockchain technology to create secure, time-stamped registration records for your assets and documents.",
+      "img": "app/peermark.svg",
+      "zoom": "1.0",
+      "alt": "scrip documentation",
+      "text": "PeerMark",
+      "info": ";;beta.svg;"
+    },
+    {
+      "tab": "tool;app",
+      "href": "https://bitschool.online",
+      "tooltip": "Learn Bitcoin SV from the ground up with hands-on simulations, clear explanations, and interactive assessments. Perfect for complete beginners.",
+      "img": "app/bitschool.svg",
+      "zoom": "1.0",
+      "alt": "scrip documentation",
+      "text": "BitSchool",
+      "info": ";;;"
+    },
+    {
+      "tab": "tool",
+      "href": "https://gaialog.world",
+      "tooltip": "Immutable environmental data, live from air, water, fire and seismic sensors.",
+      "img": "icon/bsv.svg",
+      "zoom": "1.0",
+      "alt": "data info geology",
+      "text": "GaiaLog",
+      "info": ";;;"
+    },
+    {
+      "tab": "tool",
+      "href": "https://gaiaaid.vercel.app",
+      "tooltip": "Assistance with building basic BSV App Plans & Comparing to other Chain Features.",
+      "img": "icon/gaiaaid.webp",
+      "zoom": "1.1",
+      "alt": "",
+      "text": "GaiaAid",
+      "info": ";;;",
+      "colour1": "#3ebfba"
+    },
+    {
+      "tab": "bsv",
+      "href": "https://www.boostbsv.com",
+      "tooltip": "Everything you need to know about BSV, cryptocurrency, and the future of digital money",
+      "img": "icon/bsv.svg",
+      "zoom": "1.0",
+      "alt": "",
+      "text": "Boost BSV",
+      "info": ";;;"  
     }
   ]
 }
