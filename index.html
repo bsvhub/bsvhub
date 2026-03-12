@@ -167,8 +167,8 @@ document.getElementById("background-layer").style.background =
 <!-- PARTICLE BG — desktop mode only; on when about or contact is open, off for everything else -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    var ON  = 'a[data-target="about-section"], a[data-target="contact-section"]';
-    var OFF = '.tab-btn, a.header-text-link:not([data-target="about-section"]):not([data-target="contact-section"])';
+    var ON  = 'a[data-target="about-section"], a[data-target="contact-section"], a[data-target="tip-section"]';
+    var OFF = '.tab-btn, a.header-text-link:not([data-target="about-section"]):not([data-target="contact-section"]):not([data-target="tip-section"])';
     document.querySelectorAll(ON).forEach(function (el) {
         el.addEventListener('click', function () {
             if (typeof particleBgStart === 'function' && !document.body.classList.contains('mobile-mode')) particleBgStart();
@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('mobile-toggle').addEventListener('click', function () {
         if (document.body.classList.contains('mobile-mode')) {
             var active = document.querySelector('.header-text-link.active');
-            if (active && (active.dataset.target === 'about-section' || active.dataset.target === 'contact-section')) {
+            if (active && (active.dataset.target === 'about-section' || active.dataset.target === 'contact-section' || active.dataset.target === 'tip-section')) {
                 setTimeout(function () { if (typeof particleBgStart === 'function') particleBgStart(); }, 250);
             }
         }
