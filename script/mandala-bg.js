@@ -722,10 +722,10 @@ Network.prototype._buildCore = function(){
     /* Symmetry orders weighted toward visually rich ranges.
        Primes (5,7,11,13) create aperiodic long-range structure.
        Composites with many divisors (12,24) create dense webs. */
-    var N_POOL=[3,4,5,5,6,6,7,7,8,8,9,10,10,11,12,12,
-               13,14,15,16,18,20,21,24,25,28,32];
+    // AFTER — max is now 24
+    var N_POOL=[3,4,5,5,6,6,7,7,8,8,9,10,10,11,12,12,13,14,15,16,18,20,21,24];
     var n=N_POOL[Math.floor(Math.random()*N_POOL.length)];
-    var nGW=Math.max(6,Math.min(32,n)); /* gateway count: 6-32 */
+    var nGW=Math.max(6,Math.min(24,n)); /* gateway count: 6-24 */
 
     var phi_exp = 0.55+Math.random()*0.90;  /* phi-spiral tightness  */
     var r0_frac = 0.14+Math.random()*0.14;  /* innermost ring radius */
