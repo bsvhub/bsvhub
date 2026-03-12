@@ -669,6 +669,30 @@ Network.prototype.nearestGatewayPos = function(fromX, fromY){
 };
 
 
+/* ──────────────────────────────────────────────────────────────
+   SEGMENT-CIRCLE INTERSECTION TEST
+   Returns true if the line segment from (ax,ay)→(bx,by) enters
+   or passes through a circle at (cx,cy) with radius r.
+   Used by the inner-zone edge guard in _buildCore.
+   ────────────────────────────────────────────────────────────── */
+function _segIntersectsCircle(ax,ay,bx,by,cx,cy,r){
+    var dx=bx-ax, dy=by-ay;
+    var fx=ax-cx, fy=ay-cy;
+    var a=dx*dx+dy*dy;
+    if(a<1e-10) return (fx*fx+fy*fy)<r*r; /* degenerate: point test */
+    var b=2*(fx*dx+fy*dy);
+    var c=fx*fx+fy*fy-r*r;
+    var disc=b*b-4*a*c;
+    if(disc<0) return false;
+    disc=Math.sqrt(disc);
+    var t1=(-b-disc)/(2*a);
+    var t2=(-b+disc)/(2*a);
+    /* Intersection exists if either hit-point lies on [0,1] or
+       segment is fully inside the circle (t1<0 && t2>1)          */
+    return (t1>=0&&t1<=1)||(t2>=0&&t2<=1)||(t1<0&&t2>1);
+}
+
+
 /* ══════════════════════════════════════════════════════════════
    FRACTAL SNOWFLAKE MANDALA GENERATOR
    ══════════════════════════════════════════════════════════════
@@ -721,11 +745,11 @@ Network.prototype._buildCore = function(){
 
     /* Symmetry orders weighted toward visually rich ranges.
        Primes (5,7,11,13) create aperiodic long-range structure.
-       Composites with many divisors (12,24) create dense webs. */
-    // AFTER — max is now 24
-    var N_POOL=[3,4,5,5,6,6,7,7,8,8,9,10,10,11,12,12,13,14,15,16,18,20,21,24];
+       Composites with many divisors (12,24,32) create dense webs.
+       Per-ring hard cap is 32; total mandala cap is 128 nodes.   */
+    var N_POOL=[3,4,5,5,6,6,7,7,8,8,9,10,10,11,12,12,13,14,15,16,18,20,21,24,28,32];
     var n=N_POOL[Math.floor(Math.random()*N_POOL.length)];
-    var nGW=Math.max(6,Math.min(24,n)); /* gateway count: 6-24 */
+    var nGW=Math.max(6,Math.min(32,n)); /* gateway (outer) ring count: 6-32 */
 
     var phi_exp = 0.55+Math.random()*0.90;  /* phi-spiral tightness  */
     var r0_frac = 0.14+Math.random()*0.14;  /* innermost ring radius */
@@ -766,13 +790,18 @@ Network.prototype._buildCore = function(){
     var all=[center];
     var rings=[];
 
-    /* BUILD RINGS */
+    /* BUILD RINGS — max 32 nodes per ring, 128 total nodes per mandala */
+    var MAX_CORE_NODES=128;
     for(var d=0;d<depth;d++){
         var r=radii[d];
         var rawN=Math.max(2,Math.round(n*harm[d]));
-        /* Keep arc-spacing visually sane */
+        /* Keep arc-spacing visually sane; hard cap 32 per ring */
         var maxN=Math.max(2,Math.floor(TAU*r/8));
-        var nN=Math.min(rawN,maxN);
+        var nN=Math.min(rawN,maxN,32);
+        /* Reserve enough budget for the gateway ring */
+        var budget=MAX_CORE_NODES-all.length-nGW-1;
+        nN=Math.min(nN,Math.max(2,budget));
+        if(all.length>=MAX_CORE_NODES-nGW) break;
         var dt=DTYPES[d%DTYPES.length];
         var ring=[];
         for(var i=0;i<nN;i++){
@@ -799,7 +828,7 @@ Network.prototype._buildCore = function(){
     /* ARM BIFURCATION: fractal dendritic tips */
     var outerRing=rings[depth-1];
     var branchNodes=[];
-    if(branch_p>0.05&&depth>=2&&outerRing.length<=24){
+    if(branch_p>0.05&&depth>=2&&outerRing.length<=32){
         var halfAngle=(Math.PI/n)*0.65;
         var branchR=radii[depth-1]*(1+0.28*PHI/(depth+1));
         if(branchR<=sp*0.90){
@@ -808,6 +837,7 @@ Network.prototype._buildCore = function(){
                 var od=this.devices[outerRing[i]];
                 var baseA=Math.atan2(od.y-cy,od.x-cx);
                 for(var side=-1;side<=1;side+=2){
+                    if(all.length>=MAX_CORE_NODES-nGW) break; /* respect budget */
                     var ba=baseA+side*halfAngle;
                     var bidx=this._add(
                         cx+Math.cos(ba)*branchR,
@@ -858,9 +888,10 @@ Network.prototype._buildCore = function(){
         this._connectNearest(center,innerRing,innerRing.length,'trunk');
     }
 
-    /* GATEWAY RING */
+    /* GATEWAY RING — hard cap 32 nodes, total mandala ≤ 128 nodes */
     var gwR=sp*1.05;
     var gwRot=baseRot+(Math.random()-0.5)*(Math.PI/nGW)*0.4;
+    nGW=Math.min(nGW,32,MAX_CORE_NODES-all.length); /* final cap enforcement */
     var gwConnect=branchNodes.length?branchNodes:outerRing;
     for(var i=0;i<nGW;i++){
         var a=gwRot+i*(TAU/nGW);
@@ -870,6 +901,32 @@ Network.prototype._buildCore = function(){
     }
     this._connectRing(this.gatewayIdxs,'uplink');
     this.routerIdx=this.gatewayIdxs[0];
+
+    /* ── INNER-ZONE GUARD ─────────────────────────────────────────
+       The space between the BSV hex core and rings[0] is held by
+       force-fields; no permanent network link may pass through it.
+       Rule: any edge where BOTH endpoints lie outside rings[0] radius
+       AND whose line segment intersects that inner circle is removed.
+       Centre-spoke edges (hub connections) are always preserved.     */
+    if(rings.length>0){
+        var izR=radii[0];
+        var _devs=this.devices;
+        var _cx=cx, _cy=cy, _ctr=center;
+        var izR2_lo=(izR*0.85)*(izR*0.85); /* both-outside threshold  */
+        var izR_test=izR*0.88;             /* intersection test radius */
+        this.edges=this.edges.filter(function(e){
+            if(e.a===_ctr||e.b===_ctr) return true; /* centre spoke: keep */
+            var da=_devs[e.a], db=_devs[e.b]; if(!da||!db) return true;
+            var dA2=(da.x-_cx)*(da.x-_cx)+(da.y-_cy)*(da.y-_cy);
+            var dB2=(db.x-_cx)*(db.x-_cx)+(db.y-_cy)*(db.y-_cy);
+            /* Only filter if both endpoints are clearly outside inner ring */
+            if(dA2>izR2_lo && dB2>izR2_lo){
+                if(_segIntersectsCircle(da.x,da.y,db.x,db.y,_cx,_cy,izR_test))
+                    return false;
+            }
+            return true;
+        });
+    }
 
     /* ARC TARGETS for electric force-fields */
     var arcPool=innerRing.length?innerRing:all.filter(function(i){return i!==center;});
