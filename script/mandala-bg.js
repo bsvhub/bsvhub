@@ -2456,6 +2456,16 @@ function injectPanels(){
     );
     ui.rightCtrl.style.width='100%';
     ui.rightCtrl.style.justifyContent='center';
+    /* Version label — same row as core toggle, right of ► with spacing to edge */
+    var verLbl=document.createElement('span');
+    verLbl.textContent='v3.0';
+    verLbl.dataset.lbl='1';
+    verLbl.dataset.accent='1';
+    verLbl.style.cssText=
+        'font:10px/1 monospace;letter-spacing:0.04em;white-space:nowrap;'+
+        'border:1px solid currentColor;border-radius:2px;padding:1px 4px;'+
+        'box-sizing:border-box;margin-left:4px;';
+    ui.rightCtrl.appendChild(verLbl);
     ui.right.appendChild(ui.rightCtrl);
 
     /* CENTRE BOTTOM — speed: two square [−][+] with label between */
