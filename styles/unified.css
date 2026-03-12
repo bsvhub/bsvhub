@@ -621,25 +621,28 @@ ul.icon-grid li a:hover .icon-text::first-letter {
 /* --- COPY BUTTON ------------------------------------------- */
 
 .copy-btn {
-    margin-left: 12px;
-    padding: 3px 14px;
-    font-size: 1.4rem;
-    font-family: var(--font-tooltip);
-    background: #ffcc66;
-    border: 2px solid #b8860b;
-    color: black;
-    border-radius: 10px;
+    display: inline;
+    margin: 0;
+    padding: 0;
+    font-size: inherit;
+    font-family: inherit;
+    line-height: inherit;
+    background: none;
+    border: none;
+    color: inherit;
+    opacity: 0.6;
     cursor: pointer;
-    transition: background 0.2s, transform 0.2s;
+    transition: opacity 0.2s;
+    vertical-align: baseline;
+    white-space: nowrap;
 }
 
 .copy-btn:hover {
-    background: #ffd98c;
-    transform: scale(1.08);
+    opacity: 1;
 }
 
 .copy-btn:active {
-    transform: scale(0.96);
+    opacity: 0.4;
 }
 
 /* --- LINK STYLE -------------------------------------------- */
@@ -933,8 +936,8 @@ body.mobile-mode .header-tab-text {
 }
 
 body.mobile-mode .copy-btn {
-    font-size: calc(1.4rem * var(--header-section-scale));
-    padding: calc(8px * var(--header-section-scale)) calc(14px * var(--header-section-scale));
+    font-size: inherit;
+    padding: 0;
 }
 
 /* 📱 MOBILE - Icon text scaling */
