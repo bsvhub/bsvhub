@@ -1849,6 +1849,129 @@ function bestSpawn(){
     return best;
 }
 
+/* ============================================================
+   UNIFIED PLACEMENT RESOLVER  —  cross-type overlap prevention
+   ============================================================
+   Modular layer that sits above both existing placement systems
+   (_bestCoreSpawnPos and bestSpawn) without modifying either.
+   Those systems remain responsible for their own domain logic
+   (screen-edge margins, core-exclusion zones, etc.).  This
+   layer adds a final pass that scores every candidate against
+   the actual bounding footprint of ALL live networks — cores
+   and overlays alike — and returns the least-overlapping
+   position.
+
+   Three public entry points replace the raw spawn calls:
+     _resolvedCorePos()     — wraps _bestCoreSpawnPos
+     _resolvedOverlayPos()  — wraps bestSpawn
+     _resolvedInitialPos(n) — validates a geometric init position
+
+   Tuning constants (both safe to adjust at runtime):
+     PLACEMENT_EXTRA_CANDS — additional candidates sampled on
+       top of what each underlying system already tries.
+       Higher = better placement, more CPU per spawn event.
+       Spawns are infrequent so 40 is very affordable.
+     PLACEMENT_PADDING     — minimum clear gap (px) required
+       between two network footprint edges.
+   ============================================================ */
+
+var PLACEMENT_EXTRA_CANDS = 40;
+var PLACEMENT_PADDING     = 28;
+
+/* _networkFootprint(net)
+   Returns the effective bounding radius of a network by
+   measuring the furthest device from the network centre.
+   For networks not yet built, returns a conservative floor
+   derived from the network class (core vs overlay).
+   This means every topology shape — star arms, tree branches,
+   radial tips — contributes to the real footprint rather than
+   using a fixed constant that may under- or over-estimate.   */
+function _networkFootprint(net){
+    var floor = net.isCore
+        ? CFG.SIZE_CORE  * 1.15   /* gateway ring sits at sp*1.05 */
+        : CFG.SIZE_LARGE * 0.90;  /* conservative overlay floor   */
+    if(!net.devices || net.devices.length === 0) return floor;
+    var maxR2 = 0;
+    for(var i = 0; i < net.devices.length; i++){
+        var d = net.devices[i];
+        var dx = d.x - net.cx, dy = d.y - net.cy;
+        var r2 = dx*dx + dy*dy;
+        if(r2 > maxR2) maxR2 = r2;
+    }
+    return Math.max(floor, Math.sqrt(maxR2));
+}
+
+/* _noOverlapPos(candidateFn, ownFootprint)
+   Generates (1 + PLACEMENT_EXTRA_CANDS) candidate positions
+   by calling candidateFn repeatedly, then scores each one:
+   • Hard overlap   → large penalty per overlapping network
+   • Soft clearance → reward proportional to separation slack
+   Returns the highest-scoring candidate.
+   On a very crowded screen (many overlays + cores) there may
+   be no fully clear position; in that case the least-bad
+   position is returned so spawning never stalls.             */
+function _noOverlapPos(candidateFn, ownFootprint){
+    var live = sim.networks.filter(function(n){
+        return n.state !== ST.DEAD;
+    });
+
+    /* Gather candidates — first from the raw system, rest extra */
+    var cands = [];
+    var total = 1 + PLACEMENT_EXTRA_CANDS;
+    for(var i = 0; i < total; i++) cands.push(candidateFn());
+
+    var best = cands[0], bestScore = -Infinity;
+    for(var ci = 0; ci < cands.length; ci++){
+        var p = cands[ci];
+        var score = 0;
+
+        for(var j = 0; j < live.length; j++){
+            var n   = live[j];
+            var fp  = _networkFootprint(n);
+            var req = ownFootprint + fp + PLACEMENT_PADDING;
+            var dx  = p.x - n.cx, dy = p.y - n.cy;
+            var dist = Math.sqrt(dx*dx + dy*dy);
+            var slack = dist - req;
+
+            if(slack < 0){
+                /* Overlap: penalise proportional to depth.
+                   Severe overlap (centres nearly coincide) gets
+                   an extra flat penalty to push it to last resort. */
+                score += slack * 4;
+                if(dist < (ownFootprint + fp) * 0.5) score -= 4000;
+            } else {
+                /* Clean separation: reward up to a cap so that
+                   "far from everything" and "just clear" are both
+                   good but extreme isolation is not over-rewarded. */
+                score += Math.min(slack, 180);
+            }
+        }
+        if(score > bestScore){ bestScore = score; best = p; }
+    }
+    return best;
+}
+
+/* Public resolver wrappers */
+function _resolvedCorePos(){
+    return _noOverlapPos(_bestCoreSpawnPos, CFG.SIZE_CORE * 1.15);
+}
+function _resolvedOverlayPos(){
+    return _noOverlapPos(bestSpawn, CFG.SIZE_LARGE * 0.90);
+}
+/* Used for initial geometric core positions — validates a known
+   point rather than sampling, by wrapping it in a single-shot
+   candidateFn that always returns that fixed position plus
+   PLACEMENT_EXTRA_CANDS fresh candidates for comparison.     */
+function _resolvedInitialPos(fixedPos){
+    var called = false;
+    function candidateFn(){
+        if(!called){ called = true; return fixedPos; }
+        return _bestCoreSpawnPos();
+    }
+    return _noOverlapPos(candidateFn, CFG.SIZE_CORE * 1.15);
+}
+
+
 function engineInit(){
     if(!scene.canvas){
         scene.canvas=document.createElement('canvas');
@@ -1864,10 +1987,13 @@ function engineInit(){
     sim.coreNets=[]; sim.coreNet=null;
     sim.globalBlocks=0; sim.blockCooldown=0;
 
-    /* Spawn NUM_CORES core networks distributed across screen */
+    /* Spawn NUM_CORES core networks distributed across screen.
+       Geometric positions from _corePositions() are validated
+       through the unified resolver so even initial cores do not
+       overlap each other's footprints on unusual screen sizes. */
     var corePos=_corePositions();
     for(var ci=0;ci<Math.max(2,CFG.NUM_CORES);ci++){
-        var pos=corePos[ci]||_bestCoreSpawnPos();
+        var pos=_resolvedInitialPos(corePos[ci]||_bestCoreSpawnPos());
         var core=new Network(pos.x,pos.y,true);
         /* Initial cores start alive immediately */
         core.state=ST.ALIVE; core.alpha=1; core.stf=0;
@@ -1879,7 +2005,7 @@ function engineInit(){
     /* Overlay networks — staggered lifecycle */
     var cycle=CFG.FADE_FRAMES*2+CFG.ALIVE_MIN;
     for(var i=0;i<CFG.MAX_OVERLAYS;i++){
-        var pt=bestSpawn();
+        var pt=_resolvedOverlayPos();
         var net=new Network(pt.x,pt.y,false);
         var off=Math.floor((i/CFG.MAX_OVERLAYS)*cycle);
         if(off<=CFG.FADE_FRAMES){
@@ -1920,7 +2046,7 @@ function engineUpdate(){
     /* Maintain NUM_CORES count — spawn replacement cores as needed */
     var targetCores=Math.max(2,CFG.NUM_CORES);
     while(sim.coreNets.length<targetCores){
-        var pos=_bestCoreSpawnPos();
+        var pos=_resolvedCorePos();
         var newCore=new Network(pos.x,pos.y,true);
         /* Replacement cores fade in */
         newCore.state=ST.FADE_IN; newCore.stf=0; newCore.alpha=0;
@@ -1933,7 +2059,8 @@ function engineUpdate(){
     sim.networks=sim.networks.filter(function(n){return n.state!==ST.DEAD;});
     var ovCount=sim.networks.filter(function(n){return !n.isCore;}).length;
     while(ovCount<CFG.MAX_OVERLAYS){
-        sim.networks.push(new Network(bestSpawn().x,bestSpawn().y,false));
+        var pt=_resolvedOverlayPos();
+        sim.networks.push(new Network(pt.x,pt.y,false));
         ovCount++;
     }
 
@@ -2294,7 +2421,8 @@ function injectPanels(){
             var prev=CFG.MAX_OVERLAYS;
             CFG.MAX_OVERLAYS=Math.min(32,CFG.MAX_OVERLAYS+1);
             for(var i=0;i<CFG.MAX_OVERLAYS-prev;i++)
-                sim.networks.push(new Network(bestSpawn().x,bestSpawn().y,false));
+                var _pt=_resolvedOverlayPos();
+                sim.networks.push(new Network(_pt.x,_pt.y,false));
         },
         false
     );
