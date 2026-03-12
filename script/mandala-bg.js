@@ -752,7 +752,7 @@ Network.prototype._buildCore = function(){
     var nGW=Math.max(6,Math.min(32,n)); /* gateway (outer) ring count: 6-32 */
 
     var phi_exp = 0.55+Math.random()*0.90;  /* phi-spiral tightness  */
-    var r0_frac = 0.14+Math.random()*0.14;  /* innermost ring radius */
+    var r0_frac = 0.20+Math.random()*0.10;  /* innermost ring radius: 20–30% of sp */
     var depth   = 3+Math.floor(Math.random()*3); /* 3-5 rings (min 3)*/
     var hub     = Math.floor(Math.random()*5);   /* hub style 0-4    */
     var cross_k = 1+Math.floor(Math.random()*3); /* 1-3 cross-links  */
@@ -794,6 +794,21 @@ Network.prototype._buildCore = function(){
         if(radii[d]-radii[d-1]>maxGap) radii[d]=radii[d-1]+maxGap;
     }
     for(var d=0;d<depth;d++){ if(radii[d]>sp*0.88) radii[d]=sp*0.88; }
+
+    /* INNER-ZONE RADIUS RULE — mandala network only.
+       The gap between the BSV hex centre and the first inner ring
+       must be between 20% and 30% of the full network radius (sp).
+       Enforced as a hard clamp AFTER all phi-spiral scaling and
+       inter-ring gap corrections so nothing upstream can violate it.
+       Outer rings are shifted proportionally to preserve relative spacing. */
+    var izMin=sp*0.20, izMax=sp*0.30;
+    var r0raw=radii[0];
+    var r0clamped=Math.max(izMin,Math.min(izMax,r0raw));
+    if(r0clamped!==r0raw && r0raw>0){
+        var r0scale=r0clamped/r0raw;
+        for(var d=0;d<depth;d++) radii[d]*=r0scale;
+        for(var d=0;d<depth;d++){ if(radii[d]>sp*0.88) radii[d]=sp*0.88; }
+    }
 
     var DTYPES=[DT.VALIDATOR,DT.CORE_NODE,DT.MINER,DT.VALIDATOR,DT.CORE_NODE];
 
@@ -2458,7 +2473,7 @@ function injectPanels(){
     ui.rightCtrl.style.justifyContent='center';
     /* Version label — same row as core toggle, right of ► with spacing to edge */
     var verLbl=document.createElement('span');
-    verLbl.textContent='v3.0';
+    verLbl.textContent='v3.1';
     verLbl.dataset.lbl='1';
     verLbl.dataset.accent='1';
     verLbl.style.cssText=
