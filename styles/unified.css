@@ -167,7 +167,9 @@ body {
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
     padding: 4px 12px;
-    background: rgba(25, 25, 25, 0.6);
+    background: rgba(25, 25, 25, 0.8);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px); /* Safari */
 }
 
 .header-title {
@@ -257,7 +259,9 @@ body.mobile-mode .mobile-mode-icon {
     row-gap: 10px;
     gap: 10px;
     padding: 6px 12px;
-    background-color: rgba(25, 25, 25, 0.6);
+    background-color: rgba(25, 25, 25, 0.8);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px); /* Safari */
     box-shadow: none;
     font-family: var(--font-tab);
 }
@@ -354,7 +358,9 @@ body.mobile-mode .mobile-mode-icon {
   font-size: 1.0rem;
   color: #fada4e;
   text-align: center;
-  background: rgba(25, 25, 25, 0.6);
+  background: rgba(25, 25, 25, 0.8);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px); /* Safari */
   transition: max-height var(--tooltip-speed) ease;
 }
 

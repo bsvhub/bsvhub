@@ -34,7 +34,9 @@
     align-items:     center;
     gap:             8px;
     padding:         3px 12px 7px;     /* bottom = enough for 2px underline + gap */
-    background:      rgba(25, 25, 25, 0.6);   /* matches .header-container */
+    background:      rgba(25, 25, 25, 0.8);   /* matches .header-container */
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px); /* Safari */
 }
 
 
