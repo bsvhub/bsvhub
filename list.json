@@ -526,7 +526,7 @@
       "info": "brc100.svg;;;"
     },
     {
-      "tab": "info",
+      "tab": "info;dev",
       "href": "https://bsvhackathon.com/",
       "tooltip": "Hackathon info, events, registration",
       "img": "icon/hackathon.svg",
