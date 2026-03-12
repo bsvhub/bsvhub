@@ -753,7 +753,7 @@ Network.prototype._buildCore = function(){
 
     var phi_exp = 0.55+Math.random()*0.90;  /* phi-spiral tightness  */
     var r0_frac = 0.14+Math.random()*0.14;  /* innermost ring radius */
-    var depth   = 2+Math.floor(Math.random()*4); /* 2-5 rings        */
+    var depth   = 3+Math.floor(Math.random()*3); /* 3-5 rings (min 3)*/
     var hub     = Math.floor(Math.random()*5);   /* hub style 0-4    */
     var cross_k = 1+Math.floor(Math.random()*3); /* 1-3 cross-links  */
     var branch_p= Math.random()*0.65;            /* bifurcation prob */
@@ -782,6 +782,18 @@ Network.prototype._buildCore = function(){
         var rScale=sp*0.88/rMax;
         for(var d=0;d<depth;d++) radii[d]*=rScale;
     }
+    /* Enforce max inter-ring gap ≤ 40% of network radius.
+       Walk outward: if a gap is too wide, pull that ring inward
+       to sit exactly one maxGap from its inner neighbour.
+       After clamping, re-apply the sp*0.88 outer ceiling so no
+       ring escapes the mesh boundary. The phi-spiral character is
+       preserved for well-spaced configs; only runaway jumps are
+       corrected, keeping near-infinite design variety intact.    */
+    var maxGap=sp*0.40;
+    for(var d=1;d<depth;d++){
+        if(radii[d]-radii[d-1]>maxGap) radii[d]=radii[d-1]+maxGap;
+    }
+    for(var d=0;d<depth;d++){ if(radii[d]>sp*0.88) radii[d]=sp*0.88; }
 
     var DTYPES=[DT.VALIDATOR,DT.CORE_NODE,DT.MINER,DT.VALIDATOR,DT.CORE_NODE];
 
