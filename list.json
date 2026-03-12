@@ -11,7 +11,7 @@
       "info": ";;;"
     },
     {
-      "tab": "bsv;doc",
+      "tab": "info",
       "href": "https://bsvassociation.org/",
       "tooltip": "Guardians of the BSV protocol",
       "img": "icon/association.svg",
@@ -24,7 +24,7 @@
       "opacity": "0.7"
     },
     {
-      "tab": "bsv;doc",
+      "tab": "info",
       "href": "https://hub.bsvblockchain.org/",
       "tooltip": "BSV Blockchain Hub: wide array of resources to meet diverse needs, from technical details to real-world uses.",
       "img": "icon/hub.svg",
@@ -34,7 +34,7 @@
       "info": ";;;"
     },
     {
-      "tab": "bsv;doc",
+      "tab": "info",
       "href": "https://bsv-case-studies.bsvblockchain.org",
       "tooltip": "Real-World Adoption Across Industries, Regions, and Applications",
       "img": "icon/bsv_industry.svg",
@@ -54,7 +54,7 @@
       "info": ";;yt.svg;"
     },
     {
-      "tab": "bsv;doc",
+      "tab": "info",
       "href": "https://bsvblockchain.org/",
       "tooltip": "Official BSV pages",
       "img": "icon/bsv-blockchain.svg",
@@ -67,7 +67,7 @@
       "opacity": "0.7"
     },
     {
-      "tab": "bsv;doc",
+      "tab": "dev",
       "href": "https://bsvdevs.com/",
       "tooltip": "A directory for devs and users alike. Enabling a one stop shop for great Bitcoin SV projects, tools, and resources.",
       "img": "icon/dev_tools.svg",
@@ -77,7 +77,7 @@
       "info": ";;;"
     },
     {
-      "tab": "doc",
+      "tab": "info",
       "href": "https://wiki.bitcoinsv.io/index.php/Main_Page",
       "tooltip": "Bitcoin Wiki",
       "img": "icon/bitcoin_sv.svg",
@@ -97,7 +97,7 @@
       "info": ";;yt.svg;"
     },
     {
-      "tab": "exchange",
+      "tab": "get",
       "href": "https://www.coinspot.com.au/",
       "tooltip": "A major, yet not well know Australian KYC exchange that lets you buy BSV",
       "img": "icon/coinspot.svg",
@@ -157,7 +157,7 @@
       "info": ";;yt.svg;"
     },
     {
-      "tab": "exchange",
+      "tab": "get",
       "href": "https://ghostswap.io/",
       "tooltip": "Crypto Swap Exchange, supports BSV, no KYC or account required, has amount limits.",
       "img": "icon/ghostswap.svg",
@@ -167,7 +167,7 @@
       "info": ";;;"
     },
     {
-      "tab": "bsv;doc",
+      "tab": "info",
       "href": "https://gorillapool.com/",
       "tooltip": "Gorilla Pool Mining",
       "img": "icon/gorillapool.svg",
@@ -177,7 +177,7 @@
       "info": ";;;"
     },
     {
-      "tab": "doc",
+      "tab": "info",
       "href": "https://gorillapool.io/",
       "tooltip": "Join Gorilla Pool",
       "img": "icon/gorillaminer.svg",
@@ -187,7 +187,7 @@
       "info": ";;;"
     },
     {
-      "tab": "tool;doc",
+      "tab": "tool;info;dev",
       "href": "https://junglebus.gorillapool.io",
       "tooltip": "JungleBus is an indexing engine for on-chain data developed by GorillaPool. Used to filter and organize blockchain data.",
       "img": "icon/junglebus.svg",
@@ -217,7 +217,7 @@
       "info": ";;yt.svg;"
     },
     {
-      "tab": "social",
+      "tab": "sm",
       "href": "https://linktr.ee/kurtwuckertjr",
       "tooltip": "Kurt Wuckert Jr (Bitcoin Historian) links",
       "img": "social/kurt.webp",
@@ -227,7 +227,7 @@
       "info": ";;;"
     },
     {
-      "tab": "exchange",
+      "tab": "get",
       "href": "https://kyc.rip/swap",
       "tooltip": "Privacy focused crypto swap exchange, supports BSV, no KYC or account required",
       "img": "icon/kycrip.webp",
@@ -280,7 +280,7 @@
       "info": ";;;"
     },
     {
-      "tab": "social",
+      "tab": "sm",
       "href": "https://x.com/ProjectBabbage",
       "tooltip": "Project Babbage: Our goal is to create a more efficient, scalable, and secure internet by empowering users to own their own identities and data.",
       "img": "icon/babbage.svg",
@@ -290,7 +290,7 @@
       "info": ";;twitter.svg;"
     },
     {
-      "tab": "social",
+      "tab": "sm",
       "href": "https://x.com/Kate_L_Mosso",
       "tooltip": "Kate Mosso: former FOX TV Reporter turned Independent Crypto Reporter",
       "img": "social/kate_mosso.webp",
@@ -310,7 +310,7 @@
       "info": ";;yt.svg;"
     },
     {
-      "tab": "doc",
+      "tab": "dev",
       "href": "https://docs.projectbabbage.com/docs",
       "tooltip": "documentation for getting started with BSV development.",
       "img": "icon/babbage.svg",
@@ -320,7 +320,7 @@
       "info": ";;;"
     },
     {
-      "tab": "social",
+      "tab": "sm",
       "href": "https://x.com/vamosvigilante",
       "tooltip": "Co-Founder of The Crypto Vigilante, big BSV (original design) proponent",
       "img": "social/rafael_laverde.svg",
@@ -330,7 +330,7 @@
       "info": ";;twitter.svg;"
     },
     {
-      "tab": "social",
+      "tab": "sm",
       "href": "https://x.com/SirToshiTV",
       "tooltip": "$SirToshi: \u0110efender \u272af \u20bfitcoin",
       "img": "social/sirtoshi.webp",
@@ -340,7 +340,7 @@
       "info": ";;twitter.svg;"
     },
     {
-      "tab": "tool;doc",
+      "tab": "tool;dev",
       "href": "https://app.reactonchain.com",
       "tooltip": "React Onchain; currently in beta, helps with deployment of apps on the blockchain.",
       "img": "app/react.svg",
@@ -383,7 +383,7 @@
       "info": ";;yt.svg;"
     },
     {
-      "tab": "app",
+      "tab": "tool;app",
       "href": "https://www.slictionary.com/",
       "tooltip": "An on-chain Dictionary of unique terms/word",
       "img": "icon/slictionary.webp",
@@ -393,7 +393,7 @@
       "info": ";;;"
     },
     {
-      "tab": "exchange",
+      "tab": "get",
       "href": "https://swaplobby.com/",
       "tooltip": "Atomic Swaps BTC <--> BSV",
       "img": "icon/atomic.webp",
@@ -403,7 +403,7 @@
       "info": ";;;"
     },
     {
-      "tab": "app;social",
+      "tab": "app;sm",
       "href": "https://treechat.ai",
       "tooltip": "Social network on BSV, alternative to X (Twitter)",
       "img": "app/treechat.svg",
@@ -476,7 +476,7 @@
       "colour2": "darkblue"
     },
     {
-      "tab": "app;mapp",
+      "tab": "app",
       "href": "https://pixelwar.click/",
       "tooltip": "Create pixel art on blockchain, interact with others on same canvas",
       "img": "app/pixelwar.svg",
@@ -486,7 +486,7 @@
       "info": "brc100.svg;;;"
     },
     {
-      "tab": "doc",
+      "tab": "dev",
       "href": "https://go.projectbabbage.com/",
       "tooltip": "Info for creating app on BRC-100; turn your app into revenue",
       "img": "icon/babbage.svg",
@@ -496,7 +496,7 @@
       "info": ";;;"
     },
     {
-      "tab": "app;doc",
+      "tab": "app",
       "href": "https://traceport.io/",
       "tooltip": "1. Submit your data, 2. Hash it client-side, 3. Verification when you need it",
       "img": "app/traceport.svg",
@@ -506,7 +506,7 @@
       "info": "brc100.svg;;;"
     },
     {
-      "tab": "app;social",
+      "tab": "app;sm",
       "href": "https://zanaadu.com/",
       "tooltip": "A Social Web Unchained",
       "img": "app/zanaadu.svg",
@@ -526,7 +526,7 @@
       "info": "brc100.svg;;;"
     },
     {
-      "tab": "doc",
+      "tab": "info",
       "href": "https://bsvhackathon.com/",
       "tooltip": "Hackathon info, events, registration",
       "img": "icon/hackathon.svg",
@@ -536,7 +536,7 @@
       "info": ";;;"
     },
     {
-      "tab": "doc",
+      "tab": "dev",
       "href": "https://metanetacademy.com/",
       "tooltip": "Learn to build real applications with these primitives \u2014 the version of the web the early engineers never got to finish.",
       "img": "icon/metanet_academy.webp",
@@ -546,7 +546,7 @@
       "info": ";;;"
     },
     {
-      "tab": "social",
+      "tab": "sm",
       "href": "https://x.com/GavinMehl",
       "tooltip": "Follow to get inside The Great BitCoin Flippening as Freedom's Final Frontier & for six-pack abs. Law is fun.",
       "img": "social/gavinm.webp",
@@ -556,7 +556,7 @@
       "info": ";;twitter.svg;"
     },
     {
-      "tab": "social",
+      "tab": "sm",
       "href": "https://x.com/hbgnostic",
       "tooltip": "Bridget D talks about Bitcoin and blockchain tech. Proponent of Bitcoin in it's original design.",
       "img": "social/bridgetd.webp",
@@ -566,7 +566,7 @@
       "info": ";;twitter.svg;"
     },
     {
-      "tab": "social",
+      "tab": "sm",
       "href": "https://linktr.ee/BsvGodfather",
       "tooltip": "Spreading awareness of satoshis vision with the power of memes.",
       "img": "social/bsv-godfather.svg",
@@ -576,7 +576,7 @@
       "info": ";;;"
     },
     {
-      "tab": "wallet;exchange",
+      "tab": "wallet;get",
       "href": "https://www.rockwallet.com/",
       "tooltip": "KYC mobile wallet that supports BSV and in wallet swaps.",
       "img": "icon/rock.svg",
@@ -626,7 +626,7 @@
       "info": ";;;"
     },
     {
-      "tab": "doc; bsv",
+      "tab": "info;dev",
       "href": "https://1satordinals.com/",
       "tooltip": "Website provides resources and links in relation to Ordinals/NFTs on BSV",
       "img": "icon/ordinals.svg",
@@ -646,7 +646,7 @@
       "info": ";;beta.svg;"
     },
     {
-      "tab": "exchange",
+      "tab": "get",
       "href": "https://www.kucoin.com/",
       "tooltip": "KYC exchange where you can buy BSV.",
       "img": "icon/kucoin.svg",
@@ -656,7 +656,7 @@
       "info": ";;;"
     },
     {
-      "tab": "exchange",
+      "tab": "get",
       "href": "https://www.orangegateway.com/",
       "tooltip": "Orange Gateway, an exchange based in Iceland where you can but BSV in several fiat currencies.",
       "img": "icon/orange.svg",
@@ -666,7 +666,7 @@
       "info": ";;;"
     },
     {
-      "tab": "social",
+      "tab": "sm",
       "href": "https://gavinmehl.blogspot.com/",
       "tooltip": "Gavin Mehl articles and videos on Blogspot",
       "img": "social/gavinm.webp",
@@ -686,7 +686,7 @@
       "info": ";;;"
     },
     {
-      "tab": "doc;bsv",
+      "tab": "info",
       "href": "https://thatsbtcnotbitcoin.com/",
       "tooltip": "Site explains why BTC is not Bitcoin",
       "img": "icon/not_bitcoin.svg",
@@ -696,7 +696,7 @@
       "info": ";;;"
     },
     {
-      "tab": "social",
+      "tab": "sm",
       "href": "https://x.com/cryptorebel_SV",
       "tooltip": "Big proponent of Bitcoin; original design, involved in the development of ElectrumSVP wallet",
       "img": "social/truth_machine.webp",
@@ -706,7 +706,7 @@
       "info": ";;twitter.svg;"
     },
     {
-      "tab": "social",
+      "tab": "sm",
       "href": "https://crypto-rebel.medium.com/",
       "tooltip": "Big proponent of Bitcoin; original design, involved in the development of ElectrumSVP wallet",
       "img": "social/truth_machine.webp",
@@ -858,7 +858,7 @@
       "opacity": "0.5"
     },
     {
-      "tab": "bsv;doc",
+      "tab": "info",
       "href": "https://bsvbetter.org/",
       "tooltip": "BSV Better is dedicated to exploring, and educating others about the revolutionary potential of Bitcoin SV (BSV).",
       "img": "icon/bsvbetter.svg",
@@ -994,7 +994,7 @@
       "info": "brc100.svg;;;"
     },
     {
-      "tab": "social",
+      "tab": "sm",
       "href": "https://x.com/CsTominaga",
       "tooltip": "S Tominaga (Aka Dr Craig Wright)",
       "img": "social/cs-tominaga.webp",
@@ -1014,7 +1014,7 @@
       "info": ";;;"
     },
     {
-      "tab": "social",
+      "tab": "sm",
       "href": "https://x.com/deggen",
       "tooltip": "Distributed Applications Lead @BSVBlockchain - identity, data integrity, and micropayments.",
       "img": "social/deggen.webp",
@@ -1024,7 +1024,7 @@
       "info": ";;twitter.svg;"
     },
     {
-      "tab": "social",
+      "tab": "sm",
       "href": "https://x.com/KanoTheTruth",
       "tooltip": "\ud835\uddd5\ud835\uddf6\ud835\ude01\ud835\uddf0\ud835\uddfc\ud835\uddf6\ud835\uddfb\u02e2\u1d5b : On-Chain Layer 1 Bitcoin Scaling",
       "img": "social/kano.svg",
@@ -1074,7 +1074,7 @@
       "info": ";;yt.svg;spain.webp"
     },
     {
-      "tab": "social",
+      "tab": "sm",
       "href": "https://substack.com/@cstominaga",
       "tooltip": "Dr Craig Wright on Substack",
       "img": "social/cs-tominaga.webp",
@@ -1084,7 +1084,7 @@
       "info": ";;substack.svg;"
     },
     {
-      "tab": "tool;doc",
+      "tab": "tool;dev",
       "href": "https://scrypt.io",
       "tooltip": "The FULL STACK Web3 development platform for Bitcoin Compatible Blockchains",
       "img": "icon/scrypt.svg",
@@ -1114,7 +1114,7 @@
       "info": ";;;"
     },
     {
-      "tab": "tool;doc",
+      "tab": "tool;info",
       "href": "https://nodeless.network",
       "tooltip": "deploy blockchain-powered services that scale globaly",
       "img": "icon/bsv.svg",
@@ -1124,7 +1124,7 @@
       "info": ";;;"
     },
     {
-      "tab": "tool;doc",
+      "tab": "tool;dev",
       "href": "https://bitcoinschema.org",
       "tooltip": "Build interoperable applications that share a single global database. Data written by one app is instantly readable by any other Bitcoin Schema compliant application.",
       "img": "icon/bitcoinschema.svg",
@@ -1134,7 +1134,7 @@
       "info": ";;code.svg;"
     },
     {
-      "tab": "tool;app;wallet",
+      "tab": "app;wallet",
       "href": "https://firesat.io",
       "tooltip": "Secure, non-custodial BSV wallet for effortless BSV20 token trading, feeless transactions, and intuitive asset management.",
       "img": "icon/firesat.webp",
@@ -1154,7 +1154,7 @@
       "info": "brc100.svg;;;"
     },
     {
-      "tab": "app;exchange;market",
+      "tab": "app;get;market",
       "href": "https://www.beymo.app",
       "tooltip": "Peer to Peer Bitcoin BSV trading platform",
       "img": "icon/beymo.svg",
@@ -1164,7 +1164,7 @@
       "info": ";;new.svg;"
     },
     {
-      "tab": "tool;doc",
+      "tab": "tool;dev",
       "href": "https://runcraft.io",
       "tooltip": "A token protocol for anything you can dream up — run on Bitcoin.",
       "img": "icon/runcraft.webp",
@@ -1353,7 +1353,7 @@
       "info": "brc100.svg;;;"
     },
     {
-      "tab": "exchange",
+      "tab": "get",
       "href": "https://simpleswap.io/",
       "tooltip": "Crypto Swap Exchange, supports BSV, no KYC or account required, has amount limits, offers fixed exchange rate.",
       "img": "icon/simpleswap.svg",
@@ -1392,7 +1392,7 @@
       "opacity": "1"
     },
     {
-      "tab": "tool;doc",
+      "tab": "tool;dev",
       "href": "https://github.com/icellan/runar",
       "tooltip": "Write Bitcoin smart contracts in TypeScript, Go, Rust, Python, Solidity, or Move. Compile to Bitcoin Script.",
       "img": "icon/github.svg",
@@ -1412,7 +1412,7 @@
       "info": ";;beta.svg;"
     },
     {
-      "tab": "bsv",
+      "tab": "info",
       "href": "https://bitschool.online",
       "tooltip": "Learn Bitcoin SV from the ground up with hands-on simulations, clear explanations, and interactive assessments. Perfect for complete beginners.",
       "img": "app/bitschool.svg",
@@ -1443,7 +1443,7 @@
       "colour1": "#3ebfba"
     },
     {
-      "tab": "bsv",
+      "tab": "info",
       "href": "https://www.boostbsv.com",
       "tooltip": "Everything you need to know about BSV, cryptocurrency, and the future of digital money",
       "img": "icon/bsv.svg",
@@ -1453,7 +1453,7 @@
       "info": ";;;"  
     },
     {
-      "tab": "bsv",
+      "tab": "info",
       "href": "https://igamingbsv.com",
       "tooltip": "iGamingBSV.com shows why BSV crypto and blockchain is a great asset for the iGaming industry.",
       "img": "icon/igamingbsv.png",
@@ -1463,14 +1463,14 @@
       "info": ";;;"  
     },
     {
-      "tab": "exchange",
+      "tab": "get",
       "href": "https://rampnetwork.com",
       "tooltip": "Buy BSV on Ramp Network with Apple Pay, Google Pay, cards, and bank transfers.",
       "img": "icon/rampnetwork.svg",
       "zoom": "1.0",
       "alt": "exchange buy crypto",
       "text": "Ramp NETWORK",
-      "info": ";;;"  
+      "info": ";;;"
     }
   ]
 }
