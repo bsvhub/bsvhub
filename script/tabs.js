@@ -78,10 +78,35 @@ headerLinks.forEach(link =>
 );
 
 /* ============================================================
-   COPY BUTTON SOUND
+   COPY BUTTON — audio setup, clipboard + sound
+   Audio element created here so all copy button logic lives
+   in one place. The <audio> tag in index.html can be removed.
+   Uses a hidden textarea + execCommand("copy") so clipboard
+   managers reliably intercept it (navigator.clipboard is async
+   and many managers miss it).
 ============================================================ */
+const _copySfx = document.createElement("audio");
+_copySfx.id  = "copy-sfx";
+_copySfx.src = "styles/assets/copy.mp3";
+document.body.appendChild(_copySfx);
+
 document.addEventListener("click", (e) => {
-    if (e.target.id === "copy-tip-btn") {
-        document.getElementById("copy-sfx").play();
-    }
+    if (e.target.id !== "copy-tip-btn") return;
+
+    const address = (document.getElementById("tip-address") || {}).textContent || "";
+    if (!address) return;
+
+    /* execCommand approach — synchronous, caught by all clipboard managers */
+    const ta = document.createElement("textarea");
+    ta.value = address.trim();
+    ta.style.cssText = "position:fixed;top:0;left:0;opacity:0;pointer-events:none;";
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+
+    /* Play sound — reset to start first so rapid clicks always replay */
+    _copySfx.currentTime = 0;
+    _copySfx.play();
 });
