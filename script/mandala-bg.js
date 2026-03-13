@@ -480,8 +480,9 @@ function _drawElectricArc(ctx, x1, y1, x2, y2, frame, alpha){
 /* ============================================================
    _pickTopoType  — type-diversity overlay selector  (Rule 6)
    ============================================================ */
-var TOPO_COUNT = 7;
-var TOPO_NAMES = ['star','ring','tree','fat-tree','mesh','dbl-ring','radial'];
+var TOPO_COUNT = 12;
+var TOPO_NAMES = ['star','ring','tree','fat-tree','mesh','dbl-ring','radial',
+                  'bus','full-mesh','torus','spine-leaf','hypercube'];
 
 function _pickTopoType(){
     var counts=[], i;
@@ -572,8 +573,31 @@ function Network(cx, cy, isCore) {
         var builders=[
             '_buildStar','_buildRing','_buildTree','_buildFatTree',
             '_buildMesh','_buildDoubleRing','_buildRadialArms',
+            '_buildBus','_buildFullyConnected','_buildTorus',
+            '_buildSpineLeaf','_buildHypercube',
         ];
-        this[builders[this.topoType]]();
+        /* ── Per-topology node cap: reject-and-retry ────────────
+           Build the topology, count nodes, reject if over limit.
+           Tree (index 2) is capped lower because its recursive
+           fanout can balloon quickly — 24 keeps it readable.
+           All other overlays target ~64 nodes; the hard stop is
+           65 so occasional larger builds pass through and add
+           variety — the retry loop is the final safety net.
+           The topology type is preserved across retries so the
+           type-diversity rules in _pickTopoType still hold.
+           MAX_RETRIES guards against an infinite loop on extreme
+           RNG; the last result is then accepted as a fallback.   */
+        var MAX_OVERLAY_NODES = (this.topoType === 2) ? 24 : 65;
+        var MAX_RETRIES       = 20;
+        var attempt           = 0;
+        do {
+            /* Reset geometry before each attempt. */
+            this.devices   = [];
+            this.edges     = [];
+            this.routerIdx = 0;
+            this[builders[this.topoType]]();
+            attempt++;
+        } while(this.devices.length > MAX_OVERLAY_NODES && attempt < MAX_RETRIES);
     }
 }
 
@@ -1107,7 +1131,7 @@ Network.prototype._buildTree = function(){
     var ra  = Math.atan2(this.devices[r].y-this.cy, this.devices[r].x-this.cx);
     var mainDir = ra+Math.PI;
 
-    var depth    = 2+Math.floor(Math.random()*3);          /* 2–4 levels    */
+    var depth    = 2+Math.floor(Math.random()*2);          /* 2–3 levels    */
     var sibling_p= Math.random()*0.40;                     /* sibling links */
     var stepDist = sp*(0.26+Math.random()*0.18);           /* level spacing */
     var LPOOL    = [DT.COMPUTER,DT.IOT,DT.COMPUTER,DT.MINER,DT.VALIDATOR,DT.SERVER];
@@ -1116,7 +1140,7 @@ Network.prototype._buildTree = function(){
     var self = this;
     function growBranch(parentIdx, angle, distSoFar, level){
         if(level>depth) return [];
-        var fanOut  = 2+Math.floor(Math.random()*3);       /* 2–4 children  */
+        var fanOut  = 2+Math.floor(Math.random()*2);       /* 2–3 children  */
         var spread  = (0.30+Math.random()*0.55)*Math.PI;
         var dStep   = stepDist*(1-level*0.12);             /* taper inward  */
         var nodes   = [];
@@ -1346,8 +1370,8 @@ Network.prototype._buildDoubleRing = function(){
    bifurcation prob, cross-ring prob, tip-ring connect.         */
 Network.prototype._buildRadialArms = function(){
     var sp       = CFG.SIZE_LARGE*(0.80+Math.random()*0.40);
-    var nArms    = 3+Math.floor(Math.random()*7);          /* 3–9 arms      */
-    var armLen   = 2+Math.floor(Math.random()*4);          /* 2–5 segments  */
+    var nArms    = 3+Math.floor(Math.random()*5);          /* 3–7 arms (was 3–9; capped so total overlay nodes stay ≤ 48) */
+    var armLen   = 2+Math.floor(Math.random()*3);          /* 2–4 segments (was 2–5; worst case 7×4+bifurc+hub+router≈44) */
     var rot      = Math.random()*Math.PI*2;
     var curvature= (Math.random()-0.5)*0.55;               /* arm bend      */
     var taper    = 0.75+Math.random()*0.25;                /* len taper     */
@@ -1430,6 +1454,290 @@ Network.prototype._buildRadialArms = function(){
     this._edge(rIdx, tips[raArm], 'uplink');
 };
 
+
+/* ── BUS ──────────────────────────────────────────────────────
+   Linear backbone with nodes tapping off at perpendicular drops.
+   Optional second-tier sub-drops and alternating drop directions
+   give each instance a distinct silhouette.
+   Parameters: nNodes (6–18), busLen, dropLen, alternate side,
+   second-tier probability, router at end.                      */
+Network.prototype._buildBus = function(){
+    var sp      = CFG.SIZE_LARGE*(0.80+Math.random()*0.40);
+    var r       = this._routerAtEdge(sp, 0.70+Math.random()*0.22);
+    var ra      = Math.atan2(this.devices[r].y-this.cy,
+                             this.devices[r].x-this.cx);
+
+    var busA    = ra + Math.PI;                            /* bus runs away from router */
+    var nNodes  = 6  + Math.floor(Math.random()*4);       /* 6–9 backbone taps         */
+    var busLen  = sp*(0.88+Math.random()*0.22);
+    var dropL   = sp*(0.18+Math.random()*0.18);           /* drop segment length       */
+    var altSide = Math.random() > 0.5;                    /* alternate drop direction? */
+    var tier2_p = Math.random()*0.42;                     /* 2nd-tier drop probability */
+    var POOL    = [DT.COMPUTER,DT.IOT,DT.COMPUTER,DT.MINER,DT.VALIDATOR,DT.IOT];
+    var perpA   = busA + Math.PI*0.5;                     /* perpendicular to backbone */
+
+    /* Spine nodes evenly spaced along the bus axis */
+    var spine = [];
+    for(var i=0;i<nNodes;i++){
+        var frac = i/(nNodes-1||1) - 0.5;                 /* -0.5 → +0.5 around cx/cy */
+        var jit  = (Math.random()-0.5)*sp*0.06;
+        var sx   = this.cx + Math.cos(busA)*busLen*frac
+                           + Math.cos(perpA)*jit;
+        var sy   = this.cy + Math.sin(busA)*busLen*frac
+                           + Math.sin(perpA)*jit;
+        spine.push(this._add(sx, sy, DT.SWITCH));
+    }
+
+    /* Connect spine in a chain */
+    for(var i=0;i<spine.length-1;i++)
+        this._edge(spine[i], spine[i+1], 'trunk');
+
+    /* Drop nodes perpendicular to spine */
+    for(var i=0;i<spine.length;i++){
+        var sd  = this.devices[spine[i]];
+        var dir = altSide ? (i%2===0 ? 1 : -1) : 1;
+        var dt  = POOL[Math.floor(Math.random()*POOL.length)];
+        var nx  = sd.x + Math.cos(perpA)*dropL*dir;
+        var ny  = sd.y + Math.sin(perpA)*dropL*dir;
+        var nId = this._add(nx, ny, dt);
+        this._edge(spine[i], nId, 'access');
+
+        /* Optional second-tier sub-drop */
+        if(Math.random() < tier2_p){
+            var dt2  = POOL[Math.floor(Math.random()*POOL.length)];
+            var n2x  = nx + Math.cos(perpA)*dropL*0.55*dir;
+            var n2y  = ny + Math.sin(perpA)*dropL*0.55*dir;
+            var n2Id = this._add(n2x, n2y, dt2);
+            this._edge(nId, n2Id, 'access');
+        }
+    }
+
+    this._connectNearest(r, spine, 1, 'uplink');
+};
+
+
+/* ── FULLY CONNECTED ──────────────────────────────────────────
+   Every node holds a direct link to every other node.
+   Node count is kept modest (6–14) so edge density stays
+   readable; placement alternates between ring and scattered.
+   Parameters: n (6–14), mode (ring/scatter), radius, jitter. */
+Network.prototype._buildFullyConnected = function(){
+    var sp   = CFG.SIZE_MEDIUM*(0.85+Math.random()*0.45);
+    var r    = this._routerAtEdge(sp, 0.80+Math.random()*0.20);
+    var ra   = Math.atan2(this.devices[r].y-this.cy,
+                          this.devices[r].x-this.cx);
+
+    var n    = 6  + Math.floor(Math.random()*9);           /* 6–14 nodes    */
+    var mode = Math.random();                              /* ring vs scatter*/
+    var rMu  = sp*(0.48+Math.random()*0.22);
+    var rSig = rMu*Math.random()*0.25;
+    var POOL = [DT.SERVER,DT.VALIDATOR,DT.MINER,DT.COMPUTER,DT.SERVER,DT.VALIDATOR];
+
+    var nodes = [];
+    for(var i=0;i<n;i++){
+        var x, y;
+        if(mode < 0.60){
+            /* Ring placement with radius noise */
+            var a  = ra+Math.PI + i*(Math.PI*2/n);
+            var rd = rMu + (Math.random()-0.5)*rSig*2;
+            x = this.cx + Math.cos(a)*rd;
+            y = this.cy + Math.sin(a)*rd;
+        } else {
+            /* Scattered disc placement */
+            var a  = Math.random()*Math.PI*2;
+            var rd = Math.sqrt(Math.random())*sp*0.72;
+            x = this.cx + Math.cos(a)*rd;
+            y = this.cy + Math.sin(a)*rd;
+        }
+        nodes.push(this._add(x, y, POOL[Math.floor(Math.random()*POOL.length)]));
+    }
+
+    /* Full mesh: every node to every other */
+    for(var i=0;i<nodes.length;i++)
+        for(var j=i+1;j<nodes.length;j++)
+            this._edge(nodes[i], nodes[j], 'access');
+
+    this._connectNearest(r, nodes, 1+Math.floor(Math.random()*2), 'uplink');
+};
+
+
+/* ── TORUS / GRID ─────────────────────────────────────────────
+   Rectangular grid where row and column edges wrap around to
+   connect opposite borders, giving a toroidal topology.
+   Optional diagonal cross-links add extra density.
+   Parameters: cols (3–8), rows (3–8), grid pitch, rotation,
+   per-node jitter, diagonal cross-link probability.          */
+Network.prototype._buildTorus = function(){
+    var sp     = CFG.SIZE_LARGE*(0.80+Math.random()*0.40)*0.50; /* ×0.5 physical size  */
+    var r      = this._routerAtEdge(sp, 0.78+Math.random()*0.18);
+
+    var cols   = 3 + Math.floor(Math.random()*4);          /* 3–6 columns   */
+    var rows   = 3 + Math.floor(Math.random()*4);          /* 3–6 rows      */
+    var gapX   = sp*(1.68+Math.random()*0.40) / Math.max(cols, 1);
+    var gapY   = sp*(1.68+Math.random()*0.40) / Math.max(rows, 1);
+    var diag_p = Math.random()*0.35;                       /* diagonal links */
+    var rot    = Math.random()*Math.PI*2;
+    var cosR   = Math.cos(rot), sinR = Math.sin(rot);
+    var POOL   = [DT.MINER,DT.VALIDATOR,DT.COMPUTER,DT.SERVER,DT.IOT,DT.COMPUTER];
+
+    /* Build flat grid array indexed [row*cols + col] */
+    var grid = [];
+    var ox   = -(cols-1)*gapX*0.5;
+    var oy   = -(rows-1)*gapY*0.5;
+    for(var row=0;row<rows;row++){
+        for(var col=0;col<cols;col++){
+            var lx = ox + col*gapX + (Math.random()-0.5)*gapX*0.12;
+            var ly = oy + row*gapY + (Math.random()-0.5)*gapY*0.12;
+            grid.push(this._add(
+                this.cx + lx*cosR - ly*sinR,
+                this.cy + lx*sinR + ly*cosR,
+                POOL[Math.floor(Math.random()*POOL.length)]));
+        }
+    }
+
+    var self = this;
+    function g(row, col){ return grid[row*cols + col]; }
+
+    /* Horizontal edges including right→left wrap */
+    for(var row=0;row<rows;row++)
+        for(var col=0;col<cols;col++)
+            self._edge(g(row,col), g(row,(col+1)%cols), 'access');
+
+    /* Vertical edges including bottom→top wrap */
+    for(var row=0;row<rows;row++)
+        for(var col=0;col<cols;col++)
+            self._edge(g(row,col), g((row+1)%rows,col), 'access');
+
+    /* Optional diagonal cross-links for denser feel */
+    if(diag_p > 0.12){
+        for(var row=0;row<rows;row++)
+            for(var col=0;col<cols;col++)
+                if(Math.random() < diag_p)
+                    self._edge(g(row,col),
+                               g((row+1)%rows,(col+1)%cols), 'trunk');
+    }
+
+    this._connectNearest(r, grid, 1+Math.floor(Math.random()*2), 'uplink');
+};
+
+
+/* ── SPINE-LEAF ───────────────────────────────────────────────
+   Flat two-tier datacenter fabric: every leaf connects to
+   every spine; leaves never connect directly to each other.
+   Optional sub-nodes hang off individual leaves.
+   Parameters: nSpine (2–5), nLeaf (4–20), tier separation,
+   leaf arc spread, sub-node probability.                      */
+Network.prototype._buildSpineLeaf = function(){
+    var sp       = CFG.SIZE_LARGE*(0.80+Math.random()*0.40);
+    var r        = this._routerAtEdge(sp, 0.82+Math.random()*0.18);
+    var ra       = Math.atan2(this.devices[r].y-this.cy,
+                              this.devices[r].x-this.cx);
+
+    var nSpine   = 2 + Math.floor(Math.random()*4);        /* 2–5 spines    */
+    var nLeaf    = 4 + Math.floor(Math.random()*12);       /* 4–15 leaves   */
+    var sub_p    = Math.random()*0.40;                     /* sub-node prob */
+    var mainDir  = ra + Math.PI;
+    var tierDist = sp*(0.28+Math.random()*0.18);
+    var spineArc = (0.38+Math.random()*0.38)*Math.PI;
+    var leafArc  = (0.52+Math.random()*0.48)*Math.PI;
+    var LPOOL    = [DT.COMPUTER,DT.IOT,DT.MINER,DT.COMPUTER,DT.IOT];
+
+    /* Spine tier — closer to centre */
+    var spines = [];
+    for(var i=0;i<nSpine;i++){
+        var frac = nSpine>1 ? i/(nSpine-1) : 0.5;
+        var a    = mainDir - spineArc*0.5 + frac*spineArc;
+        var d    = tierDist*0.52 + (Math.random()-0.5)*sp*0.07;
+        spines.push(this._add(
+            this.cx + Math.cos(a)*d,
+            this.cy + Math.sin(a)*d, DT.SERVER));
+    }
+
+    /* Leaf tier — further out */
+    var leaves = [];
+    for(var i=0;i<nLeaf;i++){
+        var frac = nLeaf>1 ? i/(nLeaf-1) : 0.5;
+        var a    = mainDir - leafArc*0.5 + frac*leafArc;
+        var d    = tierDist + sp*(0.28+Math.random()*0.14);
+        var jit  = (Math.random()-0.5)*sp*0.10;
+        leaves.push(this._add(
+            this.cx + Math.cos(a)*(d+jit),
+            this.cy + Math.sin(a)*(d+jit), DT.SWITCH));
+    }
+
+    /* Every leaf connects to every spine */
+    for(var li=0;li<leaves.length;li++)
+        for(var si=0;si<spines.length;si++)
+            this._edge(leaves[li], spines[si], 'trunk');
+
+    /* Optional sub-nodes hanging off each leaf */
+    for(var li=0;li<leaves.length;li++){
+        if(Math.random() < sub_p){
+            var ld   = this.devices[leaves[li]];
+            var outA = Math.atan2(ld.y-this.cy, ld.x-this.cx);
+            var sub  = this._add(
+                ld.x + Math.cos(outA)*sp*(0.11+Math.random()*0.10),
+                ld.y + Math.sin(outA)*sp*(0.11+Math.random()*0.10),
+                LPOOL[Math.floor(Math.random()*LPOOL.length)]);
+            this._edge(leaves[li], sub, 'access');
+        }
+    }
+
+    this._connectNearest(r, leaves, 1+Math.floor(Math.random()*2), 'uplink');
+};
+
+
+/* ── HYPERCUBE ────────────────────────────────────────────────
+   n-dimensional hypercube (Qn): each node's address is an
+   n-bit integer; two nodes are connected iff their addresses
+   differ by exactly one bit.  n is chosen randomly from 2–4,
+   giving 4, 8, or 16 nodes respectively.
+   Nodes are placed by projecting each basis axis onto 2D at
+   evenly spaced angles, then summing bit contributions —
+   this produces a symmetric, maximally-spread layout.
+   Parameters: n (2–4), scale, rotation, positional jitter.  */
+Network.prototype._buildHypercube = function(){
+    var sp     = CFG.SIZE_LARGE*(0.80+Math.random()*0.40);
+    var r      = this._routerAtEdge(sp, 0.82+Math.random()*0.18);
+
+    var n      = 2 + Math.floor(Math.random()*3);           /* Q2, Q3, Q4   */
+    var nNodes = 1 << n;                                   /* 4 / 8 / 16   */
+    var rot    = Math.random()*Math.PI*2;
+    var scale  = sp * (n === 2 ? 0.55 : n === 3 ? 0.60 : 0.72);
+    var jit    = sp*(0.04+Math.random()*0.06);
+    var POOL   = [DT.SERVER,DT.VALIDATOR,DT.MINER,DT.COMPUTER,DT.SERVER];
+    var normF  = n > 2 ? 1.9 : 1.3;                        /* spread factor */
+
+    var nodes = [];
+    for(var addr=0;addr<nNodes;addr++){
+        /* Project each basis bit-axis onto 2D at angle rot + b*(2π/n) */
+        var px = 0, py = 0;
+        for(var b=0;b<n;b++){
+            if((addr>>b)&1){
+                var a = rot + b*(Math.PI*2/n);
+                px += Math.cos(a) * scale / normF;
+                py += Math.sin(a) * scale / normF;
+            }
+        }
+        var jA = Math.random()*Math.PI*2;
+        var jD = Math.random()*jit;
+        nodes.push(this._add(
+            this.cx + px + Math.cos(jA)*jD,
+            this.cy + py + Math.sin(jA)*jD,
+            POOL[addr % POOL.length]));
+    }
+
+    /* Connect nodes differing by exactly one bit */
+    for(var i=0;i<nNodes;i++)
+        for(var b=0;b<n;b++){
+            var j = i ^ (1<<b);
+            if(j > i) this._edge(nodes[i], nodes[j], 'access');
+        }
+
+    this._connectNearest(r, nodes, 1+Math.floor(Math.random()*2), 'uplink');
+};
+
+
 /* ── Lifecycle update ─────────────────────────────────────── */
 Network.prototype.update = function(){
     this.stf++;
@@ -1483,6 +1791,62 @@ Network.prototype.canSend=function(){
 
 
 /* ============================================================
+   NODE RECEIVE — UNIVERSAL PULSE RULE
+   ============================================================
+   Single entry point for all packet-arrival flash effects.
+   Rule: ONLY the router (overlay) or gateway (core) that
+   physically receives a packet is allowed to pulse.
+   Everything else — intermediate nodes, non-router endpoints
+   — stays silent.
+
+   isWan  true  → WAN arrival  : large flash (full intensity)
+   isWan  false → LAN / laser  : small flash (half intensity)
+
+   Called from WanPulse, LanPulse, and LaserPulse on arrival.
+   Block-win celebration (all gateways) uses FLASH_WAN directly
+   because that is an event, not a packet receive.
+   ============================================================ */
+var FLASH_WAN = 1.00;   /* large pulse — WAN packet received   */
+var FLASH_LAN = 0.42;   /* small pulse — LAN / laser received  */
+
+function _nodeReceive(net, devIdx, isWan){
+    var dev = net.devices[devIdx];
+    if(!dev) return;
+
+    /* Only routers (overlay networks) and gateways (core networks) pulse. */
+    if(dev.type !== DT.ROUTER && dev.type !== DT.GATEWAY) return;
+
+    dev.flash = isWan ? FLASH_WAN : FLASH_LAN;
+}
+
+/* ============================================================
+   _resolveAnchorIdx — destination device index for a WAN hop
+   ============================================================
+   Mirrors the position logic of nearestAnchorTo() but returns
+   the device INDEX so WanPulse can hand it to _nodeReceive on
+   arrival.  Cores → nearest gateway index.
+   Overlays → routerIdx.
+   ============================================================ */
+function _resolveAnchorIdx(toNet, fromNet){
+    if(toNet.isCore && toNet.gatewayIdxs && toNet.gatewayIdxs.length > 0){
+        /* Find the gateway on toNet that faces fromNet (shortest hop). */
+        var tx = fromNet.cx, ty = fromNet.cy;
+        var bestIdx  = toNet.gatewayIdxs[0];
+        var bestDist = Infinity;
+        for(var i = 0; i < toNet.gatewayIdxs.length; i++){
+            var gd = toNet.devices[toNet.gatewayIdxs[i]];
+            if(!gd) continue;
+            var dx = gd.x - tx, dy = gd.y - ty;
+            var d  = dx*dx + dy*dy;
+            if(d < bestDist){ bestDist = d; bestIdx = toNet.gatewayIdxs[i]; }
+        }
+        return bestIdx;
+    }
+    /* Overlay: the one router is always the WAN anchor. */
+    return toNet.routerIdx;
+}
+
+/* ============================================================
    WAN PULSE — large glowing dot, router <-> gateway
    ALWAYS uses primaryGatewayPos() for both endpoints — same
    stable position used by backbone dashed lines, guaranteeing
@@ -1503,6 +1867,8 @@ function WanPulse(fromNet, toNet, forwards, isWinBroadcast){
     this.toCore  =toNet.isCore;
     this.fromCore=fromNet.isCore;
     this.isWinBroadcast=!!isWinBroadcast;
+    /* Resolve the exact receiving device now so arrival logic is unambiguous. */
+    this.toDevIdx=_resolveAnchorIdx(toNet, fromNet);
 }
 WanPulse.prototype.update=function(){
     if(this.t>0){
@@ -1513,18 +1879,10 @@ WanPulse.prototype.update=function(){
     if(this.t>=1){
         this.alive=false;
 
-        /* Flash destination router / gateway */
-        var r=this.toNet.devices[this.toNet.routerIdx];
-        if(r) r.flash=1.0;
+        /* ── Packet arrival: pulse the receiving router / gateway ── */
+        _nodeReceive(this.toNet, this.toDevIdx, true /* isWan */);
 
         if(this.toCore && this.toNet.state!==ST.DEAD){
-            /* Flash nearest gateway of receiving core */
-            if(this.toNet.gatewayIdxs && this.toNet.gatewayIdxs.length>0){
-                var gIdx=this.toNet.gatewayIdxs[
-                    Math.floor(Math.random()*this.toNet.gatewayIdxs.length)];
-                var gd=this.toNet.devices[gIdx];
-                if(gd) gd.flash=1.0;
-            }
 
             if(!this.isWinBroadcast && sim.blockCooldown===0){
                 /* Advance this core's packet count */
@@ -1543,11 +1901,13 @@ WanPulse.prototype.update=function(){
                         cx:winner.cx, cy:winner.cy,
                         t:0, maxR:CFG.SIZE_CORE*CFG.CONSENSUS_RING_SCALE,
                     });
-                    /* Flash all gateways on winner */
+                    /* Block-win celebration: flash all gateways on the winner.
+                       This is an event effect (not a packet receive), so we
+                       set FLASH_WAN directly rather than via _nodeReceive. */
                     if(winner.gatewayIdxs){
                         winner.gatewayIdxs.forEach(function(gi){
-                            var gd2=winner.devices[gi];
-                            if(gd2) gd2.flash=1.0;
+                            var gd=winner.devices[gi];
+                            if(gd) gd.flash=FLASH_WAN;
                         });
                     }
                     /* Broadcast win to all other live cores via golden pulse */
@@ -1596,8 +1956,8 @@ LanPulse.prototype.update=function(){
     this.t+=this.speed;
     if(this.t>=1){
         this.alive=false;
-        var dev=this.net.devices[this.dstDev];
-        if(dev) dev.flash=0.85;
+        /* Packet arrival: small pulse on router / gateway only. */
+        _nodeReceive(this.net, this.dstDev, false /* isWan */);
         return;
     }
     this.cx=this.fx+(this.tx-this.fx)*this.t;
@@ -1628,8 +1988,8 @@ LaserPulse.prototype.update=function(){
     this.t+=this.speed;
     if(this.t>=1){
         this.alive=false;
-        var dev=this.net.devices[this.dstDev];
-        if(dev) dev.flash=0.90;
+        /* Laser is an internal core signal — small pulse on the gateway. */
+        _nodeReceive(this.net, this.dstDev, false /* isWan */);
         return;
     }
     this.cx=this.fx+(this.tx-this.fx)*this.t;
@@ -1742,8 +2102,10 @@ function engineTickLAN(){
     sim.networks.forEach(function(net){
         if(net.state===ST.DEAD) return;
 
-        /* Core laser pulses — BSV hex ↔ gateway (orange) */
-        if(net.isCore && net.gatewayIdxs && net.gatewayIdxs.length>0){
+        /* Core laser pulses — BSV hex ↔ gateway (orange)
+           Rule: suppress new laser pulses once the core starts fading out
+           (lifecycle ending). Existing in-flight pulses finish naturally. */
+        if(net.isCore && net.state!==ST.FADE_OUT && net.gatewayIdxs && net.gatewayIdxs.length>0){
             net.laserTimer=(net.laserTimer||0)+1;
             var laserInt=Math.max(10,Math.floor(CFG.LAN_INTERVAL*0.45/_speed()));
             if(net.laserTimer>=laserInt){
@@ -2215,16 +2577,24 @@ function engineDraw(){
 
     /* 6 — WAN packets (large glowing dot; gold for core; extra-bright for broadcasts) */
     sim.pulses.filter(function(p){return p.isWan;}).forEach(function(p){
+        /* Path/trail colour accent: gold when either endpoint is a core or win-broadcast.
+           Path colour logic is UNCHANGED from original.                                  */
         var ac=p.toCore||p.fromCore||p.isWinBroadcast;
         var bc=p.isWinBroadcast;
+        /* Orb accent rule: packets EMANATING from an overlay always show a blue orb.
+           Only core-originated packets and win-broadcasts keep the gold orb.             */
+        var orbAc=p.fromCore||p.isWinBroadcast;
+        /* Destination-fade rule: the orb (and its trail) fade in lockstep with the
+           destination network so a packet dissolves as its target disappears.            */
+        var destAlpha=(p.toNet&&p.toNet.alpha!==undefined)?p.toNet.alpha:1;
         for(var k=0;k<p.trail.length;k++){
             var frac=k/p.trail.length;
             ctx.beginPath();
             ctx.arc(p.trail[k].x,p.trail[k].y,frac*(bc?3.5:2.4),0,Math.PI*2);
-            ctx.fillStyle=col(frac*(ac?0.72:0.55),ac);
+            ctx.fillStyle=col(frac*(orbAc?0.72:0.55)*destAlpha,orbAc);
             ctx.fill();
         }
-        var env=Math.sin(p.t*Math.PI);
+        var env=Math.sin(p.t*Math.PI)*destAlpha;
         /* Win broadcast pulses: larger glow + double ring effect */
         if(bc){
             _drawGlow(ctx,p.cx,p.cy,28,env*1.0,true);
@@ -2232,9 +2602,9 @@ function engineDraw(){
             ctx.beginPath(); ctx.arc(p.cx,p.cy,4.5,0,Math.PI*2);
             ctx.fillStyle=col(env*0.99,true); ctx.fill();
         } else {
-            _drawGlow(ctx,p.cx,p.cy,ac?17:13,env*0.75,ac);
-            ctx.beginPath(); ctx.arc(p.cx,p.cy,ac?3.1:2.6,0,Math.PI*2);
-            ctx.fillStyle=col(env*(ac?0.98:0.92),ac); ctx.fill();
+            _drawGlow(ctx,p.cx,p.cy,orbAc?17:13,env*0.75,orbAc);
+            ctx.beginPath(); ctx.arc(p.cx,p.cy,orbAc?3.1:2.6,0,Math.PI*2);
+            ctx.fillStyle=col(env*(orbAc?0.98:0.92),orbAc); ctx.fill();
         }
     });
 
@@ -2473,7 +2843,7 @@ function injectPanels(){
     ui.rightCtrl.style.justifyContent='center';
     /* Version label — same row as core toggle, right of ► with spacing to edge */
     var verLbl=document.createElement('span');
-    verLbl.textContent='v3.1';
+    verLbl.textContent='v3.2';
     verLbl.dataset.lbl='1';
     verLbl.dataset.accent='1';
     verLbl.style.cssText=
