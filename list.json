@@ -753,7 +753,10 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Gloss",
-      "info": "brc100.svg;;;"
+      "info": "brc100.svg;;;",
+      "colour1": "blue",
+      "colour2": "skyblue",
+      "opacity": "0.85"
     },
     {
       "tab": "app",
@@ -1474,6 +1477,16 @@
       "alt": "exchange buy crypto",
       "text": "Ramp NETWORK",
       "info": ";;;"
+    },
+    {
+      "tab": "app",
+      "href": "https://crypton.metanet.app",
+      "tooltip": "Secure messaging with QR codes",
+      "img": "app/crypton.webp",
+      "zoom": "1.4",
+      "alt": "private",
+      "text": "Crypton",
+      "info": "brc100.svg;;;"
     }
   ]
 }
