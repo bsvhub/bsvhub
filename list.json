@@ -260,6 +260,19 @@
       "opacity": "0.5"
     },
     {
+      "tab": "wallet",
+      "href": "https://desktop.bsvb.tech",
+      "tooltip": "Another BRC-100 wallet",
+      "img": "icon/bsv.svg",
+      "zoom": "1.0",
+      "alt": "apps wallet",
+      "text": "BSV Desktop",
+      "info": ";;;",
+      "colour1": "blue",
+      "colour2": "black",
+      "opacity": "0.5"
+    },
+    {
       "tab": "bsv",
       "href": "https://mybsv.io",
       "tooltip": "MyBSV.io: an on-chain wallet and more",
@@ -1487,6 +1500,16 @@
       "alt": "private",
       "text": "Crypton",
       "info": "brc100.svg;;;"
+    },
+    {
+      "tab": "get",
+      "href": "https://www.textbsv.com",
+      "tooltip": "No apps, no sign-ups. Just text and transact using Bitcoin SV.",
+      "img": "app/textbsv.svg",
+      "zoom": "1.0",
+      "alt": "sent send bsv",
+      "text": "TEXT BSV",
+      "info": ";;;"
     }
   ]
 }
