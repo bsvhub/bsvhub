@@ -1,0 +1,3287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>BSV DIRECTORY — SUBMIT APP v2.2</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- ╔═══════════════════════════════════════════════════════════════════════╗
+     ║  SETTINGS — TWEAK THESE TO CHANGE THE LOOK & FEEL                   ║
+     ║                                                                      ║
+     ║  This section is a "control panel" for the entire page.              ║
+     ║  Each setting has a plain-English comment explaining what it does.    ║
+     ║  Change a value here → the whole page updates automatically.         ║
+     ║                                                                      ║
+     ║  HOW TO EDIT:                                                        ║
+     ║  • Colours use hex codes like #ff5733 (google "hex colour picker")   ║
+     ║  • Sizes use px (pixels), fr (fractions), or rem                     ║
+     ║  • Opacity goes from 0 (invisible) to 1 (fully visible)             ║
+     ║  • true/false toggle features on or off                              ║
+     ║                                                                      ║
+     ║  TIP: Search for a setting name (e.g. ACCENT_COLOUR) to find        ║
+     ║  everywhere it's used in the code below.                             ║
+     ╚═══════════════════════════════════════════════════════════════════════╝ -->
+<script>
+const SETTINGS = {
+
+  /* ─── THEME: COLOURS ─────────────────────────────────────────────
+     These control every colour on the page.
+     Change these to completely re-skin the design.
+     ─────────────────────────────────────────────────────────────── */
+
+  // Main background colour (the dark base behind everything)
+  BG_COLOUR: '#0d0a1a',
+
+  // Background gradient — the 3-colour sweep across the whole page
+  // Format: "colour1, colour2, colour3" — goes diagonally top-left to bottom-right
+  BG_GRADIENT_COLOURS: '#555555, #6a0dad, #001f54',
+
+  // Gradient direction in degrees (135 = diagonal top-left → bottom-right)
+  BG_GRADIENT_ANGLE: 135,
+
+  // Panel background — the dark glass behind each box
+  PANEL_BG: 'rgba(25, 25, 25, 0.85)',
+
+  // Primary gold/amber colour — used for labels, buttons, highlights
+  AMBER: '#EAB300',
+
+  // Dimmed amber — used for less important labels
+  AMBER_DIM: '#9a7800',
+
+  // Accent colour — the bold orange used for borders and warnings
+  ACCENT_COLOUR: '#ff5733',
+
+  // Gold — used for tip amounts and fee displays
+  GOLD: '#ffcc66',
+
+  // Yellow highlight — used for hover tooltips
+  HIGHLIGHT: '#fada4e',
+
+  // Default text colour (light lavender)
+  TEXT_COLOUR: '#d4d0e0',
+
+  // Dimmed text — for secondary info and placeholders
+  TEXT_DIM: 'rgba(200,200,200,0.6)',
+
+  // Success green — used for "connected", "loaded", checkmarks
+  GREEN: '#00cc44',
+
+  // Soft blue — for subtle info highlights
+  BLUE_SOFT: 'rgba(135,206,235,0.8)',
+
+  // Border colour — the dark blue outline around panels
+  BORDER: '#2e3f66',
+
+  // Border with opacity — used for internal dividers
+  BORDER_FAINT: 'rgba(46,63,102,0.7)',
+
+  // Input field background
+  INPUT_BG: 'rgba(15,10,30,0.9)',
+
+
+  /* ─── THEME: TYPOGRAPHY ──────────────────────────────────────────
+     Font family and base sizes. Change the font to re-style text.
+     ─────────────────────────────────────────────────────────────── */
+
+  // Main font — used everywhere (must be monospace for the terminal look)
+  FONT_FAMILY: "'JetBrains Mono', 'Courier New', monospace",
+
+  // Base font size in pixels (everything scales from this)
+  FONT_SIZE_BASE: 14,
+
+  // Global letter spacing in pixels
+  LETTER_SPACING: 1,
+
+
+  /* ─── LAYOUT: SHELL & GRID ──────────────────────────────────────
+     The shell is the master box that holds everything.
+     The grid splits the middle area into 6 panels (3 rows × 2 cols).
+     ─────────────────────────────────────────────────────────────── */
+
+  // Shell aspect ratio — width:height (26:18 = slightly wide rectangle)
+  SHELL_ASPECT_W: 26,
+  SHELL_ASPECT_H: 18,
+
+  // Gap between all panels and bars (in pixels)
+  GRID_GAP: 2,
+
+  // Grid column split — "13fr 13fr" means equal halves (50/50)
+  // Try "10fr 16fr" to make left column narrower
+  GRID_COLUMNS: '13fr 13fr',
+
+  // Grid row heights — row1 : row2 : row3 proportions
+  // "11fr 9fr 10fr" means: row1 tallest, row2 shortest, row3 middle
+  GRID_ROWS: '11fr 9fr 10fr',
+
+  // Panel blur effect strength (higher = more frosted glass)
+  PANEL_BLUR: 2,
+
+
+  /* ─── LAYOUT: RESPONSIVE SCALING ─────────────────────────────────
+     These prevent the UI from being tiny on big monitors.
+     Each breakpoint bumps up the font size and caps the height.
+     ─────────────────────────────────────────────────────────────── */
+
+  // Breakpoint 1: screens wider than this get bigger text
+  SCALE_BP1_WIDTH: 1600,    // pixels
+  SCALE_BP1_FONT: 16,       // font size at this breakpoint
+  SCALE_BP1_MAX_H: 1050,    // max shell height in pixels
+
+  // Breakpoint 2: even larger screens
+  SCALE_BP2_WIDTH: 2200,
+  SCALE_BP2_FONT: 18,
+  SCALE_BP2_MAX_H: 1280,
+
+  // Breakpoint 3: ultra-wide / 4K monitors
+  SCALE_BP3_WIDTH: 3000,
+  SCALE_BP3_FONT: 22,
+  SCALE_BP3_MAX_H: 1700,
+
+  // Mobile breakpoint — below this width, switch to single-column layout
+  MOBILE_BREAKPOINT: 680,
+
+
+  /* ─── CONTENT: TITLE BAR ─────────────────────────────────────────
+     The top bar text and version label.
+     ─────────────────────────────────────────────────────────────── */
+
+  // Title text shown in the top-left (first part is gold, second part is orange)
+  TITLE_PREFIX: 'BSV',
+  TITLE_SUFFIX: 'DIR',
+  TITLE_DIVIDER: ' // ',
+
+  // Logo font size
+  LOGO_FONT_SIZE: 20,
+
+  // Logo letter spacing
+  LOGO_LETTER_SPACING: 3,
+
+
+  /* ─── CONTENT: STATUS BAR ────────────────────────────────────────
+     The bottom bar messages and version label.
+     ─────────────────────────────────────────────────────────────── */
+
+  // Right-side label in the status bar
+  STATUSBAR_LABEL: 'BSV DIRECTORY // SUBMIT v2.2',
+
+  // Default status message when page first loads
+  STATUSBAR_DEFAULT_MSG: 'READY // CONNECT WALLET TO BEGIN',
+
+
+  /* ─── CONTENT: PANEL LABELS ──────────────────────────────────────
+     The amber headers inside each panel. Change text here to rename panels.
+     ─────────────────────────────────────────────────────────────── */
+
+  LABEL_DETAILS: 'APP DETAILS',
+  LABEL_ICON: 'ICON DESIGN',
+  LABEL_DESC: 'DESCRIPTION',
+  LABEL_DEV: 'DEVELOPER',
+  LABEL_FEATURES: 'FEATURES',
+  LABEL_TRANSMIT: 'TRANSMIT',
+
+
+  /* ─── CONTENT: CATEGORIES ────────────────────────────────────────
+     10-button 2x5 grid — mutually exclusive, exactly 1 required.
+     Row 1: GAME · APP · WEB · MKT · MEDIA
+     Row 2: DEV  · FIN · PUB · INFRA · ADULT
+     ─────────────────────────────────────────────────────────────── */
+  CATEGORIES: [
+    { value: 'game',           label: 'GAME',  color: '#F0997B', bg: 'rgba(216,90,48,0.15)',   border: 'rgba(216,90,48,0.6)'   },
+    { value: 'app',            label: 'APP',   color: '#AFA9EC', bg: 'rgba(127,119,221,0.15)', border: 'rgba(127,119,221,0.6)' },
+    { value: 'website',        label: 'WEB',   color: '#85B7EB', bg: 'rgba(55,138,221,0.15)',  border: 'rgba(55,138,221,0.6)'  },
+    { value: 'marketplace',    label: 'MKT',   color: '#EF9F27', bg: 'rgba(186,117,23,0.15)',  border: 'rgba(186,117,23,0.6)'  },
+    { value: 'media',          label: 'MEDIA', color: '#ED93B1', bg: 'rgba(212,83,126,0.15)',  border: 'rgba(212,83,126,0.6)'  },
+    { value: 'developer',      label: 'DEV',   color: '#5DCAA5', bg: 'rgba(29,158,117,0.15)',  border: 'rgba(29,158,117,0.6)'  },
+    { value: 'finance',        label: 'FIN',   color: '#97C459', bg: 'rgba(99,153,34,0.15)',   border: 'rgba(99,153,34,0.6)'   },
+    { value: 'publishing',     label: 'PUB',   color: '#5DCAA5', bg: 'rgba(0,204,68,0.10)',    border: 'rgba(0,204,68,0.45)'   },
+    { value: 'infrastructure', label: 'INFRA', color: 'rgba(0,229,255,0.9)', bg: 'rgba(0,229,255,0.08)', border: 'rgba(0,229,255,0.4)' },
+    { value: 'adult',          label: 'ADULT', color: '#F09595', bg: 'rgba(226,75,74,0.12)',   border: 'rgba(226,75,74,0.6)'   },
+  ],
+
+  // Subcategory options per main category (max 3 selectable, all optional)
+  SUBCATEGORIES: {
+    game:           ['action','rpg','strategy','puzzle','simulation','sports','adventure','card','casual'],
+    app:            ['productivity','social','utility','education','health','news','travel','lifestyle'],
+    website:        ['blog','portfolio','news','community','directory','landing','ecommerce'],
+    marketplace:    ['nft','digital','physical','art','music','collectibles','gaming-items'],
+    media:          ['video','audio','podcast','streaming','music','photography','animation'],
+    developer:      ['library','api','sdk','tooling','documentation','open-source','testing'],
+    finance:        ['wallet','exchange','defi','payments','analytics','trading','lending'],
+    publishing:     ['blog','magazine','ebook','newsletter','whitepaper'],
+    infrastructure: ['node','indexer','api','storage','oracle','bridge','monitoring'],
+    adult:          ['content','social','gaming'],
+  },
+  MAX_SUBCATEGORIES: 3,
+
+  /* ─── CONTENT: SCREENSHOTS ───────────────────────────────────────
+     Screenshot slots 2-5 in the icon panel slot strip.
+     ─────────────────────────────────────────────────────────────── */
+  MAX_SCREENSHOTS: 4,
+  MAX_SCREENSHOT_BYTES: 131072,
+
+
+  /* ─── LAYOUT: PANEL FONT CAPS ────────────────────────────────────
+     Maximum font size (px) for each panel's auto-scaling system.
+     Panels not listed here are uncapped (scale up to 28px max).
+     Set a value to null to remove a cap and let it scale freely.
+     Panel IDs: panel-titlebar, panel-icon, panel-details,
+                panel-desc, panel-dev, panel-feat, panel-tx,
+                panel-statusbar
+     ─────────────────────────────────────────────────────────────── */
+  PANEL_FONT_CAPS: {
+    'panel-titlebar':  14,
+    'panel-icon':      14,
+    'panel-details':   14,
+    'panel-desc':      14,
+    'panel-dev':       14,
+    'panel-feat':      14,
+    'panel-tx':        14,
+    'panel-statusbar': 14,
+  },
+
+
+  /* ─── CONTENT: LANGUAGES ─────────────────────────────────────────
+     The dropdown options in the language selector.
+     ─────────────────────────────────────────────────────────────── */
+
+  LANGUAGES: [
+    { value: 'zh', label: 'ZH — CHINESE',    default: false },
+    { value: 'en', label: 'EN — ENGLISH',    default: true  },
+    { value: 'fr', label: 'FR — FRENCH',     default: false },
+    { value: 'de', label: 'DE — GERMAN',     default: false },
+    { value: 'ja', label: 'JA — JAPANESE',   default: false },
+    { value: 'pl', label: 'PL — POLISH',     default: false },
+    { value: 'pt', label: 'PT — PORTUGUESE', default: false },
+    { value: 'ru', label: 'RU — RUSSIAN',    default: false },
+    { value: 'es', label: 'ES — SPANISH',    default: false },
+  ],
+
+  // Max number of languages a user can select at once
+  MAX_LANGUAGES: 5,
+
+
+  /* ─── CONTENT: STATUS OPTIONS ────────────────────────────────────
+     The dropdown options and their associated colours in the preview.
+     ─────────────────────────────────────────────────────────────── */
+
+  STATUSES: [
+    { value: 'alpha',      label: 'ALPHA',      colour: '#ff5733'              },
+    { value: 'beta',       label: 'BETA',       colour: '#ffcc66'              },
+    { value: 'live',       label: 'LIVE',       colour: '#00cc44', default: true },
+    { value: 'deprecated', label: 'DEPRECATED', colour: 'rgba(255,255,255,0.3)' },
+    { value: 'delisted',   label: 'DELISTED',   colour: '#ff3c3c'              },
+  ],
+
+
+  /* ─── LIMITS: FIELD CONSTRAINTS ──────────────────────────────────
+     Maximum lengths for text fields and features.
+     These enforce limits in the UI and show in the gauges.
+     ─────────────────────────────────────────────────────────────── */
+
+  // App name max characters
+  MAX_NAME_CHARS: 64,
+
+  // URL max characters (2048 is the practical web standard)
+  MAX_URL_CHARS: 2048,
+
+  // Tags field max characters
+  MAX_TAGS_CHARS: 128,
+
+  // Description textarea max characters
+  MAX_DESC_CHARS: 256,
+
+  // Bio textarea max characters
+  MAX_BIO_CHARS: 128,
+
+  // Max characters in a single word (no spaces). Words longer than this
+  // are blocked. Underscores count as spaces and do NOT break this rule.
+  MAX_WORD_LENGTH: 64,
+
+  // Number of feature slots (each gets its own input)
+  MAX_FEATURES: 8,
+
+  // Max characters per single feature
+  MAX_FEATURE_CHARS: 128,
+
+  // Max characters across ALL features combined
+  MAX_FEATURES_COMBINED: 256,
+
+  // Version field max characters (XXX.XXX.XXX)
+  MAX_VERSION_CHARS: 11,
+
+  // Abbreviation field max characters
+  MAX_ABBR_CHARS: 16,
+
+  // Twitter handle max characters
+  MAX_TWITTER_CHARS: 32,
+
+  // GitHub URL max characters
+  MAX_GITHUB_CHARS: 128,
+
+  // Alt text max characters
+  MAX_ALT_CHARS: 64,
+
+
+  /* ─── LIMITS: ICON CONSTRAINTS ───────────────────────────────────
+     Rules for uploaded icon files.
+     ─────────────────────────────────────────────────────────────── */
+
+  // Max icon file size in bytes (131072 = 128kb)
+  MAX_ICON_BYTES: 131072,
+
+  // Accepted file types for the browse dialog
+  ICON_ACCEPT: '.svg,.png,.webp,image/svg+xml,image/png,image/webp',
+
+  // Default icon background colour (shown in the preview square)
+  ICON_DEFAULT_BG: '#1a1440',
+
+  // Default icon foreground colour
+  ICON_DEFAULT_FG: '#EAB300',
+
+  // Whether BG colour is enabled by default (checked)
+  ICON_BG_ENABLED: false,
+
+  // Whether FG colour is enabled by default (unchecked = no gradient by default)
+  ICON_FG_ENABLED: false,
+
+  // Default alpha (opacity) for icon background gradient
+  ICON_DEFAULT_ALPHA: 1,
+
+  // Default zoom level for icon
+  ICON_DEFAULT_ZOOM: 1,
+
+  // Zoom slider range
+  ICON_ZOOM_MIN: 0.5,
+  ICON_ZOOM_MAX: 2,
+  ICON_ZOOM_STEP: 0.05,
+
+  // Alpha slider range
+  ICON_ALPHA_MIN: 0,
+  ICON_ALPHA_MAX: 1,
+  ICON_ALPHA_STEP: 0.05,
+
+
+  /* ─── NETWORK: BSV TRANSACTION ───────────────────────────────────
+     Blockchain-related constants for the MAP protocol transaction.
+     ─────────────────────────────────────────────────────────────── */
+
+  // Fallback fee estimate in satoshis (used when wallet.js estimate unavailable)
+  BASE_FEE_SATS: 20,
+
+  // Protocol identifier written to every MAP transaction
+  PROTOCOL_PREFIX: 'bsvdirectory',
+
+  // Protocol version
+  PROTOCOL_VERSION: '1',
+
+  // Network label shown in the Transmit panel
+  NETWORK_LABEL: 'BSV MAINNET',
+
+  // Protocol label shown in the Transmit panel
+  PROTOCOL_LABEL: 'MAP v1',
+
+  // Tip preset amounts in BSV (shown as checkbox options)
+  TIP_AMOUNTS: [0.01, 0.1, 1],
+
+
+  /* ─── NETWORK: CDN ENDPOINTS ─────────────────────────────────────
+     URLs used to fetch on-chain icon images.
+     {txid} is replaced with the actual transaction ID.
+     ─────────────────────────────────────────────────────────────── */
+
+  // CDN URLs that append "_0" (output index 0)
+  CDN_URLS_WITH_SUFFIX: [
+    'https://ordinals.gorillapool.io/content/{txid}_0',
+    'https://ordfs.network/{txid}_0',
+    'https://1satordinals.com/content/{txid}_0',
+  ],
+
+  // CDN URLs without suffix
+  CDN_URLS_NO_SUFFIX: [
+    'https://ordfs.network/{txid}',
+    'https://ordinals.gorillapool.io/content/{txid}',
+  ],
+
+  // Timeout for fetch attempts in milliseconds
+  FETCH_TIMEOUT_MS: 6000,
+
+  // Timeout for image load attempts in milliseconds
+  IMG_LOAD_TIMEOUT_MS: 8000,
+
+  // Timeout for display-only image attempts
+  IMG_DISPLAY_TIMEOUT_MS: 7000,
+
+
+  /* ─── PREVIEW: CARD TILE ─────────────────────────────────────────
+     Dimensions for the BSVHub-style icon tile in the preview overlay.
+     ─────────────────────────────────────────────────────────────── */
+
+  // Icon tile size in the preview card (pixels)
+  PREVIEW_TILE_SIZE: 160,
+
+  // Icon tile border radius (pixels) — higher = more rounded
+  PREVIEW_TILE_RADIUS: 20,
+
+  // Icon tile border width (pixels)
+  PREVIEW_TILE_BORDER: 4,
+
+
+  /* ─── WALLET: MOCK DATA ──────────────────────────────────────────
+     Placeholder data for the mock wallet connection.
+     [BSV-HOOK] Replace these with real wallet SDK calls.
+     ─────────────────────────────────────────────────────────────── */
+
+  // Mock paymail shown when "connected"
+  MOCK_PAYMAIL: 'yourname@handcash.io',
+
+  // Mock display paymail (uppercase for status bar)
+  MOCK_PAYMAIL_DISPLAY: 'YOURNAME@HANDCASH.IO',
+};
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 1: CSS FOUNDATION — Variables, Reset, Shell, Scaling
+
+     All colours and sizes come from SETTINGS via CSS custom
+     properties. The <script> above injects them into :root.
+     ═══════════════════════════════════════════════════════════════ -->
+<style id="dynamic-vars">
+/* Injected by SettingsApplier on load — do not edit manually */
+</style>
+
+<style>
+/* ── Reset & Base ──────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--bg);
+  background-image: var(--bg-grad);
+  background-attachment: fixed;
+  color: var(--white);
+  font-family: var(--font);
+  font-size: var(--font-size-base);
+  letter-spacing: var(--letter-spacing);
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Shell — master container enforcing aspect ratio */
+.shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-width: 100vw;
+  aspect-ratio: var(--shell-aspect);
+  margin: 0 auto;
+  padding: var(--gap);
+  gap: var(--gap);
+  overflow: hidden;
+}
+
+/* Main grid — rows 2–4 between title bar and status bar */
+.main-area {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: var(--grid-cols);
+  grid-template-rows: var(--grid-rows);
+  gap: var(--gap);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION 2: COMPONENTS — Reusable UI elements
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Title bar ──────────────────────────────────────────────── */
+.title-bar {
+  background: var(--panel);
+  border: 1px solid var(--border-blue);
+  border-bottom: 2px solid var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(2px, 0.4vh, 6px) 10px;
+  flex-shrink: 0;
+  gap: 10px;
+  backdrop-filter: blur(4px);
+}
+.logo {
+  font-size:1.43em;
+  font-weight: 700;
+  color: var(--amber);
+  letter-spacing: 3px;
+  white-space: nowrap;
+}
+.logo span { color: var(--accent); }
+.mode-toggle { cursor: pointer; color: var(--dim); text-decoration: none; transition: color 0.2s; }
+.mode-toggle:hover { color: var(--amber); }
+.mode-toggle.active { color: var(--amber); text-decoration: underline; text-underline-offset: 3px; }
+
+/* ── Wallet indicator ───────────────────────────────────────── */
+.wallet-bar { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.led {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: #330000; border: 1px solid #550000; flex-shrink: 0;
+}
+.led.on { background: var(--green); border-color: #00ff55; box-shadow: 0 0 5px var(--green); }
+.wallet-label { font-size:1.14em; color: var(--dim); letter-spacing: 1px; white-space: nowrap; }
+.wallet-label.on { color: var(--green); }
+
+/* ── On-chain toggle ───────────────────────────────────────── */
+.onchain-toggle {
+  display: flex; align-items: center; gap: 6px; cursor: pointer;
+  padding: 3px 10px; border: 1px solid var(--border-blue); border-radius: 3px;
+  background: rgba(0,0,0,0.3); transition: border-color 0.2s, background 0.2s;
+  flex-shrink: 0; user-select: none;
+}
+.onchain-toggle:hover { border-color: var(--amber); }
+.onchain-toggle input { display: none; }
+.onchain-box {
+  width: 14px; height: 14px; border: 2px solid var(--dim);
+  background: transparent; transition: all 0.15s; flex-shrink: 0;
+}
+.onchain-toggle input:checked ~ .onchain-box {
+  border-color: var(--amber); background: var(--amber);
+  box-shadow: 0 0 6px rgba(234,179,0,0.4);
+}
+.onchain-label {
+  font-size:0.79em; font-weight: 700; letter-spacing: 2px;
+  color: var(--dim); transition: color 0.15s; white-space: nowrap;
+}
+.onchain-toggle input:checked ~ .onchain-label { color: var(--amber); }
+
+/* ── Generic button ─────────────────────────────────────────── */
+.btn {
+  font-family: var(--font); font-size:1.14em; letter-spacing: 2px; font-weight: 700;
+  background: transparent; color: var(--amber); border: 1px solid var(--amber);
+  padding: 5px 12px; cursor: pointer; text-transform: uppercase;
+  transition: background 0.12s, color 0.12s; white-space: nowrap;
+}
+.btn:hover { background: var(--amber); color: #000; }
+
+/* ── Panel (each grid cell) ─────────────────────────────────── */
+.panel {
+  background: var(--panel); border: 1px solid var(--border-blue);
+  padding: 7px 10px; display: flex; flex-direction: column; gap: 5px;
+  min-width: 0; min-height: 0; overflow: hidden;
+  backdrop-filter: blur(var(--panel-blur));
+}
+
+/* Panel label — amber header */
+.plabel {
+  font-size:1.0em; color: var(--amber); letter-spacing: 3px; font-weight: 700;
+  padding-bottom: 4px; border-bottom: 1px solid var(--accent);
+  margin-bottom: 1px; flex-shrink: 0;
+}
+.plabel.req { color: var(--accent); }
+
+/* Section header — label + counter on one line */
+.section-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-bottom: 4px; border-bottom: 1px solid var(--accent);
+  margin-bottom: 1px; flex-shrink: 0;
+}
+.section-head .plabel { border: none; padding: 0; margin: 0; }
+
+/* ── Form row ───────────────────────────────────────────────── */
+.row { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
+.row-top { align-items: flex-start; }
+
+/* ── REL rule — compact multi-entry row ────────────────────── *
+ * Reusable modifier for rows with multiple label/input pairs.
+ * Tight WITHIN each group (lbl 3px input), spaced BETWEEN
+ * groups (10px).  First lbl keeps panel-grid alignment.
+ * Usage: add class "row-multi" alongside "row".               */
+.row-multi { gap: 0; }
+.row-multi lbl { min-width: auto; margin-left: 0; margin-right: 3px; }
+.row-multi lbl:first-child { min-width: auto; margin-right: 7px; }
+.row-multi .clr-toggle { margin-left: 3px; margin-right: 0; }
+.row-multi .clr-toggle + lbl { margin-left: 2px; margin-right: 3px; }
+.row-multi input[type=text],
+.row-multi input[type=url],
+.row-multi select { flex: 0 0 auto; margin-left: 0; }
+/* between-group gap: 10px after any input/select, unless it's the last element */
+.row-multi input[type=text] + lbl,
+.row-multi input[type=text] + .clr-toggle,
+.row-multi input[type=url] + lbl,
+.row-multi input[type=url] + .clr-toggle,
+.row-multi select + lbl,
+.row-multi select + .clr-toggle { margin-left: 30px; }
+
+lbl {
+  display: block; font-size:1.0em; color: var(--amber-dim); letter-spacing: 1px;
+  white-space: nowrap; min-width: 53px; text-transform: uppercase; flex-shrink: 0;
+}
+lbl.req { color: var(--accent); }
+
+/* ── Validation flash for missing required fields ─────────── */
+@keyframes field-flash {
+  0%, 100% { border-color: var(--border-blue); }
+  50% { border-color: #ff5733; box-shadow: 0 0 6px rgba(255,87,51,0.5); }
+}
+@keyframes label-flash {
+  0%, 100% { color: var(--accent); }
+  50% { color: #ff5733; }
+}
+.flash-field { animation: field-flash 0.35s ease 5; }
+.flash-label { animation: label-flash 0.35s ease 5; }
+
+/* ── Browser autofill override ────────────────────────────── */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--white);
+  -webkit-box-shadow: 0 0 0 1000px var(--input-bg) inset;
+  border: 1px solid var(--border-blue);
+  transition: background-color 5000s ease-in-out 0s;
+}
+.cat-lbl { padding-top: 2px; }
+
+/* ── Inputs ─────────────────────────────────────────────────── */
+input[type=text], input[type=url], select, textarea {
+  font-family: var(--font); font-size:1.14em; letter-spacing: 1px;
+  background: var(--input-bg); color: var(--white); border: 1px solid var(--border-blue);
+  padding: 4px 7px; flex: 1; outline: none; min-width: 0; transition: border-color 0.12s;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--amber); }
+input[readonly] { color: var(--dim); cursor: default; }
+input:disabled {
+  color: rgba(255,255,255,0.15); cursor: not-allowed;
+  background: rgba(0,0,0,0.25); border-color: rgba(255,255,255,0.06);
+}
+select {
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23EAB300'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 5px center;
+  padding-right: 19px; cursor: pointer;
+}
+select option { background: var(--bg); }
+textarea { resize: none; line-height: 1.5; }
+
+/* ── Category pills ─────────────────────────────────────────── */
+.cat-group { display: flex; gap: 4px; flex-wrap: wrap; }
+.cat-btn {
+  font-family: var(--font); font-size:1.0em; letter-spacing: 1px;
+  background: var(--input-bg); color: var(--dim); border: 1px solid rgba(255,255,255,0.12);
+  padding: 2px 7px; cursor: pointer; text-transform: uppercase; user-select: none; transition: all 0.1s;
+}
+.cat-btn.active { background: rgba(234,179,0,0.16); color: var(--amber); border-color: var(--amber); }
+
+/* ── Character gauge ────────────────────────────────────────── */
+.ccount {
+  font-size:1.0em; font-weight: 700; color: var(--green); letter-spacing: 1px;
+  min-width: 62px; text-align: right; font-variant-numeric: tabular-nums; flex-shrink: 0;
+}
+.ccount.warn { color: var(--gold); }
+.ccount.over { color: var(--accent); }
+.gtrack { height: 2px; background: rgba(255,255,255,0.08); flex-shrink: 0; }
+.gfill { height: 100%; background: var(--green); transition: width 0.1s, background 0.15s; }
+.gfill.warn { background: var(--gold); }
+.gfill.over { background: var(--accent); }
+
+/* ── Radio row ──────────────────────────────────────────────── */
+.radio-row { display: flex; gap: 14px; flex-shrink: 0; }
+.radio-opt {
+  display: flex; align-items: center; gap: 6px; cursor: pointer;
+  font-size:1.0em; color: var(--dim); letter-spacing: 1px; user-select: none;
+}
+.radio-opt input { display: none; }
+.rbox {
+  width: 12px; height: 12px; border: 1px solid var(--amber-dim);
+  background: var(--input-bg); display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0;
+}
+.radio-opt input:checked + .rbox { border-color: var(--amber); }
+.radio-opt input:checked + .rbox::after {
+  content: ''; width: 6px; height: 6px; background: var(--amber); display: block;
+}
+.radio-opt input:checked ~ span { color: var(--amber); }
+
+/* ── File browse button ─────────────────────────────────────── */
+.file-btn {
+  font-family: var(--font); font-size:1.0em; letter-spacing: 1px;
+  background: var(--input-bg); color: var(--amber); border: 1px solid var(--amber-dim);
+  padding: 4px 10px; cursor: pointer; transition: border-color 0.12s; width: 100%; text-align: left;
+}
+.file-btn:hover { border-color: var(--amber); }
+.file-info {
+  font-size:1.0em; color: var(--dim); overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap; letter-spacing: 0.5px;
+}
+
+/* ── Colour picker ──────────────────────────────────────────── */
+.clr-row { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+input[type=color] {
+  width: 26px; height: 20px; border: 1px solid var(--amber-dim);
+  background: none; padding: 1px; cursor: pointer; flex-shrink: 0;
+}
+.hex-in { max-width: 89px !important; font-size:1.0em !important; letter-spacing: 0 !important; }
+
+/* ── Sliders ────────────────────────────────────────────────── */
+.srow { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.srow-compact { gap: 3px; }
+.srow-compact .sval { min-width: 24px; }
+input[type=range] {
+  flex: 1; -webkit-appearance: none; appearance: none; height: 2px;
+  background: rgba(234,179,0,0.18); outline: none; cursor: pointer; min-width: 0;
+}
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 11px; height: 11px; background: var(--amber); cursor: pointer; }
+input[type=range]::-moz-range-thumb { width: 11px; height: 11px; background: var(--amber); border: none; }
+.sval { font-size:1.0em; color: var(--gold); min-width: 34px; text-align: right; font-variant-numeric: tabular-nums; }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION 3: PANEL-SPECIFIC STYLES
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Icon preview square ───────────────────────────────────── */
+.icon-preview-sq {
+  width: 72px; height: 72px; border: 1px solid var(--border-blue); overflow: hidden;
+  position: relative; display: flex; align-items: center; justify-content: center;
+  font-size:1.0em; color: var(--dim); text-align: center; flex-shrink: 0; flex-grow: 0;
+}
+.icon-preview-sq .bg-layer { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.icon-preview-sq img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: contain; }
+.icon-preview-sq .no-img { position: relative; z-index: 1; }
+
+/* ── Icon panel layout ─────────────────────────────────────── */
+.panel-icon { flex-direction: row; gap: 8px; padding: 7px 10px; }
+.icon-controls { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 0; overflow: hidden; }
+.icon-well { flex-basis: 50%; flex-shrink: 0; display: flex; align-items: stretch; justify-content: center; align-self: stretch; min-width: 0; }
+.mode-container { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; }
+.gradient-hint { font-size:0.93em; color: var(--dim); letter-spacing: 0.5px; flex-shrink: 0; white-space: nowrap; }
+.txid-status { font-size:0.93em; white-space: normal; word-break: break-word; }
+
+/* ── Feature rows ───────────────────────────────────────────── */
+.feat-row { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.feat-num { font-size:1.0em; color: var(--amber-dim); min-width: 14px; text-align: right; flex-shrink: 0; }
+.feat-count { font-size:0.93em; color: var(--dim); min-width: 36px; text-align: right; font-variant-numeric: tabular-nums; flex-shrink: 0; letter-spacing: 0; }
+.panel-feat { padding: 5px 7px; gap: 2px; }
+.feat-hint { font-size:0.93em; color: var(--dim); letter-spacing: 0.5px; flex-shrink: 0; }
+.feat-list { display: flex; flex-direction: column; gap: 2px; flex: 1; justify-content: space-around; min-height: 0; }
+
+/* ── Submit button ──────────────────────────────────────────── */
+.btn-submit {
+  font-family: var(--font); font-size:1.64em; letter-spacing: 5px; font-weight: 700;
+  background: var(--accent); color: #fff; border: 1px solid var(--accent);
+  padding: clamp(2px, 0.5vh, 10px) 0; cursor: pointer; text-transform: uppercase; transition: background 0.12s;
+  width: 100%; flex: none; flex-shrink: 0; margin-top: auto;
+}
+.btn-submit:hover:not(:disabled) { background: #ff7a5a; border-color: #ff7a5a; }
+.btn-submit:disabled { background: rgba(255,87,51,0.2); color: var(--dim); border-color: rgba(255,87,51,0.25); cursor: not-allowed; }
+
+/* ── Tip options ────────────────────────────────────────────── */
+.tip-row { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+.tip-opt {
+  display: flex; align-items: center; gap: 5px; cursor: pointer; font-size:1.0em;
+  color: var(--dim); user-select: none; flex: 1; justify-content: center;
+  border: 1px solid rgba(255,255,255,0.10); padding: 4px 5px; background: var(--input-bg); transition: all 0.1s;
+}
+.tip-opt:hover { border-color: var(--amber-dim); color: var(--gold); }
+.tip-opt input[type=checkbox] { display: none; }
+.tbox {
+  width: 11px; height: 11px; border: 1px solid var(--amber-dim);
+  background: var(--input-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.tip-opt input:checked + .tbox { border-color: var(--amber); background: rgba(234,179,0,0.15); }
+.tip-opt input:checked + .tbox::after { content: '✓'; font-size:0.79em; color: var(--amber); line-height: 1; }
+.tip-opt input:checked ~ .tip-label { color: var(--amber); }
+.tip-opt.active { border-color: var(--amber); background: rgba(234,179,0,0.08); }
+.tip-label { font-size:1.0em; letter-spacing: 0.3px; }
+.bsv-sym { font-weight: 700; color: var(--amber); }
+
+/* ── Developer fields ───────────────────────────────────────── */
+.dev-field { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
+.dev-field input[type=text] { height: 26px; }
+.bio-textarea { flex: 1; min-height: 0; overflow: auto; resize: none; }
+
+/* ── Transmit panel ─────────────────────────────────────────── */
+.panel-tx { padding: 5px 7px; gap: 2px; }
+.tx-body { display: flex; flex-direction: column; gap: 2px; flex: 1; justify-content: flex-start; min-height: 0; }
+.tx-row { display: flex; justify-content: space-between; align-items: center; }
+.tx-row-tip { gap: 6px; align-items: center; }
+
+/* ── Status text ────────────────────────────────────────────── */
+.status { font-size:1.0em; color: var(--dim); letter-spacing: 1px; }
+.status.ok { color: var(--green); }
+.status.err { color: var(--accent); }
+.status.warn { color: var(--gold); }
+
+/* ── Status bar ─────────────────────────────────────────────── */
+.status-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--panel); border: 1px solid var(--border-blue); border-top: 2px solid var(--accent);
+  padding: clamp(2px, 0.4vh, 6px) 11px; flex-shrink: 0; backdrop-filter: blur(4px);
+}
+.sb-l { font-size:1.0em; color: var(--dim); letter-spacing: 1px; }
+.sb-r { font-size:1.0em; color: var(--amber-dim); letter-spacing: 1px; }
+.sb-l.ok { color: var(--green); }
+.sb-l.err { color: var(--accent); }
+.sb-l.warn { color: var(--gold); }
+
+/* ── Preview overlay ────────────────────────────────────────── */
+#preview-overlay { display: none; position: fixed; inset: 0; z-index: 9999; background: var(--bg); background-image: var(--bg-grad); overflow: hidden; }
+#preview-overlay.active { display: flex; }
+
+/* ── Record picker overlay ─────────────────────────────────── */
+#picker-overlay { display: none; position: fixed; inset: 0; z-index: 9998; background: rgba(5,3,15,0.4); backdrop-filter: blur(2px); align-items: center; justify-content: center; transition: background 0.8s ease, backdrop-filter 0.8s ease; }
+#picker-overlay.active { display: flex; }
+.picker-modal { background: var(--panel); border: 1px solid var(--border-blue); border-top: 2px solid var(--accent); width: 90%; max-width: 520px; max-height: 80vh; display: flex; flex-direction: column; }
+.picker-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-bottom: 1px solid var(--border-blue); flex-shrink: 0; }
+.picker-title { font-size:1.0em; color: var(--amber); letter-spacing: 3px; font-weight: 700; }
+.picker-close { font-family: var(--font); font-size:0.93em; color: var(--dim); background: none; border: 1px solid var(--border-blue); padding: 2px 8px; cursor: pointer; letter-spacing: 1px; }
+.picker-close:hover { color: var(--accent); border-color: var(--accent); }
+.picker-status { padding: 6px 12px; font-size:0.86em; color: var(--dim); letter-spacing: 1px; border-bottom: 1px solid rgba(46,63,102,0.3); flex-shrink: 0; }
+.picker-list { overflow-y: auto; flex: 1; min-height: 0; }
+.picker-list::-webkit-scrollbar { width: 3px; }
+.picker-list::-webkit-scrollbar-thumb { background: var(--amber-dim); }
+.picker-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-bottom: 1px solid rgba(46,63,102,0.3); cursor: pointer; transition: background 0.15s; }
+.picker-item:hover { background: rgba(234,179,0,0.06); }
+.picker-item-icon { width: 40px; height: 40px; border-radius: 4px; border: 1px solid var(--border-blue); overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: rgba(90,110,165,0.3); }
+.picker-item-icon img { width: 100%; height: 100%; object-fit: contain; }
+.picker-item-info { flex: 1; min-width: 0; }
+.picker-item-name { font-size:1.0em; color: var(--text); letter-spacing: 1px; font-weight: 500; }
+.picker-item-meta { font-size:0.79em; color: var(--dim); letter-spacing: 0.5px; margin-top: 2px; }
+.picker-item-status { font-size:0.71em; letter-spacing: 1px; padding: 1px 6px; border: 1px solid; flex-shrink: 0; }
+.picker-empty { padding: 20px 12px; text-align: center; font-size:0.93em; color: var(--dim); letter-spacing: 1px; }
+
+/* ── Misc ───────────────────────────────────────────────────── */
+#icon-file-input { display: none; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-thumb { background: var(--amber-dim); }
+.file-size-gold { color: var(--gold); }
+.file-size-green { color: var(--green); }
+.file-size-err { color: var(--accent); }
+
+/* ── BG/FG colour toggle checkbox ──────────────────────────── */
+.clr-toggle {
+  display: flex; align-items: center; cursor: pointer; flex-shrink: 0; user-select: none;
+}
+.clr-toggle input[type=checkbox] { display: none; }
+.clr-toggle .tbox { width: 12px; height: 12px; border: 1px solid var(--amber-dim); background: var(--input-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.clr-toggle input:checked + .tbox { border-color: var(--amber); background: rgba(234,179,0,0.15); }
+.clr-toggle input:checked + .tbox::after { content: '✓'; font-size:0.79em; color: var(--amber); line-height: 1; }
+.clr-row-disabled lbl, .clr-row-disabled input[type=color], .clr-row-disabled .hex-in {
+  opacity: 0.3; pointer-events: none;
+}
+
+/* ── Language multi-select ─────────────────────────────────── */
+.lang-wrap { display: flex; flex-direction: row; gap: 4px; flex: 1; min-width: 0; align-items: center; }
+.lang-pills { display: flex; gap: 3px; flex-wrap: nowrap; flex-shrink: 0; }
+.lang-pill {
+  display: flex; align-items: center; gap: 3px; background: rgba(234,179,0,0.12);
+  color: var(--amber); border: 1px solid rgba(234,179,0,0.35); padding: 1px 6px;
+  font-size:0.93em; letter-spacing: 1px; font-family: var(--font); cursor: pointer; user-select: none;
+}
+.lang-pill:hover { border-color: var(--accent); color: var(--accent); }
+.lang-pill .lang-x { font-size:0.79em; color: var(--accent); margin-left: 2px; }
+#panel-details { overflow: visible; position: relative; z-index: 10; }
+.lang-dd-wrap { position: relative; flex-shrink: 1; min-width: 0; }
+.lang-dd-btn { font-size:0.93em !important; padding: 3px 7px !important; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lang-dd {
+  position: absolute; top: 100%; left: 0; min-width: 200px; z-index: 9000;
+  background: rgba(15,10,30,0.97); border: 1px solid var(--amber-dim);
+  max-height: 160px; overflow-y: auto;
+}
+.lang-dd-item {
+  display: flex; align-items: center; gap: 6px; padding: 4px 8px;
+  font-family: var(--font); font-size:0.93em; color: var(--dim);
+  cursor: pointer; user-select: none; letter-spacing: 0.5px;
+}
+.lang-dd-item:hover { background: rgba(234,179,0,0.08); color: var(--amber); }
+.lang-dd-item input[type=checkbox] { display: none; }
+.lang-dd-item .tbox { width: 11px; height: 11px; border: 1px solid var(--amber-dim); background: var(--input-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.lang-dd-item input:checked + .tbox { border-color: var(--amber); background: rgba(234,179,0,0.15); }
+.lang-dd-item input:checked + .tbox::after { content: '✓'; font-size:0.71em; color: var(--amber); line-height: 1; }
+.lang-dd-item input:checked ~ span { color: var(--amber); }
+
+/* ── Slot strip ────────────────────────────────────────────── */
+.icon-well-col{display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0;width:100%;justify-content:center;}
+.slot-strip{display:flex;gap:1px;flex-shrink:0;align-items:stretch;}
+.slot-sq{
+  flex:1;aspect-ratio:1/1;border:1px solid rgba(255,255,255,0.15);
+  background:rgba(255,255,255,0.03);cursor:pointer;position:relative;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;transition:border-color 0.1s;
+  min-width:0;min-height:0;
+}
+.slot-sq:hover{border-color:rgba(234,179,0,0.5);}
+.slot-sq.active{border-color:var(--amber);background:rgba(234,179,0,0.1);}
+.slot-sq.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--amber);}
+.slot-sq.has-img{border-color:rgba(0,229,255,0.4);}
+.slot-sq img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;}
+.slot-inner-lbl{font-size:0.64em;color:var(--amber-dim);letter-spacing:0.2px;position:relative;z-index:0;pointer-events:none;line-height:1;}
+.slot-sq.has-img .slot-inner-lbl{display:none;}
+/* ── Screenshot controls (slots 2-5) ──────────────────────── */
+#icon-slot-ss-controls{flex-direction:column;gap:3px;display:none;}
+.ss-slot-lbl{font-size:0.93em;color:var(--amber);letter-spacing:2px;font-weight:700;flex-shrink:0;}
+.ss-info{font-size:0.86em;color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* ── 2x5 category grid ─────────────────────────────────────── */
+.cat-grid-new{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:2px;width:100%;flex-shrink:0;
+}
+.cat-btn-new{
+  font-family:var(--font);font-size:0.79em;letter-spacing:0.4px;font-weight:700;
+  border:1px solid;padding:3px 2px;cursor:pointer;text-align:center;
+  user-select:none;transition:filter 0.1s;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.cat-btn-new:hover{filter:brightness(1.35);}
+.cat-btn-new.active{filter:brightness(1.6);outline:1px solid rgba(255,255,255,0.45);}
+/* ── Subcategory dropdown ───────────────────────────────────── */
+.subcat-row{display:flex;align-items:center;gap:4px;width:100%;flex-shrink:0;}
+.subcat-wrap{position:relative;flex-shrink:0;}
+.subcat-btn-el{font-size:0.86em!important;padding:2px 6px!important;width:auto!important;white-space:nowrap;}
+.subcat-dd{
+  position:absolute;top:100%;left:0;min-width:155px;z-index:9001;
+  background:rgba(15,10,30,0.97);border:1px solid var(--amber-dim);
+  max-height:130px;overflow-y:auto;display:none;
+}
+.subcat-dd.open{display:block;}
+.subcat-dd-item{
+  display:flex;align-items:center;gap:5px;padding:3px 8px;
+  font-family:var(--font);font-size:0.86em;color:var(--dim);
+  cursor:pointer;user-select:none;letter-spacing:0.5px;
+}
+.subcat-dd-item:hover{background:rgba(234,179,0,0.08);color:var(--amber);}
+.subcat-dd-item input[type=checkbox]{display:none;}
+.subcat-dd-item .tbox{width:10px;height:10px;border:1px solid var(--amber-dim);background:var(--input-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.subcat-dd-item input:checked+.tbox{border-color:var(--amber);background:rgba(234,179,0,0.15);}
+.subcat-dd-item input:checked+.tbox::after{content:'✓';font-size:0.64em;color:var(--amber);line-height:1;}
+.subcat-dd-item input:checked~span{color:var(--amber);}
+.subcat-pills{display:flex;gap:3px;flex-wrap:nowrap;flex:1;min-width:0;overflow:hidden;align-items:center;}
+.subcat-pill{
+  display:flex;align-items:center;gap:2px;background:rgba(0,229,255,0.07);
+  color:rgba(0,229,255,0.85);border:1px solid rgba(0,229,255,0.3);padding:1px 5px;
+  font-size:0.79em;letter-spacing:0.4px;font-family:var(--font);cursor:pointer;user-select:none;flex-shrink:0;
+}
+.subcat-pill:hover{border-color:var(--accent);color:var(--accent);}
+.subcat-x{font-size:0.71em;color:var(--accent);margin-left:1px;}
+/* ── BSV flags row ─────────────────────────────────────────── */
+.bsv-flags-row{display:flex;gap:2px;width:100%;flex-shrink:0;}
+.bsv-flag{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:2px;
+  border:1px solid rgba(234,179,0,0.2);padding:2px 1px;cursor:pointer;
+  color:var(--gold);user-select:none;background:rgba(234,179,0,0.02);
+  transition:border-color 0.1s;white-space:nowrap;overflow:hidden;
+}
+.bsv-flag:hover{border-color:var(--amber-dim);}
+.bsv-flag input[type=checkbox]{display:none;}
+.bsv-flag .tbox{width:10px;height:10px;border:1px solid var(--amber-dim);background:var(--input-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.bsv-flag input:checked+.tbox{border-color:var(--amber);background:rgba(234,179,0,0.2);}
+.bsv-flag input:checked+.tbox::after{content:'✓';font-size:0.64em;color:var(--amber);line-height:1;}
+.bsv-flag input:checked~.bflag-lbl{color:var(--amber);}
+.bflag-lbl{font-size:0.86em;letter-spacing:0.3px;}
+.bsv-tbox{width:12px!important;height:12px!important;}
+.bsv-flag input:checked+.bsv-tbox::after{font-size:0.71em!important;}
+
+/* ══════════════════════════════════════════════════════════════
+   PANEL FONT SCALING — App.PanelScale drives --pf per panel.
+   Every panel inherits font-size from its own --pf variable.
+   Default 14px until JS measures and adjusts.
+   ══════════════════════════════════════════════════════════════ */
+:root { --pf: 14px; }
+.title-bar, .status-bar,
+.panel, .panel-icon, .panel-feat, .panel-tx {
+  font-size: var(--pf);
+}
+/* Override specific elements to use em so they scale with --pf */
+.logo      { font-size: 1.43em; }  /* 20px @ 14px base */
+.wallet-label { font-size: 1.14em; }
+.btn       { font-size: 1.14em; }
+.plabel    { font-size: 1em; }
+lbl        { font-size: 1em; }
+lbl.req    { font-size: 1em; }
+input[type=text], input[type=url], select, textarea { font-size: 1em; }
+.cat-btn-new   { font-size: 0.79em; }
+.file-btn      { font-size: 1em; }
+.file-info     { font-size: 1em; }
+.hex-in        { font-size: 1em !important; }
+.sval          { font-size: 1em; }
+.ccount        { font-size: 1em; }
+.gradient-hint { font-size: 0.93em; }
+.txid-status   { font-size: 0.93em; }
+.feat-num      { font-size: 1em; }
+.feat-count    { font-size: 0.93em; }
+.feat-hint     { font-size: 0.93em; }
+.btn-submit    { font-size: 1.64em; }
+.tip-opt       { font-size: 1em; }
+.tip-label     { font-size: 1em; }
+.status        { font-size: 1em; }
+.sb-l, .sb-r   { font-size: 1em; }
+.lang-pill     { font-size: 0.93em; }
+.lang-pill .lang-x { font-size: 0.79em; }
+.lang-dd-btn   { font-size: 0.93em !important; }
+.lang-dd-item  { font-size: 0.93em; }
+.subcat-btn-el { font-size: 0.86em !important; }
+.subcat-dd-item{ font-size: 0.86em; }
+.subcat-pill   { font-size: 0.79em; }
+.subcat-x      { font-size: 0.71em; }
+.bflag-lbl     { font-size: 0.86em; }
+.ss-slot-lbl   { font-size: 0.93em; }
+.ss-info       { font-size: 0.86em; }
+.slot-inner-lbl{ font-size: 0.64em; }
+.dev-field input[type=text] { font-size: 1em; }
+.onchain-label { font-size: 0.79em; }
+.mode-toggle   { font-size: 0.86em; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════
+     HTML STRUCTURE
+     Row 1: Title bar | Row 2: Details + Icon | Row 3: Desc + Dev
+     Row 4: Features + Transmit | Row 5: Status bar
+     ════════════════════════════════════════════════════════════ -->
+
+<div class="shell">
+
+  <!-- ── ROW 1 — TITLE BAR ───────────────────────────────────── -->
+  <div class="title-bar" id="panel-titlebar">
+    <div class="logo" id="logo"></div>
+    <div class="wallet-bar">
+      <label class="onchain-toggle" id="onchain-toggle" title="When checked, runs local simulation without wallet. Uncheck to use real BRC-100 wallet.">
+        <input type="checkbox" id="onchain-cb"><div class="onchain-box"></div><span class="onchain-label">TEST OFFLINE</span>
+      </label>
+      <div class="led" id="led"></div>
+      <span class="wallet-label" id="wallet-label">NOT CONNECTED</span>
+      <button class="btn" id="wallet-btn">CONNECT</button>
+    </div>
+  </div>
+
+  <!-- ── ROWS 2–4 — MAIN GRID ──────────────────────────────── -->
+  <div class="main-area">
+
+    <!-- ── R2 C1 — ICON DESIGN ───────────────────────────────── -->
+    <div class="panel panel-icon" id="panel-icon">
+      <div class="icon-controls">
+        <div class="plabel" id="lbl-icon"></div>
+
+        <!-- Slot 0 (icon) controls -->
+        <div id="icon-slot-icon-controls">
+          <div class="radio-row">
+            <label class="radio-opt"><input type="radio" name="isrc" value="upload" checked><div class="rbox"></div><span>UPLOAD</span></label>
+            <label class="radio-opt"><input type="radio" name="isrc" value="txid"><div class="rbox"></div><span>ON-CHAIN</span></label>
+          </div>
+          <div id="mode-upload" class="mode-container">
+            <div class="row"><button class="file-btn" id="browse-btn">▸ BROWSE</button></div>
+            <div class="file-info" id="fname">SVG · PNG · WEBP</div>
+            <div class="file-info file-size-gold" id="fsize"></div>
+          </div>
+          <div id="mode-txid" class="mode-container" style="display:none;">
+            <input type="text" id="icon-txid" placeholder="64-char txid" style="letter-spacing:0.3px;width:100%;">
+            <button class="file-btn" id="fetch-btn">▸ FETCH FROM CHAIN</button>
+            <div id="txid-st" class="status txid-status"></div>
+          </div>
+          <div class="clr-row"><label class="clr-toggle"><input type="checkbox" id="cbg-on" checked><div class="tbox"></div></label><lbl>BG</lbl><input type="color" id="cbg"><input type="text" id="cbg-h" class="hex-in"></div>
+          <div class="clr-row"><label class="clr-toggle"><input type="checkbox" id="cfg-on"><div class="tbox"></div></label><lbl>FG</lbl><input type="color" id="cfg"><input type="text" id="cfg-h" class="hex-in"></div>
+          <div class="gradient-hint" id="gradient-hint">BG ONLY — SOLID COLOUR</div>
+          <div class="srow srow-compact"><lbl>ALPHA</lbl><input type="range" id="opc"><span class="sval" id="opc-v"></span></div>
+          <div class="srow srow-compact"><lbl>ZOOM</lbl><input type="range" id="zom"><span class="sval" id="zom-v"></span></div>
+          <div class="row srow-compact" style="flex-shrink:0;"><lbl>ALT</lbl><input type="text" id="icon-alt" placeholder="alt text" ></div>
+        </div>
+
+        <!-- Slots 1-4 (screenshot) controls — hidden by default -->
+        <div id="icon-slot-ss-controls">
+          <div class="ss-slot-lbl" id="ss-slot-lbl">SCREENSHOT 1</div>
+          <div class="row"><button class="file-btn" id="ss-browse-btn">▸ BROWSE IMAGE</button></div>
+          <div class="ss-info" id="ss-fname">PNG · JPG · WEBP — MAX 128kb</div>
+          <div class="ss-info file-size-gold" id="ss-fsize"></div>
+          <button class="file-btn" id="ss-clear-btn" style="margin-top:3px;color:var(--accent);border-color:rgba(255,87,51,0.4);">✕ CLEAR SLOT</button>
+        </div>
+      </div>
+
+      <!-- Preview square + slot strip (right side of icon panel) -->
+      <div class="icon-well icon-well-col" id="preview-well">
+        <div class="icon-preview-sq" id="icon-preview">
+          <div class="bg-layer" id="preview-bg"></div>
+          <span class="no-img" id="preview-no-img">NO IMAGE</span>
+        </div>
+        <div class="slot-strip" id="slot-strip">
+          <div class="slot-sq active" data-slot="0" id="slot-0"><span class="slot-inner-lbl">ico</span></div>
+          <div class="slot-sq" data-slot="1" id="slot-1"><span class="slot-inner-lbl">ss1</span></div>
+          <div class="slot-sq" data-slot="2" id="slot-2"><span class="slot-inner-lbl">ss2</span></div>
+          <div class="slot-sq" data-slot="3" id="slot-3"><span class="slot-inner-lbl">ss3</span></div>
+          <div class="slot-sq" data-slot="4" id="slot-4"><span class="slot-inner-lbl">ss4</span></div>
+        </div>
+      </div>
+
+      <input type="file" id="icon-file-input">
+      <input type="file" id="ss-file-input" accept="image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp" style="display:none;">
+    </div>
+
+    <!-- ── R2 C2 — APP DETAILS ───────────────────────────────── -->
+    <div class="panel" id="panel-details">
+      <div class="plabel" id="lbl-details"></div>
+      <div class="row row-multi"><lbl class="req">NAME</lbl><input type="text" id="app-name" placeholder="My BSV App" style="flex:2 1 0;width:0;min-width:0;"><lbl>ABBR</lbl><input type="text" id="app-abbr" placeholder="MBA" style="flex:1 1 0;width:0;min-width:0;"></div>
+      <div class="row"><lbl class="req">URL</lbl><input type="url" id="app-url" placeholder="https://myapp.io"></div>
+      <div class="row"><lbl>TAGS</lbl><input type="text" id="app-tags" placeholder="wallet, nft, payments"></div>
+
+      <!-- 10-button 2×5 category grid -->
+      <div style="width:100%;flex-shrink:0;">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+          <lbl class="req cat-lbl" style="min-width:auto;padding-top:0;">CAT</lbl>
+          <span style="color:var(--dim);letter-spacing:0.5px;">— 1 required · mutually exclusive</span>
+        </div>
+        <div class="cat-grid-new" id="cat-grid-new"></div>
+      </div>
+
+      <!-- Subcategory row -->
+      <div class="subcat-row">
+        <lbl style="min-width:53px;">SUB</lbl>
+        <div class="subcat-wrap">
+          <button class="file-btn subcat-btn-el" id="subcat-btn" type="button">▾ SUBCAT</button>
+          <div class="subcat-dd" id="subcat-dd"></div>
+        </div>
+        <div class="subcat-pills" id="subcat-pills"></div>
+      </div>
+
+      <div class="row"><lbl>STATUS</lbl><select id="app-status"></select></div>
+      <div class="row"><lbl>LANG</lbl><div class="lang-wrap" id="lang-wrap"><div class="lang-dd-wrap"><button class="file-btn lang-dd-btn" id="lang-btn" type="button">▾ SELECT</button><div class="lang-dd" id="lang-dd" style="display:none;"></div></div><div class="lang-pills" id="lang-pills"></div></div></div>
+      <div class="row row-multi"><lbl class="req">REL</lbl><label class="clr-toggle" style="gap:4px;"><input type="checkbox" id="rel-today"><div class="tbox"></div></label><lbl>TODAY</lbl><input type="text" id="app-rel" placeholder="DD/MM/YYYY" style="flex:0 0 auto;width:14ch;" maxlength="10"><lbl>VER</lbl><input type="text" id="app-ver" placeholder="0.0.0" style="flex:0 0 auto;width:11ch;" maxlength="11"></div>
+
+      <!-- BSV Flags — 5 independent tick boxes -->
+      <div class="bsv-flags-row">
+        <label class="bsv-flag"><input type="checkbox" id="flag-bsv-content"><div class="tbox bsv-tbox"></div><span class="bflag-lbl">BSV CONTENT</span></label>
+        <label class="bsv-flag"><input type="checkbox" id="brc100-on"><div class="tbox bsv-tbox"></div><span class="bflag-lbl">BRC-100</span></label>
+        <label class="bsv-flag"><input type="checkbox" id="flag-on-chain"><div class="tbox bsv-tbox"></div><span class="bflag-lbl">ON-CHAIN</span></label>
+        <label class="bsv-flag"><input type="checkbox" id="flag-accepts-bsv"><div class="tbox bsv-tbox"></div><span class="bflag-lbl">₿PAY</span></label>
+        <label class="bsv-flag"><input type="checkbox" id="flag-open-source"><div class="tbox bsv-tbox"></div><span class="bflag-lbl">OPEN-SOURCE</span></label>
+      </div>
+    </div>
+
+    <!-- ── R3 C1 — DESCRIPTION ───────────────────────────────── -->
+    <div class="panel" id="panel-desc">
+      <div class="section-head">
+        <span class="plabel req" id="lbl-desc"></span>
+        <span class="ccount" id="desc-c"></span>
+      </div>
+      <div class="gtrack"><div class="gfill" id="desc-g" style="width:0%"></div></div>
+      <textarea id="desc" placeholder="Short description shown on the app card and on hover..." style="flex:1;min-height:0;"></textarea>
+    </div>
+
+    <!-- ── R3 C2 — DEVELOPER ─────────────────────────────────── -->
+    <div class="panel" id="panel-dev">
+      <div class="plabel" id="lbl-dev"></div>
+      <div class="dev-field"><lbl>PAYMAIL</lbl><input type="text" id="dev-paymail" placeholder="auto from wallet" readonly></div>
+      <div class="dev-field"><lbl>TWITTER</lbl><input type="text" id="dev-tw" placeholder="@handle"></div>
+      <div class="dev-field"><lbl>GITHUB</lbl><input type="text" id="dev-gh" placeholder="https://github.com/..."></div>
+      <div class="section-head" style="flex-shrink:0;margin-top:2px;">
+        <span class="plabel">BIO</span>
+        <span class="ccount" id="bio-c"></span>
+      </div>
+      <div class="gtrack"><div class="gfill" id="bio-g" style="width:0%"></div></div>
+      <textarea id="dev-bio" placeholder="A few lines about you or your project..." class="bio-textarea"></textarea>
+    </div>
+
+    <!-- ── R4 C1 — FEATURES ──────────────────────────────────── -->
+    <div class="panel panel-feat" id="panel-feat">
+      <div class="section-head">
+        <span class="plabel" id="lbl-feat"></span>
+        <span class="ccount" id="feat-total-c"></span>
+      </div>
+      <div class="gtrack"><div class="gfill" id="feat-total-g" style="width:0%"></div></div>
+      <div class="feat-hint" id="feat-hint"></div>
+      <div class="feat-list" id="feat-rows"></div>
+    </div>
+
+    <!-- ── R4 C2 — TRANSMIT ──────────────────────────────────── -->
+    <div class="panel panel-tx" id="panel-tx">
+      <div class="plabel" id="lbl-transmit"></div>
+      <div class="tx-body">
+        <div class="tx-row"><span class="status">NETWORK</span><span class="status" id="tx-network"></span></div>
+        <div class="tx-row"><span class="status">PROTOCOL</span><span class="status" id="tx-protocol"></span></div>
+        <div class="tx-row tx-row-tip">
+          <span class="status" style="color:var(--amber-dim);white-space:nowrap;flex-shrink:0;">tip BSVhub.io</span>
+          <div class="tip-row" id="tip-group" style="flex:1;margin:0;"></div>
+        </div>
+        <div class="tx-row"><span class="status">FEE EST.</span><span class="status" id="fee-est" style="color:var(--gold);">— BSV</span></div>
+        <div class="status" id="sub-st">WALLET NOT CONNECTED</div>
+      </div>
+      <button class="btn-submit" id="sub-btn" disabled>▸ PREVIEW &amp; SUBMIT</button>
+    </div>
+
+  </div><!-- /main-area -->
+
+  <!-- ── ROW 5 — STATUS BAR ──────────────────────────────────── -->
+  <div class="status-bar" id="panel-statusbar">
+    <span class="sb-l" id="sb"></span>
+    <span class="sb-r" id="sb-version"></span>
+  </div>
+
+</div><!-- /shell -->
+
+<div id="preview-overlay"></div>
+<div id="picker-overlay"></div>
+
+
+<!-- ═══ App bootstrap — must exist before any module loads ═══ -->
+<script>
+var App = {};
+App.Capabilities = { offline: false, onchain: false };
+</script>
+
+<!-- ═══ Optional modules — either or both can be omitted ═══ -->
+<script src="onchain.js"></script>
+<script src="offline.js"></script>
+
+<!-- ════════════════════════════════════════════════════════════
+     JAVASCRIPT — Modular architecture
+     All logic under `App` namespace. [BSV-HOOK] marks integration points.
+     Modules (onchain.js, offline.js) self-register via App.Capabilities.
+     ════════════════════════════════════════════════════════════ -->
+<script>
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.Config — Reads from SETTINGS, provides computed helpers
+   ───────────────────────────────────────────────────────────── */
+App.Config = {
+  get(key) { return SETTINGS[key]; },
+
+  getAllCdnUrls(txid) {
+    const withSuffix = SETTINGS.CDN_URLS_WITH_SUFFIX.map(u => u.replace('{txid}', txid));
+    const noSuffix   = SETTINGS.CDN_URLS_NO_SUFFIX.map(u => u.replace('{txid}', txid));
+    return [...withSuffix, ...noSuffix];
+  },
+
+  getStatusColour(statusValue) {
+    const match = SETTINGS.STATUSES.find(s => s.value === statusValue);
+    return match ? match.colour : SETTINGS.AMBER;
+  },
+};
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.State — All mutable application state
+   ───────────────────────────────────────────────────────────── */
+App.State = {
+  mode:            'submit',  // 'submit' or 'update'
+  onChain:         App.Capabilities.onchain,  // auto-detect: true if onchain.js loaded, false if only offline.js
+  walletConnected: false,
+  iconDataB64:     null,
+  iconChainUrl:    null,
+  iconMime:        '',
+  iconFilename:    '',
+  iconKb:          0,
+  selectedTip:     0,
+  loadedRecord:    null,  // Stores the original loaded MAP data for diff comparison
+};
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.Utils — Pure helper functions
+   ───────────────────────────────────────────────────────────── */
+App.Utils = {
+  $(id) { return document.getElementById(id); },
+
+  esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  },
+
+  // Escape HTML then insert <wbr> after underscores so the browser
+  // can line-break at underscores to prevent tooltip overflow
+  escBreakable(s) {
+    return this.esc(s).replace(/_/g, '_<wbr>');
+  },
+
+  hexToRgba(hex, alpha) {
+    const h = hex.replace('#', '');
+    return `rgba(${parseInt(h.slice(0,2),16)},${parseInt(h.slice(2,4),16)},${parseInt(h.slice(4,6),16)},${alpha})`;
+  },
+
+  buildGradient(bg, fg, alpha) {
+    return `linear-gradient(${SETTINGS.BG_GRADIENT_ANGLE}deg,${this.hexToRgba(bg,alpha)},${this.hexToRgba(fg,alpha)})`;
+  },
+
+  isValidTxid(str) {
+    return str.length === 64 && /^[0-9a-fA-F]{64}$/.test(str);
+  },
+};
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.SettingsApplier — Bridges SETTINGS → CSS vars + HTML
+   ───────────────────────────────────────────────────────────── */
+App.SettingsApplier = {
+  applyCSS() {
+    const S = SETTINGS;
+    const grad = `linear-gradient(${S.BG_GRADIENT_ANGLE}deg, ${S.BG_GRADIENT_COLOURS})`;
+    App.Utils.$('dynamic-vars').textContent = `
+:root {
+  --bg:${S.BG_COLOUR}; --bg-grad:${grad}; --panel:${S.PANEL_BG};
+  --amber:${S.AMBER}; --amber-dim:${S.AMBER_DIM}; --accent:${S.ACCENT_COLOUR};
+  --gold:${S.GOLD}; --fada:${S.HIGHLIGHT}; --white:${S.TEXT_COLOUR}; --dim:${S.TEXT_DIM};
+  --green:${S.GREEN}; --blue-soft:${S.BLUE_SOFT}; --border:${S.BORDER_FAINT};
+  --border-blue:${S.BORDER}; --input-bg:${S.INPUT_BG}; --font:${S.FONT_FAMILY};
+  --font-size-base:${S.FONT_SIZE_BASE}px; --letter-spacing:${S.LETTER_SPACING}px;
+  --gap:${S.GRID_GAP}px; --shell-aspect:${S.SHELL_ASPECT_W}/${S.SHELL_ASPECT_H};
+  --grid-cols:${S.GRID_COLUMNS}; --grid-rows:${S.GRID_ROWS};
+  --panel-blur:${S.PANEL_BLUR}px; --logo-font-size:${S.LOGO_FONT_SIZE}px;
+  --logo-letter-spacing:${S.LOGO_LETTER_SPACING}px;
+}
+`;
+  },
+
+  _applyCaps() {
+    // Populate App.PanelScale.CAP from SETTINGS.PANEL_FONT_CAPS.
+    // Called after PanelScale exists (App.Init wires the order).
+    if (!App.PanelScale) return;
+    App.PanelScale.CAP = {};
+    const caps = SETTINGS.PANEL_FONT_CAPS || {};
+    Object.keys(caps).forEach(id => {
+      if (caps[id] !== null && caps[id] !== undefined) {
+        App.PanelScale.CAP[id] = caps[id];
+      }
+    });
+  },
+
+  applyHTML() {
+    const S = SETTINGS;
+    const $ = App.Utils.$;
+    const esc = App.Utils.esc;
+
+    // Logo
+    $('logo').innerHTML = esc(S.TITLE_PREFIX) + '<span>' + esc(S.TITLE_SUFFIX) + '</span>' + esc(S.TITLE_DIVIDER) + '<a class="mode-toggle active" id="mode-submit">SUBMIT</a> <span style="color:var(--dim);font-size:0.7em;">|</span> <a class="mode-toggle" id="mode-update">UPDATE</a> <span style="color:var(--dim);font-size:0.7em;">|</span> <a class="mode-toggle" href="viewer.html" id="mode-viewer">VIEW</a>';
+
+    // Panel labels
+    $('lbl-details').textContent  = S.LABEL_DETAILS;
+    $('lbl-icon').textContent     = S.LABEL_ICON;
+    $('lbl-desc').textContent     = S.LABEL_DESC;
+    $('lbl-dev').textContent      = S.LABEL_DEV;
+    $('lbl-feat').textContent     = S.LABEL_FEATURES;
+    $('lbl-transmit').textContent = S.LABEL_TRANSMIT;
+
+    // Status bar
+    $('sb').textContent         = S.STATUSBAR_DEFAULT_MSG;
+    $('sb-version').textContent = S.STATUSBAR_LABEL;
+
+    // Transmit labels
+    $('tx-network').textContent  = S.NETWORK_LABEL;
+    $('tx-network').style.color  = 'var(--gold)';
+    $('tx-protocol').textContent = S.PROTOCOL_LABEL;
+    $('tx-protocol').style.color = 'var(--amber)';
+
+    // Field maxlengths
+    $('app-name').maxLength = S.MAX_NAME_CHARS;
+    $('app-abbr').maxLength = S.MAX_ABBR_CHARS;
+    $('app-url').maxLength  = S.MAX_URL_CHARS;
+    $('app-tags').maxLength = S.MAX_TAGS_CHARS;
+    $('desc').maxLength     = S.MAX_DESC_CHARS;
+    $('dev-bio').maxLength  = S.MAX_BIO_CHARS;
+    $('app-ver').maxLength  = S.MAX_VERSION_CHARS;
+    $('dev-tw').maxLength   = S.MAX_TWITTER_CHARS;
+    $('dev-gh').maxLength   = S.MAX_GITHUB_CHARS;
+    $('icon-alt').maxLength = S.MAX_ALT_CHARS;
+
+    // File input accept
+    $('icon-file-input').accept = S.ICON_ACCEPT;
+
+    // Colour defaults
+    $('cbg').value = $('cbg-h').value = S.ICON_DEFAULT_BG;
+    $('cfg').value = $('cfg-h').value = S.ICON_DEFAULT_FG;
+
+    // Slider defaults
+    $('opc').min = S.ICON_ALPHA_MIN; $('opc').max = S.ICON_ALPHA_MAX;
+    $('opc').step = S.ICON_ALPHA_STEP; $('opc').value = S.ICON_DEFAULT_ALPHA;
+    $('opc-v').textContent = Number(S.ICON_DEFAULT_ALPHA).toFixed(2);
+
+    $('zom').min = S.ICON_ZOOM_MIN; $('zom').max = S.ICON_ZOOM_MAX;
+    $('zom').step = S.ICON_ZOOM_STEP; $('zom').value = S.ICON_DEFAULT_ZOOM;
+    $('zom-v').textContent = Number(S.ICON_DEFAULT_ZOOM).toFixed(2);
+
+    // Dynamic text
+    $('feat-hint').textContent    = `${S.MAX_FEATURES} FEATURES MAX · ${S.MAX_FEATURE_CHARS} CHARS EACH · ${S.MAX_FEATURES_COMBINED} COMBINED`;
+    $('fsize').textContent        = `MAX ${Math.round(S.MAX_ICON_BYTES/1024)}kb`;
+    $('desc-c').textContent       = '000/' + S.MAX_DESC_CHARS;
+    $('bio-c').textContent        = '000/' + S.MAX_BIO_CHARS;
+    $('feat-total-c').textContent = '000/' + S.MAX_FEATURES_COMBINED;
+
+    // BG/FG checkbox defaults
+    $('cbg-on').checked = S.ICON_BG_ENABLED;
+    $('cfg-on').checked = S.ICON_FG_ENABLED;
+
+    // Build dynamic elements
+    this._buildCatGrid();
+    this._buildSelect('app-status', S.STATUSES);
+    this._buildLangDropdown();
+    this._buildTips();
+  },
+
+  _buildCatGrid() {
+    const grid = App.Utils.$('cat-grid-new');
+    if (!grid) return;
+    grid.innerHTML = '';
+    SETTINGS.CATEGORIES.forEach(cat => {
+      const btn = document.createElement('div');
+      btn.className = 'cat-btn-new';
+      btn.dataset.val = cat.value;
+      btn.textContent = cat.label;
+      btn.style.color = cat.color;
+      btn.style.background = cat.bg;
+      btn.style.borderColor = cat.border;
+      grid.appendChild(btn);
+    });
+  },
+
+  _buildPills(containerId, items, className) {
+    const el = App.Utils.$(containerId);
+    el.innerHTML = '';
+    items.forEach(item => {
+      const btn = document.createElement('div');
+      btn.className = className + (item.default ? ' active' : '');
+      btn.dataset.val = item.value;
+      btn.textContent = item.label;
+      el.appendChild(btn);
+    });
+  },
+
+  _buildSelect(id, options) {
+    const sel = App.Utils.$(id);
+    sel.innerHTML = '';
+    options.forEach(opt => {
+      const o = document.createElement('option');
+      o.value = opt.value; o.textContent = opt.label;
+      if (opt.default) o.selected = true;
+      sel.appendChild(o);
+    });
+  },
+
+  _buildLangDropdown() {
+    const dd = App.Utils.$('lang-dd');
+    dd.innerHTML = '';
+    SETTINGS.LANGUAGES.forEach(lang => {
+      const item = document.createElement('label');
+      item.className = 'lang-dd-item';
+      item.innerHTML =
+        `<input type="checkbox" value="${lang.value}" data-label="${lang.label}"${lang.default ? ' checked' : ''}>` +
+        `<div class="tbox"></div><span>${lang.label}</span>`;
+      dd.appendChild(item);
+    });
+  },
+
+  _buildTips() {
+    const group = App.Utils.$('tip-group');
+    group.innerHTML = '';
+    SETTINGS.TIP_AMOUNTS.forEach((amount, i) => {
+      const label = document.createElement('label');
+      label.className = 'tip-opt';
+      label.id = 'tip-opt-' + (i + 1);
+      label.innerHTML =
+        `<input type="checkbox" name="tip" value="${amount}"><div class="tbox"></div>` +
+        `<span class="tip-label"><span class="bsv-sym">₿</span>${amount}</span>`;
+      group.appendChild(label);
+    });
+  },
+
+  init() { this.applyCSS(); this.applyHTML(); },
+};
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.LabelAlign — Aligns input fields within each panel.
+   Scans all <lbl> elements per panel, finds the widest,
+   and sets all labels to that width so inputs line up neatly.
+   All labels participate (including CAT in APP DETAILS).
+   Exception: CAT in DIRECTORY CARD PREVIEW (iframe) is excluded
+   — that's a separate document and not affected by this script.
+   Also aligns .status labels in the Transmit panel.
+   ───────────────────────────────────────────────────────────── */
+App.LabelAlign = {
+  align() {
+    // For each panel, find all lbl elements and align to the widest
+    const panels = document.querySelectorAll('.panel');
+    panels.forEach(panel => {
+      const labels = panel.querySelectorAll('lbl');
+      if (labels.length < 2) return;
+
+      // Split labels: column labels (first-child or not in row-multi)
+      // vs inner labels (non-first in row-multi, sized to text + 4px)
+      const colLabels = [];
+      const innerLabels = [];
+      labels.forEach(l => {
+        const row = l.closest('.row-multi');
+        if (row && l !== row.querySelector('lbl')) {
+          innerLabels.push(l);
+        } else {
+          colLabels.push(l);
+        }
+      });
+
+      // Reset to auto first so we measure natural width
+      colLabels.forEach(l => l.style.minWidth = '');
+      innerLabels.forEach(l => l.style.minWidth = '');
+
+      // Column labels: align to widest + 4px
+      let maxW = 0;
+      colLabels.forEach(l => maxW = Math.max(maxW, l.offsetWidth));
+      if (maxW > 0) {
+        colLabels.forEach(l => l.style.minWidth = (maxW + 4) + 'px');
+      }
+
+      // Inner labels: each sized to own text + 4px
+      innerLabels.forEach(l => {
+        l.style.minWidth = (l.offsetWidth + 4) + 'px';
+      });
+    });
+
+    // Also align the .status labels in the Transmit tx-row items
+    const txPanel = App.Utils.$('panel-tx');
+    if (txPanel) {
+      const statusLabels = txPanel.querySelectorAll('.tx-row > .status:first-child');
+      statusLabels.forEach(l => l.style.minWidth = '');
+      let maxTx = 0;
+      statusLabels.forEach(l => maxTx = Math.max(maxTx, l.offsetWidth));
+      if (maxTx > 0) {
+        statusLabels.forEach(l => l.style.minWidth = maxTx + 'px');
+      }
+    }
+  },
+
+  init() {
+    // Run after DOM is fully laid out
+    requestAnimationFrame(() => {
+      this.align();
+      // Re-run once more after fonts load
+      setTimeout(() => this.align(), 300);
+    });
+    // Re-align on resize (font size may change at breakpoints)
+    window.addEventListener('resize', () => this.align());
+  },
+};
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.StatusBar — Bottom status bar messages
+   ───────────────────────────────────────────────────────────── */
+App.StatusBar = {
+  set(msg, cls) {
+    const el = App.Utils.$('sb');
+    el.textContent = msg;
+    el.className = 'sb-l' + (cls ? ' ' + cls : '');
+  },
+};
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.Gauge — Character counter + progress bar
+   ───────────────────────────────────────────────────────────── */
+App.Gauge = {
+  update(len, max, countEl, fillEl) {
+    const pct = (len / max) * 100;
+    const rem = max - len;
+    fillEl.style.width = Math.min(pct, 100) + '%';
+    const cls = pct >= 100 ? 'over' : pct >= 80 ? 'warn' : '';
+    fillEl.className = 'gfill' + (cls ? ' ' + cls : '');
+    countEl.className = 'ccount' + (cls ? ' ' + cls : '');
+    if (pct >= 100)     countEl.textContent = 'MAX';
+    else if (pct >= 80) countEl.textContent = rem + ' LEFT';
+    else                countEl.textContent = String(len).padStart(3,'0') + '/' + max;
+  },
+
+  init() {
+    const $ = App.Utils.$;
+    $('desc').addEventListener('input', () =>
+      this.update($('desc').value.length, SETTINGS.MAX_DESC_CHARS, $('desc-c'), $('desc-g')));
+    $('dev-bio').addEventListener('input', () =>
+      this.update($('dev-bio').value.length, SETTINGS.MAX_BIO_CHARS, $('bio-c'), $('bio-g')));
+  },
+};
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.WordGuard — Enforces max word length in text fields.
+
+   RULE 1: No single word (unbroken run of non-space chars)
+           may exceed SETTINGS.MAX_WORD_LENGTH characters.
+   RULE 2: Underscores count as spaces — they split a word
+           into segments, each checked independently.
+
+   This module is applied to: description, bio, and features.
+   It can be applied to any field by calling enforce(element).
+
+   The preview tooltip also uses CSS word-break at underscores
+   to prevent overflow (handled in preview CSS via word-break
+   and a text replacement that inserts zero-width spaces).
+   ───────────────────────────────────────────────────────────── */
+App.WordGuard = {
+
+  // Check a single text value. Returns { valid, badWord } where
+  // badWord is the first offending word (for status messages).
+  check(text) {
+    const max = SETTINGS.MAX_WORD_LENGTH;
+    // Split on real spaces/newlines first
+    const chunks = text.split(/[\s]+/);
+    for (const chunk of chunks) {
+      // Split on underscores — each segment is an independent "word"
+      const segments = chunk.split('_');
+      for (const seg of segments) {
+        if (seg.length > max) {
+          return { valid: false, badWord: seg.slice(0, 20) + '...' };
+        }
+      }
+    }
+    return { valid: true, badWord: null };
+  },
+
+  // Enforce on a textarea/input — show status bar error, revert last char
+  enforce(el) {
+    const result = this.check(el.value);
+    if (!result.valid) {
+      // Remove the last typed character that caused the violation
+      el.value = el.value.slice(0, -1);
+      App.StatusBar.set('WORD TOO LONG — MAX ' + SETTINGS.MAX_WORD_LENGTH + ' CHARS PER WORD (use spaces or underscores)', 'err');
+    }
+  },
+
+  // Wire up enforcement on specific fields
+  init() {
+    const $ = App.Utils.$;
+
+    // Description
+    $('desc').addEventListener('input', () => this.enforce($('desc')));
+
+    // Bio
+    $('dev-bio').addEventListener('input', () => this.enforce($('dev-bio')));
+
+    // Features are wired in App.Features.init since they're dynamically created
+  },
+};
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.Features — Sequential feature inputs with combined limit
+   ───────────────────────────────────────────────────────────── */
+App.Features = {
+  buildRows() {
+    const container = App.Utils.$('feat-rows');
+    for (let i = 1; i <= SETTINGS.MAX_FEATURES; i++) {
+      const row = document.createElement('div');
+      row.className = 'feat-row';
+      row.innerHTML =
+        `<span class="feat-num">${i}</span>` +
+        `<input type="text" id="f${i}" maxlength="${SETTINGS.MAX_FEATURE_CHARS}" ${i>1?'disabled ':''}placeholder="Feature ${i}...">` +
+        `<span class="feat-count" id="fc${i}">—</span>`;
+      container.appendChild(row);
+    }
+    // Re-scale after rows are added
+    if (App.PanelScale) App.PanelScale._fit(document.getElementById('panel-feat'));
+  },
+
+  updateAccess() {
+    for (let i = 2; i <= SETTINGS.MAX_FEATURES; i++) {
+      const prev = App.Utils.$('f'+(i-1)), cur = App.Utils.$('f'+i), cEl = App.Utils.$('fc'+i);
+      if (prev.value.trim().length > 0) { cur.disabled = false; }
+      else { cur.disabled = true; cur.value = ''; cEl.textContent = '—'; cEl.style.color = 'var(--dim)'; cur.style.borderColor = ''; }
+    }
+  },
+
+  handleInput(index, el) {
+    // Enforce word length rule
+    App.WordGuard.enforce(el);
+
+    // ── WORD-FILTER (DISABLED — requires server to fetch word_filter.json) ──────
+    // Browser security (CORS / file:// restrictions) blocks fetch() of local JSON
+    // files when the app is opened directly from disk.  Re-enable this single line
+    // once the app is served from a web server (even a trivial local one such as
+    // `python -m http.server 8080`).
+    //
+    //   if (App.WordFilter._loaded) App.WordFilter.enforce(el);
+    //
+    // ─────────────────────────────────────────────────────────────────────────────
+
+    const MAX_EACH = SETTINGS.MAX_FEATURE_CHARS, MAX_ALL = SETTINGS.MAX_FEATURES_COMBINED;
+    if (el.value.length > MAX_EACH) el.value = el.value.slice(0, MAX_EACH);
+
+    let total = 0;
+    for (let i = 1; i <= SETTINGS.MAX_FEATURES; i++) { const e = App.Utils.$('f'+i); if (e) total += e.value.length; }
+    if (total > MAX_ALL) { el.value = el.value.slice(0, Math.max(0, el.value.length-(total-MAX_ALL))); total = MAX_ALL; }
+
+    const cEl = App.Utils.$('fc'+index), len = el.value.length, rem = MAX_EACH - len;
+    if (!len) { cEl.textContent = '—'; cEl.style.color = 'var(--dim)'; el.style.borderColor = ''; }
+    else {
+      cEl.textContent = rem < 20 ? rem : len;
+      cEl.style.color = rem === 0 ? 'var(--accent)' : rem < 20 ? 'var(--gold)' : 'var(--dim)';
+      el.style.borderColor = rem === 0 ? 'var(--accent)' : rem < 20 ? 'rgba(255,204,102,0.5)' : '';
+    }
+    App.Gauge.update(total, MAX_ALL, App.Utils.$('feat-total-c'), App.Utils.$('feat-total-g'));
+    this.updateAccess();
+  },
+
+  getValues() {
+    const feats = [];
+    for (let i = 1; i <= SETTINGS.MAX_FEATURES; i++) { const v = App.Utils.$('f'+i).value.trim(); if (v) feats.push(v); }
+    return feats;
+  },
+
+  init() {
+    this.buildRows();
+    for (let i = 1; i <= SETTINGS.MAX_FEATURES; i++) {
+      const el = App.Utils.$('f'+i);
+      el.addEventListener('input', () => this.handleInput(i, el));
+    }
+  },
+};
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.Tips — Tip selection (mutually exclusive checkboxes)
+   ───────────────────────────────────────────────────────────── */
+App.Tips = {
+  handleChange(checkbox) {
+    document.querySelectorAll('input[name=tip]').forEach(c => {
+      if (c !== checkbox) { c.checked = false; c.closest('.tip-opt').classList.remove('active'); }
+    });
+    if (checkbox.checked) { checkbox.closest('.tip-opt').classList.add('active'); App.State.selectedTip = parseFloat(checkbox.value); }
+    else { checkbox.closest('.tip-opt').classList.remove('active'); App.State.selectedTip = 0; }
+    this.updateFeeDisplay();
+  },
+
+  updateFeeDisplay() {
+    const el = App.Utils.$('fee-est');
+    if (!App.State.walletConnected) { el.textContent = '— BSV'; return; }
+
+    // Build real fee estimate from current form data
+    const tipSats = Math.round(App.State.selectedTip * 1e8);
+    let feeSats = SETTINGS.BASE_FEE_SATS; // fallback
+
+    try {
+      const d = App.Form.collectData();
+      if (App.Capabilities.onchain && App.MAPExport && App.MAPExport._buildMAPFields) {
+        const fields = App.MAPExport._buildMAPFields(d);
+        const iconBytes = (d.icon_source === 'upload' && d.icon_data_b64)
+          ? WalletManager._base64ToBytes(d.icon_data_b64) : null;
+        const est = WalletManager.estimateSubmitFee(fields, iconBytes, tipSats);
+        feeSats = est.mapFeeSats + est.iconFeeSats;
+      }
+
+      const totalSats = feeSats + tipSats;
+      const totalBSV = (totalSats / 1e8).toFixed(totalSats < 100000 ? 5 : 4);
+
+      if (tipSats > 0) {
+        el.textContent = `~${totalBSV} BSV  (${feeSats.toLocaleString()} fee + ${tipSats.toLocaleString()} tip)`;
+      } else {
+        el.textContent = `~${totalBSV} BSV  (~${feeSats.toLocaleString()} sats)`;
+      }
+    } catch (e) {
+      // Fallback to placeholder if form isn't ready
+      const totalSats = feeSats + tipSats;
+      const totalBSV = (totalSats / 1e8).toFixed(5);
+      el.textContent = `~${totalBSV} BSV  (~${feeSats.toLocaleString()} sats)`;
+    }
+  },
+
+  init() {
+    document.querySelectorAll('input[name=tip]').forEach(cb =>
+      cb.addEventListener('change', () => this.handleChange(cb)));
+  },
+};
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.Wallet — Mock wallet connection
+   [BSV-HOOK] Replace with BRC-100 / HandCash SDK
+   ───────────────────────────────────────────────────────────── */
+App.Wallet = {
+
+  // Update all wallet-related UI elements to reflect connection state.
+  _updateUI(on, displayName) {
+    const $ = App.Utils.$;
+    $('led').classList.toggle('on', on);
+    const wl = $('wallet-label');
+    wl.textContent = on ? displayName : 'NOT CONNECTED';
+    wl.classList.toggle('on', on);
+    const wb = $('wallet-btn');
+    wb.textContent = on ? 'DISCONNECT' : 'CONNECT';
+    wb.disabled = false;
+
+    const pm = $('dev-paymail');
+    pm.value = on ? ((App.Capabilities.onchain && WalletManager.paymail) || displayName) : '';
+    pm.style.color = on ? '' : 'var(--dim)';
+    $('sub-btn').disabled = !on;
+
+    const sst = $('sub-st');
+    sst.textContent = on ? 'READY — PREVIEW BEFORE SIGNING' : 'WALLET NOT CONNECTED';
+    sst.className = 'status' + (on ? ' ok' : '');
+
+    App.StatusBar.set(
+      on ? 'WALLET CONNECTED // ' + displayName : SETTINGS.STATUSBAR_DEFAULT_MSG,
+      on ? 'ok' : ''
+    );
+    App.Tips.updateFeeDisplay();
+  },
+
+  // Mock connect — instant toggle with fake paymail (existing behaviour)
+  _mockToggle() {
+    const st = App.State;
+    st.walletConnected = !st.walletConnected;
+    this._updateUI(st.walletConnected, SETTINGS.MOCK_PAYMAIL_DISPLAY);
+  },
+
+  // Heartbeat interval ID (for periodic wallet reachability checks)
+  _heartbeatId: null,
+
+  // Start periodic heartbeat to detect wallet going away
+  _startHeartbeat() {
+    this._stopHeartbeat();
+    this._heartbeatId = setInterval(() => {
+      if (!App.State.walletConnected || !App.State.onChain || !App.Capabilities.onchain) {
+        this._stopHeartbeat();
+        return;
+      }
+      BRC100Provider.isAuthenticated()
+        .catch(() => {
+          // Wallet is no longer reachable
+          WalletManager.disconnect();
+          App.State.walletConnected = false;
+          this._updateUI(false, '');
+          this._stopHeartbeat();
+          App.StatusBar.set('WALLET DISCONNECTED — CONNECTION LOST', 'err');
+        });
+    }, 5000);
+  },
+
+  _stopHeartbeat() {
+    if (this._heartbeatId) {
+      clearInterval(this._heartbeatId);
+      this._heartbeatId = null;
+    }
+  },
+
+  // Real BRC-100 connect — async, talks to localhost:2121
+  _realToggle() {
+    const st = App.State, $ = App.Utils.$;
+
+    if (st.walletConnected) {
+      // Disconnect
+      WalletManager.disconnect();
+      st.walletConnected = false;
+      this._updateUI(false, '');
+      this._stopHeartbeat();
+      return;
+    }
+
+    // Connect — show connecting state
+    $('wallet-btn').textContent = '⟳ ...';
+    $('wallet-btn').disabled = true;
+    App.StatusBar.set('CONNECTING TO BRC-100 WALLET...', '');
+
+    WalletManager.connect()
+      .then((info) => {
+        st.walletConnected = true;
+        const display = WalletManager.getDisplayNameUpper();
+        this._updateUI(true, display);
+        if (info.network) {
+          $('tx-network').textContent = info.network.toUpperCase();
+        }
+        this._startHeartbeat();
+      })
+      .catch((err) => {
+        st.walletConnected = false;
+        $('wallet-btn').textContent = 'CONNECT';
+        $('wallet-btn').disabled = false;
+        if (err.message === 'WALLET_NOT_RUNNING') {
+          App.StatusBar.set('WALLET NOT FOUND — START BSV DESKTOP AND TRY AGAIN', 'err');
+        } else {
+          App.StatusBar.set('WALLET ERROR — ' + (err.message || 'UNKNOWN').toUpperCase(), 'err');
+        }
+      });
+  },
+
+  toggle() {
+    if (App.Capabilities.onchain && App.State.onChain) {
+      this._realToggle();
+    } else {
+      this._mockToggle();
+    }
+  },
+
+  init() {
+    const $ = App.Utils.$;
+    $('wallet-btn').addEventListener('click', () => this.toggle());
+
+    // Set initial status bar message based on available capabilities
+    if (!App.Capabilities.onchain) {
+      App.StatusBar.set('LOCAL SIMULATION MODE — OFFLINE TESTING', '');
+    }
+
+    // Test offline checkbox — checked = offline mode, unchecked = real wallet
+    // Only show toggle if both modes are available
+    const cbWrap = $('onchain-cb').closest('.tip-opt') || $('onchain-cb').parentElement;
+    if (!App.Capabilities.onchain || !App.Capabilities.offline) {
+      // Only one mode available — hide the toggle
+      cbWrap.style.display = 'none';
+      // Ensure checkbox reflects actual state
+      $('onchain-cb').checked = !App.State.onChain;
+    }
+    $('onchain-cb').addEventListener('change', (e) => {
+      App.State.onChain = !e.target.checked;
+      // Disconnect if switching modes while connected
+      if (App.State.walletConnected) {
+        if (App.Capabilities.onchain && WalletManager.connected) WalletManager.disconnect();
+        App.State.walletConnected = false;
+        this._updateUI(false, '');
+        this._stopHeartbeat();
+      }
+      App.StatusBar.set(
+        App.State.onChain ? 'ON-CHAIN MODE — REAL BRC-100 WALLET' : 'LOCAL SIMULATION MODE',
+        App.State.onChain ? 'ok' : ''
+      );
+    });
+  },
+};
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.Icon — Icon upload, update: on-chain fetch, preview square
+   [BSV-HOOK] B:// upload transaction goes here
+   ───────────────────────────────────────────────────────────── */
+App.Icon = {
+  switchMode(mode) {
+    App.Utils.$('mode-upload').style.display = mode === 'upload' ? 'flex' : 'none';
+    App.Utils.$('mode-txid').style.display   = mode === 'txid'   ? 'flex' : 'none';
+    if (mode === 'txid') { App.Utils.$('txid-st').textContent = ''; App.Utils.$('txid-st').className = 'status txid-status'; }
+  },
+
+  handleFileUpload(file) {
+    if (!file) return;
+    const st = App.State;
+    st.iconFilename = file.name; st.iconMime = file.type; st.iconKb = (file.size/1024).toFixed(1);
+    App.Utils.$('fname').textContent = file.name;
+    const szEl = App.Utils.$('fsize');
+
+    if (file.size > SETTINGS.MAX_ICON_BYTES) {
+      szEl.textContent = st.iconKb + 'kb — OVER LIMIT'; szEl.className = 'file-info file-size-err';
+      App.StatusBar.set('FILE TOO LARGE — MAX ' + Math.round(SETTINGS.MAX_ICON_BYTES/1024) + 'KB', 'err');
+      st.iconDataB64 = null; return;
+    }
+    szEl.textContent = st.iconKb + 'kb ✓'; szEl.className = 'file-info file-size-green';
+    App.StatusBar.set('ICON LOADED // ' + file.name, 'ok');
+
+    const reader = new FileReader();
+    reader.onload = e => { st.iconDataB64 = e.target.result; st.iconChainUrl = null; this._loadIntoPreview(e.target.result); this.updatePreviewStyles(); };
+    reader.readAsDataURL(file);
+  },
+
+  async fetchFromBlockchain() {
+    const txid = App.Utils.$('icon-txid').value.trim();
+    const el = App.Utils.$('txid-st');
+    if (!App.Utils.isValidTxid(txid)) { el.textContent = '✗ INVALID — MUST BE 64 HEX CHARS'; el.className = 'status txid-status err'; return; }
+    el.textContent = '⟳ FETCHING FROM BLOCKCHAIN...'; el.className = 'status txid-status warn';
+
+    const allUrls = App.Config.getAllCdnUrls(txid);
+    for (const url of allUrls) { const r = await this._tryFetchAsDataUrl(url); if (r) return this._applyFetchedImage(r, txid, el); }
+    for (const url of allUrls) { const r = await this._tryImgToBase64(url); if (r) return this._applyFetchedImage(r, txid, el); }
+    for (const url of allUrls) { if (await this._tryImgDisplay(url)) return this._showChainImageDisplayOnly(url, txid, el); }
+
+    el.textContent = '✓ TXID RECORDED // No local preview (CORS) — will display on chain'; el.className = 'status txid-status warn';
+    App.StatusBar.set('TXID STORED // Preview unavailable locally — image loads fine on chain', 'warn');
+    App.State.iconDataB64 = null; App.State.iconMime = 'image/unknown'; App.State.iconFilename = txid.slice(0,8); App.State.iconKb = '?';
+  },
+
+  _applyFetchedImage(result, txid, statusEl) {
+    const st = App.State;
+    st.iconDataB64 = result.dataUrl; st.iconChainUrl = null; st.iconMime = result.mime;
+    st.iconFilename = txid.slice(0,8) + '.' + (result.mime.split('/')[1]||'png').replace('jpeg','jpg');
+    st.iconKb = (result.bytes/1024).toFixed(1);
+    statusEl.textContent = '✓ LOADED FROM CHAIN (' + st.iconKb + 'kb)'; statusEl.className = 'status txid-status ok';
+    App.StatusBar.set('ON-CHAIN ICON FETCHED // ' + txid.slice(0,12) + '...', 'ok');
+    this._loadIntoPreview(st.iconDataB64); this.updatePreviewStyles();
+  },
+
+  _showChainImageDisplayOnly(url, txid, statusEl) {
+    const prev = App.Utils.$('icon-preview');
+    const noImg = prev.querySelector('.no-img'); if (noImg) noImg.remove();
+    let img = prev.querySelector('img'); if (!img) { img = document.createElement('img'); prev.appendChild(img); }
+    img.removeAttribute('crossorigin'); img.src = url;
+    App.State.iconChainUrl = url; App.State.iconDataB64 = null; App.State.iconMime = 'image/unknown'; App.State.iconFilename = txid.slice(0,8); App.State.iconKb = '?';
+    this.enforceSquare();
+    statusEl.textContent = '✓ LOADED FROM CHAIN — PREVIEW ACTIVE'; statusEl.className = 'status txid-status ok';
+    App.StatusBar.set('ON-CHAIN ICON LOADED // ' + txid.slice(0,12) + '...', 'ok');
+  },
+
+  _tryFetchAsDataUrl(url) {
+    return new Promise(resolve => {
+      const ac = new AbortController();
+      const timer = setTimeout(() => ac.abort(), SETTINGS.FETCH_TIMEOUT_MS);
+      fetch(url, { signal: ac.signal }).then(r => {
+        clearTimeout(timer); if (!r.ok) { resolve(null); return; }
+        return r.arrayBuffer().then(buf => {
+          if (buf.byteLength === 0) { resolve(null); return; }
+          const b = new Uint8Array(buf.slice(0,4)), mime = this._detectMime(b);
+          if (!mime) { resolve(null); return; }
+          let bin = ''; const bytes = new Uint8Array(buf);
+          for (let i = 0; i < bytes.length; i += 8192) bin += String.fromCharCode(...bytes.subarray(i, i+8192));
+          resolve({ dataUrl: 'data:'+mime+';base64,'+btoa(bin), mime, bytes: buf.byteLength });
+        });
+      }).catch(() => { clearTimeout(timer); resolve(null); });
+    });
+  },
+
+  _tryImgToBase64(url) {
+    return new Promise(resolve => {
+      const img = new Image(); img.crossOrigin = 'anonymous';
+      const t = setTimeout(() => { img.onload = img.onerror = null; resolve(null); }, SETTINGS.IMG_LOAD_TIMEOUT_MS);
+      img.onerror = () => { clearTimeout(t); resolve(null); };
+      img.onload = () => {
+        clearTimeout(t);
+        try { const c = document.createElement('canvas'); c.width = img.naturalWidth; c.height = img.naturalHeight;
+          c.getContext('2d').drawImage(img,0,0); const dataUrl = c.toDataURL('image/png');
+          resolve({ dataUrl, mime:'image/png', bytes: Math.round(dataUrl.length*0.75) });
+        } catch(e) { resolve(null); }
+      }; img.src = url;
+    });
+  },
+
+  _tryImgDisplay(url) {
+    return new Promise(resolve => {
+      const img = new Image();
+      const t = setTimeout(() => { img.onload = img.onerror = null; resolve(false); }, SETTINGS.IMG_DISPLAY_TIMEOUT_MS);
+      img.onload = () => { clearTimeout(t); resolve(true); };
+      img.onerror = () => { clearTimeout(t); resolve(false); };
+      img.src = url;
+    });
+  },
+
+  _detectMime(bytes) {
+    if (bytes[0]===0x89 && bytes[1]===0x50) return 'image/png';
+    if (bytes[0]===0xFF && bytes[1]===0xD8) return 'image/jpeg';
+    if (bytes[0]===0x52 && bytes[1]===0x49) return 'image/webp';
+    if (bytes[0]===0x47 && bytes[1]===0x49) return 'image/gif';
+    if (bytes[0]===0x3C) return 'image/svg+xml';
+    return null;
+  },
+
+  _loadIntoPreview(src) {
+    const prev = App.Utils.$('icon-preview');
+    const noImg = prev.querySelector('.no-img'); if (noImg) noImg.style.display = 'none';
+    let img = prev.querySelector('img:not(.ss-preview-img)'); if (!img) { img = document.createElement('img'); prev.appendChild(img); }
+    img.src = src; this.enforceSquare();
+    if (App.Screenshots) App.Screenshots.setIconThumb(src);
+  },
+
+  enforceSquare() {
+    const well = App.Utils.$('preview-well'), sq = App.Utils.$('icon-preview');
+    const strip = App.Utils.$('slot-strip');
+    if (!well || !sq) return;
+    const H = well.clientHeight;
+    const W = well.clientWidth;
+    if (H < 10 || W < 10) return;
+    // Layout: preview square (side × side) + 2px gap + strip row (side × side/5 each slot)
+    // Total height = side + 2 + side/5  →  side × (1 + 1/5) = H - 2  →  side = (H-2) × 5/6
+    const sideFromH = strip ? Math.floor((H - 4) * 5 / 6) : H;
+    const side = Math.min(W, sideFromH);
+    if (side > 4) {
+      sq.style.width  = side + 'px';
+      sq.style.height = side + 'px';
+      if (strip) strip.style.width = side + 'px';
+    }
+  },
+
+  _updateGradientHint() {
+    const $ = App.Utils.$;
+    const bgOn = $('cbg-on').checked, fgOn = $('cfg-on').checked;
+    const hint = $('gradient-hint');
+    // Toggle disabled styling on colour rows
+    $('cbg').closest('.clr-row').classList.toggle('clr-row-disabled', !bgOn);
+    $('cfg').closest('.clr-row').classList.toggle('clr-row-disabled', !fgOn);
+    if (bgOn && fgOn)       hint.textContent = 'BG→FG GRADIENT';
+    else if (bgOn && !fgOn) hint.textContent = 'BG ONLY — SOLID COLOUR';
+    else if (!bgOn && fgOn) hint.textContent = 'FG ONLY — SOLID COLOUR';
+    else                    hint.textContent = 'NO BACKGROUND';
+  },
+
+  updatePreviewStyles() {
+    const $ = App.Utils.$;
+    const bgOn = $('cbg-on').checked, fgOn = $('cfg-on').checked;
+    const alpha = parseFloat($('opc').value);
+    let bg;
+    if (bgOn && fgOn)       bg = App.Utils.buildGradient($('cbg').value, $('cfg').value, alpha);
+    else if (bgOn && !fgOn) bg = App.Utils.hexToRgba($('cbg').value, alpha);
+    else if (!bgOn && fgOn) bg = App.Utils.hexToRgba($('cfg').value, alpha);
+    else                    bg = 'transparent';
+    $('preview-bg').style.background = bg;
+    this._updateGradientHint();
+    const img = $('icon-preview').querySelector('img');
+    if (img) { img.style.opacity = '1'; img.style.transform = 'scale('+$('zom').value+')'; }
+    this.enforceSquare();
+  },
+
+  syncColour(which) { App.Utils.$('c'+which+'-h').value = App.Utils.$('c'+which).value; this.updatePreviewStyles(); },
+  syncHex(which, val) { if (/^#[0-9a-fA-F]{6}$/.test(val)) { App.Utils.$('c'+which).value = val; this.updatePreviewStyles(); } },
+
+  init() {
+    const $ = App.Utils.$;
+    document.querySelectorAll('input[name=isrc]').forEach(r => r.addEventListener('change', () => this.switchMode(r.value)));
+    $('browse-btn').addEventListener('click', () => $('icon-file-input').click());
+    $('icon-file-input').addEventListener('change', e => this.handleFileUpload(e.target.files[0]));
+    $('fetch-btn').addEventListener('click', () => this.fetchFromBlockchain());
+    $('cbg-on').addEventListener('change', () => this.updatePreviewStyles());
+    $('cfg-on').addEventListener('change', () => this.updatePreviewStyles());
+    $('cbg').addEventListener('input', () => this.syncColour('bg'));
+    $('cfg').addEventListener('input', () => this.syncColour('fg'));
+    $('cbg-h').addEventListener('input', () => this.syncHex('bg', $('cbg-h').value));
+    $('cfg-h').addEventListener('input', () => this.syncHex('fg', $('cfg-h').value));
+    $('opc').addEventListener('input', () => { $('opc-v').textContent = parseFloat($('opc').value).toFixed(2); this.updatePreviewStyles(); });
+    $('zom').addEventListener('input', () => { $('zom-v').textContent = parseFloat($('zom').value).toFixed(2); this.updatePreviewStyles(); });
+    window.addEventListener('resize', () => this.enforceSquare());
+    requestAnimationFrame(() => { this.enforceSquare(); setTimeout(() => this.enforceSquare(), 200); });
+  },
+};
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.Form — Categories, validation, data collection
+   [BSV-HOOK] collectData() maps to Layer 1 fields
+   ───────────────────────────────────────────────────────────── */
+App.Form = {
+  getCategory() {
+    const active = document.querySelector('.cat-btn-new.active');
+    return active ? active.dataset.val : '';
+  },
+
+  collectData() {
+    const $ = App.Utils.$, st = App.State;
+    const iconMode = document.querySelector('input[name=isrc]:checked').value;
+    const ssData = App.Screenshots ? App.Screenshots.getData() : { screenshots: [null,null,null,null] };
+    return {
+      protocol: SETTINGS.PROTOCOL_PREFIX, protocol_version: SETTINGS.PROTOCOL_VERSION,
+      name: $('app-name').value.trim(), abbreviation: $('app-abbr').value.trim(), url: $('app-url').value.trim(), tags: $('app-tags').value.trim(),
+      category: this.getCategory(),
+      subcategory: App.Subcat ? App.Subcat.getValue() : '',
+      status: $('app-status').value, language: App.Lang.getValue(),
+      bsv_content: $('flag-bsv-content').checked,
+      brc100: $('brc100-on').checked,
+      on_chain: $('flag-on-chain').checked,
+      accepts_bsv: $('flag-accepts-bsv').checked,
+      open_source: $('flag-open-source').checked,
+      version: $('app-ver').value.trim(), release_date: App.ReleaseDate.toISO($('app-rel').value.trim()), description: $('desc').value.trim(), features: App.Features.getValues(),
+      icon_source: iconMode, icon_txid: iconMode==='txid' ? $('icon-txid').value.trim() : '(pending)',
+      icon_format: st.iconMime||'—', icon_filename: st.iconFilename||'—', icon_size_kb: st.iconKb||'—',
+      icon_bg_enabled: $('cbg-on').checked, icon_fg_enabled: $('cfg-on').checked,
+      icon_bg_colour: $('cbg').value, icon_fg_colour: $('cfg').value, icon_bg_alpha: $('opc').value,
+      icon_zoom: $('zom').value, alt_text: $('icon-alt').value.trim(),
+      developer_paymail: $('dev-paymail').value.trim(), developer_twitter: $('dev-tw').value.trim(),
+      developer_github: $('dev-gh').value.trim(), developer_bio: $('dev-bio').value.trim(),
+      icon_data_b64: st.iconDataB64, icon_chain_url: st.iconChainUrl, icon_width: null, icon_height: null,
+      screenshots: ssData.screenshots,
+      tip_bsv: st.selectedTip,
+    };
+  },
+
+  // Flash a field and its label to draw attention on validation failure.
+  _flashField(fieldEl, labelEl) {
+    if (fieldEl) {
+      fieldEl.classList.remove('flash-field');
+      void fieldEl.offsetWidth; // force reflow to restart animation
+      fieldEl.classList.add('flash-field');
+      fieldEl.addEventListener('animationend', () => fieldEl.classList.remove('flash-field'), { once: true });
+    }
+    if (labelEl) {
+      labelEl.classList.remove('flash-label');
+      void labelEl.offsetWidth;
+      labelEl.classList.add('flash-label');
+      labelEl.addEventListener('animationend', () => labelEl.classList.remove('flash-label'), { once: true });
+    }
+    if (fieldEl) fieldEl.focus();
+  },
+
+  // Find the nearest <lbl> sibling for a given input element.
+  _findLabel(fieldEl) {
+    if (!fieldEl) return null;
+    const row = fieldEl.closest('.row, .panel, .dev-field');
+    if (row) {
+      // Look for lbl.req first, then any lbl, then .plabel.req, then .plabel
+      return row.querySelector('lbl.req') || row.querySelector('lbl') || row.querySelector('.plabel.req') || row.querySelector('.plabel');
+    }
+    return null;
+  },
+
+  validate() {
+    const $ = App.Utils.$;
+    if (!$('app-name').value.trim()) {
+      App.StatusBar.set('NAME IS REQUIRED', 'err');
+      this._flashField($('app-name'), this._findLabel($('app-name')));
+      return false;
+    }
+    if (!$('app-url').value.trim()) {
+      App.StatusBar.set('URL IS REQUIRED', 'err');
+      this._flashField($('app-url'), this._findLabel($('app-url')));
+      return false;
+    }
+    if (!document.querySelectorAll('.cat-btn-new.active').length) {
+      App.StatusBar.set('SELECT A CATEGORY — 1 REQUIRED', 'err');
+      const catLbl = document.querySelector('.cat-lbl');
+      if (catLbl) { catLbl.classList.remove('flash-label'); void catLbl.offsetWidth; catLbl.classList.add('flash-label'); catLbl.addEventListener('animationend', () => catLbl.classList.remove('flash-label'), { once: true }); }
+      return false;
+    }
+    if (!$('desc').value.trim()) {
+      App.StatusBar.set('DESCRIPTION IS REQUIRED', 'err');
+      this._flashField($('desc'), document.querySelector('#lbl-desc'));
+      return false;
+    }
+    if (!$('app-rel').value.trim()) {
+      App.StatusBar.set('RELEASE DATE IS REQUIRED', 'err');
+      this._flashField($('app-rel'), this._findLabel($('app-rel')));
+      return false;
+    }
+
+    // ── WORD-FILTER SUBMIT-TIME SWEEP (DISABLED — requires server) ──────────────
+    // This block performs a final full-form check against blocked words just before
+    // submission.  It is disabled for the same reason as the live-check above:
+    // fetch('word_filter.json') is blocked by the browser when running from disk.
+    //
+    // To re-enable, uncomment the entire block below AND un-comment
+    // App.WordFilter.init() in App.Init (see further down this file).
+    //
+    // if (App.WordFilter._loaded) {
+    //   const filterFields = [
+    //     ['NAME',        $('app-name').value], ['ABBR',    $('app-abbr').value],
+    //     ['URL',         $('app-url').value],  ['TAGS',    $('app-tags').value],
+    //     ['DESCRIPTION', $('desc').value],     ['BIO',     $('dev-bio').value],
+    //     ['ALT TEXT',    $('icon-alt').value], ['VERSION', $('app-ver').value],
+    //     ['TWITTER',     $('dev-tw').value],   ['GITHUB',  $('dev-gh').value],
+    //   ];
+    //   for (let i = 1; i <= SETTINGS.MAX_FEATURES; i++) {
+    //     const fv = $('f'+i) ? $('f'+i).value : '';
+    //     if (fv) filterFields.push(['FEATURE ' + i, fv]);
+    //   }
+    //   for (const [label, val] of filterFields) {
+    //     const fc = App.WordFilter.check(val);
+    //     if (!fc.clean) { App.StatusBar.set(label + ' CONTAINS BLOCKED WORD', 'err'); return false; }
+    //   }
+    // }
+    //
+    // ─────────────────────────────────────────────────────────────────────────────
+
+    // Check all guarded fields for word length violations
+    const descCheck = App.WordGuard.check($('desc').value);
+    if (!descCheck.valid) { App.StatusBar.set('DESCRIPTION HAS WORD TOO LONG: ' + descCheck.badWord, 'err'); return false; }
+    const bioCheck = App.WordGuard.check($('dev-bio').value);
+    if (!bioCheck.valid) { App.StatusBar.set('BIO HAS WORD TOO LONG: ' + bioCheck.badWord, 'err'); return false; }
+    for (let i = 1; i <= SETTINGS.MAX_FEATURES; i++) {
+      const fVal = $('f'+i) ? $('f'+i).value : '';
+      if (fVal) {
+        const fCheck = App.WordGuard.check(fVal);
+        if (!fCheck.valid) { App.StatusBar.set('FEATURE ' + i + ' HAS WORD TOO LONG: ' + fCheck.badWord, 'err'); return false; }
+      }
+    }
+    return true;
+  },
+
+  init() {
+    // 10-button category grid — mutually exclusive, exactly 1 required
+    document.querySelectorAll('.cat-btn-new').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.cat-btn-new').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        if (App.Subcat) App.Subcat.updateForCategory(btn.dataset.val);
+      });
+    });
+  },
+};
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.Preview — Full-page preview overlay (iframe srcdoc)
+   All CSS generated from SETTINGS so theme always matches.
+   [BSV-HOOK] Replace mockSign() with wallet.signTransaction()
+   ───────────────────────────────────────────────────────────── */
+App.Preview = {
+  open() {
+    if (!App.Form.validate()) return;
+    const d = App.Form.collectData(), esc = App.Utils.esc, h2r = App.Utils.hexToRgba, S = SETTINGS;
+    let iconBg;
+    if (d.icon_bg_enabled && d.icon_fg_enabled)       iconBg = `linear-gradient(135deg,${h2r(d.icon_bg_colour,d.icon_bg_alpha)},${h2r(d.icon_fg_colour,d.icon_bg_alpha)})`;
+    else if (d.icon_bg_enabled && !d.icon_fg_enabled)  iconBg = h2r(d.icon_bg_colour, d.icon_bg_alpha);
+    else if (!d.icon_bg_enabled && d.icon_fg_enabled)  iconBg = h2r(d.icon_fg_colour, d.icon_bg_alpha);
+    else                                                iconBg = 'transparent';
+    const iconSrc = d.icon_data_b64 || d.icon_chain_url;
+    const ts = S.PREVIEW_TILE_SIZE, tr = S.PREVIEW_TILE_RADIUS, tb = S.PREVIEW_TILE_BORDER;
+    const tileCSS = `position:relative;width:${ts}px;height:${ts}px;border-radius:${tr}px;border:${tb}px solid ${S.BORDER};background:rgba(90,110,165,0.5);overflow:hidden;flex-shrink:0;`;
+
+    const iconHTML = iconSrc
+      ? `<div class="bsv-tile" style="${tileCSS}"><div style="position:absolute;inset:0;background:${iconBg};z-index:0;"></div><img src="${iconSrc}" alt="${esc(d.alt_text||d.name)}" style="--base-zoom:${d.icon_zoom};position:absolute;top:0;left:0;right:0;bottom:28px;margin:auto;z-index:1;max-width:80%;max-height:70%;object-fit:contain;transform:scale(${d.icon_zoom});"><div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.5);z-index:11;text-align:center;padding:6px 4px;"><span style="color:#fff;font-size:13px;font-weight:500;letter-spacing:1px;">${esc(d.name)||'UNNAMED'}</span></div></div>`
+      : `<div class="bsv-tile" style="${tileCSS}display:flex;align-items:center;justify-content:center;"><div style="position:absolute;inset:0;background:${iconBg};z-index:0;"></div><span style="position:relative;z-index:1;color:rgba(255,255,255,0.25);font-size:13px;text-align:center;letter-spacing:1px;margin-bottom:20px;">NO IMAGE</span><div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.5);z-index:11;text-align:center;padding:6px 4px;"><span style="color:#fff;font-size:13px;font-weight:500;letter-spacing:1px;">${esc(d.name)||'UNNAMED'}</span></div></div>`;
+
+    const statusColour = App.Config.getStatusColour(d.status);
+    const tipSats = Math.round(d.tip_bsv*1e8);
+    let baseFee = SETTINGS.BASE_FEE_SATS;
+    let est = { mapFeeSats: baseFee, iconFeeSats: 0, tipSats: tipSats, totalFeeSats: baseFee + tipSats };
+    if (App.Capabilities.onchain && App.MAPExport && App.MAPExport._buildMAPFields) {
+      try {
+        const fields = App.MAPExport._buildMAPFields(d);
+        const iconBytes = (d.icon_source === 'upload' && d.icon_data_b64)
+          ? WalletManager._base64ToBytes(d.icon_data_b64) : null;
+        est = WalletManager.estimateSubmitFee(fields, iconBytes, tipSats);
+        baseFee = est.mapFeeSats + est.iconFeeSats;
+      } catch (e) { /* use fallback */ }
+    }
+    const totalSats = baseFee + tipSats;
+    const totalBSV = (totalSats/1e8).toFixed(totalSats < 100000 ? 5 : 4);
+    const feeStr = d.tip_bsv > 0 ? `~${totalBSV} BSV (${baseFee.toLocaleString()} sats + ${tipSats.toLocaleString()} sats tip)` : `~${totalBSV} BSV (~${baseFee.toLocaleString()} sats)`;
+    const tipLine = d.tip_bsv > 0 ? `<div class="meta-row"><span class="mk">TIP</span><span class="mv" style="color:${S.GREEN};">&#x20BF;${d.tip_bsv} BSV</span></div>` : '';
+
+    const rows = [
+      ['protocol',d.protocol],['protocol_version',d.protocol_version],['name',d.name||'—'],['abbreviation',d.abbreviation||'—'],['url',d.url||'—'],
+      ['category',d.category],['status',d.status],['language',d.language],['brc100',String(d.brc100)],['release_date',d.release_date||'—'],['version',d.version||'—'],
+      ['tags',d.tags||'—'],['description',d.description||'—'],
+    ];
+    d.features.forEach((f,i) => rows.push(['feature_'+(i+1),f]));
+    rows.push(['icon_txid',d.icon_txid],['icon_format',d.icon_format],['icon_size_kb',d.icon_size_kb],
+      ['icon_bg_enabled',String(d.icon_bg_enabled)],['icon_fg_enabled',String(d.icon_fg_enabled)],
+      ['icon_bg_colour',(d.icon_bg_enabled && d.icon_bg_colour && d.icon_bg_colour.toLowerCase() !== S.ICON_DEFAULT_BG.toLowerCase()) ? d.icon_bg_colour : ''],['icon_fg_colour',(d.icon_fg_enabled && d.icon_fg_colour && d.icon_fg_colour.toLowerCase() !== S.ICON_DEFAULT_FG.toLowerCase()) ? d.icon_fg_colour : ''],['icon_bg_alpha',d.icon_bg_alpha],
+      ['icon_zoom',d.icon_zoom],['alt_text',d.alt_text||'—'],['developer_paymail',d.developer_paymail||'—'],
+      ['developer_twitter',d.developer_twitter||'—'],['developer_github',d.developer_github||'—'],['developer_bio',d.developer_bio||'—']);
+
+    // Build MAP rows with diff highlighting if updating a loaded record
+    const old = App.State.loadedRecord;
+    let hasChanges = false;
+    const mapRows = rows.map(([k,v]) => {
+      const newVal = esc(String(v));
+      const fvClass = k.startsWith('feature') ? ' fv' : '';
+      if (old && old[k] !== undefined) {
+        const oldVal = esc(String(old[k]));
+        if (oldVal === newVal) {
+          // Unchanged — default colour
+          return `<tr><td>${esc(k)}</td><td class="${fvClass}">${newVal}</td></tr>`;
+        } else {
+          // Changed — old in red crossed out, new in green below
+          hasChanges = true;
+          return `<tr><td>${esc(k)}</td><td class="${fvClass}"><div class="map-old">${oldVal}</div><div class="map-new">${newVal}</div></td></tr>`;
+        }
+      }
+      return `<tr><td>${esc(k)}</td><td class="${fvClass}">${newVal}</td></tr>`;
+    }).join('');
+
+    // Detect no-change update scenario
+    const noChangeWarning = (old && !hasChanges);
+
+    const html = this._buildPreviewHTML({ d,esc,iconHTML,iconBg,iconSrc,statusColour,feeStr,tipLine,mapRows,noChangeWarning,est });
+    const overlay = App.Utils.$('preview-overlay');
+    let iframe = overlay.querySelector('iframe');
+    if (!iframe) { iframe = document.createElement('iframe'); iframe.style.cssText = 'width:100%;height:100%;border:none;'; overlay.appendChild(iframe); }
+    iframe.srcdoc = html;
+    overlay.classList.add('active');
+    App.StatusBar.set('PREVIEW LOADED', 'ok');
+  },
+
+  close() { App.Utils.$('preview-overlay').classList.remove('active'); App.StatusBar.set('RETURNED TO EDITOR', 'ok'); },
+
+  _buildPreviewHTML(p) {
+    const { d, esc, iconHTML, iconSrc, statusColour, feeStr, tipLine, mapRows, noChangeWarning, est } = p;
+    const S = SETTINGS;
+    const grad = `linear-gradient(${S.BG_GRADIENT_ANGLE}deg,${S.BG_GRADIENT_COLOURS})`;
+
+    // FONT_FAMILY may contain single-quoted names e.g. 'JetBrains Mono', 'Courier New', monospace.
+    // When ${S.FONT_FAMILY} is interpolated into the mockSign function body — which itself lives
+    // inside single-quoted JS string literals — those inner single-quotes prematurely terminate
+    // the strings, producing a syntax error that silently kills the entire <script> block in the
+    // preview iframe.  We escape them once here and use this safe variable in mockSign only.
+    // CSS usage (font-family property values) is fine with unescaped quotes, so S.FONT_FAMILY
+    // continues to be used directly everywhere else in the template.
+    const fontFamilySafe = S.FONT_FAMILY.replace(/'/g, "\\'");
+
+    return `<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PREVIEW // ${esc(d.name)||'UNNAMED'}</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:${S.BG_COLOUR};background-image:${grad};background-attachment:fixed;color:${S.TEXT_COLOUR};font-family:${S.FONT_FAMILY};font-size:${S.FONT_SIZE_BASE}px;letter-spacing:${S.LETTER_SPACING}px;overflow:hidden;height:100%;width:100%;}
+.shell{display:flex;flex-direction:column;height:100vh;aspect-ratio:${S.SHELL_ASPECT_W}/${S.SHELL_ASPECT_H};max-width:100vw;margin:0 auto;padding:${S.GRID_GAP}px;gap:${S.GRID_GAP}px;}
+.title-bar{background:${S.PANEL_BG};border:1px solid ${S.BORDER};border-bottom:2px solid ${S.ACCENT_COLOUR};display:flex;align-items:center;justify-content:space-between;padding:4px 10px;height:38px;flex-shrink:0;gap:10px;backdrop-filter:blur(4px);}
+.logo{font-size:20px;font-weight:700;color:${S.AMBER};letter-spacing:3px;white-space:nowrap;}
+.logo span{color:${S.ACCENT_COLOUR};}
+.badge{background:rgba(255,87,51,0.18);color:${S.ACCENT_COLOUR};border:1px solid rgba(255,87,51,0.45);padding:3px 10px;font-size:13px;letter-spacing:2px;}
+.main-row{flex:1;min-height:0;display:flex;gap:${S.GRID_GAP}px;}
+.col{flex:1;min-width:0;overflow-y:auto;overflow-x:hidden;}
+.col::-webkit-scrollbar{width:3px;}.col::-webkit-scrollbar-thumb{background:${S.AMBER_DIM};}
+.panel{background:${S.PANEL_BG};border:1px solid ${S.BORDER};padding:8px 10px;backdrop-filter:blur(${S.PANEL_BLUR}px);}
+.plabel{font-size:12px;color:${S.AMBER};letter-spacing:3px;font-weight:700;padding-bottom:4px;border-bottom:1px solid ${S.ACCENT_COLOUR};margin-bottom:6px;}
+.card{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.meta-row{display:flex;justify-content:space-between;align-items:flex-start;padding:3px 0;border-bottom:1px solid rgba(46,63,102,0.4);}
+.mk{font-size:12px;color:${S.AMBER_DIM};letter-spacing:1px;text-transform:uppercase;white-space:nowrap;padding-right:8px;}
+.mv{font-size:13px;color:${S.TEXT_COLOUR};text-align:right;word-break:break-all;flex:1;}
+.map-table{width:100%;border-collapse:collapse;font-size:13px;}
+.map-table tr{border-bottom:1px solid rgba(46,63,102,0.4);}
+.map-table tr:hover{background:rgba(255,87,51,0.04);}
+.map-table td{padding:4px 6px;vertical-align:top;}
+.map-table td:first-child{color:${S.AMBER_DIM};white-space:nowrap;width:38%;letter-spacing:0.5px;}
+.map-table td:last-child{color:${S.TEXT_COLOUR};word-break:break-all;}
+.map-table .fv{color:rgba(212,208,224,0.65);}
+.map-old{color:#ff3c3c;text-decoration:line-through;opacity:0.7;margin-bottom:2px;}
+.map-new{color:#00cc44;}
+.tx-row{background:${S.PANEL_BG};border:1px solid ${S.BORDER};padding:6px 10px;flex-shrink:0;backdrop-filter:blur(${S.PANEL_BLUR}px);}
+.status-bar{display:flex;align-items:center;justify-content:space-between;background:${S.PANEL_BG};border:1px solid ${S.BORDER};border-top:2px solid ${S.ACCENT_COLOUR};padding:4px 11px;flex-shrink:0;backdrop-filter:blur(4px);gap:8px;}
+.sb-l{font-size:14px;color:${S.TEXT_DIM};letter-spacing:1px;flex:1;}
+.sb-r{font-size:14px;color:${S.AMBER_DIM};letter-spacing:1px;}
+.btn-back{font-family:${S.FONT_FAMILY};font-size:13px;letter-spacing:2px;font-weight:700;background:transparent;color:${S.AMBER};border:1px solid ${S.AMBER};padding:4px 10px;cursor:pointer;text-transform:uppercase;}
+.btn-back:hover{background:${S.AMBER};color:#000;}
+.btn-sign{font-family:${S.FONT_FAMILY};font-size:15px;letter-spacing:3px;font-weight:700;background:${S.ACCENT_COLOUR};color:#fff;border:1px solid ${S.ACCENT_COLOUR};padding:4px 14px;cursor:pointer;text-transform:uppercase;}
+.btn-sign:hover{background:#ff7a5a;}
+.bsv-tile{transition:border-color 0.2s;cursor:pointer;}.bsv-tile:hover{border-color:${S.AMBER} !important;}
+.bsv-tile img{transition:transform 0.3s ease;}.bsv-tile:hover img{transform:scale(calc(var(--base-zoom,1)*1.15)) !important;}
+.tip-wrap{margin-bottom:2px;}
+.tip-box{background:${S.INPUT_BG};border:1px solid ${S.BORDER};padding:4px 10px;font-size:12px;text-align:center;letter-spacing:1px;display:grid;}
+.tip-box .tip-static,.tip-box .tip-desc{grid-area:1/1;display:flex;align-items:center;justify-content:center;transition:opacity 0.25s ease;min-height:0;}
+.tip-box .tip-static{color:rgba(200,200,200,0.35);letter-spacing:2px;font-size:11px;text-transform:uppercase;opacity:1;}
+.tip-box .tip-desc{color:${S.HIGHLIGHT};line-height:1.5;letter-spacing:0.5px;opacity:0;overflow-wrap:break-word;word-break:break-word;}
+.col:has(.bsv-tile:hover) .tip-static{opacity:0;}.col:has(.bsv-tile:hover) .tip-desc{opacity:1;}
+.info-tbl{width:${S.PREVIEW_TILE_SIZE}px;border-collapse:collapse;font-size:11px;margin:0 auto;}
+.info-tbl td{padding:2px 1px;border-bottom:1px solid rgba(46,63,102,0.3);}
+.info-tbl td:first-child{color:${S.AMBER_DIM};letter-spacing:0.5px;text-transform:uppercase;white-space:nowrap;padding-right:2px;}
+.info-tbl td:last-child{color:${S.TEXT_COLOUR};text-align:right;}
+.info-tbl .box{display:inline-block;background:rgba(234,179,0,0.12);color:${S.AMBER};border:1px solid rgba(234,179,0,0.35);padding:1px 4px;font-size:10px;letter-spacing:1px;margin:1px;}
+.info-tbl .box-status{display:inline-block;padding:1px 6px;font-size:10px;letter-spacing:1px;border-width:1px;border-style:solid;margin:1px;}
+.no-change-warn{background:rgba(234,179,0,0.12);border:2px solid ${S.AMBER};padding:10px 14px;text-align:center;font-size:15px;font-weight:700;color:${S.AMBER};letter-spacing:2px;flex-shrink:0;animation:warn-pulse 1.5s ease-in-out infinite;}
+.no-change-icon{font-size:20px;margin-right:6px;}
+.no-change-sub{font-size:11px;font-weight:400;color:rgba(234,179,0,0.65);letter-spacing:1px;margin-top:4px;}
+@keyframes warn-pulse{0%,100%{border-color:${S.AMBER};box-shadow:0 0 0 rgba(234,179,0,0);}50%{border-color:${S.ACCENT_COLOUR};box-shadow:0 0 12px rgba(234,179,0,0.25);}}
+</style></head><body>
+<div class="shell">
+  <div class="title-bar"><div class="logo">${esc(S.TITLE_PREFIX)}<span>${esc(S.TITLE_SUFFIX)}</span> // CHAIN PREVIEW</div><div class="badge">&#9888; NOT YET ON CHAIN</div></div>
+  <div class="main-row">
+    <div class="col panel" style="margin:0;"><div class="plabel">ON-CHAIN MAP RECORD</div><table class="map-table"><tbody>${mapRows}</tbody></table></div>
+    <div class="col panel" style="margin:0;display:flex;flex-direction:column;overflow:hidden;">
+      <div class="plabel" style="flex-shrink:0;">DIRECTORY CARD PREVIEW</div>
+      <div style="flex-shrink:0;width:100%;"><div class="tip-wrap"><div class="tip-box"><div class="tip-static">TOOLTIP</div><div class="tip-desc">${App.Utils.escBreakable(d.description||'No description')}</div></div></div></div>
+      <div id="card-scale-wrap" style="flex:1;min-height:0;display:flex;align-items:flex-start;justify-content:center;overflow:hidden;padding-top:2px;">
+        <div id="card-inner" style="display:flex;flex-direction:column;align-items:center;transform-origin:top center;">
+          <div class="card">${iconHTML}</div>
+          ${iconSrc?`<table class="info-tbl" style="margin-top:5px;"><tr><td>FILE</td><td>${esc(d.icon_filename)}</td></tr><tr><td>TYPE</td><td>${esc(d.icon_format).toUpperCase()}</td></tr><tr><td>SIZE</td><td>${d.icon_size_kb}kb</td></tr><tr><td>RES</td><td>${d.icon_width||'—'}×${d.icon_height||'—'}px</td></tr><tr><td>BG</td><td>${d.icon_bg_enabled ? `<span style="display:inline-block;width:9px;height:9px;background:${d.icon_bg_colour};border:1px solid rgba(255,255,255,0.2);vertical-align:middle;margin-right:3px;"></span>${d.icon_bg_colour}` : '—'}</td></tr><tr><td>FG</td><td>${d.icon_fg_enabled ? `<span style="display:inline-block;width:9px;height:9px;background:${d.icon_fg_colour};border:1px solid rgba(255,255,255,0.2);vertical-align:middle;margin-right:3px;"></span>${d.icon_fg_colour}` : '—'}</td></tr><tr><td>ALPHA</td><td>${d.icon_bg_alpha}</td></tr></table>`:''}
+          <table class="info-tbl" style="margin-top:3px;"><tr><td>CAT</td><td>${d.category.split(';').filter(Boolean).slice(0,4).map(c=>'<span class="box">'+c.toUpperCase()+'</span>').join(' ')}</td></tr></table>
+          <table class="info-tbl" style="margin-top:0;">
+            ${d.status?`<tr><td>STATUS</td><td><span class="box-status" style="border-color:${statusColour}50;color:${statusColour};background:rgba(0,0,0,0.3);">${d.status.toUpperCase()}</span></td></tr>`:''}
+            ${d.language?`<tr><td>LANG</td><td>${d.language.split(';').map(l=>'<span class="box">'+l.toUpperCase()+'</span>').join(' ')}</td></tr>`:''}
+            <tr><td>BRC-100</td><td style="color:${d.brc100 ? S.GREEN : S.AMBER_DIM};">${d.brc100 ? '✓ YES' : '✗ NO'}</td></tr>
+            ${d.version?`<tr><td>VER</td><td>v${esc(d.version)}</td></tr>`:''}
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tx-row"><div class="plabel">TRANSACTION SUMMARY</div>${est.iconFeeSats > 0 ? `<div class="meta-row"><span class="mk">ICON TX FEE</span><span class="mv">~${est.iconFeeSats.toLocaleString()} sats</span></div>` : ''}<div class="meta-row"><span class="mk">MAP TX FEE</span><span class="mv">~${est.mapFeeSats.toLocaleString()} sats</span></div>${tipLine}<div class="meta-row"><span class="mk">TOTAL COST EST.</span><span class="mv" style="color:${S.GOLD};">${feeStr}</span></div></div>
+  ${noChangeWarning ? `<div class="no-change-warn"><span class="no-change-icon">&#9888;</span> NO CHANGES DETECTED — THIS WILL REWRITE AN IDENTICAL RECORD TO CHAIN<div class="no-change-sub">Transaction fee will still be charged. Go back to make changes or proceed to refresh timestamp.</div></div>` : ''}
+  <div class="status-bar"><span class="sb-l" id="sb-preview">REVIEW ALL DATA &middot; PERMANENTLY WRITTEN TO BSV BLOCKCHAIN</span><span class="sb-r" style="display:flex;gap:8px;"><button class="btn-back" onclick="parent.closePreview()">&#9666; BACK</button><button class="btn-sign" id="sign-btn" onclick="mockSign()">&#9658; SIGN &amp; BROADCAST</button></span></div>
+</div>
+<script>
+function mockSign(){var b=document.getElementById('sign-btn');b.textContent='\\u27F3 CONSTRUCTING TX...';b.disabled=true;var result;try{result=parent.saveMAP();}catch(e){result='(save-error)';}if(result&&typeof result.then==='function'){result.then(function(txid){document.querySelector('.status-bar').innerHTML='<span class="sb-l" style="color:${S.GREEN};">\\u2713 BROADCAST SUCCESS // APP_ID: '+txid.substring(0,16)+'...</span><span class="sb-r" style="display:flex;gap:8px;"><a href="viewer.html?tx='+txid+'" target="_blank" style="font-family:${fontFamilySafe};font-size:13px;letter-spacing:2px;font-weight:700;color:${S.AMBER};border:1px solid ${S.AMBER};padding:4px 10px;text-decoration:none;white-space:nowrap;">\\u25B8 VIEW ON CHAIN</a><a href="https://whatsonchain.com/tx/'+txid+'" target="_blank" style="font-family:${fontFamilySafe};font-size:13px;letter-spacing:2px;font-weight:700;color:${S.GREEN};border:1px solid ${S.GREEN};padding:4px 10px;text-decoration:none;white-space:nowrap;">WoC \\u2197</a></span>';}).catch(function(err){document.querySelector('.status-bar').innerHTML='<span class="sb-l" style="color:${S.ACCENT_COLOUR};">\\u2717 ERROR: '+(err.message||'UNKNOWN')+'</span><span class="sb-r"><button class="btn-sign" onclick="mockSign()">\\u25B8 RETRY</button></span>';});}else{setTimeout(function(){document.querySelector('.status-bar').innerHTML='<span class="sb-l" style="color:${S.GREEN};">\\u2713 MAP RECORD SAVED // APP_ID: '+result+' // [LOCAL TEST \\u2014 NOT ON CHAIN]</span>';},1500);}}
+function scaleCard(){var w=document.getElementById('card-scale-wrap'),i=document.getElementById('card-inner');if(!w||!i)return;i.style.transform='none';var aH=w.clientHeight,aW=w.clientWidth,nH=i.scrollHeight,nW=i.scrollWidth;if(nH<=0||aH<=0)return;i.style.transform='scale('+Math.min(aH/nH,aW/nW)+')';i.style.transformOrigin='top center';}
+setTimeout(scaleCard,80);window.addEventListener('resize',scaleCard);
+<\/script></body></html>`;
+  },
+
+  init() {
+    App.Utils.$('sub-btn').addEventListener('click', () => this.open());
+    window.closePreview = () => this.close();
+  },
+};
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.MAPExport / App.MAPImport — defined in offline.js and/or
+   onchain.js. The HTML sets up the saveMAP bridge and inits
+   whichever modules are loaded.
+   ───────────────────────────────────────────────────────────── */
+
+// Ensure App.MAPExport exists even if no module loaded it
+if (!App.MAPExport) { App.MAPExport = { init() {} }; }
+
+
+// Ensure App.MAPImport exists even if no module loaded it
+if (!App.MAPImport) { App.MAPImport = { init() {} }; }
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.RecordPicker — Dispatches to on-chain or offline scan
+   depending on which modules are loaded and current mode.
+   ───────────────────────────────────────────────────────────── */
+App.RecordPicker = {
+
+  _records: [],
+
+  // Dispatch scan to the appropriate module
+  async _scanWallet() {
+    this._records = [];
+    const statusEl = document.querySelector('.picker-status');
+    if (statusEl) statusEl.textContent = '⟳ SCANNING WALLET FOR RECORDS...';
+
+    try {
+      if (App.Capabilities.onchain && App.State.onChain && App._onchainScanRecords) {
+        this._records = await App._onchainScanRecords();
+      } else if (App.Capabilities.offline && App._offlineScanLocal) {
+        this._records = await App._offlineScanLocal();
+      }
+    } catch (e) {
+      if (statusEl) statusEl.textContent = 'SCAN ERROR — ' + (e.message || 'UNKNOWN').toUpperCase();
+      return;
+    }
+
+    if (statusEl) {
+      statusEl.textContent = this._records.length
+        ? `${this._records.length} RECORD${this._records.length > 1 ? 'S' : ''} FOUND`
+        : 'NO RECORDS FOUND';
+    }
+  },
+
+  _renderList() {
+    const list = document.querySelector('.picker-list');
+    if (!list) return;
+    list.innerHTML = '';
+
+    if (!this._records.length) {
+      list.innerHTML = '<div class="picker-empty">NO BSVDIRECTORY RECORDS FOUND</div>';
+      return;
+    }
+
+    this._records.forEach((rec, idx) => {
+      const statusColour = App.Config.getStatusColour(rec.status || '');
+      const iconSrc = rec._icon_data_b64 || '';
+      const item = document.createElement('div');
+      item.className = 'picker-item';
+      item.innerHTML =
+        `<div class="picker-item-icon">${iconSrc ? `<img src="${iconSrc}" alt="${App.Utils.esc(rec.name || '')}">` : '<span style="color:var(--dim);font-size:10px;">—</span>'}</div>` +
+        `<div class="picker-item-info"><div class="picker-item-name">${App.Utils.esc(rec.name || 'UNNAMED')}</div>` +
+        `<div class="picker-item-meta">${App.Utils.esc(rec.url || '—')} · ${App.Utils.esc(rec.category || '—')}${rec.version ? ' · v' + App.Utils.esc(rec.version) : ''}</div></div>` +
+        `<span class="picker-item-status" style="color:${statusColour};border-color:${statusColour}50;background:rgba(0,0,0,0.3);">${App.Utils.esc((rec.status || '—').toUpperCase())}</span>`;
+      item.addEventListener('click', () => this._select(idx));
+      list.appendChild(item);
+    });
+  },
+
+  _select(idx) {
+    const rec = this._records[idx];
+    if (!rec) return;
+    if (App.MAPImport && App.MAPImport._populateForm) {
+      App.MAPImport._populateForm(rec);
+    }
+    this.close();
+    App.StatusBar.set('RECORD LOADED // ' + (rec.name || 'UNNAMED'), 'ok');
+  },
+
+  async open() {
+    // Ensure wallet is connected first
+    if (!App.State.walletConnected) {
+      App.Wallet.toggle();
+      if (!App.State.walletConnected) return;
+    }
+
+    const overlay = App.Utils.$('picker-overlay');
+    overlay.innerHTML =
+      '<div class="picker-modal">' +
+        '<div class="picker-header"><span class="picker-title">SELECT RECORD TO UPDATE</span><button class="picker-close" id="picker-close-btn">✕ CLOSE</button></div>' +
+        '<div class="picker-status">⟳ SCANNING...</div>' +
+        '<div class="picker-list"></div>' +
+      '</div>';
+    overlay.classList.add('active');
+    document.getElementById('picker-close-btn').addEventListener('click', () => this.close());
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) this.close(); });
+
+    await this._scanWallet();
+    this._renderList();
+  },
+
+  close() {
+    App.Utils.$('picker-overlay').classList.remove('active');
+  },
+
+  init() {},
+};
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.Lang — Multi-language selector with dropdown checkboxes
+   Max selection defined by SETTINGS.MAX_LANGUAGES (default 3).
+   Selected languages shown as removable pill boxes.
+   ───────────────────────────────────────────────────────────── */
+App.Lang = {
+  _dropdownOpen: false,
+
+  toggle() {
+    this._dropdownOpen = !this._dropdownOpen;
+    App.Utils.$('lang-dd').style.display = this._dropdownOpen ? 'block' : 'none';
+  },
+
+  close() {
+    this._dropdownOpen = false;
+    App.Utils.$('lang-dd').style.display = 'none';
+  },
+
+  getSelected() {
+    return Array.from(document.querySelectorAll('#lang-dd input[type=checkbox]:checked')).map(cb => cb.value);
+  },
+
+  getSelectedLabels() {
+    return Array.from(document.querySelectorAll('#lang-dd input[type=checkbox]:checked')).map(cb => ({
+      value: cb.value,
+      label: cb.dataset.label
+    }));
+  },
+
+  updatePills() {
+    const pills = App.Utils.$('lang-pills');
+    pills.innerHTML = '';
+    this.getSelectedLabels().forEach(lang => {
+      const pill = document.createElement('span');
+      pill.className = 'lang-pill';
+      pill.innerHTML = lang.value.toUpperCase() + '<span class="lang-x">✕</span>';
+      pill.addEventListener('click', () => {
+        const cb = document.querySelector(`#lang-dd input[value="${lang.value}"]`);
+        if (cb) { cb.checked = false; }
+        this.updatePills();
+      });
+      pills.appendChild(pill);
+    });
+    // Update button text
+    const count = this.getSelected().length;
+    App.Utils.$('lang-btn').textContent = count >= SETTINGS.MAX_LANGUAGES
+      ? `▾ MAX ${SETTINGS.MAX_LANGUAGES}`
+      : '▾ SELECT';
+  },
+
+  handleCheck(cb) {
+    const selected = this.getSelected();
+    if (cb.checked && selected.length > SETTINGS.MAX_LANGUAGES) {
+      cb.checked = false;
+      App.StatusBar.set('MAX ' + SETTINGS.MAX_LANGUAGES + ' LANGUAGES ALLOWED', 'warn');
+      return;
+    }
+    this.updatePills();
+  },
+
+  // Returns semicolon-separated language codes for MAP record
+  getValue() {
+    const sel = this.getSelected();
+    return sel.length ? sel.join(';') : 'en';
+  },
+
+  init() {
+    App.Utils.$('lang-btn').addEventListener('click', () => this.toggle());
+
+    // Close dropdown on outside click
+    document.addEventListener('click', (e) => {
+      if (this._dropdownOpen && !App.Utils.$('lang-wrap').contains(e.target)) {
+        this.close();
+      }
+    });
+
+    // Wire up checkbox changes
+    document.querySelectorAll('#lang-dd input[type=checkbox]').forEach(cb => {
+      cb.addEventListener('change', () => this.handleCheck(cb));
+    });
+
+    // Build initial pills from defaults
+    this.updatePills();
+  },
+};
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.VersionGuard — Enforces numbers and dots only in version
+   ───────────────────────────────────────────────────────────── */
+App.VersionGuard = {
+  enforce(el) {
+    // Strip anything that isn't a digit or dot
+    const cleaned = el.value.replace(/[^0-9.]/g, '');
+    if (cleaned !== el.value) {
+      el.value = cleaned;
+      App.StatusBar.set('VERSION — NUMBERS AND DOTS ONLY', 'warn');
+    }
+  },
+
+  init() {
+    const el = App.Utils.$('app-ver');
+    el.addEventListener('input', () => this.enforce(el));
+  },
+};
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.ReleaseDate — TODAY checkbox + DD/MM/YYYY date input
+   ───────────────────────────────────────────────────────────── */
+App.ReleaseDate = {
+  formatToday() {
+    const d = new Date();
+    const dd = String(d.getDate()).padStart(2,'0');
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const yyyy = d.getFullYear();
+    return dd + '/' + mm + '/' + yyyy;
+  },
+
+  toISO(val) {
+    // Convert DD/MM/YYYY to ISO-8601
+    const parts = val.split('/');
+    if (parts.length !== 3) return val;
+    return parts[2] + '-' + parts[1] + '-' + parts[0];
+  },
+
+  enforce(el) {
+    // Allow only digits and forward slash
+    const cleaned = el.value.replace(/[^0-9/]/g, '');
+    if (cleaned !== el.value) {
+      el.value = cleaned;
+      App.StatusBar.set('RELEASE DATE — USE DD/MM/YYYY FORMAT', 'warn');
+    }
+  },
+
+  init() {
+    const $ = App.Utils.$;
+    const cb = $('rel-today'), inp = $('app-rel');
+    cb.addEventListener('change', () => {
+      if (cb.checked) {
+        inp.value = this.formatToday();
+        inp.disabled = true;
+      } else {
+        inp.value = '';
+        inp.disabled = false;
+        inp.focus();
+      }
+    });
+    inp.addEventListener('input', () => this.enforce(inp));
+  },
+};
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.WordFilter — Content moderation via blocked-word list.
+
+   ╔══════════════════════════════════════════════════════════════╗
+   ║  STATUS: DISABLED (local/offline mode)                      ║
+   ║                                                              ║
+   ║  This module loads word_filter.json via fetch() and blocks   ║
+   ║  entries containing disallowed words in all text fields.     ║
+   ║                                                              ║
+   ║  WHY IT IS DISABLED:                                         ║
+   ║  fetch() of a local JSON file is blocked by browsers under   ║
+   ║  the file:// protocol (CORS / same-origin policy).  The      ║
+   ║  module must remain dormant (_loaded stays false) so it      ║
+   ║  does not throw errors or hang the app when run from disk.   ║
+   ║                                                              ║
+   ║  HOW TO RE-ENABLE (three steps):                             ║
+   ║  1. Serve the app from any HTTP server, e.g.:               ║
+   ║       python -m http.server 8080                             ║
+   ║  2. Uncomment the body of load() below.                     ║
+   ║  3. Uncomment App.WordFilter.init() in App.Init.            ║
+   ║                                                              ║
+   ║  Everything else (check, enforce, init wiring) is already    ║
+   ║  intact — only the fetch call needs restoring.              ║
+   ╚══════════════════════════════════════════════════════════════╝
+   ───────────────────────────────────────────────────────────── */
+App.WordFilter = {
+  _blockedWords: [],
+  _loaded: false,       // Stays false while disabled — all guards short-circuit safely.
+
+  // ── load() — Fetch blocked-word list from word_filter.json ──────────────────
+  // DISABLED: the fetch call below is commented out so the app works locally.
+  // To re-enable, un-comment the try/catch block and follow the steps above.
+  async load() {
+    // ── RE-ENABLE START ──────────────────────────────────────────────────────
+    // try {
+    //   const resp = await fetch('word_filter.json');
+    //   if (!resp.ok) { console.warn('word_filter.json not found — filter disabled'); return; }
+    //   const data = await resp.json();
+    //   this._blockedWords = (data.blocked_words || []).map(w => w.toLowerCase());
+    //   this._loaded = true;
+    // } catch (e) {
+    //   console.warn('Failed to load word filter:', e);
+    // }
+    // ── RE-ENABLE END ────────────────────────────────────────────────────────
+  },
+
+  // Check text for blocked words. Returns { clean, word } where
+  // word is the first blocked word found (or null if clean).
+  // NOTE: returns clean:true unconditionally while _loaded === false.
+  check(text) {
+    if (!this._loaded || !text) return { clean: true, word: null };
+    const lower = text.toLowerCase();
+    for (const w of this._blockedWords) {
+      // Match whole word boundaries
+      const re = new RegExp('\\b' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i');
+      if (re.test(lower)) return { clean: false, word: w };
+    }
+    return { clean: true, word: null };
+  },
+
+  // Enforce on a text input/textarea — strip offending character and show error.
+  // NOTE: no-ops while _loaded === false.
+  enforce(el) {
+    const result = this.check(el.value);
+    if (!result.clean) {
+      // Remove the last typed character that triggered the match
+      el.value = el.value.slice(0, -1);
+      App.StatusBar.set('BLOCKED WORD DETECTED — INPUT REJECTED', 'err');
+    }
+  },
+
+  // Wire input listeners onto every text field.
+  // Called only after load() resolves so _loaded is guaranteed true first.
+  init() {
+    this.load().then(() => {
+      const $ = App.Utils.$;
+      const fields = ['app-name', 'app-abbr', 'app-url', 'app-tags', 'desc', 'dev-tw', 'dev-gh', 'dev-bio', 'app-ver', 'icon-alt'];
+      fields.forEach(id => {
+        const el = $(id);
+        if (el) el.addEventListener('input', () => this.enforce(el));
+      });
+      // Features are dynamic — wired in App.Features.handleInput
+    });
+  },
+};
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.Subcat — Subcategory dropdown (max 3, optional)
+   ───────────────────────────────────────────────────────────── */
+App.Subcat = {
+  _open: false,
+  _selected: [],
+
+  updateForCategory(catVal) {
+    this._selected = [];
+    this._catVal = catVal;
+    // Resolve colour from SETTINGS.CATEGORIES for this category
+    const catDef = (SETTINGS.CATEGORIES || []).find(c => c.value === catVal) || {};
+    this._catColor  = catDef.color  || 'var(--amber)';
+    this._catBorder = catDef.border || 'rgba(234,179,0,0.4)';
+    this._catBg     = catDef.bg     || 'rgba(234,179,0,0.07)';
+
+    // Apply colour to the trigger button
+    const btn = App.Utils.$('subcat-btn');
+    if (btn) {
+      btn.style.color       = this._catColor;
+      btn.style.borderColor = this._catBorder;
+    }
+
+    // Uncheck any checked items
+    document.querySelectorAll('#subcat-dd input[type=checkbox]').forEach(cb => { cb.checked = false; });
+    this._renderPills();
+    const dd = App.Utils.$('subcat-dd');
+    if (!dd) return;
+    // Apply colour to the dropdown container border
+    dd.style.borderColor = this._catBorder;
+
+    const opts = (SETTINGS.SUBCATEGORIES || {})[catVal] || [];
+    dd.innerHTML = '';
+    if (!opts.length) {
+      const item = document.createElement('div');
+      item.className = 'subcat-dd-item'; item.style.color = 'var(--dim)'; item.textContent = 'no subcategories';
+      dd.appendChild(item); return;
+    }
+    opts.forEach(opt => {
+      const item = document.createElement('label');
+      item.className = 'subcat-dd-item';
+      item.innerHTML = '<input type="checkbox" value="'+opt+'"><div class="tbox"></div><span>'+opt+'</span>';
+      // Colour the tbox border and checked state to match category
+      const tbox = item.querySelector('.tbox');
+      tbox.style.borderColor = this._catBorder;
+      const cb = item.querySelector('input');
+      cb.addEventListener('change', e => {
+        tbox.style.borderColor = cb.checked ? this._catColor : this._catBorder;
+        tbox.style.background  = cb.checked ? this._catBg    : '';
+        this._handleCheck(e.target);
+      });
+      item.addEventListener('mouseenter', () => { item.style.color = this._catColor; item.style.background = this._catBg; });
+      item.addEventListener('mouseleave', () => { item.style.color = ''; item.style.background = ''; });
+      dd.appendChild(item);
+    });
+  },
+
+  _handleCheck(cb) {
+    if (cb.checked) {
+      if (this._selected.length >= SETTINGS.MAX_SUBCATEGORIES) {
+        cb.checked = false;
+        App.StatusBar.set('MAX ' + SETTINGS.MAX_SUBCATEGORIES + ' SUBCATEGORIES ALLOWED', 'warn'); return;
+      }
+      if (!this._selected.includes(cb.value)) this._selected.push(cb.value);
+    } else {
+      this._selected = this._selected.filter(v => v !== cb.value);
+    }
+    this._renderPills(); this._updateBtnLabel();
+  },
+
+  _renderPills() {
+    const c = App.Utils.$('subcat-pills'); if (!c) return;
+    c.innerHTML = '';
+    const color  = this._catColor  || 'rgba(0,229,255,0.85)';
+    const border = this._catBorder || 'rgba(0,229,255,0.3)';
+    const bg     = this._catBg     || 'rgba(0,229,255,0.07)';
+    this._selected.forEach(val => {
+      const pill = document.createElement('span');
+      pill.className = 'subcat-pill';
+      pill.style.color       = color;
+      pill.style.borderColor = border;
+      pill.style.background  = bg;
+      pill.innerHTML = val + '<span class="subcat-x">✕</span>';
+      pill.addEventListener('mouseenter', () => { pill.style.borderColor = 'var(--accent)'; pill.style.color = 'var(--accent)'; });
+      pill.addEventListener('mouseleave', () => { pill.style.borderColor = border; pill.style.color = color; });
+      pill.addEventListener('click', () => {
+        this._selected = this._selected.filter(v => v !== val);
+        const cb = document.querySelector('#subcat-dd input[value="'+val+'"]');
+        if (cb) {
+          cb.checked = false;
+          const tbox = cb.nextElementSibling;
+          if (tbox) { tbox.style.borderColor = border; tbox.style.background = ''; }
+        }
+        this._renderPills(); this._updateBtnLabel();
+      });
+      c.appendChild(pill);
+    });
+  },
+
+  _updateBtnLabel() {
+    const btn = App.Utils.$('subcat-btn'); if (!btn) return;
+    btn.textContent = this._selected.length >= SETTINGS.MAX_SUBCATEGORIES
+      ? ('▾ MAX ' + SETTINGS.MAX_SUBCATEGORIES) : '▾ SUBCAT';
+  },
+
+  toggle() {
+    this._open = !this._open;
+    const dd = App.Utils.$('subcat-dd'); if (dd) dd.classList.toggle('open', this._open);
+  },
+
+  close() {
+    this._open = false;
+    const dd = App.Utils.$('subcat-dd'); if (dd) dd.classList.remove('open');
+  },
+
+  getValue() { return this._selected.join(';'); },
+
+  init() {
+    const btn = App.Utils.$('subcat-btn');
+    if (btn) btn.addEventListener('click', e => { e.stopPropagation(); this.toggle(); });
+    document.addEventListener('click', e => {
+      const wrap = document.querySelector('.subcat-wrap');
+      if (this._open && wrap && !wrap.contains(e.target)) this.close();
+    });
+  },
+};
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.Screenshots — 5-slot icon+screenshot selector strip.
+   Slot 0 = icon (App.Icon manages the preview itself).
+   Slots 1-4 = screenshots SS1-SS4 managed here.
+   ───────────────────────────────────────────────────────────── */
+App.Screenshots = {
+  _active: 0,
+  _slots: [null, null, null, null, null],
+  _LABELS: ['ICON DESIGN', 'SCREENSHOT 1', 'SCREENSHOT 2', 'SCREENSHOT 3', 'SCREENSHOT 4'],
+
+  selectSlot(idx) {
+    this._active = idx;
+    for (let i = 0; i <= 4; i++) {
+      const sq = App.Utils.$('slot-' + i);
+      if (sq) sq.classList.toggle('active', i === idx);
+    }
+    const lbl = App.Utils.$('lbl-icon');
+    if (lbl) lbl.textContent = this._LABELS[idx];
+    const iconCtrl = App.Utils.$('icon-slot-icon-controls');
+    const ssCtrl   = App.Utils.$('icon-slot-ss-controls');
+    if (idx === 0) {
+      if (iconCtrl) iconCtrl.style.display = '';
+      if (ssCtrl)   ssCtrl.style.display   = 'none';
+      App.Icon.updatePreviewStyles();
+      // restore icon image if present
+      const prev = App.Utils.$('icon-preview');
+      if (prev) {
+        const ssImg = prev.querySelector('.ss-preview-img');
+        if (ssImg) ssImg.remove();
+        const iconImg = prev.querySelector('img:not(.ss-preview-img)');
+        if (iconImg) iconImg.style.display = '';
+        const noImg = App.Utils.$('preview-no-img');
+        if (noImg) noImg.style.display = (iconImg ? 'none' : '');
+        if (noImg && !iconImg) noImg.textContent = 'NO IMAGE';
+      }
+    } else {
+      if (iconCtrl) iconCtrl.style.display = 'none';
+      if (ssCtrl)   { ssCtrl.style.display = 'flex'; }
+      const ssLbl = App.Utils.$('ss-slot-lbl');
+      if (ssLbl) ssLbl.textContent = this._LABELS[idx];
+      this._showSlotPreview(idx);
+    }
+  },
+
+  _showSlotPreview(idx) {
+    const preview = App.Utils.$('icon-preview');
+    const noImg   = App.Utils.$('preview-no-img');
+    if (!preview) return;
+    // Hide the icon img
+    const iconImg = preview.querySelector('img:not(.ss-preview-img)');
+    if (iconImg) iconImg.style.display = 'none';
+    // Remove old ss preview img
+    let ssImg = preview.querySelector('.ss-preview-img');
+    if (ssImg) ssImg.remove();
+    const slot = this._slots[idx];
+    if (slot && slot.dataB64) {
+      if (noImg) noImg.style.display = 'none';
+      ssImg = document.createElement('img');
+      ssImg.className = 'ss-preview-img';
+      ssImg.src = slot.dataB64;
+      ssImg.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2;';
+      preview.appendChild(ssImg);
+      const fnEl = App.Utils.$('ss-fname'), fsEl = App.Utils.$('ss-fsize');
+      if (fnEl) fnEl.textContent = slot.filename || '';
+      if (fsEl) { fsEl.textContent = slot.kb + 'kb'; fsEl.className = 'ss-info ' + (slot.kb > 100 ? 'file-size-err' : 'file-size-gold'); }
+    } else {
+      if (noImg) { noImg.style.display = ''; noImg.textContent = 'NO SCREENSHOT'; }
+      const fnEl = App.Utils.$('ss-fname'), fsEl = App.Utils.$('ss-fsize');
+      if (fnEl) fnEl.textContent = 'PNG · JPG · WEBP — MAX 128kb';
+      if (fsEl) { fsEl.textContent = ''; fsEl.className = 'ss-info'; }
+    }
+  },
+
+  _updateStripThumb(idx) {
+    const sq = App.Utils.$('slot-' + idx); if (!sq) return;
+    const slot = this._slots[idx];
+    let img = sq.querySelector('img');
+    if (slot && slot.dataB64) {
+      sq.classList.add('has-img');
+      if (!img) { img = document.createElement('img'); sq.appendChild(img); }
+      img.src = slot.dataB64;
+    } else {
+      sq.classList.remove('has-img');
+      if (img) img.remove();
+    }
+  },
+
+  handleSSUpload(file) {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { App.StatusBar.set('SCREENSHOTS MUST BE IMAGE FILES', 'err'); return; }
+    if (file.size > SETTINGS.MAX_SCREENSHOT_BYTES) { App.StatusBar.set('SCREENSHOT TOO LARGE — MAX 128kb', 'err'); return; }
+    const idx = this._active, kb = Math.round(file.size / 1024);
+    const reader = new FileReader();
+    reader.onload = e => {
+      this._slots[idx] = { dataB64: e.target.result, filename: file.name, kb, mime: file.type };
+      this._updateStripThumb(idx);
+      this._showSlotPreview(idx);
+      App.StatusBar.set('SCREENSHOT ' + idx + ' LOADED — ' + file.name, 'ok');
+    };
+    reader.readAsDataURL(file);
+  },
+
+  clearSlot(idx) {
+    if (idx < 1 || idx > 4) return;
+    this._slots[idx] = null;
+    this._updateStripThumb(idx);
+    this._showSlotPreview(idx);
+    const fi = App.Utils.$('ss-file-input'); if (fi) fi.value = '';
+    App.StatusBar.set('SCREENSHOT ' + idx + ' CLEARED', 'ok');
+  },
+
+  // Called by App.Icon._loadIntoPreview to sync slot-0 thumbnail
+  setIconThumb(dataB64) {
+    const sq = App.Utils.$('slot-0'); if (!sq) return;
+    let img = sq.querySelector('img');
+    if (dataB64) {
+      sq.classList.add('has-img');
+      if (!img) { img = document.createElement('img'); sq.appendChild(img); }
+      img.src = dataB64;
+    } else {
+      sq.classList.remove('has-img');
+      if (img) img.remove();
+    }
+  },
+
+  getData() {
+    return { icon: this._slots[0], screenshots: [this._slots[1], this._slots[2], this._slots[3], this._slots[4]] };
+  },
+
+  init() {
+    for (let i = 0; i <= 4; i++) {
+      const sq = App.Utils.$('slot-' + i);
+      if (sq) { const idx = i; sq.addEventListener('click', () => this.selectSlot(idx)); }
+    }
+    const ssBrowse = App.Utils.$('ss-browse-btn'), ssInput = App.Utils.$('ss-file-input');
+    if (ssBrowse && ssInput) {
+      ssBrowse.addEventListener('click', () => ssInput.click());
+      ssInput.addEventListener('change', e => this.handleSSUpload(e.target.files[0]));
+    }
+    const ssClear = App.Utils.$('ss-clear-btn');
+    if (ssClear) ssClear.addEventListener('click', () => this.clearSlot(this._active));
+    this.selectSlot(0);
+  },
+};
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.Mode — SUBMIT / UPDATE toggle in title bar
+   ───────────────────────────────────────────────────────────── */
+App.Mode = {
+  set(mode, skipPicker) {
+    const $ = App.Utils.$;
+    App.State.mode = mode;
+    $('mode-submit').classList.toggle('active', mode === 'submit');
+    $('mode-update').classList.toggle('active', mode === 'update');
+    if ($('mode-viewer')) $('mode-viewer').classList.remove('active');
+    $('sub-btn').textContent = mode === 'update' ? '▸ PREVIEW & UPDATE' : '▸ PREVIEW & SUBMIT';
+    if (!skipPicker && mode === 'update') {
+      App.RecordPicker.open();
+    } else if (mode === 'submit') {
+      App.StatusBar.set('SUBMIT MODE — NEW RECORD', 'ok');
+    }
+  },
+  init() {
+    const $ = App.Utils.$;
+    $('mode-submit').addEventListener('click', () => this.set('submit'));
+    $('mode-update').addEventListener('click', () => this.set('update'));
+  },
+};
+
+
+
+/* FreezeShell removed — shell is 100vh + overflow:hidden in CSS. */
+App.FreezeShell = { freeze() {}, init() {} };
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.PanelScale — per-panel font scaling via ResizeObserver.
+   Finds the largest --pf value (px) where the panel does not
+   overflow, using a binary search between MIN_PF and MAX_PF.
+   Special cases:
+     • panel-icon:    excludes .icon-well from overflow check
+                      (enforceSquare manages that area)
+     • panel-details: excludes open dropdowns (.lang-dd, .subcat-dd)
+     • panel-feat:    re-runs after App.Features.buildRows()
+   ───────────────────────────────────────────────────────────── */
+App.PanelScale = {
+  MIN_PF: 3,    // floor — allows very high zoom levels
+  MAX_PF: 80,   // ceiling — allows very low zoom levels
+  STEP:   0.5,  // binary-search precision (px)
+
+  // Per-panel caps (px). Panels listed here will never scale above
+  // their cap regardless of available space — preserving the original
+  // 14px design size as the maximum for compact/fixed-content panels.
+  // Panels NOT listed here are uncapped (use MAX_PF as ceiling).
+  // CAP is populated from SETTINGS.PANEL_FONT_CAPS by SettingsApplier.init()
+  // (null entries are treated as uncapped — MAX_PF used instead)
+  CAP: {},
+
+  // IDs of the 8 panels
+  _PANELS: [
+    'panel-titlebar',
+    'panel-icon',
+    'panel-details',
+    'panel-desc',
+    'panel-dev',
+    'panel-feat',
+    'panel-tx',
+    'panel-statusbar',
+  ],
+
+  // Fit a single panel: binary-search for the largest --pf that
+  // fits without overflow, up to the cap in SETTINGS.PANEL_FONT_CAPS.
+  // Every panel uses this same logic — cap is a ceiling, not a pin.
+  _fit(el) {
+    if (!el) return;
+    const cap = (this.CAP[el.id] !== undefined) ? this.CAP[el.id] : this.MAX_PF;
+    const hi_limit = Math.min(cap, this.MAX_PF);
+
+    // Temporarily hide overflowing dropdowns so they don't
+    // inflate scrollHeight during measurement
+    const hiddenDropdowns = [];
+    el.querySelectorAll('.lang-dd, .subcat-dd').forEach(dd => {
+      if (getComputedStyle(dd).display !== 'none') {
+        dd.style.visibility = 'hidden';
+        dd.style.position = 'fixed';
+        hiddenDropdowns.push(dd);
+      }
+    });
+
+    // For panel-icon, the well area is controlled by enforceSquare —
+    // exclude it from overflow measurement by hiding it temporarily
+    const well = el.id === 'panel-icon' ? el.querySelector('#preview-well') : null;
+    if (well) { well.style.visibility = 'hidden'; well.style.overflow = 'hidden'; }
+
+    let lo = this.MIN_PF, hi = hi_limit, best = this.MIN_PF;
+    while (hi - lo > this.STEP) {
+      const mid = (lo + hi) / 2;
+      el.style.setProperty('--pf', mid + 'px');
+      if (el.scrollHeight <= el.clientHeight + 1) {
+        best = mid; lo = mid;
+      } else {
+        hi = mid;
+      }
+    }
+    el.style.setProperty('--pf', best + 'px');
+
+    // Restore hidden elements
+    hiddenDropdowns.forEach(dd => {
+      dd.style.visibility = ''; dd.style.position = '';
+    });
+    if (well) { well.style.visibility = ''; well.style.overflow = ''; }
+  },
+
+  fitAll() {
+    this._PANELS.forEach(id => this._fit(document.getElementById(id)));
+    // After scaling, re-run enforceSquare so the icon well
+    // re-measures with the updated font size
+    if (App.Icon && App.Icon.enforceSquare) App.Icon.enforceSquare();
+  },
+
+  init() {
+    if (!window.ResizeObserver) {
+      // Fallback: just fit once on load
+      this.fitAll(); return;
+    }
+    const ro = new ResizeObserver(() => {
+      // Debounce — coalesce rapid resize events
+      clearTimeout(this._timer);
+      this._timer = setTimeout(() => this.fitAll(), 40);
+    });
+    // Observe the shell (size change of any panel flows from here)
+    const shell = document.querySelector('.shell');
+    if (shell) ro.observe(shell);
+    // Initial fit after layout settles
+    requestAnimationFrame(() => setTimeout(() => this.fitAll(), 80));
+  },
+};
+
+/* ─────────────────────────────────────────────────────────────
+   App.Init — Bootstrap all modules
+   ───────────────────────────────────────────────────────────── */
+App.Init = function() {
+  App.SettingsApplier.init();
+  App.FreezeShell.init();   // Lock shell px size before any measurement
+  App.Gauge.init();
+  App.WordGuard.init();
+  App.Features.init();
+  App.Tips.init();
+  App.Wallet.init();
+  App.Icon.init();
+  App.Screenshots.init();
+  App.Subcat.init();
+  App.Lang.init();
+  App.VersionGuard.init();
+  App.ReleaseDate.init();
+  // App.WordFilter.init();  // DISABLED — re-enable once served from HTTP (see App.WordFilter above)
+  App.Form.init();
+  App.Preview.init();
+  if (App.MAPExport && App.MAPExport.init) App.MAPExport.init();
+  if (App.MAPImport && App.MAPImport.init) App.MAPImport.init();
+  App.RecordPicker.init();
+  App.LabelAlign.init();
+  App.Mode.init();
+  App.Icon.updatePreviewStyles();
+  App.SettingsApplier._applyCaps();
+  App.PanelScale.init();
+
+  // Set up the saveMAP bridge — dispatches to on-chain or offline save
+  window.saveMAP = function() {
+    if (App.Capabilities.onchain && App.State.onChain && App.MAPExport.saveOnChain) {
+      return App.MAPExport.saveOnChain();
+    }
+    if (App.Capabilities.offline && App.MAPExport.save) {
+      return App.MAPExport.save();
+    }
+    App.StatusBar.set('NO SAVE METHOD AVAILABLE — LOAD ONCHAIN.JS OR OFFLINE.JS', 'err');
+  };
+};
+
+App.Init();
+</script>
+</body>
+</html>
