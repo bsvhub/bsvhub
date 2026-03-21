@@ -143,6 +143,15 @@ body {
   z-index: 0;
 }
 
+/* Mandala animation canvas — locked to background layer */
+#background-layer canvas,
+body > canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
 /* ============================================================
    5 – TOP-UI: HEADER BAR [LAYER 1]
    ============================================================ */
