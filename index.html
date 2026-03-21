@@ -21,6 +21,17 @@
     <meta property="og:url" content="https://bsvhub.io/">
     <meta property="og:type" content="website">
 
+    <!-- MANDALA CANVAS PRE-STYLE — before any js and ccs rules load; prevents flash to top layer on load -->
+	<style>
+	  #background-layer canvas,
+	  body > canvas {
+		position: fixed !important;
+		inset: 0;
+		z-index: 0 !important;
+		pointer-events: none;
+	  }
+	</style>
+        
     <!-- MAIN STYLES -->
     <link rel="stylesheet" href="styles/unified.css">
 
