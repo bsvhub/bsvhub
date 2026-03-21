@@ -1217,7 +1217,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "MetaMarket buy sell",
-      "info": ";;new.svg;"
+      "info": "brc100.svg;;;"
     },
     {
       "tab": "tool;app",
@@ -1509,6 +1509,16 @@
       "zoom": "1.0",
       "alt": "sent send bsv",
       "text": "TEXT BSV",
+      "info": ";;;"
+    },
+    {
+      "tab": "info;dev",
+      "href": "https://docs.whatsonchain.com",
+      "tooltip": "WhatsonChain documentation for how to transmit and read information of chain",
+      "img": "icon/whatsonchain.svg",
+      "zoom": "1.0",
+      "alt": "read brodcast transmit api",
+      "text": "WhatsonChain Docs",
       "info": ";;;"
     }
   ]
