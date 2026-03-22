@@ -1459,14 +1459,14 @@
       "colour1": "#3ebfba"
     },
     {
-      "tab": "info",
+      "tab": "info;dev",
       "href": "https://www.boostbsv.com",
       "tooltip": "Everything you need to know about BSV, cryptocurrency, and the future of digital money",
-      "img": "icon/bsv.svg",
-      "zoom": "1.0",
+      "img": "icon/boostbsv.svg",
+      "zoom": "0.9",
       "alt": "",
       "text": "Boost BSV",
-      "info": ";;;"  
+      "info": ";;code.svg;"  
     },
     {
       "tab": "info",
