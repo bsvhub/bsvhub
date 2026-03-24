@@ -1,0 +1,646 @@
+/* ═══════════════════════════════════════════════════════════════
+   app.css — Component + Panel Styles
+   ═══════════════════════════════════════════════════════════════
+
+   PURPOSE:  All visual styles for form components, inputs, buttons,
+             gauges, pills, tables, cards, modals, and panel-specific
+             typography. Scoped to wireframe panel IDs for isolation.
+
+   INPUTS:   CSS custom properties injected by App.SettingsApplier
+             into <style id="dynamic-vars">.
+
+   OUTPUTS:  Styled components consumed by panel controllers.
+
+   DEPENDS:  wireframe.css (provides base .panel, .shell styles).
+             dynamic-vars (provides --amber, --accent, --font, etc).
+
+   NOTES:    Extracted from up-link.html lines 454-1048 + viewer.html
+             lines 10-193. Panel IDs remapped from #panel-icon to
+             #p1-icon etc. Each panel has independent font-size for
+             isolation (change one without affecting others).
+   ═══════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION 1: COMPONENT STYLES — Reusable UI elements
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Panel inner styling (overrides wireframe.css .panel base) ─ */
+.panel {
+  background: var(--panel); border: 1px solid var(--border-blue);
+  padding: 7px 10px; display: flex; flex-direction: column; gap: 5px;
+  min-width: 0; min-height: 0; overflow: hidden;
+  backdrop-filter: blur(var(--panel-blur));
+  align-items: stretch; justify-content: flex-start; text-align: left;
+}
+
+/* Panel label — amber header */
+.plabel {
+  font-size: 1.0em; color: var(--amber); letter-spacing: 3px; font-weight: 700;
+  padding-bottom: 4px; border-bottom: 1px solid var(--accent);
+  margin-bottom: 1px; flex-shrink: 0;
+}
+.plabel.req { color: var(--mandatory); }
+lbl.req { color: var(--mandatory); }
+
+/* APP DETAILS header line — exact 14px to match ICON DESIGN label.
+   .plabel.plabel-details beats the generic .plabel override on line 525. */
+.plabel.plabel-details { font-size: 14px; display: flex; align-items: center; }
+.bsvhub-head .tbox { width: 15px !important; height: 15px !important; }
+.bsvhub-head .bflag-lbl { font-size: 1.0em; }
+.bsvhub-head .tbox::after { font-size: 0.8em !important; }
+
+/* Section header — label + counter on one line */
+.section-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-bottom: 4px; border-bottom: 1px solid var(--accent);
+  margin-bottom: 1px; flex-shrink: 0;
+}
+.section-head .plabel { border: none; padding: 0; margin: 0; }
+
+/* ── Mode toggles in titlebar ──────────────────────────────── */
+.mode-toggle { cursor: pointer; color: var(--dim); text-decoration: none; transition: color 0.2s; }
+.mode-toggle:hover { color: var(--amber); }
+.mode-toggle.active { color: var(--amber); text-decoration: underline; text-underline-offset: 3px; }
+
+/* ── Wallet indicator ───────────────────────────────────────── */
+.wallet-bar { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.led {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: #330000; border: 1px solid #550000; flex-shrink: 0;
+}
+.led.on { background: var(--green); border-color: #00ff55; box-shadow: 0 0 5px var(--green); }
+.wallet-label { font-size: 1.14em; color: var(--dim); letter-spacing: 1px; white-space: nowrap; }
+.wallet-label.on { color: var(--green); }
+
+/* ── On-chain toggle ───────────────────────────────────────── */
+.onchain-toggle {
+  display: flex; align-items: center; gap: 6px; cursor: pointer;
+  padding: 3px 10px; border: 1px solid var(--border-blue); border-radius: 3px;
+  background: rgba(0,0,0,0.3); transition: border-color 0.2s, background 0.2s;
+  flex-shrink: 0; user-select: none;
+}
+.onchain-toggle:hover { border-color: var(--amber); }
+.onchain-toggle input { display: none; }
+.onchain-box {
+  width: 14px; height: 14px; border: 2px solid var(--dim);
+  background: transparent; transition: all 0.15s; flex-shrink: 0;
+}
+.onchain-toggle input:checked ~ .onchain-box {
+  border-color: var(--amber); background: var(--amber);
+  box-shadow: 0 0 6px rgba(234,179,0,0.4);
+}
+.onchain-label {
+  font-size: 0.79em; font-weight: 700; letter-spacing: 2px;
+  color: var(--dim); transition: color 0.15s; white-space: nowrap;
+}
+.onchain-toggle input:checked ~ .onchain-label { color: var(--amber); }
+
+/* ── Generic button ─────────────────────────────────────────── */
+.btn {
+  font-family: var(--font); font-size: 1.14em; letter-spacing: 2px; font-weight: 700;
+  background: transparent; color: var(--amber); border: 1px solid var(--amber);
+  padding: 5px 12px; cursor: pointer; text-transform: uppercase;
+  transition: background 0.12s, color 0.12s; white-space: nowrap;
+}
+.btn:hover { background: var(--amber); color: #000; }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION 2: FORM ELEMENTS
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Form row ───────────────────────────────────────────────── */
+.row { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
+.row-top { align-items: flex-start; }
+
+/* ── Multi-entry row ────────────────────────────────────────── */
+.row-multi { gap: 0; }
+.row-multi lbl { min-width: auto; margin-left: 0; margin-right: 3px; }
+.row-multi lbl:first-child { min-width: auto; margin-right: 7px; }
+.row-multi .clr-toggle { margin-left: 3px; margin-right: 0; }
+.row-multi .clr-toggle + lbl { margin-left: 2px; margin-right: 3px; }
+.row-multi input[type=text],
+.row-multi input[type=url],
+.row-multi select { flex: 0 0 auto; margin-left: 0; }
+.row-multi input[type=text] + lbl,
+.row-multi input[type=text] + .clr-toggle,
+.row-multi input[type=url] + lbl,
+.row-multi input[type=url] + .clr-toggle,
+.row-multi select + lbl,
+.row-multi select + .clr-toggle { margin-left: 30px; }
+
+/* ── REL row — shrink inputs to stay on one line ───────────── */
+.row-rel { overflow: hidden; flex-shrink: 1; min-width: 0; }
+.row-rel input[type=text] { flex: 1 1 0 !important; min-width: 3ch !important; width: 0 !important; }
+.row-rel select { flex: 1 1 0 !important; min-width: 3ch !important; }
+.row-rel lbl { flex-shrink: 1; min-width: 0 !important; }
+
+lbl {
+  display: block; font-size: 1.0em; color: var(--amber-dim); letter-spacing: 1px;
+  white-space: nowrap; min-width: 53px; text-transform: uppercase; flex-shrink: 0;
+}
+/* ── Validation flash for missing required fields ─────────── */
+@keyframes field-flash {
+  0%, 100% { border-color: var(--border); }
+  50% { border-color: var(--mandatory); box-shadow: 0 0 6px rgba(232,68,32,0.5); }
+}
+@keyframes label-flash {
+  0%, 100% { opacity: 1; }
+  50% { color: var(--mandatory); opacity: 0.6; }
+}
+.flash-field { animation: field-flash 0.6s ease 3; }
+.flash-label { animation: label-flash 0.6s ease 3; }
+
+/* ── Browser autofill override ────────────────────────────── */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--white);
+  -webkit-box-shadow: 0 0 0 1000px var(--input-bg) inset;
+  border: 1px solid var(--border-blue);
+  transition: background-color 5000s ease-in-out 0s;
+}
+.cat-lbl { padding-top: 2px; }
+
+/* ── Inputs ─────────────────────────────────────────────────── */
+input[type=text], input[type=url], select, textarea {
+  font-family: var(--font); font-size: 1.14em; letter-spacing: 1px;
+  background: var(--input-bg); color: var(--white); border: 1px solid var(--border-blue);
+  padding: 4px 7px; flex: 1; outline: none; min-width: 0; transition: border-color 0.12s;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--amber); }
+input[readonly] { color: var(--dim); cursor: default; }
+input:disabled {
+  color: rgba(255,255,255,0.15); cursor: not-allowed;
+  background: rgba(0,0,0,0.25); border-color: rgba(255,255,255,0.06);
+}
+select {
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23EAB300'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 5px center;
+  padding-right: 19px; cursor: pointer;
+}
+select option { background: var(--bg); }
+textarea { resize: none; line-height: 1.5; }
+
+/* ── Category pills ─────────────────────────────────────────── */
+.cat-group { display: flex; gap: 4px; flex-wrap: wrap; }
+.cat-btn {
+  font-family: var(--font); font-size: 1.0em; letter-spacing: 1px;
+  background: var(--input-bg); color: var(--dim); border: 1px solid rgba(255,255,255,0.12);
+  padding: 2px 7px; cursor: pointer; text-transform: uppercase; user-select: none; transition: all 0.1s;
+}
+.cat-btn.active { background: rgba(234,179,0,0.16); color: var(--amber); border-color: var(--amber); }
+
+/* ── Character gauge ────────────────────────────────────────── */
+.ccount {
+  font-size: 1.0em; font-weight: 700; color: var(--green); letter-spacing: 1px;
+  min-width: 62px; text-align: right; font-variant-numeric: tabular-nums; flex-shrink: 0;
+}
+.ccount.warn { color: var(--gold); }
+.ccount.over { color: var(--accent); }
+.gtrack { height: 2px; background: rgba(255,255,255,0.08); flex-shrink: 0; }
+.gfill { height: 100%; background: var(--green); transition: width 0.1s, background 0.15s; }
+.gfill.warn { background: var(--gold); }
+.gfill.over { background: var(--accent); }
+
+/* ── Radio row ──────────────────────────────────────────────── */
+.radio-row { display: flex; gap: 14px; flex-shrink: 0; }
+.radio-opt {
+  display: flex; align-items: center; gap: 6px; cursor: pointer;
+  font-size: 1.0em; color: var(--dim); letter-spacing: 1px; user-select: none;
+}
+.radio-opt input { display: none; }
+.rbox {
+  width: 12px; height: 12px; border: 1px solid var(--amber-dim);
+  background: var(--input-bg); display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0;
+}
+.radio-opt input:checked + .rbox { border-color: var(--amber); }
+.radio-opt input:checked + .rbox::after {
+  content: ''; width: 6px; height: 6px; background: var(--amber); display: block;
+}
+.radio-opt input:checked ~ span { color: var(--amber); }
+
+/* ── File browse button ─────────────────────────────────────── */
+.file-btn {
+  font-family: var(--font); font-size: 1.0em; letter-spacing: 1px;
+  background: var(--input-bg); color: var(--amber); border: 1px solid var(--amber-dim);
+  padding: 4px 10px; cursor: pointer; transition: border-color 0.12s; width: 100%; text-align: left;
+}
+.file-btn:hover { border-color: var(--amber); }
+.file-info {
+  font-size: 1.0em; color: var(--dim); overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap; letter-spacing: 0.5px;
+}
+
+/* ── Colour picker ──────────────────────────────────────────── */
+.clr-row { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+input[type=color] {
+  width: 26px; height: 20px; border: 1px solid var(--amber-dim);
+  background: none; padding: 1px; cursor: pointer; flex-shrink: 0;
+}
+.hex-in { max-width: 89px !important; font-size: 1.0em !important; letter-spacing: 0 !important; }
+
+/* ── Sliders ────────────────────────────────────────────────── */
+.srow { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.srow-compact { gap: 3px; }
+.srow-compact .sval { min-width: 24px; }
+input[type=range] {
+  flex: 1; -webkit-appearance: none; appearance: none; height: 2px;
+  background: rgba(234,179,0,0.18); outline: none; cursor: pointer; min-width: 0;
+}
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 11px; height: 11px; background: var(--amber); cursor: pointer; }
+input[type=range]::-moz-range-thumb { width: 11px; height: 11px; background: var(--amber); border: none; }
+.sval { font-size: 1.0em; color: var(--gold); min-width: 34px; text-align: right; font-variant-numeric: tabular-nums; }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION 3: PANEL-SPECIFIC STYLES
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Icon preview square ───────────────────────────────────── */
+.icon-preview-sq {
+  width: 72px; height: 72px; border: 1px solid var(--border-blue); overflow: hidden;
+  position: relative; display: flex; align-items: center; justify-content: center;
+  font-size: 1.0em; color: var(--dim); text-align: center; flex-shrink: 0; flex-grow: 0;
+}
+.icon-preview-sq .bg-layer { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.icon-preview-sq img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: contain; }
+.icon-preview-sq .no-img { position: relative; z-index: 1; }
+
+/* ── Icon panel layout ─────────────────────────────────────── */
+.panel-icon { flex-direction: row; gap: 8px; padding: 7px 10px; }
+.icon-controls { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 0; overflow: hidden; }
+.icon-well { flex-basis: 50%; flex-shrink: 0; display: flex; align-items: stretch; justify-content: center; align-self: stretch; min-width: 0; }
+.mode-container { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; }
+.gradient-hint { font-size: 0.93em; color: var(--dim); letter-spacing: 0.5px; flex-shrink: 0; white-space: nowrap; }
+/* Icon-only rows greyed when a screenshot slot is active */
+#p1-icon.ss-active .icon-only { opacity: 0.3; pointer-events: none; }
+.txid-status { font-size: 0.93em; white-space: normal; word-break: break-word; }
+
+/* ── Feature rows ───────────────────────────────────────────── */
+.feat-row { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.feat-num { font-size: 1.0em; color: var(--amber-dim); min-width: 14px; text-align: right; flex-shrink: 0; }
+.feat-count { font-size: 0.93em; color: var(--dim); min-width: 36px; text-align: right; font-variant-numeric: tabular-nums; flex-shrink: 0; letter-spacing: 0; }
+.panel-feat { padding: 5px 7px; gap: 2px; }
+.feat-hint { font-size: 0.78em; color: rgba(200,200,200,0.4); letter-spacing: 0.5px; margin-left: 8px; font-weight: 400; }
+.feat-list { display: flex; flex-direction: column; gap: 2px; flex: 1; justify-content: space-around; min-height: 0; }
+
+/* ── Submit button ──────────────────────────────────────────── */
+.btn-submit-wrap { display:block; width:100%; flex:none; flex-shrink:0; margin-top:auto; }
+.btn-submit {
+  font-family: var(--font); font-size: 1.64em; letter-spacing: 5px; font-weight: 700;
+  background: var(--accent); color: #fff; border: 1px solid var(--accent);
+  padding: 0; cursor: pointer; text-transform: uppercase; transition: background 0.12s;
+  width: 100%; height: 48px;
+}
+.btn-submit:hover:not(:disabled) { background: #ff7a5a; border-color: #ff7a5a; }
+.btn-submit:disabled { background: rgba(255,87,51,0.2); color: var(--dim); border-color: rgba(255,87,51,0.25); cursor: not-allowed; }
+
+/* ── Tip options ────────────────────────────────────────────── */
+.tip-row { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+.tip-opt {
+  display: flex; align-items: center; gap: 5px; cursor: pointer; font-size: 1.0em;
+  color: var(--dim); user-select: none; flex: 1; justify-content: center;
+  border: 1px solid rgba(255,255,255,0.10); padding: 4px 5px; background: var(--input-bg); transition: all 0.1s;
+}
+.tip-opt:hover { border-color: var(--amber-dim); color: var(--gold); }
+.tip-opt input[type=checkbox] { display: none; }
+.tbox {
+  width: 11px; height: 11px; border: 1px solid var(--amber-dim);
+  background: var(--input-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.tip-opt input:checked + .tbox { border-color: var(--amber); background: rgba(234,179,0,0.15); }
+.tip-opt input:checked + .tbox::after { content: '\2713'; font-size: 0.79em; color: var(--amber); line-height: 1; }
+.tip-opt input:checked ~ .tip-label { color: var(--amber); }
+.tip-opt.active { border-color: var(--amber); background: rgba(234,179,0,0.08); }
+.tip-label { font-size: 1.0em; letter-spacing: 0.3px; }
+.bsv-sym { font-weight: 700; color: var(--amber); }
+
+/* ── Developer fields ───────────────────────────────────────── */
+.dev-field { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
+.dev-field input[type=text] { height: 26px; }
+.bio-textarea { flex: 1; min-height: 0; overflow: auto; resize: none; }
+
+/* ── Transmit panel ─────────────────────────────────────────── */
+.panel-tx { padding: 5px 7px; gap: 2px; }
+.tx-body { display: flex; flex-direction: column; gap: 2px; flex: 1; justify-content: flex-start; min-height: 0; }
+.tx-row { display: flex; justify-content: space-between; align-items: center; }
+.tx-row-tip { gap: 6px; align-items: center; }
+
+/* ── Status text ────────────────────────────────────────────── */
+.status { font-size: 1.0em; color: var(--dim); letter-spacing: 1px; }
+.status.ok { color: var(--green); }
+.status.err { color: var(--accent); }
+.status.warn { color: var(--gold); }
+
+/* ── Status bar classes ─────────────────────────────────────── */
+.sb-l.ok { color: var(--green); }
+.sb-l.err { color: var(--accent); }
+.sb-l.warn { color: var(--gold); }
+
+/* ── Record picker overlay ─────────────────────────────────── */
+#picker-overlay { display: none; position: fixed; inset: 0; z-index: 9998; background: rgba(5,3,15,0.4); backdrop-filter: blur(2px); align-items: center; justify-content: center; transition: background 0.8s ease, backdrop-filter 0.8s ease; }
+#picker-overlay.active { display: flex; }
+.picker-modal { background: var(--panel); border: 1px solid var(--border-blue); border-top: 2px solid var(--accent); width: 90%; max-width: 624px; max-height: 85vh; display: flex; flex-direction: column; }
+.picker-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid var(--border-blue); flex-shrink: 0; }
+.picker-title { font-size: 1.2em; color: var(--amber); letter-spacing: 3px; font-weight: 700; }
+.picker-close { font-family: var(--font); font-size: 1.1em; color: var(--dim); background: none; border: 1px solid var(--border-blue); padding: 3px 10px; cursor: pointer; letter-spacing: 1px; }
+.picker-close:hover { color: var(--accent); border-color: var(--accent); }
+.picker-status { padding: 8px 14px; font-size: 1.0em; color: var(--dim); letter-spacing: 1px; border-bottom: 1px solid rgba(46,63,102,0.3); flex-shrink: 0; }
+.picker-list { overflow-y: auto; flex: 1; min-height: 0; }
+.picker-list::-webkit-scrollbar { width: 3px; }
+.picker-list::-webkit-scrollbar-thumb { background: var(--amber-dim); }
+.picker-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid rgba(46,63,102,0.3); cursor: pointer; transition: background 0.15s; }
+.picker-item:hover { background: rgba(234,179,0,0.06); }
+.picker-item-icon { width: 48px; height: 48px; border-radius: 5px; border: 1px solid var(--border-blue); overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: rgba(90,110,165,0.3); }
+.picker-item-icon img { width: 100%; height: 100%; object-fit: contain; }
+.picker-item-info { flex: 1; min-width: 0; }
+.picker-item-name { font-size: 1.2em; color: var(--text); letter-spacing: 1px; font-weight: 500; }
+.picker-item-meta { font-size: 0.95em; color: var(--dim); letter-spacing: 0.5px; margin-top: 3px; }
+.picker-item-status { font-size: 0.85em; letter-spacing: 1px; padding: 2px 8px; border: 1px solid; flex-shrink: 0; }
+.picker-item-txid { font-size: 0.85em; color: var(--dim); letter-spacing: 0.3px; margin-top: 3px; display: flex; align-items: center; gap: 5px; }
+.txid-text { font-family: var(--font); opacity: 0.6; }
+.txid-copy { cursor: pointer; font-size: 1.2em; opacity: 0.7; transition: opacity 0.15s; padding: 0 3px; }
+.txid-copy:hover { opacity: 1; }
+.picker-empty { padding: 24px 14px; text-align: center; font-size: 1.1em; color: var(--dim); letter-spacing: 1px; }
+
+/* ── Misc ───────────────────────────────────────────────────── */
+#icon-file-input { display: none; }
+#ss-file-input { display: none; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-thumb { background: var(--amber-dim); }
+.file-size-gold { color: var(--gold); }
+.file-size-green { color: var(--green); }
+.file-size-err { color: var(--accent); }
+
+/* ── BG/FG colour toggle checkbox ──────────────────────────── */
+.clr-toggle {
+  display: flex; align-items: center; cursor: pointer; flex-shrink: 0; user-select: none;
+}
+.clr-toggle input[type=checkbox] { display: none; }
+.clr-toggle .tbox { width: 12px; height: 12px; border: 1px solid var(--amber-dim); background: var(--input-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.clr-toggle input:checked + .tbox { border-color: var(--amber); background: rgba(234,179,0,0.15); }
+.clr-toggle input:checked + .tbox::after { content: '\2713'; font-size: 0.79em; color: var(--amber); line-height: 1; }
+.clr-row-disabled lbl, .clr-row-disabled input[type=color], .clr-row-disabled .hex-in {
+  opacity: 0.3; pointer-events: none;
+}
+
+/* ── Language multi-select ─────────────────────────────────── */
+.lang-wrap { display: flex; flex-direction: row; gap: 4px; flex: 1; min-width: 0; align-items: center; }
+.lang-pills { display: flex; gap: 3px; flex-wrap: nowrap; flex-shrink: 0; }
+.lang-pill {
+  display: flex; align-items: center; gap: 3px; background: rgba(234,179,0,0.12);
+  color: var(--amber); border: 1px solid rgba(234,179,0,0.35); padding: 1px 6px;
+  font-size: 0.93em; letter-spacing: 1px; font-family: var(--font); cursor: pointer; user-select: none;
+}
+.lang-pill:hover { border-color: var(--accent); color: var(--accent); }
+.lang-pill .lang-x { font-size: 0.79em; color: var(--accent); margin-left: 2px; }
+#p1-det { overflow: visible; position: relative; z-index: 10; }
+.lang-dd-wrap { position: relative; flex-shrink: 1; min-width: 0; }
+.lang-dd-btn { font-size: 0.86em !important; padding: 2px 6px !important; width: auto !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lang-dd {
+  position: absolute; top: 100%; left: 0; min-width: 200px; z-index: 9000;
+  background: rgba(15,10,30,0.97); border: 1px solid var(--amber-dim);
+  max-height: 160px; overflow-y: auto;
+}
+.lang-dd-item {
+  display: flex; align-items: center; gap: 6px; padding: 4px 8px;
+  font-family: var(--font); font-size: 0.93em; color: var(--dim);
+  cursor: pointer; user-select: none; letter-spacing: 0.5px;
+}
+.lang-dd-item:hover { background: rgba(234,179,0,0.08); color: var(--amber); }
+.lang-dd-item input[type=checkbox] { display: none; }
+.lang-dd-item .tbox { width: 11px; height: 11px; border: 1px solid var(--amber-dim); background: var(--input-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.lang-dd-item input:checked + .tbox { border-color: var(--amber); background: rgba(234,179,0,0.15); }
+.lang-dd-item input:checked + .tbox::after { content: '\2713'; font-size: 0.71em; color: var(--amber); line-height: 1; }
+.lang-dd-item input:checked ~ span { color: var(--amber); }
+
+/* ── Slot strip ────────────────────────────────────────────── */
+.icon-well-col { display: flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0; width: 100%; justify-content: center; }
+.slot-strip { display: flex; gap: 1px; flex-shrink: 0; align-items: stretch; }
+.slot-sq {
+  flex: 1; aspect-ratio: 1/1; border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.03); cursor: pointer; position: relative;
+  display: flex; align-items: center; justify-content: center; overflow: hidden; transition: border-color 0.1s;
+  min-width: 0; min-height: 0;
+}
+.slot-sq:hover { border-color: rgba(234,179,0,0.5); }
+.slot-sq.active { border-color: var(--amber); background: rgba(234,179,0,0.1); }
+.slot-sq.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--amber); }
+.slot-sq.has-img { border-color: rgba(0,229,255,0.4); }
+.slot-sq.slot-disabled { opacity: 0.25; pointer-events: none; cursor: default; }
+.slot-sq img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+.slot-inner-lbl { font-size: 0.64em; color: var(--amber-dim); letter-spacing: 0.2px; position: relative; z-index: 0; pointer-events: none; line-height: 1; }
+.slot-sq.has-img .slot-inner-lbl { display: none; }
+/* ── Screenshot controls (slots 2-5) ──────────────────────── */
+.ss-info { font-size: 0.86em; color: var(--dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ── 2x5 category grid ─────────────────────────────────────── */
+.cat-grid-new {
+  display: grid; grid-template-columns: repeat(5,1fr); gap: 2px; width: 100%; flex-shrink: 0;
+}
+.cat-btn-new {
+  font-family: var(--font); font-size: 0.79em; letter-spacing: 0.4px; font-weight: 700;
+  border: 1px solid; padding: 3px 2px; cursor: pointer; text-align: center;
+  user-select: none; transition: filter 0.1s;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cat-btn-new:hover { filter: brightness(1.35); }
+.cat-btn-new.active { filter: brightness(1.6); outline: 1px solid rgba(255,255,255,0.45); }
+
+/* ── Subcategory dropdown ───────────────────────────────────── */
+.subcat-row { width: 100%; flex-shrink: 0; }
+.subcat-wrap { position: relative; flex-shrink: 0; }
+.subcat-btn-el { font-size: 0.86em !important; padding: 2px 6px !important; width: auto !important; white-space: nowrap; }
+.subcat-dd {
+  position: absolute; top: 100%; left: 0; min-width: 155px; z-index: 9001;
+  background: rgba(15,10,30,0.97); border: 1px solid var(--amber-dim);
+  max-height: 130px; overflow-y: auto; display: none;
+}
+.subcat-dd.open { display: block; }
+.subcat-dd-item {
+  display: flex; align-items: center; gap: 5px; padding: 3px 8px;
+  font-family: var(--font); font-size: 0.86em; color: var(--dim);
+  cursor: pointer; user-select: none; letter-spacing: 0.5px;
+}
+.subcat-dd-item:hover { background: rgba(234,179,0,0.08); color: var(--amber); }
+.subcat-dd-item input[type=checkbox] { display: none; }
+.subcat-dd-item .tbox { width: 10px; height: 10px; border: 1px solid var(--amber-dim); background: var(--input-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.subcat-dd-item input:checked+.tbox { border-color: var(--amber); background: rgba(234,179,0,0.15); }
+.subcat-dd-item input:checked+.tbox::after { content: '\2713'; font-size: 0.64em; color: var(--amber); line-height: 1; }
+.subcat-dd-item input:checked~span { color: var(--amber); }
+.subcat-pills { display: flex; gap: 3px; flex-wrap: nowrap; flex: 1; min-width: 0; overflow: hidden; align-items: center; }
+.subcat-pill {
+  display: flex; align-items: center; gap: 2px; background: rgba(0,229,255,0.07);
+  color: rgba(0,229,255,0.85); border: 1px solid rgba(0,229,255,0.3); padding: 1px 5px;
+  font-size: 0.79em; letter-spacing: 0.4px; font-family: var(--font); cursor: pointer; user-select: none; flex-shrink: 0;
+}
+.subcat-pill:hover { border-color: var(--accent); color: var(--accent); }
+.subcat-x { font-size: 0.71em; color: var(--accent); margin-left: 1px; }
+
+/* ── BSV flags row ─────────────────────────────────────────── */
+.bsv-flags-row { display: flex; gap: 2px; width: 100%; flex-shrink: 0; }
+.bsv-flag {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 2px;
+  border: 1px solid rgba(234,179,0,0.2); padding: 2px 1px; cursor: pointer;
+  color: var(--gold); user-select: none; background: rgba(234,179,0,0.02);
+  transition: border-color 0.1s; white-space: nowrap; overflow: hidden;
+}
+.bsv-flag:hover { border-color: var(--amber-dim); }
+.bsv-flag input[type=checkbox] { display: none; }
+.bsv-flag .tbox { width: 10px; height: 10px; border: 1px solid var(--amber-dim); background: var(--input-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.bsv-flag input:checked+.tbox { border-color: var(--amber); background: rgba(234,179,0,0.2); }
+.bsv-flag input:checked+.tbox::after { content: '\2713'; font-size: 0.64em; color: var(--amber); line-height: 1; }
+.bsv-flag input:checked~.bflag-lbl { color: var(--amber); }
+/* BSVhub checkbox — blood orange when checked */
+.bsv-flag.bsvhub-mandatory input:checked+.tbox { border-color: var(--mandatory); background: rgba(232,68,32,0.15); }
+.bsv-flag.bsvhub-mandatory input:checked+.tbox::after { color: var(--mandatory); }
+.bsv-flag.bsvhub-mandatory input:checked~.bflag-lbl { color: var(--mandatory); }
+/* Subcat button — blood orange when BSVhub mandatory */
+.subcat-btn-el.req { border-color: var(--mandatory) !important; color: var(--mandatory) !important; }
+.bflag-lbl { font-size: 0.86em; letter-spacing: 0.3px; }
+.bsv-tbox { width: 12px !important; height: 12px !important; }
+.bsv-flag input:checked+.bsv-tbox::after { font-size: 0.71em !important; }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION 4: PANEL FONT SIZES — Independent per-panel typography
+   Remapped from #panel-* to #p1-* wireframe panel IDs
+   ═══════════════════════════════════════════════════════════════ */
+#p1-icon                               { font-size: 14px; }
+#p1-det                                { font-size: 12px; }
+#p1-desc                               { font-size: 14px; }
+#p1-dev                                { font-size: 12px; }
+#p1-feat                               { font-size: 14px; }
+#p1-tx                                 { font-size: 16px; }
+.titlebar                              { font-size: 14px; }
+.statusbar                             { font-size: 14px; }
+
+/* Element overrides — em values are relative to their panel's font-size above */
+.logo      { font-size: 1.43em; }  /* 20px @ 14px base */
+.wallet-label { font-size: 1.14em; }
+.btn       { font-size: 1.14em; }
+.plabel    { font-size: 1em; }
+lbl        { font-size: 1em; }
+lbl.req    { font-size: 1em; }
+input[type=text], input[type=url], select, textarea { font-size: 1em; }
+.cat-btn-new   { font-size: 0.79em; }
+.file-btn      { font-size: 1em; }
+.file-info     { font-size: 1em; }
+.hex-in        { font-size: 1em !important; }
+.sval          { font-size: 1em; }
+.ccount        { font-size: 1em; }
+.gradient-hint { font-size: 0.93em; }
+.txid-status   { font-size: 0.93em; }
+.feat-num      { font-size: 1em; }
+.feat-count    { font-size: 0.93em; }
+.feat-hint     { font-size: 0.78em; }
+.btn-submit    { font-size: 1.64em; }
+.tip-opt       { font-size: 1em; }
+.tip-label     { font-size: 1em; }
+.status        { font-size: 1em; }
+.sb-l, .sb-r   { font-size: 1em; }
+.lang-pill     { font-size: 0.93em; }
+.lang-pill .lang-x { font-size: 0.79em; }
+.lang-dd-btn   { font-size: 0.86em !important; }
+.lang-dd-item  { font-size: 0.93em; }
+.subcat-btn-el { font-size: 0.86em !important; }
+.subcat-dd-item{ font-size: 0.86em; }
+.subcat-pill   { font-size: 0.79em; }
+.subcat-x      { font-size: 0.71em; }
+.bflag-lbl     { font-size: 0.86em; }
+.ss-info       { font-size: 0.86em; }
+.slot-inner-lbl{ font-size: 0.64em; }
+.dev-field input[type=text] { font-size: 1em; }
+.onchain-label { font-size: 0.79em; }
+.mode-toggle   { font-size: 0.86em; }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION 5: VIEWER STYLES (from viewer.html)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Badge (viewer title bar) ──────────────────────────────── */
+.badge {
+  background: rgba(0,204,68,0.12); color: var(--green);
+  border: 1px solid rgba(0,204,68,0.45);
+  padding: 3px 10px; font-size: 13px; letter-spacing: 2px; white-space: nowrap;
+}
+.badge:empty { display: none; }
+.badge.loading {
+  background: rgba(234,179,0,0.12); color: var(--amber);
+  border-color: rgba(234,179,0,0.45);
+}
+.badge.err {
+  background: rgba(255,87,51,0.18); color: var(--accent);
+  border-color: rgba(255,87,51,0.45);
+}
+
+/* ── MAP table (shared S2 + S3) ────────────────────────────── */
+.map-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.map-table tr { border-bottom: 1px solid rgba(46,63,102,0.4); }
+.map-table tr:hover { background: rgba(255,87,51,0.04); }
+.map-table td { padding: 4px 6px; vertical-align: top; }
+.map-table td:first-child {
+  color: var(--amber-dim); white-space: nowrap; width: 38%; letter-spacing: 0.5px;
+}
+.map-table td:last-child { color: var(--white); word-break: break-all; }
+.map-table .fv { color: rgba(212,208,224,0.65); }
+
+/* ── Metadata rows ─────────────────────────────────────────── */
+.meta-row {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding: 3px 0; border-bottom: 1px solid rgba(46,63,102,0.4);
+}
+.mk { font-size: 12px; color: var(--amber-dim); letter-spacing: 1px; text-transform: uppercase; white-space: nowrap; padding-right: 8px; }
+.mv { font-size: 13px; color: var(--white); text-align: right; word-break: break-all; flex: 1; }
+
+
+/* ── Side tile hover (augments card.js styles) ──────────────── */
+.bsvcard-side-tile { transition: border-color 0.2s; }
+.bsvcard-side-tile img { transition: opacity 0.2s; }
+
+/* ── Loading states ────────────────────────────────────────── */
+.loading-msg {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  height: 100%; gap: 12px; text-align: center;
+}
+.loading-msg .spinner {
+  font-size: 28px; animation: spin 1.2s linear infinite; color: var(--amber);
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-msg .text { font-size: 14px; color: var(--dim); letter-spacing: 2px; }
+.err-msg { color: var(--accent); font-size: 14px; letter-spacing: 1px; line-height: 1.6; }
+
+/* ── Scrollbar for viewer columns ──────────────────────────── */
+.col { overflow-y: auto; overflow-x: hidden; }
+.col::-webkit-scrollbar { width: 3px; }
+.col::-webkit-scrollbar-thumb { background: var(--amber-dim); }
+
+/* ── Diff highlighting for UPDATE mode preview ─────────────── */
+.map-table .changed td { background: rgba(234,179,0,0.08); }
+.map-table .added td { background: rgba(0,204,68,0.08); }
+.map-table .removed td { background: rgba(255,87,51,0.08); text-decoration: line-through; }
+
+/* ── S2 MAP panel — scroll when content overflows ──────────── */
+#p2-map { overflow-y: auto; overflow-x: auto; }
+#p2-map::-webkit-scrollbar { width: 3px; }
+#p2-map::-webkit-scrollbar-thumb { background: var(--amber-dim); }
+
+/* ── S3 MAP table panel — scroll when content overflows ────── */
+#p3-table { overflow-y: auto; overflow-x: auto; }
+#p3-table::-webkit-scrollbar { width: 3px; }
+#p3-table::-webkit-scrollbar-thumb { background: var(--amber-dim); }
+
+/* ── S2 TX summary — left-justified ───────────────────────── */
+#p2-tx { text-align: left; }
+
+/* ── S3 TXID panel — right-justified bar ──────────────────── */
+#p3-txid { justify-content: center; }
+
+/* ── Inputs stretch to full width ─────────────────────────── */
+.row input[type=text], .row input[type=url], .row select, .row textarea { flex: 1; min-width: 0; width: 100%; }
+textarea { width: 100%; }

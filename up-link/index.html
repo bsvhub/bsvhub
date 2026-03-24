@@ -1,0 +1,199 @@
+<!--
+  ═══════════════════════════════════════════════════════════════
+  index.html — BSV Directory Portal // Entry Point (v7.0)
+  ═══════════════════════════════════════════════════════════════
+
+  PURPOSE:  Single HTML entry point. 3-screen wireframe shell with
+            empty panel slots, col-wrap flex layout, unit controls,
+            CSS/JS load order, and shared hidden elements.
+
+  INPUTS:   None (static HTML). All content injected by JS controllers.
+
+  OUTPUTS:  DOM structure consumed by wireframe.js (geometry),
+            panel JS files (content rendering), app-init.js (bootstrap).
+
+  DEPENDS:  wireframe.css, app.css, settings.js, wireframe.js,
+            card.js, onchain.js (opt), offline.js (opt),
+            app-core.js, app-form.js, s1-*.js, in-tx.js,
+            header-footer.js, map-up.js, map-down.js, txid-in.js,
+            app-core-s1.js, app-core-s2.js, app-core-s3.js,
+            app-wallet.js, app-init.js
+
+  NOTES:    Replaces up-link.html + viewer.html as the single page.
+            Works from file:// protocol — no server required.
+            Panel divs start empty; JS injects content on DOMContentLoaded.
+            Titlebars/statusbars are empty containers — populated by
+            header-footer.js at boot time.
+  ═══════════════════════════════════════════════════════════════
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>BSV DIRECTORY // PORTAL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="wireframe.css">
+<link rel="stylesheet" href="app.css">
+<style id="dynamic-vars">
+/* Injected by App.SettingsApplier on load — do not edit manually */
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════
+     SCREEN 1 — SUBMIT FORM
+     Left  (13w): APP DETAILS(7h) · DESCRIPTION(3h) · FEATURES(4h) = 14h
+     Right (13w): ICON DESIGN(6h) · DEVELOPER(4h) · TRANSMIT(3h) · SUBMIT BTN(1h) = 14h
+     1-col order: Det(1) · Icon(2) · Desc(3) · Dev(4) · Feat(5) · Tx(6) · TxBtn(7)
+     ════════════════════════════════════════════════════════ -->
+<div id="screen-1" class="screen active">
+  <div class="shell" id="shell-1">
+
+    <div class="titlebar" id="titlebar-1">
+      <!-- Populated by header-footer.js -->
+    </div>
+
+    <div class="main-area" id="main-s1">
+      <div class="col-wrap" id="colwrap-s1">
+
+        <div class="col col-left">
+          <div class="panel" id="p1-det"><!-- s1-details.js --></div>
+          <div class="panel" id="p1-desc"><!-- s1-desc.js --></div>
+          <div class="panel" id="p1-feat"><!-- s1-feat.js --></div>
+        </div>
+
+        <div class="col col-right">
+          <div class="panel" id="p1-icon"><!-- s1-icon.js --></div>
+          <div class="panel" id="p1-dev"><!-- s1-dev.js --></div>
+          <div class="panel" id="p1-tx"><!-- in-tx.js --></div>
+          <div class="panel" id="p1-tx-btn"><!-- in-tx.js (button) --></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="statusbar" id="sb-1">
+      <span class="sb-l">READY</span>
+      <div class="sb-r">
+        <span id="sb-version"></span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     SCREEN 2 — CHAIN PREVIEW
+     Left  (13w): MAP RECORD(14h) = 14h
+     Right (13w): CARD PREVIEW(10h) · TX SUMMARY(3h) · SIGN BTN(1h) = 14h
+     1-col order: Map(1) · Card(2) · Tx(3) · TxBtn(4)
+     ════════════════════════════════════════════════════════ -->
+<div id="screen-2" class="screen">
+  <div class="shell" id="shell-2">
+
+    <div class="titlebar" id="titlebar-2">
+      <!-- Populated by header-footer.js -->
+    </div>
+
+    <div class="main-area" id="main-s2">
+      <div class="col-wrap" id="colwrap-s2">
+
+        <div class="col col-left">
+          <div class="panel" id="p2-map"><!-- map-up.js --></div>
+        </div>
+
+        <div class="col col-right">
+          <div class="panel" id="p2-card"><!-- card.js --></div>
+          <div class="panel" id="p2-tx"><!-- in-tx.js --></div>
+          <div class="panel" id="p2-tx-btn"><!-- in-tx.js (button) --></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="statusbar" id="sb-2">
+      <span class="sb-l">PREVIEW</span>
+      <div class="sb-r"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     SCREEN 3 — ON-CHAIN VIEWER
+     Full-width : TXID INPUT BAR (2h)
+     Left  (13w): MAP TABLE (12h)
+     Right (13w): CARD VIEW (12h)
+     1-col order: TXID(1) · Table(2) · Card(3)
+     ════════════════════════════════════════════════════════ -->
+<div id="screen-3" class="screen">
+  <div class="shell" id="shell-3">
+
+    <div class="titlebar" id="titlebar-3">
+      <!-- Populated by header-footer.js -->
+    </div>
+
+    <div class="main-area" id="main-s3">
+
+      <!-- TXID: full-width, direct child of main-area in both modes.
+           Gets explicit h×unit height always (not proportioned in a col). -->
+      <div class="panel" id="p3-txid"><!-- txid-in.js --></div>
+
+      <div class="col-wrap" id="colwrap-s3">
+        <div class="col col-left">
+          <div class="panel" id="p3-table"><!-- map-down.js --></div>
+        </div>
+        <div class="col col-right">
+          <div class="panel" id="p3-card"><!-- card.js --></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="statusbar" id="sb-3">
+      <span class="sb-l">VIEWER</span>
+      <div class="sb-r"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Hidden file inputs -->
+<input type="file" id="icon-file-input">
+<input type="file" id="ss-file-input">
+
+<!-- Record picker overlay -->
+<div id="picker-overlay"></div>
+
+<!-- Debug badge -->
+<div id="dim-badge"></div>
+
+<!-- ═══ Scripts — dependency order ═══ -->
+<script src="settings.js"></script>
+<script src="wireframe.js"></script>
+<script src="slide.js"></script>
+<script src="card.js"></script>
+<script src="onchain.js"></script>
+<script src="offline.js"></script>
+<script src="app-core.js"></script>
+<script src="app-form.js"></script>
+<script src="s1-icon.js"></script>
+<script src="s1-details.js"></script>
+<script src="s1-desc.js"></script>
+<script src="s1-dev.js"></script>
+<script src="s1-feat.js"></script>
+<script src="in-tx.js"></script>
+<script src="header-footer.js"></script>
+<script src="map-up.js"></script>
+<script src="map-down.js"></script>
+<script src="txid-in.js"></script>
+<script src="app-core-s1.js"></script>
+<script src="app-core-s2.js"></script>
+<script src="app-core-s3.js"></script>
+<script src="app-wallet.js"></script>
+<script src="app-init.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,572 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   offline.js — Offline/Local Testing Module for BSV Directory Portal
+   ═══════════════════════════════════════════════════════════════════════
+
+   Provides .txt file export/import for MAP protocol records.
+   Used for local testing without a real BRC-100 wallet.
+
+   This file is OPTIONAL. If missing, the portal runs in on-chain-only
+   mode. If present, it registers App.Capabilities.offline = true and
+   the portal enables local simulation features.
+
+   Requires: App object to exist (defined in HTML before this loads).
+   ═══════════════════════════════════════════════════════════════════════ */
+
+
+// ─────────────────────────────────────────────────────────────────────
+//  App.MAPExport — Serialise form data to MAP protocol text
+//  and trigger browser download as .txt file.
+//
+//  IMPORTANT — additive extension, not a replacement:
+//  onchain.js (loaded before this file) may have already attached
+//  saveOnChain and other methods to App.MAPExport.  Using a bare
+//  assignment ( App.MAPExport = { … } ) would silently destroy those
+//  methods, causing saveMAP() to fall through to the offline file-save
+//  path even when on-chain mode is active.
+//
+//  Object.assign merges our offline methods into whatever object already
+//  exists (or into a fresh one if onchain.js is absent), preserving any
+//  methods added by earlier scripts.
+// ─────────────────────────────────────────────────────────────────────
+
+App.MAPExport = Object.assign(App.MAPExport || {}, {
+
+  // Generate a mock 64-char hex txid for local testing.
+  _mockTxid: function() {
+    var hex = '0123456789abcdef';
+    var id = '';
+    for (var i = 0; i < 64; i++) id += hex[Math.floor(Math.random() * 16)];
+    return id;
+  },
+
+  // Build ordered MAP key-value pairs from collectData() output.
+  // This field order matches the on-chain MAP SET structure exactly.
+  // Shared by both offline (serialisation) and on-chain (hex scripts).
+  _buildMAPFields: function(d) {
+    var fields = [
+      ['protocol',          d.protocol],
+      ['protocol_version',  d.protocol_version],
+      ['name',              d.name || ''],
+      ['abbreviation',      d.abbreviation || ''],
+      ['url',               d.url || ''],
+      ['category',          d.category || ''],
+      ['subcategory',       d.subcategory || ''],
+      ['status',            d.status || ''],
+      ['language',          d.language || ''],
+      ['bsv_content',       String(!!d.bsv_content)],
+      ['brc100',            String(d.brc100)],
+      ['on_chain',          String(!!d.on_chain)],
+      ['accepts_bsv',       String(!!d.accepts_bsv)],
+      ['open_source',       String(!!d.open_source)],
+      ['release_date',      d.release_date || ''],
+      ['version',           d.version || ''],
+      ['tags',              d.tags || ''],
+      ['description',       d.description || ''],
+    ];
+
+    // Features — only include non-empty slots
+    d.features.forEach(function(f, i) {
+      if (f) fields.push(['feature_' + (i + 1), f]);
+    });
+
+    fields.push(
+      ['icon_txid',         d.icon_txid || '(pending)'],
+      ['icon_format',       d.icon_format || ''],
+      ['icon_size_kb',      String(d.icon_size_kb || '')],
+      ['icon_bg_enabled',   String(d.icon_bg_enabled)],
+      ['icon_fg_enabled',   String(d.icon_fg_enabled)],
+      ['icon_bg_colour',    (d.icon_bg_enabled && d.icon_bg_colour && d.icon_bg_colour.toLowerCase() !== '#1a1440') ? d.icon_bg_colour : ''],
+      ['icon_fg_colour',    (d.icon_fg_enabled && d.icon_fg_colour && d.icon_fg_colour.toLowerCase() !== '#eab300') ? d.icon_fg_colour : ''],
+      ['icon_bg_alpha',     String(d.icon_bg_alpha)],
+      ['icon_zoom',         String(d.icon_zoom)],
+      ['alt_text',          d.alt_text || ''],
+      ['developer_paymail', d.developer_paymail || ''],
+      ['developer_twitter', d.developer_twitter || ''],
+      ['developer_github',  d.developer_github || ''],
+      ['developer_bio',     d.developer_bio || ''],
+    );
+
+    // Screenshots — ss1 through ss4 txids and metadata
+    var ss = d.screenshots || [null, null, null, null];
+    for (var si = 0; si < 4; si++) {
+      var n = si + 1;
+      var slot = ss[si];
+      if (slot || d['ss' + n + '_txid']) {
+        fields.push(['ss' + n + '_txid',    d['ss' + n + '_txid'] || '(pending)']);
+        fields.push(['ss' + n + '_format',  (slot && slot.mime) || d['ss' + n + '_format'] || '']);
+        fields.push(['ss' + n + '_size_kb', (slot && String(slot.kb)) || d['ss' + n + '_size_kb'] || '']);
+      }
+    }
+
+    return fields;
+  },
+
+  // Serialise form data to MAP protocol text format.
+  _serialise: function(d) {
+    var fields = this._buildMAPFields(d);
+    var mockId = this._mockTxid();
+    var ts = new Date().toISOString();
+
+    var maxKey = 0;
+    fields.forEach(function(pair) { if (pair[0].length > maxKey) maxKey = pair[0].length; });
+
+    var lines = [
+      '# ═══════════════════════════════════════════════════════════════',
+      '# BSV DIRECTORY — MAP PROTOCOL RECORD',
+      '# ═══════════════════════════════════════════════════════════════',
+      '#',
+      '# Timestamp:  ' + ts,
+      '# App ID:     ' + mockId + '  [LOCAL TEST — mock txid]',
+      '# Action:     MAP SET',
+      '# Protocol:   ' + d.protocol + ' v' + d.protocol_version,
+      '#',
+      '# [TEMPORARY] Local test file — not written to chain.',
+      '# ═══════════════════════════════════════════════════════════════',
+      '',
+      'MAP SET',
+    ];
+
+    fields.forEach(function(pair) {
+      lines.push(pair[0].padEnd(maxKey + 2) + '| ' + pair[1]);
+    });
+
+    if (d.tip_bsv > 0) {
+      lines.push('');
+      lines.push('# TIP: ' + d.tip_bsv + ' BSV (included in transaction output)');
+    }
+
+    if (d.icon_data_b64) {
+      lines.push('');
+      lines.push('# ═══════════════════════════════════════════════════════════════');
+      lines.push('# B:// ICON DATA');
+      lines.push('# [TEMPORARY] Embedded for local testing only.');
+      lines.push('# ═══════════════════════════════════════════════════════════════');
+      lines.push('B_ICON_DATA | ' + d.icon_data_b64);
+    }
+
+    // Embed screenshot data for local testing
+    var ss = d.screenshots || [null, null, null, null];
+    for (var si = 0; si < 4; si++) {
+      if (ss[si] && ss[si].dataB64) {
+        lines.push('');
+        lines.push('# B:// SCREENSHOT ' + (si + 1) + ' DATA');
+        lines.push('B_SS' + (si + 1) + '_DATA | ' + ss[si].dataB64);
+      }
+    }
+
+    lines.push('');
+    lines.push('# ═══════════════════════════════════════════════════════════════');
+    lines.push('# OP_RETURN REFERENCE (single-line on-chain format)');
+    lines.push('# ═══════════════════════════════════════════════════════════════');
+    var opParts = ['OP_RETURN', '1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5', 'SET'];
+    fields.forEach(function(pair) { opParts.push(pair[0], pair[1]); });
+    lines.push('# ' + opParts.join(' | '));
+
+    lines.push('');
+    lines.push('# END OF RECORD');
+
+    return { text: lines.join('\n'), mockId: mockId };
+  },
+
+  // Trigger browser file download.
+  _downloadFile: function(text, filename) {
+    var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  },
+
+  // Main entry point — validate, serialise, download.
+  save: function() {
+    var d = App.Form.collectData();
+    var result = this._serialise(d);
+
+    var safeName = (d.name || 'unnamed').replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 32);
+    var date = new Date().toISOString().slice(0, 10);
+    var filename = 'bsvdirectory_MAP_' + safeName + '_' + date + '.txt';
+
+    this._downloadFile(result.text, filename);
+    App.StatusBar.set('MAP RECORD SAVED // ' + filename, 'ok');
+
+    return result.mockId;
+  },
+
+  init: function() {
+    // Set up the saveMAP bridge for offline mode.
+    // If onchain.js also loads, it will wrap this in a dispatcher.
+    // If only offline.js loads, this is the only save path.
+    if (!window.saveMAP) {
+      window.saveMAP = function() {
+        return App.MAPExport.save();
+      };
+    }
+  },
+});
+
+
+// ─────────────────────────────────────────────────────────────────────
+//  App.MAPImport — Parse a MAP protocol text file and populate
+//  the submit form for update/edit testing.
+// ─────────────────────────────────────────────────────────────────────
+
+App.MAPImport = {
+
+  // Parse MAP protocol text into a key-value object.
+  _parse: function(text) {
+    var fields = {};
+    var inMAPBlock = false;
+
+    text.split('\n').forEach(function(line) {
+      var trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) return;
+      if (trimmed === 'MAP SET') { inMAPBlock = true; return; }
+
+      if (trimmed.startsWith('B_ICON_DATA')) {
+        var pipeIdx = trimmed.indexOf('|');
+        if (pipeIdx !== -1) fields._icon_data_b64 = trimmed.slice(pipeIdx + 1).trim();
+        return;
+      }
+      // Parse embedded screenshot data (B_SS1_DATA through B_SS4_DATA)
+      for (var ssi = 1; ssi <= 4; ssi++) {
+        if (trimmed.startsWith('B_SS' + ssi + '_DATA')) {
+          var ssPipeIdx = trimmed.indexOf('|');
+          if (ssPipeIdx !== -1) fields['_ss' + ssi + '_data_b64'] = trimmed.slice(ssPipeIdx + 1).trim();
+          return;
+        }
+      }
+
+      if (inMAPBlock) {
+        var pipeIdx2 = trimmed.indexOf('|');
+        if (pipeIdx2 === -1) return;
+        var key = trimmed.slice(0, pipeIdx2).trim();
+        var val = trimmed.slice(pipeIdx2 + 1).trim();
+        if (key) fields[key] = val;
+      }
+    });
+
+    return fields;
+  },
+
+  // Populate form fields from parsed MAP data.
+  // Reusable for both local file import and on-chain record loading.
+  _populateForm: function(f) {
+    var $ = App.Utils.$;
+
+    // Store original loaded data for diff comparison in preview
+    var normalized = Object.assign({}, f);
+    ['name','url','version','tags','description','alt_text',
+     'developer_paymail','developer_twitter','developer_github','developer_bio'].forEach(function(k) {
+      if (normalized[k] !== undefined && !normalized[k]) normalized[k] = '—';
+    });
+    App.State.loadedRecord = normalized;
+
+    // Auto-switch to UPDATE mode
+    App.Mode.set('update', true);
+
+    // --- Text inputs ---
+    if (f.name !== undefined)    $('app-name').value = f.name;
+    if (f.abbreviation !== undefined) $('app-abbr').value = f.abbreviation;
+    if (f.url !== undefined)     $('app-url').value = f.url;
+    if (f.tags !== undefined)    $('app-tags').value = f.tags;
+    if (f.version !== undefined) $('app-ver').value = f.version;
+    if (f.release_date !== undefined) { $('app-rel').value = f.release_date; $('rel-today').checked = false; $('app-rel').disabled = false; }
+    if (f.brc100 !== undefined) $('brc100-on').checked = f.brc100 === 'true' || f.brc100 === true;
+
+    // --- Selects ---
+    if (f.status) $('app-status').value = f.status;
+
+    // --- Language multi-select ---
+    if (f.language) {
+      var langs = f.language.split(';').map(function(l) { return l.trim(); }).filter(Boolean);
+      document.querySelectorAll('#lang-dd input[type=checkbox]').forEach(function(cb) {
+        cb.checked = langs.includes(cb.value);
+      });
+      App.Lang.updatePills();
+    }
+
+    // --- Categories ---
+    if (f.category) {
+      var cats = f.category.split(';').map(function(c) { return c.trim(); }).filter(Boolean);
+      document.querySelectorAll('.cat-btn-new').forEach(function(btn) {
+        btn.classList.toggle('active', cats.includes(btn.dataset.val));
+      });
+    }
+
+    // --- Description ---
+    if (f.description !== undefined) {
+      $('desc').value = f.description;
+      $('desc').dispatchEvent(new Event('input'));
+    }
+
+    // --- Features ---
+    for (var i = 1; i <= SETTINGS.MAX_FEATURES; i++) {
+      var el = $('f' + i);
+      if (!el) continue;
+      var val = f['feature_' + i] || '';
+      if (i > 1 && val) el.disabled = false;
+      el.value = val;
+      el.dispatchEvent(new Event('input'));
+    }
+
+    // --- Developer fields ---
+    if (f.developer_twitter !== undefined) $('dev-tw').value = f.developer_twitter;
+    if (f.developer_github !== undefined)  $('dev-gh').value = f.developer_github;
+    if (f.developer_bio !== undefined) {
+      $('dev-bio').value = f.developer_bio;
+      $('dev-bio').dispatchEvent(new Event('input'));
+    }
+    if (f.developer_paymail && App.State.walletConnected) {
+      $('dev-paymail').value = f.developer_paymail;
+    }
+
+    // --- Icon state ---
+    if (f.icon_format) App.State.iconMime = f.icon_format;
+    if (f.icon_size_kb && f.icon_size_kb !== '—') App.State.iconKb = f.icon_size_kb;
+
+    // --- Icon BG/FG toggles ---
+    if (f.icon_bg_enabled !== undefined) {
+      $('cbg-on').checked = f.icon_bg_enabled === 'true' || f.icon_bg_enabled === true;
+    } else if (f.icon_bg_colour && f.icon_bg_colour !== '—') {
+      $('cbg-on').checked = true;
+    }
+    if (f.icon_fg_enabled !== undefined) {
+      $('cfg-on').checked = f.icon_fg_enabled === 'true' || f.icon_fg_enabled === true;
+    } else if (f.icon_fg_colour && f.icon_fg_colour !== '—') {
+      $('cfg-on').checked = true;
+    }
+
+    // --- Icon settings ---
+    if (f.icon_bg_colour && /^#[0-9a-fA-F]{6}$/.test(f.icon_bg_colour)) {
+      $('cbg').value = f.icon_bg_colour;
+      $('cbg-h').value = f.icon_bg_colour;
+    }
+    if (f.icon_fg_colour && /^#[0-9a-fA-F]{6}$/.test(f.icon_fg_colour)) {
+      $('cfg').value = f.icon_fg_colour;
+      $('cfg-h').value = f.icon_fg_colour;
+    }
+    if (f.icon_bg_alpha !== undefined) {
+      $('opc').value = f.icon_bg_alpha;
+      $('opc-v').textContent = parseFloat(f.icon_bg_alpha).toFixed(2);
+    }
+    if (f.icon_zoom !== undefined) {
+      $('zom').value = f.icon_zoom;
+      $('zom-v').textContent = parseFloat(f.icon_zoom).toFixed(2);
+    }
+    if (f.alt_text !== undefined) $('icon-alt').value = f.alt_text;
+
+    // --- Icon mode and data ---
+    if (f.icon_txid && f.icon_txid !== '(pending)' && App.Utils.isValidTxid(f.icon_txid)) {
+      var txidRadio = document.querySelector('input[name=isrc][value=txid]');
+      txidRadio.checked = true;
+      App.Icon.switchMode('txid');
+      $('icon-txid').value = f.icon_txid;
+    }
+
+    // Restore icon preview from embedded B:// data or fetch from chain
+    if (f._icon_data_b64) {
+      App.State.iconDataB64 = f._icon_data_b64;
+      App.State.iconChainUrl = null;
+      App.Icon._loadIntoPreview(f._icon_data_b64);
+    } else if (f.icon_txid && f.icon_txid !== '(pending)' && App.Utils.isValidTxid(f.icon_txid)) {
+      // Try to fetch icon from chain and display it
+      App.State.iconDataB64 = null;
+      App.State.iconChainUrl = null;
+      if (App.Icon.fetchFromBlockchain) {
+        $('icon-txid').value = f.icon_txid;
+        App.Icon.fetchFromBlockchain();
+      }
+    } else {
+      App.State.iconDataB64 = null;
+      App.State.iconChainUrl = null;
+      var prev = $('icon-preview');
+      prev.innerHTML = '<div class="bg-layer" id="preview-bg"></div><span class="no-img">NO IMAGE</span>';
+    }
+
+    // --- Restore screenshots from embedded data or on-chain txids ---
+    if (App.Screenshots) {
+      // Clear existing screenshots first
+      for (var si = 1; si <= 4; si++) {
+        App.Screenshots._slots[si] = null;
+        App.Screenshots._updateStripThumb(si);
+      }
+      for (var sj = 1; sj <= 4; sj++) {
+        var ssTxid = f['ss' + sj + '_txid'];
+        var ssEmbedded = f['_ss' + sj + '_data_b64'];
+
+        if (ssEmbedded) {
+          // Offline file with embedded B64 data
+          App.Screenshots._slots[sj] = {
+            dataB64: ssEmbedded,
+            filename: 'ss' + sj,
+            kb: f['ss' + sj + '_size_kb'] || '?',
+            mime: f['ss' + sj + '_format'] || 'image/png'
+          };
+          App.Screenshots._updateStripThumb(sj);
+        } else if (ssTxid && ssTxid !== '(pending)') {
+          // On-chain record — restore metadata and try to fetch from CDN
+          var ssSlot = {
+            dataB64: null,
+            filename: 'ss' + sj,
+            kb: f['ss' + sj + '_size_kb'] || '?',
+            mime: f['ss' + sj + '_format'] || 'image/png',
+            txid: ssTxid
+          };
+          App.Screenshots._slots[sj] = ssSlot;
+          App.Screenshots._updateStripThumb(sj);
+          // Try to fetch screenshot image from chain CDN
+          (function(idx, txid, slot) {
+            if (App.Config && App.Config.getAllCdnUrls) {
+              var urls = App.Config.getAllCdnUrls(txid);
+              var attempt = 0;
+              function tryNext() {
+                if (attempt >= urls.length) return;
+                var img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = function() {
+                  var canvas = document.createElement('canvas');
+                  canvas.width = img.naturalWidth;
+                  canvas.height = img.naturalHeight;
+                  canvas.getContext('2d').drawImage(img, 0, 0);
+                  try {
+                    slot.dataB64 = canvas.toDataURL(slot.mime);
+                    App.Screenshots._updateStripThumb(idx);
+                    if (App.Screenshots._updateSlotStates) App.Screenshots._updateSlotStates();
+                  } catch(e) { /* CORS blocked — thumbnail stays empty */ }
+                };
+                img.onerror = function() { attempt++; tryNext(); };
+                img.src = urls[attempt];
+              }
+              tryNext();
+            }
+          })(sj, ssTxid, ssSlot);
+        }
+      }
+      // Update slot disabled states after restoring
+      if (App.Screenshots._updateSlotStates) App.Screenshots._updateSlotStates();
+    }
+
+    App.Icon.updatePreviewStyles();
+    App.LabelAlign.align();
+  },
+
+  // Open file picker, read .txt, parse, populate form.
+  load: function() {
+    var self = this;
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.txt,text/plain';
+
+    input.addEventListener('change', function() {
+      var file = input.files[0];
+      if (!file) return;
+
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var text = e.target.result;
+        var fields = self._parse(text);
+
+        if (fields.protocol !== SETTINGS.PROTOCOL_PREFIX) {
+          App.StatusBar.set('INVALID FILE — NOT A BSV DIRECTORY MAP RECORD', 'err');
+          return;
+        }
+
+        self._populateForm(fields);
+        App.StatusBar.set('MAP RECORD LOADED // ' + file.name, 'ok');
+      };
+      reader.readAsText(file);
+    });
+
+    input.click();
+  },
+
+  init: function() {},
+};
+
+
+// ─────────────────────────────────────────────────────────────────────
+//  App._offlineScanLocal — File-picker-based local record loader
+// ─────────────────────────────────────────────────────────────────────
+//
+//  Presents a multi-file picker so the user can select one or more
+//  previously saved MAP .txt files.  Uses FileReader (not fetch), so
+//  it works correctly under the file:// protocol with no server needed.
+//
+//  Previous implementation used fetch() on hardcoded filenames, which
+//  is blocked by browsers under file:// (CORS / same-origin policy).
+//  FileReader is exempt from that restriction because the user explicitly
+//  grants access to the files via the OS picker dialog.
+//
+//  Called by App.RecordPicker._scanWallet() in the HTML.
+//  Returns a Promise that resolves with an array of parsed record objects,
+//  each matching the shape produced by App.MAPImport._parse().
+//
+//  ── SERVER UPGRADE NOTE ─────────────────────────────────────────────
+//  When served from HTTP, this approach still works perfectly — the
+//  file picker is always valid.  If you later want auto-discovery
+//  (scan a directory for all .txt files without a manual picker), that
+//  requires a small server endpoint and should replace this function.
+//  ─────────────────────────────────────────────────────────────────────
+
+App._offlineScanLocal = function() {
+  return new Promise(function(resolve) {
+
+    // Build a hidden multi-file input restricted to .txt files.
+    var input = document.createElement('input');
+    input.type     = 'file';
+    input.accept   = '.txt,text/plain';
+    input.multiple = true;
+
+    // If the user cancels the picker without selecting anything,
+    // resolve with an empty array rather than hanging forever.
+    input.addEventListener('cancel', function() { resolve([]); });
+
+    input.addEventListener('change', function() {
+      var files = Array.prototype.slice.call(input.files);
+      if (!files.length) { resolve([]); return; }
+
+      var records  = [];
+      var pending  = files.length;
+
+      files.forEach(function(file) {
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+          try {
+            var fields = App.MAPImport._parse(e.target.result);
+            // Silently skip files that aren't BSV Directory MAP records.
+            if (fields.protocol === SETTINGS.PROTOCOL_PREFIX) {
+              fields._source_file = file.name;
+              records.push(fields);
+            }
+          } catch (err) {
+            // Malformed file — skip gracefully, never block the rest.
+            console.warn('_offlineScanLocal: skipping unreadable file:', file.name, err);
+          }
+          // Resolve only once every FileReader has finished.
+          if (--pending === 0) resolve(records);
+        };
+
+        reader.onerror = function() {
+          console.warn('_offlineScanLocal: FileReader error on:', file.name);
+          if (--pending === 0) resolve(records);
+        };
+
+        reader.readAsText(file);
+      });
+    });
+
+    // Trigger the OS file-picker dialog.
+    input.click();
+  });
+};
+
+
+// ─────────────────────────────────────────────────────────────────────
+//  Register capability
+// ─────────────────────────────────────────────────────────────────────
+App.Capabilities.offline = true;

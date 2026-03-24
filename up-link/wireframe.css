@@ -1,0 +1,317 @@
+/* ═══════════════════════════════════════════════════════════════
+   wireframe.css — Shell Layout Styles (v7.0)
+   ═══════════════════════════════════════════════════════════════
+
+   PURPOSE:  Structural shell for the 3-screen wireframe.
+             Fixed-pixel canvas driven by wireframe.js geometry engine.
+             Screens, shells, columns, panels, titlebars, statusbars,
+             nav buttons, unit controls, debug badge.
+
+   INPUTS:   CSS custom properties on :root (shell theme colours).
+             Inline styles set by wireframe.js (widths, heights, flex, order).
+
+   OUTPUTS:  Layout classes consumed by index.html and wireframe.js.
+
+   DEPENDS:  None (pure CSS, loads first).
+
+   NOTES:    Extracted from wireframe_v3.html v9 <style> block.
+             This is the "motherboard" — structural slots only.
+             No app-level theming (that lives in app.css).
+             No panel content styles (those live inside each panel JS).
+             Shell never scales to fit viewport — it overflows and the
+             page scrolls (browser zoom = zoom).
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── CONFIG — shell theme tokens ──────────────────────────────── */
+:root {
+  --gold:        #EAB300;
+  --red:         #ff5733;
+  --border:      #2e3f66;
+  --bg-dark:     rgba(20, 15, 40, 0.92);
+  --text:        #d4d0e0;
+  --accent-blue: rgba(116, 185, 255, 0.28);
+  --panel-bg:    rgba(116, 185, 255, 0.03);
+  --panel-label: rgba(116, 185, 255, 0.48);
+  --panel-mark:  rgba(116, 185, 255, 0.18);
+  --gold-bg:     rgba(234, 179, 0, 0.08);
+  --gold-dim:    rgba(234, 179, 0, 0.5);
+  --sb-text:     rgba(200, 200, 200, 0.72);
+}
+
+/* ── Reset ────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: #0d0a1a;
+  background-image: linear-gradient(135deg, #555555, #6a0dad, #001f54);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  letter-spacing: 1px;
+  /* WHY auto: fixed-pixel shell overflows at small viewports/high zoom;
+     page must scroll rather than clip content */
+  overflow: auto;
+  min-height: 100%;
+  width: 100%;
+}
+
+/* ── Screen container — centres shell, no viewport fitting ───── */
+.screen { display: none; }
+.screen.active {
+  display: flex;
+  justify-content: center;   /* horizontal centre */
+  align-items: flex-start;   /* don't vertically stretch the shell */
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* ── Shell — width + height set entirely by JS ────────────────── */
+/*
+ * WHY flex-shrink:0 — screen container is a flex parent; without this
+ * the shell would compress to fit, defeating the fixed-pixel goal.
+ * WHY opacity transition only — animating width/height during mode
+ * switch causes layout reflow jank; fade-out/in is clean and instant.
+ */
+.shell {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: 2px;
+  padding: 2px;
+  transition: opacity 220ms ease-in-out;
+}
+
+/* ── Title bar ────────────────────────────────────────────────── */
+.titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 10px;
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  border-bottom: 2px solid var(--red);
+  flex-shrink: 0;
+  gap: 8px;
+  backdrop-filter: blur(4px);
+  overflow: hidden;
+}
+.tb-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.logo {
+  font-weight: 700;
+  font-size: 1.43em;
+  color: var(--gold);
+  letter-spacing: 3px;
+  white-space: nowrap;
+}
+.logo span { color: var(--red); }
+
+/* ── Titlebar divider ─────────────────────────────────────────── */
+.tb-divider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--border);
+  flex-shrink: 0;
+  margin: 4px 4px;
+}
+
+/* ── Nav buttons ──────────────────────────────────────────────── */
+.nav-group { display: flex; align-items: center; gap: 8px; }
+.nav-btn {
+  font-family: 'Courier New', monospace;
+  font-size: 0.86em;
+  letter-spacing: 1px;
+  font-weight: 700;
+  background: var(--gold-bg);
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s, color 0.12s, transform 0.05s;
+  position: relative;
+  text-transform: lowercase;
+  flex-shrink: 0;
+}
+.nav-btn:hover  { background: var(--gold); color: #000; }
+.nav-btn:active { transform: translateY(1px); }
+.nav-btn.active { background: var(--gold); color: #000; border-color: var(--gold); }
+.nav-btn.active::after {
+  content: "";
+  position: absolute;
+  left: 0px; right: 0px; bottom: -6px;
+  height: 2px;
+  background: var(--gold);
+  border-radius: 1px;
+}
+
+/* ── Main content area ────────────────────────────────────────── */
+/* flex:1 fills shell between titlebar and statusbar in 2-col mode */
+.main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+}
+
+/* ── Column wrapper + columns ─────────────────────────────────── */
+/*
+ * WHY .col-wrap + .col instead of a single CSS grid:
+ *   A grid with shared rows forces both columns to break at the same
+ *   horizontal boundaries. Two independent flex columns let each side
+ *   distribute its panels freely — S1 left: 7+3+4h vs right: 6+4+3+1h.
+ *
+ * 2-col: col-wrap = flex-direction row; each .col fills its half.
+ * 1-col (.mode-1col class on .shell):
+ *   .col-wrap → flex-direction column (panels stack vertically)
+ *   .col      → display:contents (cols dissolve; panels become direct
+ *               children of col-wrap so CSS `order` controls sequence)
+ */
+.col-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  min-height: 0;
+}
+.col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+}
+
+/* 1-col overrides — activated by JS toggling .mode-1col on .shell */
+.shell.mode-1col .col-wrap {
+  flex-direction: column;
+  flex: none;  /* height driven by content, not main-area */
+}
+.shell.mode-1col .col {
+  display: contents; /* transparent to layout; panels participate directly */
+}
+
+/* ── Wireframe panels ─────────────────────────────────────────── */
+/*
+ * WHY flex-shrink:0 — JS sets explicit panel heights in 1-col mode
+ * and flex:h in 2-col; flex-shrink:0 prevents any parent from
+ * compressing panels below their assigned size.
+ */
+.panel {
+  flex-shrink: 0;
+  border: 1px dashed var(--accent-blue);
+  background: var(--panel-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+.panel::before {
+  content: '+';
+  position: absolute;
+  top: 4px; left: 6px;
+  font-size: 10px;
+  color: var(--panel-mark);
+  letter-spacing: 0;
+}
+.panel-lbl {
+  font-size: 0.82em;
+  color: var(--panel-label);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 4px;
+  user-select: none;
+}
+
+/* ── Status bar ───────────────────────────────────────────────── */
+.statusbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--red);
+  flex-shrink: 0;
+  backdrop-filter: blur(4px);
+  overflow: hidden;
+  gap: 6px;
+}
+.sb-l {
+  font-size: 0.75em;
+  color: var(--sb-text);
+  white-space: nowrap;
+  letter-spacing: 1px;
+  text-transform: lowercase;
+  flex-shrink: 0;
+}
+.sb-r { display: flex; align-items: center; gap: 8px; }
+
+/* ── Unit control (+/−) in status bar ─────────────────────────── */
+.unit-ctrl {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.unit-btn {
+  font-family: 'Courier New', monospace;
+  font-size: 1em;
+  font-weight: 700;
+  line-height: 1;
+  background: var(--gold-bg);
+  color: var(--gold);
+  border: 1px solid var(--gold-dim);
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.12s, color 0.12s;
+  flex-shrink: 0;
+}
+.unit-btn:hover  { background: var(--gold); color: #000; border-color: var(--gold); }
+.unit-btn:active { transform: translateY(1px); }
+[data-unit-lbl] {
+  font-size: 0.72em;
+  color: var(--gold-dim);
+  letter-spacing: 1px;
+  white-space: nowrap;
+  min-width: 36px;
+  text-align: center;
+}
+
+/* ── Debug badge (fixed overlay) ──────────────────────────────── */
+#dim-badge {
+  position: fixed;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  color: var(--gold-dim);
+  letter-spacing: 1px;
+  pointer-events: none;
+  z-index: 9999;
+  white-space: nowrap;
+}
+
+/* ── Large-screen font scaling ────────────────────────────────── */
+@media (min-width: 1600px) { html { font-size: 16px; } }
+@media (min-width: 2200px) { html { font-size: 18px; } }
+@media (min-width: 3000px) { html { font-size: 22px; } }
