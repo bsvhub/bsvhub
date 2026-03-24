@@ -172,11 +172,12 @@ App.MAPExport = Object.assign(App.MAPExport || {}, {
 
   // Trigger browser file download.
   // Strategy:
-  //   1. showSaveFilePicker (Chromium HTTPS — native save dialog)
-  //   2. <a download> fallback (Firefox, Safari, file://, HTTP)
-  //      Firefox on HTTPS can silently ignore <a download> on blob URLs
-  //      when sandbox or cross-origin headers interfere, so we use
-  //      a data URI fallback as a last resort.
+  //   1. showSaveFilePicker (Chromium HTTPS — native save dialog with confirmation)
+  //   2. <a download> with blob URL (works on HTTP, file://, and most browsers)
+  //   3. window.open blob URL (Firefox HTTPS fallback — programmatic <a download>
+  //      is silently blocked by Firefox on HTTPS with Cloudflare/GitHub Pages
+  //      headers. Both blob URLs and data URIs via <a>.click() fail. Opening
+  //      a blob URL in a new tab forces Firefox to offer a download dialog.)
   _downloadFile: function(text, filename) {
     var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
 
@@ -196,62 +197,35 @@ App.MAPExport = Object.assign(App.MAPExport || {}, {
       return;
     }
 
-    // Path 2: <a download> with blob URL
-    // Firefox on HTTPS may silently block blob URL downloads when the page
-    // is served through Cloudflare or has restrictive headers. We detect
-    // this by checking if the download actually started within a short
-    // window, and fall back to a data URI if it didn't.
+    // Path 2 & 3: Firefox on HTTPS silently blocks <a download>.click() for
+    // both blob URLs and data URIs when restrictive headers are present.
+    // Use window.open with blob URL instead — Firefox treats this as user-
+    // initiated navigation and will offer save/open dialog.
+    var isFirefox = navigator.userAgent.indexOf('Firefox') !== -1;
+
+    if (isFirefox && location.protocol === 'https:') {
+      var url = URL.createObjectURL(blob);
+      var w = window.open(url, '_blank');
+      // If popup was blocked, try location.href as last resort
+      if (!w) {
+        window.location.href = url;
+      }
+      setTimeout(function() { URL.revokeObjectURL(url); }, 30000);
+      return;
+    }
+
+    // Path 2: Standard <a download> — works on HTTP, file://, non-Firefox HTTPS
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = url;
     a.download = filename;
     a.style.display = 'none';
     document.body.appendChild(a);
-
-    // Use a focus/visibilitychange heuristic: browsers that open a save
-    // dialog will blur the window. If neither fires within 1s on Firefox,
-    // the download was silently swallowed — fall back to data URI.
-    var didDownload = false;
-    var isFirefox = navigator.userAgent.indexOf('Firefox') !== -1;
-
-    function onBlurOrVisibility() {
-      didDownload = true;
-    }
-
-    if (isFirefox && location.protocol === 'https:') {
-      window.addEventListener('blur', onBlurOrVisibility, { once: true });
-      document.addEventListener('visibilitychange', onBlurOrVisibility, { once: true });
-    }
-
     a.click();
-
-    var self = this;
     setTimeout(function() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      window.removeEventListener('blur', onBlurOrVisibility);
-      document.removeEventListener('visibilitychange', onBlurOrVisibility);
-
-      // If Firefox on HTTPS and no download detected, use data URI fallback
-      if (isFirefox && location.protocol === 'https:' && !didDownload) {
-        self._downloadDataUri(text, filename);
-      }
-    }, 1500);
-  },
-
-  // Data URI fallback — works on all browsers including Firefox HTTPS.
-  // Less elegant (no suggested filename on some browsers) but reliable.
-  _downloadDataUri: function(text, filename) {
-    var dataUri = 'data:text/plain;charset=utf-8,' + encodeURIComponent(text);
-    var a = document.createElement('a');
-    a.href = dataUri;
-    a.download = filename;
-    a.style.display = 'none';
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(function() {
-      document.body.removeChild(a);
-    }, 200);
+    }, 1000);
   },
 
   // Main entry point — validate, serialise, download.
