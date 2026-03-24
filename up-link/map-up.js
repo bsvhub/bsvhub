@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   map-up.js — S2 MAP Record Table (v7.0)
+   map-up.js — S2 MAP Record Table (v7.1)
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  Builds the MAP record table for Screen 2 (#p2-map).
@@ -70,8 +70,8 @@ App.Panels.S2.map = {
       ['icon_size_kb',    String(d.icon_size_kb || '')],
       ['icon_bg_enabled', String(d.icon_bg_enabled)],
       ['icon_fg_enabled', String(d.icon_fg_enabled)],
-      ['icon_bg_colour',  (d.icon_bg_enabled && d.icon_bg_colour && d.icon_bg_colour.toLowerCase() !== SETTINGS.ICON_DEFAULT_BG.toLowerCase()) ? d.icon_bg_colour : ''],
-      ['icon_fg_colour',  (d.icon_fg_enabled && d.icon_fg_colour && d.icon_fg_colour.toLowerCase() !== SETTINGS.ICON_DEFAULT_FG.toLowerCase()) ? d.icon_fg_colour : ''],
+      ['icon_bg_colour',  d.icon_bg_colour || ''],
+      ['icon_fg_colour',  d.icon_fg_colour || ''],
       ['icon_bg_alpha',   String(d.icon_bg_alpha)],
       ['icon_zoom',       String(d.icon_zoom)],
       ['alt_text',        d.alt_text || '\u2014'],
@@ -81,16 +81,17 @@ App.Panels.S2.map = {
       ['developer_bio',      d.developer_bio || '\u2014']
     );
 
-    /* Screenshot fields */
+    /* Screenshot fields — per-slot zoom + alt_text */
     var ss = d.screenshots || [null, null, null, null];
     for (var si = 0; si < 4; si++) {
       var n = si + 1;
       var slot = ss[si];
       if (slot || d['ss' + n + '_txid']) {
-        rows.push(['ss' + n + '_txid',    d['ss' + n + '_txid'] || '(pending)']);
-        rows.push(['ss' + n + '_format',  (slot && slot.mime) || d['ss' + n + '_format'] || '']);
-        rows.push(['ss' + n + '_size_kb', (slot && String(slot.kb)) || d['ss' + n + '_size_kb'] || '']);
-        rows.push(['ss' + n + '_zoom',    d['ss' + n + '_zoom'] || '1']);
+        rows.push(['ss' + n + '_txid',     d['ss' + n + '_txid'] || '(pending)']);
+        rows.push(['ss' + n + '_format',   (slot && slot.mime) || d['ss' + n + '_format'] || '']);
+        rows.push(['ss' + n + '_size_kb',  (slot && String(slot.kb)) || d['ss' + n + '_size_kb'] || '']);
+        rows.push(['ss' + n + '_zoom',     d['ss' + n + '_zoom'] || (slot && String(slot.zoom)) || '1']);
+        rows.push(['ss' + n + '_alt_text', d['ss' + n + '_alt_text'] || (slot && slot.altText) || '\u2014']);
       }
     }
 

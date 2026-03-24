@@ -347,10 +347,10 @@ var SETTINGS = {
   SS_ACCEPT:   '.png,.jpg,.jpeg,.webp,.avif,image/png,image/jpeg,image/webp,image/avif',
 
   // Default icon background colour (shown in the preview square)
-  ICON_DEFAULT_BG: '#1a1440',
+  ICON_DEFAULT_BG: 'red',
 
   // Default icon foreground colour
-  ICON_DEFAULT_FG: '#EAB300',
+  ICON_DEFAULT_FG: 'blue',
 
   // Whether BG colour is enabled by default (checked)
   ICON_BG_ENABLED: false,

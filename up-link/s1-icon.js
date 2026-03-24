@@ -1,11 +1,14 @@
 /* ═══════════════════════════════════════════════════════════════
-   s1-icon.js — Icon Design Panel (Screen 1, #p1-icon) (v7.0)
+   s1-icon.js — Icon Design Panel (Screen 1, #p1-icon) (v7.1)
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  Self-contained panel: HTML template, icon upload/fetch,
              colour controls, zoom slider, preview square, and the
              5-slot screenshot strip. Everything for #p1-icon in
              one file.
+             Each slot stores its own values independently:
+               ico:  upload, txid, bg, fg, alpha, zoom, alt text
+               ss1-4: upload, txid, zoom, alt text
 
    INPUTS:   SETTINGS (from settings.js).
              App.Utils, App.State, App.StatusBar, App.Config,
@@ -130,8 +133,10 @@ App.Icon = {
       el.textContent = '\u2713 SS' + activeSlot + ' TXID RECORDED // No local preview (CORS)'; el.className = 'status txid-status warn';
       App.StatusBar.set('SS' + activeSlot + ' TXID STORED // Preview unavailable locally', 'warn');
       if (App.Screenshots) {
+        var existing2 = App.Screenshots._slots[activeSlot] || App.Screenshots._defaultSlotValues(activeSlot);
         App.Screenshots._slots[activeSlot] = {
-          dataB64: null, filename: 'ss' + activeSlot, kb: '?', mime: 'image/unknown', txid: txid
+          dataB64: null, filename: 'ss' + activeSlot, kb: '?', mime: 'image/unknown', txid: txid,
+          zoom: existing2.zoom, altText: existing2.altText
         };
         App.Screenshots._updateStripThumb(activeSlot);
         App.Screenshots._updateSlotStates();
@@ -151,12 +156,16 @@ App.Icon = {
     var kb = (result.bytes / 1024).toFixed(1);
     var ext = (result.mime.split('/')[1] || 'png').replace('jpeg', 'jpg');
     if (App.Screenshots) {
+      /* Preserve existing per-slot control values (zoom, altText) */
+      var existing = App.Screenshots._slots[slotIdx] || App.Screenshots._defaultSlotValues(slotIdx);
       App.Screenshots._slots[slotIdx] = {
         dataB64: result.dataUrl,
         filename: txid.slice(0, 8) + '.' + ext,
         kb: parseFloat(kb),
         mime: result.mime,
-        txid: txid
+        txid: txid,
+        zoom: existing.zoom,
+        altText: existing.altText
       };
       App.Screenshots._updateStripThumb(slotIdx);
       App.Screenshots._showSlotPreview(slotIdx);
@@ -298,6 +307,8 @@ App.Icon = {
     if (img) { img.style.opacity = '1'; img.style.transform = 'scale(' + $('zom').value + ')'; }
     var ssZImg = $('icon-preview').querySelector('.ss-preview-img');
     if (ssZImg) { ssZImg.style.transform = 'scale(' + $('zom').value + ')'; ssZImg.style.transformOrigin = 'center'; }
+    /* Persist control values into the active slot on every change */
+    if (App.Screenshots) App.Screenshots._saveActiveControls();
     this.enforceSquare();
   },
 
@@ -332,8 +343,14 @@ App.Icon = {
 
 /* ─────────────────────────────────────────────────────────────
    App.Screenshots — 5-slot icon+screenshot selector strip
-   Slot 0 = icon (App.Icon manages the preview itself).
-   Slots 1-4 = screenshots SS1-SS4 managed here.
+   Slot 0 = icon. Slots 1-4 = screenshots SS1-SS4.
+
+   Each slot independently stores its own values:
+     ico  (slot 0): dataB64, filename, kb, mime, txid, bg, fg, alpha, zoom, altText
+     ss1-4 (1-4):   dataB64, filename, kb, mime, txid, zoom, altText
+
+   The UI controls (zoom slider, alt text input, bg/fg/alpha for ico)
+   are shared visually — values swap in/out when switching slots.
    ───────────────────────────────────────────────────────────── */
 App.Screenshots = {
   _active: 0,
@@ -341,11 +358,75 @@ App.Screenshots = {
   _slots: [null, null, null, null, null],
   _LABELS: ['ICON UPLOAD', 'SCREENSHOT 1', 'SCREENSHOT 2', 'SCREENSHOT 3', 'SCREENSHOT 4'],
 
+  /* ── Per-slot value defaults ────────────────────────────── */
+  _defaultSlotValues: function(idx) {
+    var v = { zoom: SETTINGS.ICON_DEFAULT_ZOOM || 1, altText: '' };
+    if (idx === 0) {
+      v.bgOn = SETTINGS.ICON_BG_ENABLED !== undefined ? SETTINGS.ICON_BG_ENABLED : true;
+      v.fgOn = SETTINGS.ICON_FG_ENABLED !== undefined ? SETTINGS.ICON_FG_ENABLED : false;
+      v.bg = SETTINGS.ICON_DEFAULT_BG || '#1a1440';
+      v.fg = SETTINGS.ICON_DEFAULT_FG || '#EAB300';
+      v.alpha = SETTINGS.ICON_DEFAULT_ALPHA || 1;
+    }
+    return v;
+  },
+
+  /* ── Save current UI control values into the active slot ── */
+  _saveActiveControls: function() {
+    var $ = App.Utils.$;
+    var idx = this._active;
+    var slot = this._slots[idx];
+    /* Build a values object even if slot has no image data yet —
+       we store control state regardless so switching back restores it */
+    if (!slot) {
+      slot = this._defaultSlotValues(idx);
+      this._slots[idx] = slot;
+    }
+    slot.zoom = $('zom') ? $('zom').value : (slot.zoom || 1);
+    slot.altText = $('icon-alt') ? $('icon-alt').value.trim() : (slot.altText || '');
+    if (idx === 0) {
+      slot.bgOn  = $('cbg-on') ? $('cbg-on').checked : slot.bgOn;
+      slot.fgOn  = $('cfg-on') ? $('cfg-on').checked : slot.fgOn;
+      slot.bg    = $('cbg')    ? $('cbg').value       : slot.bg;
+      slot.fg    = $('cfg')    ? $('cfg').value       : slot.fg;
+      slot.alpha = $('opc')    ? $('opc').value       : slot.alpha;
+    }
+  },
+
+  /* ── Load a slot's stored values into the UI controls ──── */
+  _loadSlotControls: function(idx) {
+    var $ = App.Utils.$;
+    var slot = this._slots[idx];
+    var defs = this._defaultSlotValues(idx);
+    var zoom = (slot && slot.zoom !== undefined) ? slot.zoom : defs.zoom;
+    var alt  = (slot && slot.altText !== undefined) ? slot.altText : defs.altText;
+    if ($('zom'))   { $('zom').value = zoom; $('zom-v').textContent = parseFloat(zoom).toFixed(2); }
+    if ($('icon-alt')) $('icon-alt').value = alt;
+    if (idx === 0) {
+      var bgOn  = (slot && slot.bgOn !== undefined)  ? slot.bgOn  : defs.bgOn;
+      var fgOn  = (slot && slot.fgOn !== undefined)  ? slot.fgOn  : defs.fgOn;
+      var bg    = (slot && slot.bg)                  ? slot.bg    : defs.bg;
+      var fg    = (slot && slot.fg)                  ? slot.fg    : defs.fg;
+      var alpha = (slot && slot.alpha !== undefined)  ? slot.alpha : defs.alpha;
+      if ($('cbg-on')) $('cbg-on').checked = bgOn;
+      if ($('cfg-on')) $('cfg-on').checked = fgOn;
+      if ($('cbg'))    $('cbg').value   = bg;
+      if ($('cbg-h'))  $('cbg-h').value = bg;
+      if ($('cfg'))    $('cfg').value   = fg;
+      if ($('cfg-h'))  $('cfg-h').value = fg;
+      if ($('opc'))    { $('opc').value = alpha; $('opc-v').textContent = parseFloat(alpha).toFixed(2); }
+    }
+  },
+
   selectSlot: function(idx) {
     if (idx >= 2) {
       var sq = App.Utils.$('slot-' + idx);
       if (sq && sq.classList.contains('slot-disabled')) return;
     }
+
+    /* Save outgoing slot's control values before switching */
+    this._saveActiveControls();
+
     this._active = idx;
     var panel = App.Utils.$('p1-icon');
 
@@ -360,6 +441,9 @@ App.Screenshots = {
     var txidInput = App.Utils.$('icon-txid');
     var txidSt = App.Utils.$('txid-st');
     if (txidSt) { txidSt.textContent = ''; txidSt.className = 'status txid-status'; }
+
+    /* Load incoming slot's control values into UI */
+    this._loadSlotControls(idx);
 
     if (idx === 0) {
       if (panel) panel.classList.remove('ss-active');
@@ -411,12 +495,14 @@ App.Screenshots = {
     if (ssImg) ssImg.remove();
     var slot = this._slots[idx];
     var fnEl = App.Utils.$('fname'), fsEl = App.Utils.$('fsize');
+    /* Read zoom from stored slot value, not from global control */
+    var slotZoom = (slot && slot.zoom !== undefined) ? slot.zoom : 1;
     if (slot && slot.dataB64) {
       if (noImg) noImg.style.display = 'none';
       ssImg = document.createElement('img');
       ssImg.className = 'ss-preview-img';
       ssImg.src = slot.dataB64;
-      ssImg.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transform-origin:center;z-index:2;transform:scale(' + parseFloat(App.Utils.$('zom').value || 1) + ');';
+      ssImg.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transform-origin:center;z-index:2;transform:scale(' + parseFloat(slotZoom) + ');';
       preview.appendChild(ssImg);
       if (fnEl) fnEl.textContent = slot.filename || '';
       if (fsEl) { fsEl.textContent = slot.kb + 'kb'; fsEl.className = 'file-info ' + (slot.kb > Math.round(SETTINGS.MAX_SCREENSHOT_BYTES / 1024) ? 'file-size-err' : 'file-size-gold'); }
@@ -454,7 +540,12 @@ App.Screenshots = {
     var kb = Math.round(file.size / 1024);
     var reader = new FileReader();
     reader.onload = function(e) {
-      self._slots[idx] = { dataB64: e.target.result, filename: file.name, kb: kb, mime: file.type };
+      /* Preserve any existing per-slot control values (zoom, alt) */
+      var existing = self._slots[idx] || self._defaultSlotValues(idx);
+      self._slots[idx] = {
+        dataB64: e.target.result, filename: file.name, kb: kb, mime: file.type,
+        zoom: existing.zoom, altText: existing.altText
+      };
       self._updateStripThumb(idx);
       self._showSlotPreview(idx);
       self._updateSlotStates();
@@ -471,6 +562,8 @@ App.Screenshots = {
       this._slots[i] = null;
       this._updateStripThumb(i);
     }
+    /* Reset controls to defaults for this slot */
+    this._loadSlotControls(idx);
     this._showSlotPreview(idx);
     this._updateSlotStates();
     var fi = App.Utils.$('ss-file-input'); if (fi) fi.value = '';
@@ -492,7 +585,11 @@ App.Screenshots = {
     }
   },
 
+  /* Return per-slot data for collectData / MAP export.
+     Each slot includes zoom and altText alongside image data. */
   getData: function() {
+    /* Snapshot current UI controls into active slot before returning */
+    this._saveActiveControls();
     return { icon: this._slots[0], screenshots: [this._slots[1], this._slots[2], this._slots[3], this._slots[4]] };
   },
 
@@ -525,6 +622,8 @@ App.Screenshots = {
     }
     var ssInput = App.Utils.$('ss-file-input');
     if (ssInput) ssInput.addEventListener('change', function(e) { self.handleSSUpload(e.target.files[0]); });
+    /* Initialise slot 0 (icon) with default control values */
+    this._slots[0] = this._defaultSlotValues(0);
     this.selectSlot(0);
     this._updateSlotStates();
   }

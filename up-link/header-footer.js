@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   header-footer.js — Titlebar & Statusbar Renderer (v7.3)
+   header-footer.js — Titlebar & Statusbar Renderer (v7.4)
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  Cross-screen panel card that populates the titlebar and
@@ -46,13 +46,8 @@ App.HeaderFooter = {
       '.logo span.logo-link{color:var(--gold);}' +
       '.logo span.logo-link.bsvhub-active{color:var(--mandatory);}' +
 
-      /* ── CLEAR button: small, dim, matches mode-toggle size ── */
-      '.clear-btn{' +
-        'font-size:0.65em;padding:0px 4px;margin-left:6px;' +
-        'color:var(--red);border:1px solid var(--red);' +
-        'background:transparent;cursor:pointer;letter-spacing:1px;' +
-        'border-radius:2px;vertical-align:middle;' +
-      '}' +
+      /* ── CLEAR button: uses .mode-toggle for sizing, only overrides colour ── */
+      '.clear-btn{color:var(--red);border:1px solid var(--red);margin-left:6px;background:transparent;padding:0 2px;line-height:1;}' +
       '.clear-btn:hover{color:#fff;background:var(--red);border-color:var(--red);}' +
       '.clear-btn:disabled{color:var(--dim);border-color:rgba(200,200,200,0.15);opacity:0.4;cursor:default;pointer-events:none;}' +
 
@@ -121,7 +116,7 @@ App.HeaderFooter = {
           '<a class="mode-toggle' + u + '" id="mode-update" data-screen="1">UPDATE</a> ' +
           '<span style="color:var(--dim);font-size:0.7em;">|</span> ' +
           '<a class="mode-toggle' + v + '" id="mode-viewer" data-screen="3">VIEW</a>' +
-          ' <button class="btn clear-btn" id="clear-form-btn" title="Clear all form data and images">CLEAR</button>' +
+          ' <button class="mode-toggle clear-btn" id="clear-form-btn" title="Clear all form data and images">CLEAR</button>' +
         '</div>' +
       '</div>';
   },

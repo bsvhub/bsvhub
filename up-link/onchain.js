@@ -656,8 +656,8 @@ if (!App.MAPExport) {
         ['icon_size_kb',      String(d.icon_size_kb || '')],
         ['icon_bg_enabled',   String(d.icon_bg_enabled)],
         ['icon_fg_enabled',   String(d.icon_fg_enabled)],
-        ['icon_bg_colour',    (d.icon_bg_enabled && d.icon_bg_colour && d.icon_bg_colour.toLowerCase() !== '#1a1440') ? d.icon_bg_colour : ''],
-        ['icon_fg_colour',    (d.icon_fg_enabled && d.icon_fg_colour && d.icon_fg_colour.toLowerCase() !== '#eab300') ? d.icon_fg_colour : ''],
+        ['icon_bg_colour',    d.icon_bg_colour || ''],
+        ['icon_fg_colour',    d.icon_fg_colour || ''],
         ['icon_bg_alpha',     String(d.icon_bg_alpha)],
         ['icon_zoom',         String(d.icon_zoom)],
         ['alt_text',          d.alt_text || ''],
@@ -667,16 +667,17 @@ if (!App.MAPExport) {
         ['developer_bio',     d.developer_bio || ''],
       );
 
-      // Screenshots — ss1 through ss4 txids and metadata
+      // Screenshots — ss1 through ss4 txids, metadata, per-slot zoom + alt text
       var ss = d.screenshots || [null, null, null, null];
       for (var si = 0; si < 4; si++) {
         var n = si + 1;
         var slot = ss[si];
         if (slot || d['ss' + n + '_txid']) {
-          fields.push(['ss' + n + '_txid',    d['ss' + n + '_txid'] || '(pending)']);
-          fields.push(['ss' + n + '_format',  (slot && slot.mime) || d['ss' + n + '_format'] || '']);
-          fields.push(['ss' + n + '_size_kb', (slot && String(slot.kb)) || d['ss' + n + '_size_kb'] || '']);
-          fields.push(['ss' + n + '_zoom',    d['ss' + n + '_zoom'] || '1']);
+          fields.push(['ss' + n + '_txid',     d['ss' + n + '_txid'] || '(pending)']);
+          fields.push(['ss' + n + '_format',   (slot && slot.mime) || d['ss' + n + '_format'] || '']);
+          fields.push(['ss' + n + '_size_kb',  (slot && String(slot.kb)) || d['ss' + n + '_size_kb'] || '']);
+          fields.push(['ss' + n + '_zoom',     d['ss' + n + '_zoom'] || (slot && String(slot.zoom)) || '1']);
+          fields.push(['ss' + n + '_alt_text', d['ss' + n + '_alt_text'] || (slot && slot.altText) || '']);
         }
       }
 

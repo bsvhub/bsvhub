@@ -270,7 +270,7 @@ var BSVCard = (function() {
     var dimCell = '<td '+dm+'>\u2014</td>';
     var naCell  = '<td '+dm+'>N/A</td>';
 
-    function infoPanel(id, slotLabel, loaded, txid, fmt, sizeKb, hasBg, bgC, hasFg, fgC, alphaVal, zoomVal) {
+    function infoPanel(id, slotLabel, loaded, txid, fmt, sizeKb, hasBg, bgC, hasFg, fgC, alphaVal, zoomVal, altVal) {
       var h = '<table class="bsvcard-info-tbl" style="width:'+ts+'px;margin-top:6px;">';
       // SLOT
       h += '<tr><td>SLOT</td><td>'+esc(slotLabel)+'</td></tr>';
@@ -296,6 +296,8 @@ var BSVCard = (function() {
       // ZOOM
       var zv = parseFloat(zoomVal) || 1;
       h += '<tr><td>ZOOM</td><td'+(zv === 1 ? ' '+dm : '')+'>'+zv+'x</td></tr>';
+      // ALT TEXT
+      h += '<tr><td>ALT</td>'+(altVal ? '<td>'+esc(altVal)+'</td>' : dimCell)+'</tr>';
       h += '</table>';
       return h;
     }
@@ -307,7 +309,7 @@ var BSVCard = (function() {
       f.icon_txid, f.icon_format, f.icon_size_kb,
       bgOn ? true : false, bgCol,
       fgOn ? true : false, fgCol,
-      f.icon_bg_alpha, zoom);
+      f.icon_bg_alpha, zoom, f.alt_text);
     iconInfo += '</div>';
 
     // ── Screenshot info panels (always rendered, hidden by default) ──
@@ -319,11 +321,12 @@ var BSVCard = (function() {
       var hasSS = !!(sSlot && sSlot.src) || (ssTxid && ssTxid !== '(pending)');
       var ssFmt = (sSlot && sSlot.format) || f['ss'+n+'_format'] || '';
       var ssSize = (sSlot && sSlot.kb) || f['ss'+n+'_size_kb'] || '';
-      var ssZoom = f['ss' + n + '_zoom'];
+      var ssZoom = f['ss' + n + '_zoom'] || (sSlot && sSlot.zoom) || '1';
+      var ssAlt  = f['ss' + n + '_alt_text'] || (sSlot && sSlot.altText) || '';
       ssInfoPanels += '<div id="info-ss'+n+'" style="display:none;">';
       ssInfoPanels += infoPanel('info-ss'+n, 'SCREENSHOT '+n, hasSS,
         ssTxid, ssFmt, ssSize,
-        'n/a', '', 'n/a', '', 'n/a', ssZoom);
+        'n/a', '', 'n/a', '', 'n/a', ssZoom, ssAlt);
       ssInfoPanels += '</div>';
     }
 
@@ -572,13 +575,15 @@ App.Panels.S2.card = {
       release_date:    d.release_date
     };
 
-    /* Screenshot txid fields for card rendering */
+    /* Screenshot txid fields for card rendering — per-slot zoom + alt */
     for (var si = 0; si < 4; si++) {
       var n = si + 1;
       if (ss[si] || d['ss' + n + '_txid']) {
-        cardFields['ss' + n + '_txid']    = d['ss' + n + '_txid'] || '(pending)';
-        cardFields['ss' + n + '_format']  = (ss[si] && ss[si].mime) || d['ss' + n + '_format'] || '';
-        cardFields['ss' + n + '_size_kb'] = (ss[si] && String(ss[si].kb)) || d['ss' + n + '_size_kb'] || '';
+        cardFields['ss' + n + '_txid']     = d['ss' + n + '_txid'] || '(pending)';
+        cardFields['ss' + n + '_format']   = (ss[si] && ss[si].mime) || d['ss' + n + '_format'] || '';
+        cardFields['ss' + n + '_size_kb']  = (ss[si] && String(ss[si].kb)) || d['ss' + n + '_size_kb'] || '';
+        cardFields['ss' + n + '_zoom']     = d['ss' + n + '_zoom'] || (ss[si] && String(ss[si].zoom)) || '1';
+        cardFields['ss' + n + '_alt_text'] = d['ss' + n + '_alt_text'] || (ss[si] && ss[si].altText) || '';
       }
     }
 

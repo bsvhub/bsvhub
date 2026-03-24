@@ -40,21 +40,33 @@ App.Form = {
   collectData: function() {
     var $ = App.Utils.$, st = App.State;
     var iconMode = document.querySelector('input[name=isrc]:checked').value;
-    var ssData = App.Screenshots ? App.Screenshots.getData() : { screenshots: [null, null, null, null] };
-    // Build screenshot txid fields from slot data
+    var ssData = App.Screenshots ? App.Screenshots.getData() : { icon: null, screenshots: [null, null, null, null] };
+    var iconSlot = ssData.icon; /* slot 0 — contains per-slot bg/fg/alpha/zoom/altText */
+
+    // Build screenshot txid fields from slot data — each slot stores its own zoom + altText
     var ssFields = {};
     var ss = ssData.screenshots || [null, null, null, null];
     for (var si = 0; si < 4; si++) {
       var n = si + 1;
       var slot = ss[si];
       if (slot) {
-        // If slot has a txid (from on-chain fetch), use it; otherwise pending (will be uploaded)
         ssFields['ss' + n + '_txid'] = slot.txid || '(pending)';
         ssFields['ss' + n + '_format'] = slot.mime || '';
         ssFields['ss' + n + '_size_kb'] = String(slot.kb || '');
-        ssFields['ss' + n + '_zoom'] = $('zom') ? $('zom').value : '1';
+        ssFields['ss' + n + '_zoom'] = String(slot.zoom || 1);
+        ssFields['ss' + n + '_alt_text'] = slot.altText || '';
       }
     }
+
+    // Icon values: prefer per-slot stored values, fall back to UI controls
+    var icoZoom  = (iconSlot && iconSlot.zoom !== undefined)    ? iconSlot.zoom     : ($('zom') ? $('zom').value : 1);
+    var icoAlt   = (iconSlot && iconSlot.altText !== undefined) ? iconSlot.altText   : ($('icon-alt') ? $('icon-alt').value.trim() : '');
+    var icoBgOn  = (iconSlot && iconSlot.bgOn !== undefined)    ? iconSlot.bgOn      : ($('cbg-on') ? $('cbg-on').checked : true);
+    var icoFgOn  = (iconSlot && iconSlot.fgOn !== undefined)    ? iconSlot.fgOn      : ($('cfg-on') ? $('cfg-on').checked : false);
+    var icoBg    = (iconSlot && iconSlot.bg)                    ? iconSlot.bg        : ($('cbg') ? $('cbg').value : '#1a1440');
+    var icoFg    = (iconSlot && iconSlot.fg)                    ? iconSlot.fg        : ($('cfg') ? $('cfg').value : '#EAB300');
+    var icoAlpha = (iconSlot && iconSlot.alpha !== undefined)   ? iconSlot.alpha     : ($('opc') ? $('opc').value : 1);
+
     var base = {
       protocol: SETTINGS.PROTOCOL_PREFIX, protocol_version: SETTINGS.PROTOCOL_VERSION,
       name: $('app-name').value.trim(), abbreviation: $('app-abbr').value.trim(), url: $('app-url').value.trim(),
@@ -71,9 +83,9 @@ App.Form = {
       version: $('app-ver').value.trim(), release_date: App.ReleaseDate.toISO($('app-rel').value.trim()), description: $('desc').value.trim(), features: App.Features.getValues(),
       icon_source: iconMode, icon_txid: iconMode === 'txid' ? $('icon-txid').value.trim() : '(pending)',
       icon_format: st.iconMime || '\u2014', icon_filename: st.iconFilename || '\u2014', icon_size_kb: st.iconKb || '\u2014',
-      icon_bg_enabled: $('cbg-on').checked, icon_fg_enabled: $('cfg-on').checked,
-      icon_bg_colour: $('cbg').value, icon_fg_colour: $('cfg').value, icon_bg_alpha: $('opc').value,
-      icon_zoom: $('zom').value, alt_text: $('icon-alt').value.trim(),
+      icon_bg_enabled: icoBgOn, icon_fg_enabled: icoFgOn,
+      icon_bg_colour: icoBg, icon_fg_colour: icoFg, icon_bg_alpha: icoAlpha,
+      icon_zoom: icoZoom, alt_text: icoAlt,
       developer_paymail: $('dev-paymail').value.trim(), developer_twitter: $('dev-tw').value.trim(),
       developer_github: $('dev-gh').value.trim(), developer_bio: $('dev-bio').value.trim(),
       icon_data_b64: st.iconDataB64, icon_chain_url: st.iconChainUrl, icon_width: null, icon_height: null,
@@ -357,12 +369,14 @@ App.Form = {
     if ($('fsize')) { $('fsize').textContent = 'MAX ' + Math.round(SETTINGS.MAX_ICON_BYTES / 1024) + 'kb'; $('fsize').className = 'file-info file-size-gold'; }
     if ($('txid-st')) { $('txid-st').textContent = ''; $('txid-st').className = 'status txid-status'; }
 
-    /* Clear all screenshot slots */
+    /* Clear all screenshot slots — reset slot 0 to defaults for per-slot storage */
     if (App.Screenshots) {
       for (var si = 0; si <= 4; si++) {
         App.Screenshots._slots[si] = null;
         App.Screenshots._updateStripThumb(si);
       }
+      /* Restore slot 0 with default control values */
+      App.Screenshots._slots[0] = App.Screenshots._defaultSlotValues(0);
       App.Screenshots._updateSlotStates();
       App.Screenshots.selectSlot(0);
     }

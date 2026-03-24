@@ -174,10 +174,10 @@ App.Viewer = {
       'developer_paymail', 'developer_twitter', 'developer_github', 'developer_bio'
     ]);
 
-    /* Add screenshot fields */
+    /* Add screenshot fields — per-slot zoom + alt_text */
     for (var si = 1; si <= 4; si++) {
       if (fields['ss' + si + '_txid']) {
-        ordered.push('ss' + si + '_txid', 'ss' + si + '_format', 'ss' + si + '_size_kb', 'ss' + si + '_zoom');
+        ordered.push('ss' + si + '_txid', 'ss' + si + '_format', 'ss' + si + '_size_kb', 'ss' + si + '_zoom', 'ss' + si + '_alt_text');
       }
     }
 

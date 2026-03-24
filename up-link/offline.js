@@ -75,8 +75,8 @@ App.MAPExport = Object.assign(App.MAPExport || {}, {
       ['icon_size_kb',      String(d.icon_size_kb || '')],
       ['icon_bg_enabled',   String(d.icon_bg_enabled)],
       ['icon_fg_enabled',   String(d.icon_fg_enabled)],
-      ['icon_bg_colour',    (d.icon_bg_enabled && d.icon_bg_colour && d.icon_bg_colour.toLowerCase() !== '#1a1440') ? d.icon_bg_colour : ''],
-      ['icon_fg_colour',    (d.icon_fg_enabled && d.icon_fg_colour && d.icon_fg_colour.toLowerCase() !== '#eab300') ? d.icon_fg_colour : ''],
+      ['icon_bg_colour',    d.icon_bg_colour || ''],
+      ['icon_fg_colour',    d.icon_fg_colour || ''],
       ['icon_bg_alpha',     String(d.icon_bg_alpha)],
       ['icon_zoom',         String(d.icon_zoom)],
       ['alt_text',          d.alt_text || ''],
@@ -86,16 +86,17 @@ App.MAPExport = Object.assign(App.MAPExport || {}, {
       ['developer_bio',     d.developer_bio || ''],
     );
 
-    // Screenshots — ss1 through ss4 txids and metadata
+    // Screenshots — ss1 through ss4 txids, metadata, per-slot zoom + alt text
     var ss = d.screenshots || [null, null, null, null];
     for (var si = 0; si < 4; si++) {
       var n = si + 1;
       var slot = ss[si];
       if (slot || d['ss' + n + '_txid']) {
-        fields.push(['ss' + n + '_txid',    d['ss' + n + '_txid'] || '(pending)']);
-        fields.push(['ss' + n + '_format',  (slot && slot.mime) || d['ss' + n + '_format'] || '']);
-        fields.push(['ss' + n + '_size_kb', (slot && String(slot.kb)) || d['ss' + n + '_size_kb'] || '']);
-        fields.push(['ss' + n + '_zoom',    d['ss' + n + '_zoom'] || '1']);
+        fields.push(['ss' + n + '_txid',     d['ss' + n + '_txid'] || '(pending)']);
+        fields.push(['ss' + n + '_format',   (slot && slot.mime) || d['ss' + n + '_format'] || '']);
+        fields.push(['ss' + n + '_size_kb',  (slot && String(slot.kb)) || d['ss' + n + '_size_kb'] || '']);
+        fields.push(['ss' + n + '_zoom',     d['ss' + n + '_zoom'] || (slot && String(slot.zoom)) || '1']);
+        fields.push(['ss' + n + '_alt_text', d['ss' + n + '_alt_text'] || (slot && slot.altText) || '']);
       }
     }
 
@@ -170,11 +171,16 @@ App.MAPExport = Object.assign(App.MAPExport || {}, {
   },
 
   // Trigger browser file download.
-  // Uses File System Access API (HTTPS-safe) with <a download> fallback.
+  // Strategy:
+  //   1. showSaveFilePicker (Chromium HTTPS — native save dialog)
+  //   2. <a download> fallback (Firefox, Safari, file://, HTTP)
+  //      Firefox on HTTPS can silently ignore <a download> on blob URLs
+  //      when sandbox or cross-origin headers interfere, so we use
+  //      a data URI fallback as a last resort.
   _downloadFile: function(text, filename) {
     var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
 
-    // Modern browsers on HTTPS — showSaveFilePicker is reliable everywhere
+    // Path 1: File System Access API (Chromium on HTTPS)
     if (window.showSaveFilePicker) {
       window.showSaveFilePicker({
         suggestedName: filename,
@@ -185,23 +191,66 @@ App.MAPExport = Object.assign(App.MAPExport || {}, {
         writable.write(blob);
         return writable.close();
       })['catch'](function(err) {
-        // User cancelled the picker — not an error
         if (err.name !== 'AbortError') console.warn('Save failed:', err);
       });
       return;
     }
 
-    // Fallback — <a download> for file:// and older HTTP servers
+    // Path 2: <a download> with blob URL
+    // Firefox on HTTPS may silently block blob URL downloads when the page
+    // is served through Cloudflare or has restrictive headers. We detect
+    // this by checking if the download actually started within a short
+    // window, and fall back to a data URI if it didn't.
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = url;
     a.download = filename;
     a.style.display = 'none';
     document.body.appendChild(a);
+
+    // Use a focus/visibilitychange heuristic: browsers that open a save
+    // dialog will blur the window. If neither fires within 1s on Firefox,
+    // the download was silently swallowed — fall back to data URI.
+    var didDownload = false;
+    var isFirefox = navigator.userAgent.indexOf('Firefox') !== -1;
+
+    function onBlurOrVisibility() {
+      didDownload = true;
+    }
+
+    if (isFirefox && location.protocol === 'https:') {
+      window.addEventListener('blur', onBlurOrVisibility, { once: true });
+      document.addEventListener('visibilitychange', onBlurOrVisibility, { once: true });
+    }
+
     a.click();
+
+    var self = this;
     setTimeout(function() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+      window.removeEventListener('blur', onBlurOrVisibility);
+      document.removeEventListener('visibilitychange', onBlurOrVisibility);
+
+      // If Firefox on HTTPS and no download detected, use data URI fallback
+      if (isFirefox && location.protocol === 'https:' && !didDownload) {
+        self._downloadDataUri(text, filename);
+      }
+    }, 1500);
+  },
+
+  // Data URI fallback — works on all browsers including Firefox HTTPS.
+  // Less elegant (no suggested filename on some browsers) but reliable.
+  _downloadDataUri: function(text, filename) {
+    var dataUri = 'data:text/plain;charset=utf-8,' + encodeURIComponent(text);
+    var a = document.createElement('a');
+    a.href = dataUri;
+    a.download = filename;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function() {
+      document.body.removeChild(a);
     }, 200);
   },
 
@@ -383,6 +432,19 @@ App.MAPImport = {
     }
     if (f.alt_text !== undefined) $('icon-alt').value = f.alt_text;
 
+    // --- Sync restored icon values into slot 0 for per-slot storage ---
+    if (App.Screenshots) {
+      App.Screenshots._slots[0] = App.Screenshots._slots[0] || App.Screenshots._defaultSlotValues(0);
+      var s0 = App.Screenshots._slots[0];
+      if (f.icon_bg_enabled !== undefined) s0.bgOn = f.icon_bg_enabled === 'true' || f.icon_bg_enabled === true;
+      if (f.icon_fg_enabled !== undefined) s0.fgOn = f.icon_fg_enabled === 'true' || f.icon_fg_enabled === true;
+      if (f.icon_bg_colour && /^#[0-9a-fA-F]{6}$/.test(f.icon_bg_colour)) s0.bg = f.icon_bg_colour;
+      if (f.icon_fg_colour && /^#[0-9a-fA-F]{6}$/.test(f.icon_fg_colour)) s0.fg = f.icon_fg_colour;
+      if (f.icon_bg_alpha !== undefined) s0.alpha = f.icon_bg_alpha;
+      if (f.icon_zoom !== undefined) s0.zoom = f.icon_zoom;
+      if (f.alt_text !== undefined) s0.altText = f.alt_text;
+    }
+
     // --- Icon mode and data ---
     if (f.icon_txid && f.icon_txid !== '(pending)' && App.Utils.isValidTxid(f.icon_txid)) {
       var txidRadio = document.querySelector('input[name=isrc][value=txid]');
@@ -421,6 +483,8 @@ App.MAPImport = {
       for (var sj = 1; sj <= 4; sj++) {
         var ssTxid = f['ss' + sj + '_txid'];
         var ssEmbedded = f['_ss' + sj + '_data_b64'];
+        var ssZoom = f['ss' + sj + '_zoom'] || '1';
+        var ssAlt  = f['ss' + sj + '_alt_text'] || '';
 
         if (ssEmbedded) {
           // Offline file with embedded B64 data
@@ -428,7 +492,8 @@ App.MAPImport = {
             dataB64: ssEmbedded,
             filename: 'ss' + sj,
             kb: f['ss' + sj + '_size_kb'] || '?',
-            mime: f['ss' + sj + '_format'] || 'image/png'
+            mime: f['ss' + sj + '_format'] || 'image/png',
+            zoom: ssZoom, altText: ssAlt
           };
           App.Screenshots._updateStripThumb(sj);
         } else if (ssTxid && ssTxid !== '(pending)') {
@@ -438,7 +503,8 @@ App.MAPImport = {
             filename: 'ss' + sj,
             kb: f['ss' + sj + '_size_kb'] || '?',
             mime: f['ss' + sj + '_format'] || 'image/png',
-            txid: ssTxid
+            txid: ssTxid,
+            zoom: ssZoom, altText: ssAlt
           };
           App.Screenshots._slots[sj] = ssSlot;
           App.Screenshots._updateStripThumb(sj);
