@@ -60,8 +60,8 @@ html, body {
   display: flex;
   justify-content: center;   /* horizontal centre */
   align-items: flex-start;   /* don't vertically stretch the shell */
-  min-height: 90vh;
-  padding: 10px;
+  min-height: 100vh;
+  padding: 20px;
 }
 
 /* ── Shell — width + height set entirely by JS ────────────────── */
