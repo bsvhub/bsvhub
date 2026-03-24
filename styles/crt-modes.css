@@ -115,7 +115,8 @@ html[data-crt-mode] .header-title::after,
 html[data-crt-mode] .tab-btn::after,
 html[data-crt-mode] .search-container::after,
 html[data-crt-mode] #tooltip-display::after,
-html[data-crt-mode] .icon-wrapper::after {
+html[data-crt-mode] .icon-wrapper::after,
+html[data-crt-mode] .up-link-wrap::after {
     content:         '';
     position:        absolute;
     inset:           0;

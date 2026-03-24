@@ -993,3 +993,34 @@ body.mobile-mode ul.icon-grid li a:hover {
 /* NOTE: Image zoom on hover is NOT disabled in mobile mode.
    The desktop hover zoom logic (1.15x scale on icon images) works
    identically in mobile mode, sharing the same CSS from desktop. */
+
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION 13: UP-LINK IFRAME PLUGIN SLOT
+   ═══════════════════════════════════════════════════════════════
+   Embeds a standalone app via iframe into the tab/content system.
+   The wrapper provides position context for the CRT scanline overlay.
+   Change src in the loader script to swap the embedded app.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* WHY relative: provides stacking context for the ::after CRT overlay */
+.up-link-wrap {
+    position: relative;
+    width: 100%;
+    /* Fill viewport below top-ui; 200px approximates top-ui height */
+    height: calc(100vh - 200px);
+    min-height: 480px;
+}
+
+.up-link-wrap iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #0d0a1a;
+}
+
+/* Mobile: adjust for scaled layout */
+body.mobile-mode .up-link-wrap {
+    height: calc(100vh - 140px);
+}
