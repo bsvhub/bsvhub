@@ -998,23 +998,19 @@ body.mobile-mode ul.icon-grid li a:hover {
 /* ═══════════════════════════════════════════════════════════════
    SECTION 13: UP-LINK IFRAME PLUGIN SLOT
    ═══════════════════════════════════════════════════════════════
-   Embeds a standalone app via iframe into the tab/content system.
-   The wrapper provides position context for the CRT scanline overlay.
+   Full-viewport overlay. Sits above top-ui bars but below CRT
+   scanlines. Semi-transparent black backdrop with blur.
+   Close button returns to the previously active tab.
    Change src in the loader script to swap the embedded app.
    ═══════════════════════════════════════════════════════════════ */
 
-/* WHY fixed+inset:0 — iframe fills the full viewport so the app
-   scrolls underneath the semi-transparent top-ui bars naturally.
-   WHY relative also needed — stacking context for ::after CRT overlay,
-   so we use a combo: the section goes fixed, the wrap stays relative. */
-
-/* Full-viewport section — breaks out of normal content flow.
-   WHY z-index 999 — must sit above #content-area (200) but below
-   #top-ui (1000) so the app renders behind the translucent bars. */
+/* WHY z-index 1001 — above #top-ui (1000) so the overlay covers
+   everything. CRT ::after on .up-link-wrap is a child pseudo-element
+   so it naturally renders on top of the iframe within this context. */
 #up-link.tab-content.active {
     position: fixed;
     inset: 0;
-    z-index: 999;
+    z-index: 1001;
     padding: 0;
     margin: 0;
 }
@@ -1023,6 +1019,9 @@ body.mobile-mode ul.icon-grid li a:hover {
     position: relative;     /* stacking context for CRT ::after overlay */
     width: 100%;
     height: 100%;
+    background: rgba(0, 0, 0, 0.82);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
 }
 
 .up-link-wrap iframe {
@@ -1033,7 +1032,24 @@ body.mobile-mode ul.icon-grid li a:hover {
     background: transparent;
 }
 
-/* WHY hidden: Up-Link app is desktop-only; not optimised for mobile */
+/* ── Close button ─────────────────────────────────────────────── */
+.up-link-close {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    z-index: 12;            /* above CRT scanline (z:10) */
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.up-link-close:hover {
+    opacity: 1;
+}
+
+/* WHY hidden: Up-Link app is desktop-only */
 body.mobile-mode [data-target="up-link"] {
     display: none;
 }
