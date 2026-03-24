@@ -1003,13 +1003,26 @@ body.mobile-mode ul.icon-grid li a:hover {
    Change src in the loader script to swap the embedded app.
    ═══════════════════════════════════════════════════════════════ */
 
-/* WHY relative: provides stacking context for the ::after CRT overlay */
+/* WHY fixed+inset:0 — iframe fills the full viewport so the app
+   scrolls underneath the semi-transparent top-ui bars naturally.
+   WHY relative also needed — stacking context for ::after CRT overlay,
+   so we use a combo: the section goes fixed, the wrap stays relative. */
+
+/* Full-viewport section — breaks out of normal content flow.
+   WHY z-index 999 — must sit above #content-area (200) but below
+   #top-ui (1000) so the app renders behind the translucent bars. */
+#up-link.tab-content.active {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    padding: 0;
+    margin: 0;
+}
+
 .up-link-wrap {
-    position: relative;
+    position: relative;     /* stacking context for CRT ::after overlay */
     width: 100%;
-    /* Fill viewport below top-ui; 200px approximates top-ui height */
-    height: calc(100vh - 200px);
-    min-height: 480px;
+    height: 100%;
 }
 
 .up-link-wrap iframe {
@@ -1017,10 +1030,10 @@ body.mobile-mode ul.icon-grid li a:hover {
     width: 100%;
     height: 100%;
     border: none;
-    background: #0d0a1a;
+    background: transparent;
 }
 
-/* Mobile: adjust for scaled layout */
-body.mobile-mode .up-link-wrap {
-    height: calc(100vh - 140px);
+/* WHY hidden: Up-Link app is desktop-only; not optimised for mobile */
+body.mobile-mode [data-target="up-link"] {
+    display: none;
 }
