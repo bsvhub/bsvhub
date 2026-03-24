@@ -42,11 +42,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
-  /*background: #0d0a1a;
-  background-image: linear-gradient(135deg, #555555, #6a0dad, #001f54);
-  background-attachment: fixed;*/
   background: transparent;
-  padding-top: calc(var(--iframe-pad, 80px) * 0.5);
   color: var(--text);
   font-family: 'Courier New', monospace;
   font-size: 14px;
@@ -64,8 +60,8 @@ html, body {
   display: flex;
   justify-content: center;   /* horizontal centre */
   align-items: flex-start;   /* don't vertically stretch the shell */
-  min-height: calc(90vh - var(--iframe-pad, 80px) * 0.5);
-  padding: 20px;
+  min-height: 90vh;
+  padding: 10px;
 }
 
 /* ── Shell — width + height set entirely by JS ────────────────── */
