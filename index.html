@@ -142,19 +142,21 @@
             <div class="ideas-loading">Loading ideas…</div>
         </section>
 
-        <!-- UP-LINK — standalone app loaded via iframe (plugin slot) -->
-        <section id="up-link" class="tab-content">
-            <div id="up-link-wrap" class="up-link-wrap">
-                <iframe id="up-link-frame"
-                        src="about:blank"
-                        title="Up-Link Portal"
-                        allowfullscreen
-                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
-                </iframe>
-            </div>
-        </section>
     </div>
 </main>
+
+<!-- UP-LINK — standalone app overlay (outside content-area so z-index works) -->
+<section id="up-link" class="tab-content">
+    <div id="up-link-wrap" class="up-link-wrap">
+        <img id="up-link-close" class="up-link-close" src="icon/close.svg" alt="Close" title="Close Up-Link">
+        <iframe id="up-link-frame"
+                src="about:blank"
+                title="Up-Link Portal"
+                allowfullscreen
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
+        </iframe>
+    </div>
+</section>
  
     
 <!-- JS SECTION 1 — SCROLL, TOOLTIP, BSV PRICE & MOBILE DOUBLE-TAP -->
@@ -219,18 +221,36 @@ document.addEventListener('DOMContentLoaded', function () {
 <!-- JS SECTION 6 — MOBILE / DESKTOP MODE TOGGLE -->
 <script src="script/mobile.js"></script>
 
-<!-- JS SECTION 7 — UP-LINK IFRAME LOADER (lazy — loads on first tab click) -->
+<!-- JS SECTION 7 — UP-LINK IFRAME OVERLAY (lazy load + close button) -->
 <script>
 (function () {
     var loaded = false;
+    var lastTab = null;
+    var lastBtn = null;
     var btn = document.querySelector('[data-target="up-link"]');
+    var closeBtn = document.getElementById('up-link-close');
     if (!btn) return;
+
+    /* Remember the active tab before opening Up-Link */
     btn.addEventListener('click', function () {
+        var prev = document.querySelector('.tab-btn.active:not([data-target="up-link"])');
+        if (prev) { lastTab = prev.getAttribute('data-target'); lastBtn = prev; }
         if (loaded) return;
         loaded = true;
         var frame = document.getElementById('up-link-frame');
         if (frame) frame.src = 'up-link/index.html';
     });
+
+    /* Close button — return to previously active tab */
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function () {
+            if (lastTab && typeof activateTab === 'function') {
+                activateTab(lastTab, lastBtn || document.querySelector('[data-target="' + lastTab + '"]'));
+            } else if (typeof activateTab === 'function') {
+                activateTab('app', document.querySelector('[data-target="app"]'));
+            }
+        });
+    }
 })();
 </script>
 
