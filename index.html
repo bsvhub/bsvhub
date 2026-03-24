@@ -114,6 +114,7 @@
         <button class="tab-btn" data-target="sm"><span>SM</span></button>
         <button class="tab-btn" data-target="video"><span>Videos</span></button>
         <button class="tab-btn" data-target="ideas"><span>App Ideas</span></button>
+        <button class="tab-btn" data-target="up-link"><span>Up-LINK</span></button>
         <div class="search-container">
             <input id="search-box" type="text" placeholder="search here">
         </div>
@@ -139,6 +140,18 @@
         <!-- APP IDEAS — content fetched from ideas.html on first click -->
         <section id="ideas" class="tab-content ideas-section-host">
             <div class="ideas-loading">Loading ideas…</div>
+        </section>
+
+        <!-- UP-LINK — standalone app loaded via iframe (plugin slot) -->
+        <section id="up-link" class="tab-content">
+            <div id="up-link-wrap" class="up-link-wrap">
+                <iframe id="up-link-frame"
+                        src="about:blank"
+                        title="Up-Link Portal"
+                        allowfullscreen
+                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
+                </iframe>
+            </div>
         </section>
     </div>
 </main>
@@ -206,7 +219,20 @@ document.addEventListener('DOMContentLoaded', function () {
 <!-- JS SECTION 6 — MOBILE / DESKTOP MODE TOGGLE -->
 <script src="script/mobile.js"></script>
 
-
+<!-- JS SECTION 7 — UP-LINK IFRAME LOADER (lazy — loads on first tab click) -->
+<script>
+(function () {
+    var loaded = false;
+    var btn = document.querySelector('[data-target="up-link"]');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+        if (loaded) return;
+        loaded = true;
+        var frame = document.getElementById('up-link-frame');
+        if (frame) frame.src = 'up-link/index.html';
+    });
+})();
+</script>
 
 
 </div>
