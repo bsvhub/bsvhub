@@ -63,6 +63,10 @@ App.CoreS2 = {
       badge.textContent = App.State.mode === 'update' ? 'UPDATE PREVIEW' : 'NOT YET ON CHAIN';
     }
 
+    /* 8. Disable CLEAR button — nothing to clear on preview screen */
+    var clearBtns = document.querySelectorAll('.clear-btn');
+    for (var i = 0; i < clearBtns.length; i++) clearBtns[i].disabled = true;
+
     App.StatusBar.set('PREVIEW LOADED', 'ok');
   }
 };

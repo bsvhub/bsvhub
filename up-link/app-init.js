@@ -54,9 +54,21 @@ App.Init = function() {
     BSVCard.injectCSS();
   }
 
-  /* 10. Register Screen 2 mount hook (lazy — renders on navigate) */
+  /* 10a. Register Screen 1 mount hook — re-enable CLEAR button */
+  window._onScreenMount[1] = function() {
+    var clearBtns = document.querySelectorAll('.clear-btn');
+    for (var i = 0; i < clearBtns.length; i++) clearBtns[i].disabled = false;
+  };
+
+  /* 10b. Register Screen 2 mount hook (lazy — renders on navigate) */
   window._onScreenMount[2] = function() {
     App.CoreS2.mount();
+  };
+
+  /* 10c. Register Screen 3 mount hook — disable CLEAR button */
+  window._onScreenMount[3] = function() {
+    var clearBtns = document.querySelectorAll('.clear-btn');
+    for (var i = 0; i < clearBtns.length; i++) clearBtns[i].disabled = true;
   };
 
   /* 11. Legacy bridge — window.saveMAP dispatches to onchain or offline */

@@ -170,9 +170,28 @@ App.MAPExport = Object.assign(App.MAPExport || {}, {
   },
 
   // Trigger browser file download.
-  // Uses createObjectURL + <a download> — works on both file:// and HTTP servers.
+  // Uses File System Access API (HTTPS-safe) with <a download> fallback.
   _downloadFile: function(text, filename) {
     var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+
+    // Modern browsers on HTTPS — showSaveFilePicker is reliable everywhere
+    if (window.showSaveFilePicker) {
+      window.showSaveFilePicker({
+        suggestedName: filename,
+        types: [{ description: 'Text file', accept: { 'text/plain': ['.txt'] } }]
+      }).then(function(handle) {
+        return handle.createWritable();
+      }).then(function(writable) {
+        writable.write(blob);
+        return writable.close();
+      })['catch'](function(err) {
+        // User cancelled the picker — not an error
+        if (err.name !== 'AbortError') console.warn('Save failed:', err);
+      });
+      return;
+    }
+
+    // Fallback — <a download> for file:// and older HTTP servers
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = url;
@@ -180,7 +199,6 @@ App.MAPExport = Object.assign(App.MAPExport || {}, {
     a.style.display = 'none';
     document.body.appendChild(a);
     a.click();
-    // Delay cleanup so the browser has time to initiate the download
     setTimeout(function() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);

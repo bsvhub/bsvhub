@@ -535,7 +535,7 @@ var WalletManager = {
     return bytes;
   },
 
-  FEE_RATE_SATS_PER_KB: 50,
+  FEE_RATE_SATS_PER_KB: 100,
 
   estimateFee: function(scriptHexArray) {
     var overhead = 10;
