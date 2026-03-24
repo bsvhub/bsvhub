@@ -309,7 +309,7 @@ var WalletManager = {
     return BRC100Provider.createAction({
       description: 'Upload icon to BSV chain',
       outputs: [{ lockingScript: script, satoshis: 0, outputDescription: 'Icon file via B protocol' }],
-      labels: ['bsvdirectory', 'icon'],
+      labels: ['up-link', 'icon'],
     }).then(function(res) { return { txid: res.txid }; });
   },
 
@@ -324,9 +324,9 @@ var WalletManager = {
       });
     }
     return BRC100Provider.createAction({
-      description: 'Submit app to BSV Directory',
+      description: 'Submit app to Up-LINK',
       outputs: outputs,
-      labels: ['bsvdirectory'],
+      labels: ['up-link'],
     }).then(function(res) { return { txid: res.txid }; });
   },
 
@@ -341,9 +341,9 @@ var WalletManager = {
       });
     }
     return BRC100Provider.createAction({
-      description: 'Update app on BSV Directory',
+      description: 'Update app on Up-LINK',
       outputs: outputs,
-      labels: ['bsvdirectory', 'update'],
+      labels: ['up-link', 'update'],
     }).then(function(res) { return { txid: res.txid }; });
   },
 
@@ -352,7 +352,7 @@ var WalletManager = {
   scanRecords: function() {
     var self = this;
     return BRC100Provider.listActions({
-      labels: ['bsvdirectory'],
+      labels: ['up-link'],
       labelQueryMode: 'any',
       limit: 100,
       offset: 0,
@@ -365,7 +365,7 @@ var WalletManager = {
         return self._fetchAndParseRecord(action.txid).catch(function() {
           return {
             txid: action.txid,
-            fields: { _txid: action.txid, _description: action.description || '', protocol: 'bsvdirectory' },
+            fields: { _txid: action.txid, _description: action.description || '', protocol: 'up-link' },
           };
         });
       });
@@ -676,6 +676,7 @@ if (!App.MAPExport) {
           fields.push(['ss' + n + '_txid',    d['ss' + n + '_txid'] || '(pending)']);
           fields.push(['ss' + n + '_format',  (slot && slot.mime) || d['ss' + n + '_format'] || '']);
           fields.push(['ss' + n + '_size_kb', (slot && String(slot.kb)) || d['ss' + n + '_size_kb'] || '']);
+          fields.push(['ss' + n + '_zoom',    d['ss' + n + '_zoom'] || '1']);
         }
       }
 

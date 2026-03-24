@@ -95,6 +95,7 @@ App.MAPExport = Object.assign(App.MAPExport || {}, {
         fields.push(['ss' + n + '_txid',    d['ss' + n + '_txid'] || '(pending)']);
         fields.push(['ss' + n + '_format',  (slot && slot.mime) || d['ss' + n + '_format'] || '']);
         fields.push(['ss' + n + '_size_kb', (slot && String(slot.kb)) || d['ss' + n + '_size_kb'] || '']);
+        fields.push(['ss' + n + '_zoom',    d['ss' + n + '_zoom'] || '1']);
       }
     }
 
@@ -112,7 +113,7 @@ App.MAPExport = Object.assign(App.MAPExport || {}, {
 
     var lines = [
       '# ═══════════════════════════════════════════════════════════════',
-      '# BSV DIRECTORY — MAP PROTOCOL RECORD',
+      '# UP-LINK — MAP PROTOCOL RECORD',
       '# ═══════════════════════════════════════════════════════════════',
       '#',
       '# Timestamp:  ' + ts,
@@ -169,16 +170,21 @@ App.MAPExport = Object.assign(App.MAPExport || {}, {
   },
 
   // Trigger browser file download.
+  // Uses createObjectURL + <a download> — works on both file:// and HTTP servers.
   _downloadFile: function(text, filename) {
     var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = url;
     a.download = filename;
+    a.style.display = 'none';
     document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    // Delay cleanup so the browser has time to initiate the download
+    setTimeout(function() {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 200);
   },
 
   // Main entry point — validate, serialise, download.
@@ -188,7 +194,7 @@ App.MAPExport = Object.assign(App.MAPExport || {}, {
 
     var safeName = (d.name || 'unnamed').replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 32);
     var date = new Date().toISOString().slice(0, 10);
-    var filename = 'bsvdirectory_MAP_' + safeName + '_' + date + '.txt';
+    var filename = 'up-link_MAP_' + safeName + '_' + date + '.txt';
 
     this._downloadFile(result.text, filename);
     App.StatusBar.set('MAP RECORD SAVED // ' + filename, 'ok');
@@ -471,7 +477,7 @@ App.MAPImport = {
         var fields = self._parse(text);
 
         if (fields.protocol !== SETTINGS.PROTOCOL_PREFIX) {
-          App.StatusBar.set('INVALID FILE — NOT A BSV DIRECTORY MAP RECORD', 'err');
+          App.StatusBar.set('INVALID FILE \u2014 NOT AN UP-LINK MAP RECORD', 'err');
           return;
         }
 

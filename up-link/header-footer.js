@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   header-footer.js — Titlebar & Statusbar Renderer (v7.2)
+   header-footer.js — Titlebar & Statusbar Renderer (v7.3)
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  Cross-screen panel card that populates the titlebar and
@@ -41,6 +41,19 @@ App.HeaderFooter = {
     var s = document.createElement('style');
     s.id = 'hf-css';
     s.textContent =
+
+      /* ── LINK colour: matches Up- (gold) by default, blood orange when BSVhub active ── */
+      '.logo span.logo-link{color:var(--gold);}' +
+      '.logo span.logo-link.bsvhub-active{color:var(--mandatory);}' +
+
+      /* ── CLEAR button: small, dim, matches mode-toggle size ── */
+      '.clear-btn{' +
+        'font-size:0.75em;padding:1px 6px;margin-left:6px;' +
+        'color:var(--dim);border:1px solid rgba(200,200,200,0.2);' +
+        'background:transparent;cursor:pointer;letter-spacing:1px;' +
+        'border-radius:2px;vertical-align:middle;' +
+      '}' +
+      '.clear-btn:hover{color:var(--accent);border-color:var(--accent);}' +
 
       /* ── TITLEBAR: 1-col → 2-line, ~20% font reduction ──────── */
       '.mode-1col > .titlebar {' +
@@ -101,12 +114,13 @@ App.HeaderFooter = {
           '<span data-unit-lbl>U:55</span>' +
           '<button class="unit-btn" data-delta="5">+</button>' +
         '</div>' +
-        '<div class="logo">Up-<span>LINK</span> // ' +
+        '<div class="logo">Up-<span class="logo-link">LINK</span> // ' +
           '<a class="mode-toggle' + s + '" id="mode-submit" data-screen="1">SUBMIT</a> ' +
           '<span style="color:var(--dim);font-size:0.7em;">|</span> ' +
           '<a class="mode-toggle' + u + '" id="mode-update" data-screen="1">UPDATE</a> ' +
           '<span style="color:var(--dim);font-size:0.7em;">|</span> ' +
           '<a class="mode-toggle' + v + '" id="mode-viewer" data-screen="3">VIEW</a>' +
+          ' <button class="btn clear-btn" id="clear-form-btn" title="Clear all form data and images">CLEAR</button>' +
         '</div>' +
       '</div>';
   },

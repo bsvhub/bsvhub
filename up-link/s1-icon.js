@@ -43,7 +43,7 @@ App.Panels.S1.icon = {
         '</div>' +
         '<div id="mode-upload" class="mode-container">' +
           '<div class="row"><button class="file-btn" id="browse-btn">\u25b8 BROWSE</button></div>' +
-          '<div class="file-info" id="fname">SVG \u00b7 PNG \u00b7 WEBP</div>' +
+          '<div class="file-info" id="fname">SVG \u00b7 PNG \u00b7 WEBP \u00b7 AVIF</div>' +
           '<div class="file-info file-size-gold" id="fsize"></div>' +
         '</div>' +
         '<div id="mode-txid" class="mode-container" style="display:none;">' +
@@ -196,7 +196,7 @@ App.Icon = {
         clearTimeout(timer); if (!r.ok) { resolve(null); return; }
         return r.arrayBuffer().then(function(buf) {
           if (buf.byteLength === 0) { resolve(null); return; }
-          var b = new Uint8Array(buf.slice(0, 4)), mime = self._detectMime(b);
+          var b = new Uint8Array(buf.slice(0, 12)), mime = self._detectMime(b);
           if (!mime) { resolve(null); return; }
           var bin = ''; var bytes = new Uint8Array(buf);
           for (var i = 0; i < bytes.length; i += 8192) {
@@ -240,6 +240,10 @@ App.Icon = {
     if (bytes[0] === 0x52 && bytes[1] === 0x49) return 'image/webp';
     if (bytes[0] === 0x47 && bytes[1] === 0x49) return 'image/gif';
     if (bytes[0] === 0x3C) return 'image/svg+xml';
+    /* AVIF: ftyp box at offset 4 — check for 'ftyp' then 'avif' or 'avis' */
+    if (bytes.length >= 12 && bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) {
+      if ((bytes[8] === 0x61 && bytes[9] === 0x76 && bytes[10] === 0x69) /* avi(f|s) */) return 'image/avif';
+    }
     return null;
   },
 
@@ -365,8 +369,11 @@ App.Screenshots = {
         if (iconMode && iconMode.value === 'txid') txidInput.value = txidInput.dataset.iconTxid || '';
       }
       var fn = App.Utils.$('fname'), fs = App.Utils.$('fsize');
-      if (fn) fn.textContent = 'SVG \u00B7 PNG \u00B7 WEBP';
+      if (fn) fn.textContent = 'SVG \u00B7 PNG \u00B7 WEBP \u00B7 AVIF';
       if (fs) { fs.textContent = 'MAX ' + Math.round(SETTINGS.MAX_ICON_BYTES / 1024) + 'kb'; fs.className = 'file-info file-size-gold'; }
+      /* Restore BG/FG gradient layer — only applies to icon */
+      var bgLayer = App.Utils.$('preview-bg');
+      if (bgLayer) bgLayer.style.display = '';
       App.Icon.updatePreviewStyles();
       var prev = App.Utils.$('icon-preview');
       if (prev) {
@@ -386,6 +393,9 @@ App.Screenshots = {
         var slot = this._slots[idx];
         txidInput.value = (slot && slot.txid) ? slot.txid : '';
       }
+      /* Hide BG/FG gradient layer — screenshots don't support bg/fg */
+      var bgLayer2 = App.Utils.$('preview-bg');
+      if (bgLayer2) bgLayer2.style.display = 'none';
       this._showSlotPreview(idx);
     }
     this._prevActive = idx;
@@ -412,7 +422,7 @@ App.Screenshots = {
       if (fsEl) { fsEl.textContent = slot.kb + 'kb'; fsEl.className = 'file-info ' + (slot.kb > Math.round(SETTINGS.MAX_SCREENSHOT_BYTES / 1024) ? 'file-size-err' : 'file-size-gold'); }
     } else {
       if (noImg) { noImg.style.display = ''; noImg.textContent = 'NO SCREENSHOT'; }
-      if (fnEl) fnEl.textContent = 'PNG \u00B7 JPG \u00B7 WEBP';
+      if (fnEl) fnEl.textContent = 'PNG \u00B7 JPG \u00B7 WEBP \u00B7 AVIF';
       if (fsEl) { fsEl.textContent = 'MAX ' + Math.round(SETTINGS.MAX_SCREENSHOT_BYTES / 1024) + 'kb'; fsEl.className = 'file-info file-size-gold'; }
     }
   },

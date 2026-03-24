@@ -167,7 +167,7 @@ var SETTINGS = {
      ─────────────────────────────────────────────────────────────── */
 
   // Right-side label in the status bar
-  STATUSBAR_LABEL: 'BSV DIRECTORY // SUBMIT v2.2',
+  STATUSBAR_LABEL: 'UP-LINK // SUBMIT v2.2',
 
   // Default status message when page first loads
   STATUSBAR_DEFAULT_MSG: 'READY // CONNECT WALLET TO BEGIN',
@@ -383,7 +383,7 @@ var SETTINGS = {
   BASE_FEE_SATS: 20,
 
   // Protocol identifier written to every MAP transaction
-  PROTOCOL_PREFIX: 'bsvdirectory',
+  PROTOCOL_PREFIX: 'up-link',
 
   // Protocol version
   PROTOCOL_VERSION: '1',

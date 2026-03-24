@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   in-tx.js — Transmit & Transaction Panels (v7.0)
+   in-tx.js — Transmit & Transaction Panels (v7.2)
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  Cross-screen panel card feeding 4 wireframe slots:
@@ -209,6 +209,8 @@ App.Panels.S2.txBtn = {
   mount: function() {
     var signBtn = App.Utils.$('s2-sign-btn');
     if (signBtn) {
+      /* Sync label: offline → SAVE TO FILE, on-chain → SIGN & BROADCAST */
+      signBtn.textContent = App.State.onChain ? '\u25b8 SIGN & BROADCAST' : '\u25b8 SAVE TO FILE';
       signBtn.addEventListener('click', function() {
         App.Transmit.sign();
       });
@@ -241,9 +243,10 @@ App.Tips = {
 
     try {
       var d = App.Form.collectData();
-      if (App.Capabilities.onchain && App.State.onChain && App.MAPExport && App.MAPExport._buildMAPFields) {
+      if (App.Capabilities.onchain && App.State.onChain && App.MAPExport && App.MAPExport._buildMAPFields
+          && typeof WalletManager !== 'undefined' && WalletManager.estimateSubmitFee) {
         var fields = App.MAPExport._buildMAPFields(d);
-        var iconBytes = (d.icon_source === 'upload' && d.icon_data_b64)
+        var iconBytes = (d.icon_source === 'upload' && d.icon_data_b64 && WalletManager._base64ToBytes)
           ? WalletManager._base64ToBytes(d.icon_data_b64) : null;
         var ssSlots = d.screenshots || [null, null, null, null];
         var est = WalletManager.estimateSubmitFee(fields, iconBytes, tipSats, ssSlots);

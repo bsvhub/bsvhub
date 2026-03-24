@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   app-wallet.js — Wallet UI + Mode Toggle + Record Picker
+   app-wallet.js — Wallet UI + Mode Toggle + Record Picker (v7.1)
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  Session management layer — controls what mode the app
@@ -70,6 +70,48 @@ App.Wallet = {
     this._updateUI(st.walletConnected, SETTINGS.MOCK_PAYMAIL_DISPLAY);
   },
 
+  /* ── Connection timeout — 60s countdown shown in #sub-st ── */
+  _connectTimerId: null,
+  _connectCountdown: 0,
+  _connectAborted: false,
+
+  _startConnectTimer: function() {
+    var self = this;
+    this._connectAborted = false;
+    this._connectCountdown = 60;
+    var sst = App.Utils.$('sub-st');
+    if (sst) {
+      sst.textContent = 'CONNECTING... ' + this._connectCountdown + 's';
+      sst.className = 'status warn';
+    }
+    this._connectTimerId = setInterval(function() {
+      self._connectCountdown--;
+      if (sst) sst.textContent = 'CONNECTING... ' + self._connectCountdown + 's';
+      if (self._connectCountdown <= 0) {
+        self._abortConnect('CONNECTION TIMED OUT \u2014 WALLET DID NOT RESPOND');
+      }
+    }, 1000);
+  },
+
+  _stopConnectTimer: function() {
+    if (this._connectTimerId) {
+      clearInterval(this._connectTimerId);
+      this._connectTimerId = null;
+    }
+  },
+
+  _abortConnect: function(msg) {
+    this._connectAborted = true;
+    this._stopConnectTimer();
+    App.State.walletConnected = false;
+    var $ = App.Utils.$;
+    $('wallet-btn').textContent = 'CONNECT';
+    $('wallet-btn').disabled = false;
+    var sst = $('sub-st');
+    if (sst) { sst.textContent = 'WALLET NOT CONNECTED'; sst.className = 'status'; }
+    App.StatusBar.set(msg || 'CONNECTION ABORTED', 'err');
+  },
+
   // Heartbeat interval ID (for periodic wallet reachability checks)
   _heartbeatId: null,
 
@@ -116,13 +158,17 @@ App.Wallet = {
       return;
     }
 
-    // Connect — show connecting state
+    // Connect — show connecting state + start 60s countdown
     $('wallet-btn').textContent = '\u27F3 ...';
     $('wallet-btn').disabled = true;
     App.StatusBar.set('CONNECTING TO BRC-100 WALLET...', '');
+    self._startConnectTimer();
 
     WalletManager.connect()
       .then(function(info) {
+        /* Ignore if aborted while awaiting wallet response */
+        if (self._connectAborted) return;
+        self._stopConnectTimer();
         st.walletConnected = true;
         var display = WalletManager.getDisplayNameUpper();
         self._updateUI(true, display);
@@ -132,9 +178,14 @@ App.Wallet = {
         self._startHeartbeat();
       })
       .catch(function(err) {
+        /* Ignore if already aborted (timeout or offline toggle) */
+        if (self._connectAborted) return;
+        self._stopConnectTimer();
         st.walletConnected = false;
         $('wallet-btn').textContent = 'CONNECT';
         $('wallet-btn').disabled = false;
+        var sst = $('sub-st');
+        if (sst) { sst.textContent = 'WALLET NOT CONNECTED'; sst.className = 'status'; }
         if (err.message === 'WALLET_NOT_RUNNING') {
           App.StatusBar.set('WALLET NOT FOUND \u2014 START BSV DESKTOP AND TRY AGAIN', 'err');
         } else {
@@ -173,7 +224,13 @@ App.Wallet = {
     if (cb) {
       cb.addEventListener('change', function(e) {
         App.State.onChain = !e.target.checked;
-        // Disconnect if switching modes while connected
+
+        /* Abort in-progress connection attempt if switching to offline */
+        if (self._connectTimerId) {
+          self._abortConnect('CONNECTION CANCELLED \u2014 SWITCHED TO OFFLINE MODE');
+        }
+
+        /* Disconnect if already connected */
         if (App.State.walletConnected) {
           if (App.Capabilities.onchain && typeof WalletManager !== 'undefined' && WalletManager.connected) {
             WalletManager.disconnect();
@@ -182,6 +239,11 @@ App.Wallet = {
           self._updateUI(false, '');
           self._stopHeartbeat();
         }
+
+        /* Update S2 sign button label based on mode */
+        var s2Btn = App.Utils.$('s2-sign-btn');
+        if (s2Btn) s2Btn.textContent = App.State.onChain ? '\u25B8 SIGN & BROADCAST' : '\u25B8 SAVE TO FILE';
+
         App.StatusBar.set(
           App.State.onChain ? 'ON-CHAIN MODE \u2014 REAL BRC-100 WALLET' : 'LOCAL SIMULATION MODE',
           App.State.onChain ? 'ok' : ''
@@ -259,7 +321,7 @@ App.RecordPicker = {
     list.innerHTML = '';
 
     if (!this._records.length) {
-      list.innerHTML = '<div class="picker-empty">NO BSVDIRECTORY RECORDS FOUND</div>';
+      list.innerHTML = '<div class="picker-empty">NO UP-LINK RECORDS FOUND</div>';
       return;
     }
 

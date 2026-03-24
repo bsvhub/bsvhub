@@ -111,7 +111,9 @@ App.Form = {
     return null;
   },
 
-  /* Check if any data has been entered at all */
+  /* Check if any user-entered data exists.
+     Excludes dev-paymail because it's auto-populated by wallet connection
+     and should not count as intentional form data. */
   _hasAnyData: function() {
     var $ = App.Utils.$;
     if ($('app-name').value.trim()) return true;
@@ -122,8 +124,9 @@ App.Form = {
     if ($('app-bsv').value.trim()) return true;
     if ($('app-abbr').value.trim()) return true;
     if ($('dev-bio').value.trim()) return true;
-    if ($('dev-paymail').value.trim()) return true;
     if (this.getCategory()) return true;
+    if ($('app-status').value) return true;
+    if (App.State.iconDataB64 || App.State.iconChainUrl) return true;
     for (var i = 1; i <= SETTINGS.MAX_FEATURES; i++) {
       if ($('f' + i) && $('f' + i).value.trim()) return true;
     }
@@ -268,19 +271,157 @@ App.Form = {
     }
   },
 
+  /* Wipe all form fields, images, and state back to factory defaults */
+  clearAll: function() {
+    var $ = App.Utils.$;
+    var st = App.State;
+
+    /* Text inputs + textareas */
+    var fields = ['app-name','app-abbr','app-url','app-tor','app-bsv','app-tags',
+                  'desc','dev-bio','dev-tw','dev-gh','icon-alt','app-ver','app-rel','icon-txid'];
+    for (var i = 0; i < fields.length; i++) {
+      var el = $(fields[i]);
+      if (el) el.value = '';
+    }
+    /* Paymail: only clear if wallet not connected (wallet auto-fills it) */
+    if (!st.walletConnected && $('dev-paymail')) $('dev-paymail').value = '';
+
+    /* Status select → reset to placeholder */
+    if ($('app-status')) $('app-status').selectedIndex = 0;
+
+    /* Uncheck all BSV flags */
+    var flags = ['flag-bsv-content','brc100-on','flag-on-chain','flag-accepts-bsv','flag-open-source'];
+    for (var fi = 0; fi < flags.length; fi++) {
+      var cb = $(flags[fi]);
+      if (cb) cb.checked = false;
+    }
+
+    /* Reset BSVhub to checked (default state) */
+    var bsvhub = $('bsvhub-cb');
+    if (bsvhub && !bsvhub.checked) {
+      bsvhub.checked = true;
+      bsvhub.dispatchEvent(new Event('change'));
+    }
+
+    /* Reset category grid — deselect all */
+    var catBtns = Array.prototype.slice.call(document.querySelectorAll('.cat-btn-new'));
+    for (var ci = 0; ci < catBtns.length; ci++) catBtns[ci].classList.remove('active');
+
+    /* Reset language to default */
+    var langCbs = Array.prototype.slice.call(document.querySelectorAll('#lang-dd input[type=checkbox]'));
+    for (var li = 0; li < langCbs.length; li++) {
+      langCbs[li].checked = !!langCbs[li].defaultChecked;
+    }
+    if (App.Lang) App.Lang.updatePills();
+
+    /* Clear subcategories */
+    if (App.Subcat) { App.Subcat._selected = []; App.Subcat._renderPills(); App.Subcat._updateBtnLabel(); }
+
+    /* Release date checkbox */
+    if ($('rel-today')) { $('rel-today').checked = false; }
+    if ($('app-rel')) $('app-rel').disabled = false;
+
+    /* Features */
+    for (var fti = 1; fti <= SETTINGS.MAX_FEATURES; fti++) {
+      var fe = $('f' + fti);
+      if (fe) fe.value = '';
+    }
+    if (App.Features && App.Features._updateTotal) App.Features._updateTotal();
+
+    /* Icon state — wipe everything */
+    st.iconDataB64 = null;
+    st.iconChainUrl = null;
+    st.iconMime = '';
+    st.iconFilename = '';
+    st.iconKb = 0;
+
+    /* Reset icon radio to "upload" */
+    var uploadRadio = document.querySelector('input[name=isrc][value=upload]');
+    if (uploadRadio) { uploadRadio.checked = true; }
+    if (App.Icon) App.Icon.switchMode('upload');
+
+    /* Clear icon preview */
+    var prev = $('icon-preview');
+    if (prev) {
+      var img = prev.querySelector('img');
+      if (img) img.remove();
+      var ssImg = prev.querySelector('.ss-preview-img');
+      if (ssImg) ssImg.remove();
+      var noImg = $('preview-no-img');
+      if (noImg) { noImg.style.display = ''; noImg.textContent = 'NO IMAGE'; }
+    }
+    $('preview-bg').style.background = '';
+
+    /* Reset file info display */
+    if ($('fname')) $('fname').textContent = 'SVG \u00B7 PNG \u00B7 WEBP \u00B7 AVIF';
+    if ($('fsize')) { $('fsize').textContent = 'MAX ' + Math.round(SETTINGS.MAX_ICON_BYTES / 1024) + 'kb'; $('fsize').className = 'file-info file-size-gold'; }
+    if ($('txid-st')) { $('txid-st').textContent = ''; $('txid-st').className = 'status txid-status'; }
+
+    /* Clear all screenshot slots */
+    if (App.Screenshots) {
+      for (var si = 0; si <= 4; si++) {
+        App.Screenshots._slots[si] = null;
+        App.Screenshots._updateStripThumb(si);
+      }
+      App.Screenshots._updateSlotStates();
+      App.Screenshots.selectSlot(0);
+    }
+
+    /* Clear file inputs so re-selecting the same file triggers change event */
+    if ($('icon-file-input')) $('icon-file-input').value = '';
+    if ($('ss-file-input')) $('ss-file-input').value = '';
+
+    /* Reset colour controls to defaults */
+    if ($('cbg-on')) $('cbg-on').checked = SETTINGS.ICON_BG_ENABLED;
+    if ($('cfg-on')) $('cfg-on').checked = SETTINGS.ICON_FG_ENABLED;
+    if ($('cbg'))   $('cbg').value   = SETTINGS.ICON_DEFAULT_BG;
+    if ($('cbg-h')) $('cbg-h').value = SETTINGS.ICON_DEFAULT_BG;
+    if ($('cfg'))   $('cfg').value   = SETTINGS.ICON_DEFAULT_FG;
+    if ($('cfg-h')) $('cfg-h').value = SETTINGS.ICON_DEFAULT_FG;
+    if ($('opc'))   { $('opc').value = SETTINGS.ICON_DEFAULT_ALPHA; $('opc-v').textContent = Number(SETTINGS.ICON_DEFAULT_ALPHA).toFixed(2); }
+    if ($('zom'))   { $('zom').value = SETTINGS.ICON_DEFAULT_ZOOM;  $('zom-v').textContent = Number(SETTINGS.ICON_DEFAULT_ZOOM).toFixed(2); }
+    if (App.Icon) App.Icon.updatePreviewStyles();
+
+    /* Reset gauges */
+    if ($('desc-c') && $('desc-g')) App.Gauge.update(0, SETTINGS.MAX_DESC_CHARS, $('desc-c'), $('desc-g'));
+    if ($('bio-c') && $('bio-g'))   App.Gauge.update(0, SETTINGS.MAX_BIO_CHARS, $('bio-c'), $('bio-g'));
+
+    /* Tips */
+    st.selectedTip = 0;
+    var tips = Array.prototype.slice.call(document.querySelectorAll('input[name=tip]'));
+    for (var ti = 0; ti < tips.length; ti++) { tips[ti].checked = false; tips[ti].closest('.tip-opt').classList.remove('active'); }
+    if (App.Tips && App.Tips.updateFeeDisplay) App.Tips.updateFeeDisplay();
+
+    /* Clear loaded record (update mode state) */
+    st.loadedRecord = null;
+
+    App.StatusBar.set('FORM CLEARED', 'ok');
+  },
+
   init: function() {
     var self = this;
     var $ = App.Utils.$;
 
     /* ── BSVhub.io checkbox — dominant category ── */
     var bsvhubCb = $('bsvhub-cb');
+
+    /* Toggle LINK colour in logo — blood orange when BSVhub active, gold otherwise */
+    function _syncLogoLink(on) {
+      var links = document.querySelectorAll('.logo-link');
+      for (var li = 0; li < links.length; li++) {
+        links[li].classList.toggle('bsvhub-active', on);
+      }
+    }
+
     if (bsvhubCb) {
       /* BSVhub is checked by default — set initial state */
       self._setCatGridEnabled(false);
       self._setMandatory(true);
+      _syncLogoLink(true);
       if (App.Subcat) App.Subcat.updateForCategory('bsvhub');
 
       bsvhubCb.addEventListener('change', function() {
+        _syncLogoLink(bsvhubCb.checked);
         if (bsvhubCb.checked) {
           /* Deselect any active cat-btn */
           var allBtns = Array.prototype.slice.call(document.querySelectorAll('.cat-btn-new'));

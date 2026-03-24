@@ -177,7 +177,7 @@ App.Viewer = {
     /* Add screenshot fields */
     for (var si = 1; si <= 4; si++) {
       if (fields['ss' + si + '_txid']) {
-        ordered.push('ss' + si + '_txid', 'ss' + si + '_format', 'ss' + si + '_size_kb');
+        ordered.push('ss' + si + '_txid', 'ss' + si + '_format', 'ss' + si + '_size_kb', 'ss' + si + '_zoom');
       }
     }
 

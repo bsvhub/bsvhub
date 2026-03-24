@@ -103,5 +103,14 @@ App.CoreS1 = {
         goTo(3);
       });
     }
+
+    /* 11. Wire CLEAR button — wipe all form data and images */
+    var clearBtn = $('clear-form-btn');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        App.Form.clearAll();
+      });
+    }
   }
 };
