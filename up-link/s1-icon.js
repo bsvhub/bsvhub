@@ -110,7 +110,13 @@ App.Icon = {
 
     var self = this;
     var reader = new FileReader();
-    reader.onload = function(e) { slot.dataB64 = e.target.result; slot.chainUrl = null; slot.txid = ''; self._loadIntoPreview(e.target.result); self.updatePreviewStyles(); App.Screenshots.setIconThumb(e.target.result); };
+    reader.onload = function(e) {
+      slot.dataB64 = e.target.result; slot.chainUrl = null; slot.txid = '';
+      /* Clear the txid input so _saveActiveControls won't re-contaminate the slot */
+      var txIn = App.Utils.$('icon-txid');
+      if (txIn) txIn.value = '';
+      self._loadIntoPreview(e.target.result); self.updatePreviewStyles(); App.Screenshots.setIconThumb(e.target.result);
+    };
     reader.readAsDataURL(file);
   },
 
@@ -561,8 +567,11 @@ App.Screenshots = {
       var existing = self._slots[idx] || self._defaultSlotValues(idx);
       self._slots[idx] = {
         dataB64: e.target.result, filename: file.name, kb: kb, mime: file.type,
-        zoom: existing.zoom, altText: existing.altText
+        txid: '', zoom: existing.zoom, altText: existing.altText
       };
+      /* Clear the txid input so _saveActiveControls won't re-contaminate the slot */
+      var txIn = App.Utils.$('icon-txid');
+      if (txIn) txIn.value = '';
       self._updateStripThumb(idx);
       self._showSlotPreview(idx);
       self._updateSlotStates();
