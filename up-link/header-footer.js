@@ -47,7 +47,7 @@ App.HeaderFooter = {
       '.logo span.logo-link.bsvhub-active{color:var(--mandatory);}' +
 
       /* ── CLEAR button: uses .mode-toggle for sizing, only overrides colour ── */
-      '.clear-btn{color:var(--red);border:1px solid var(--red);margin-left:6px;background:transparent;padding:0 2px;line-height:1;}' +
+      '.clear-btn{font-family:var(--font);font-size:0.72em;font-weight:700;letter-spacing:2px;color:var(--red);border:1px solid var(--red);margin:0 0 0 6px;background:transparent;padding:0 2px;cursor:pointer;text-transform:uppercase;line-height:1;appearance:none;-webkit-appearance:none;box-sizing:border-box;}' +
       '.clear-btn:hover{color:#fff;background:var(--red);border-color:var(--red);}' +
       '.clear-btn:disabled{color:var(--dim);border-color:rgba(200,200,200,0.15);opacity:0.4;cursor:default;pointer-events:none;}' +
 
