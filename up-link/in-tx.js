@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   in-tx.js — Transmit & Transaction Panels (v7.2)
+   in-tx.js — Transmit & Transaction Panels (v7.3)
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  Cross-screen panel card feeding 4 wireframe slots:
@@ -215,6 +215,7 @@ App.Panels.S2.txBtn = {
         App.Transmit.sign();
       });
     }
+    App.Transmit._watchFormEdits();
   }
 };
 
@@ -284,6 +285,34 @@ App.Tips = {
    App.Transmit — Sign & Broadcast Dispatch
    ───────────────────────────────────────────────────────────── */
 App.Transmit = {
+  _sent: false, /* true after successful broadcast/save — guards against re-submit */
+
+  /* Lock the S2 button after a successful broadcast/save */
+  _lockBtn: function() {
+    this._sent = true;
+    var btn = App.Utils.$('s2-sign-btn');
+    if (btn) { btn.disabled = true; btn.textContent = '\u2713 BROADCAST'; }
+  },
+
+  /* Re-enable the S2 button when form data changes after a broadcast */
+  _unlockBtn: function() {
+    if (!this._sent) return;
+    this._sent = false;
+    var btn = App.Utils.$('s2-sign-btn');
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = App.State.onChain ? '\u25b8 SIGN & BROADCAST' : '\u25b8 SAVE TO FILE';
+    }
+  },
+
+  /* Attach a single delegated listener that re-enables after any form edit */
+  _watchFormEdits: function() {
+    var self = this;
+    var s1 = App.Utils.$('screen-1');
+    if (!s1) return;
+    s1.addEventListener('input', function() { self._unlockBtn(); });
+    s1.addEventListener('change', function() { self._unlockBtn(); });
+  },
 
   /**
    * Dispatch sign/broadcast.
@@ -292,6 +321,8 @@ App.Transmit = {
    * shows error if neither is available.
    */
   sign: function() {
+    var self = this;
+
     /* On-chain path — only if capability exists AND user is in on-chain mode */
     if (App.Capabilities.onchain && App.State.onChain && App.MAPExport && App.MAPExport.saveOnChain) {
       App.StatusBar.set('SIGNING TRANSACTION...', 'ok');
@@ -299,6 +330,7 @@ App.Transmit = {
         App.StatusBar.set(msg, 'ok');
       }).then(function(txid) {
         App.StatusBar.set('BROADCAST SUCCESS // TXID: ' + txid, 'ok');
+        self._lockBtn();
       })['catch'](function(err) {
         App.StatusBar.set('BROADCAST FAILED: ' + (err.message || String(err)), 'err');
       });
@@ -310,6 +342,7 @@ App.Transmit = {
       try {
         App.MAPExport.save();
         App.StatusBar.set('FILE SAVED (OFFLINE MODE)', 'ok');
+        self._lockBtn();
       } catch (err) {
         App.StatusBar.set('SAVE FAILED: ' + (err.message || String(err)), 'err');
       }
