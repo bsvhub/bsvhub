@@ -57,7 +57,7 @@ App.CoreS1 = {
 
     /* 5. Set statusbar label */
     var sbVersion = $('sb-version');
-    if (sbVersion) sbVersion.textContent = SETTINGS.STATUSBAR_LABEL;
+    if (sbVersion) sbVersion.textContent = SETTINGS.STATUSBAR_LABEL_S1;
 
     /* 6. Initialize all S1 panel-specific modules */
     App.Panels.S1.desc.init();    /* desc gauge + wordguard */

@@ -166,8 +166,10 @@ var SETTINGS = {
      The bottom bar messages and version label.
      ─────────────────────────────────────────────────────────────── */
 
-  // Right-side label in the status bar
-  STATUSBAR_LABEL: 'UP-LINK // SUBMIT v2.2',
+  // Right-side label in the status bar (per screen)
+  STATUSBAR_LABEL_S1: 'UP-LINK // SUBMIT v2.3',
+  STATUSBAR_LABEL_S2: 'UP-LINK // SUBMIT v2.3',
+  STATUSBAR_LABEL_S3: 'UP-LINK // VIEW v2.3',
 
   // Default status message when page first loads
   STATUSBAR_DEFAULT_MSG: 'READY // CONNECT WALLET TO BEGIN',
@@ -400,21 +402,14 @@ var SETTINGS = {
 
 
   /* ─── NETWORK: CDN ENDPOINTS ─────────────────────────────────────
-     URLs used to fetch on-chain icon images.
-     {txid} is replaced with the actual transaction ID.
+     URLs used to fetch on-chain images (icon + screenshots).
+     {txid} is replaced with the full txid_suffix string.
      ─────────────────────────────────────────────────────────────── */
 
-  // CDN URLs that append "_0" (output index 0)
-  CDN_URLS_WITH_SUFFIX: [
-    'https://ordinals.gorillapool.io/content/{txid}_0',
-    'https://ordfs.network/{txid}_0',
-    'https://1satordinals.com/content/{txid}_0',
-  ],
-
-  // CDN URLs without suffix
-  CDN_URLS_NO_SUFFIX: [
-    'https://ordfs.network/{txid}',
+  CDN_URLS: [
     'https://ordinals.gorillapool.io/content/{txid}',
+    'https://ordfs.network/{txid}',
+    'https://1satordinals.com/content/{txid}',
   ],
 
   // Timeout for fetch attempts in milliseconds

@@ -63,12 +63,16 @@ App.Init = function() {
   /* 10b. Register Screen 2 mount hook (lazy — renders on navigate) */
   window._onScreenMount[2] = function() {
     App.CoreS2.mount();
+    var sv2 = $('sb-version-2');
+    if (sv2) sv2.textContent = SETTINGS.STATUSBAR_LABEL_S2;
   };
 
-  /* 10c. Register Screen 3 mount hook — disable CLEAR button */
+  /* 10c. Register Screen 3 mount hook — disable CLEAR button, set version label */
   window._onScreenMount[3] = function() {
     var clearBtns = document.querySelectorAll('.clear-btn');
     for (var i = 0; i < clearBtns.length; i++) clearBtns[i].disabled = true;
+    var sv3 = $('sb-version-3');
+    if (sv3) sv3.textContent = SETTINGS.STATUSBAR_LABEL_S3;
   };
 
   /* 11. Legacy bridge — window.saveMAP dispatches to onchain or offline */

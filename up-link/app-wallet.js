@@ -159,8 +159,9 @@ App.Wallet = {
     }
 
     // Connect — show connecting state + start 60s countdown
-    $('wallet-btn').textContent = '\u27F3 ...';
-    $('wallet-btn').disabled = true;
+    var _wb = $('wallet-btn');
+    _wb.innerHTML = '<span class="spinner" style="font-size:inherit;display:inline-block;">\u27F3</span>';
+    _wb.disabled = true;
     App.StatusBar.set('CONNECTING TO BRC-100 WALLET...', '');
     self._startConnectTimer();
 
@@ -187,7 +188,7 @@ App.Wallet = {
         var sst = $('sub-st');
         if (sst) { sst.textContent = 'WALLET NOT CONNECTED'; sst.className = 'status'; }
         if (err.message === 'WALLET_NOT_RUNNING') {
-          App.StatusBar.set('WALLET NOT FOUND \u2014 START BSV DESKTOP AND TRY AGAIN', 'err');
+          App.StatusBar.set('WALLET NOT FOUND \u2014 START BRC-100 WALLET AND TRY AGAIN', 'err');
         } else {
           App.StatusBar.set('WALLET ERROR \u2014 ' + (err.message || 'UNKNOWN').toUpperCase(), 'err');
         }
