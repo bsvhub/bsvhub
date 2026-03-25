@@ -371,78 +371,70 @@ App.MAPImport = {
       $('dev-paymail').value = f.developer_paymail;
     }
 
-    // --- Icon state ---
-    if (f.icon_format) App.State.iconMime = f.icon_format;
-    if (f.icon_size_kb && f.icon_size_kb !== '—') App.State.iconKb = f.icon_size_kb;
-
-    // --- Icon BG/FG toggles ---
-    if (f.icon_bg_enabled !== undefined) {
-      $('cbg-on').checked = f.icon_bg_enabled === 'true' || f.icon_bg_enabled === true;
-    } else if (f.icon_bg_colour && f.icon_bg_colour !== '—') {
-      $('cbg-on').checked = true;
-    }
-    if (f.icon_fg_enabled !== undefined) {
-      $('cfg-on').checked = f.icon_fg_enabled === 'true' || f.icon_fg_enabled === true;
-    } else if (f.icon_fg_colour && f.icon_fg_colour !== '—') {
-      $('cfg-on').checked = true;
-    }
-
-    // --- Icon settings ---
-    if (f.icon_bg_colour && /^#[0-9a-fA-F]{6}$/.test(f.icon_bg_colour)) {
-      $('cbg').value = f.icon_bg_colour;
-      $('cbg-h').value = f.icon_bg_colour;
-    }
-    if (f.icon_fg_colour && /^#[0-9a-fA-F]{6}$/.test(f.icon_fg_colour)) {
-      $('cfg').value = f.icon_fg_colour;
-      $('cfg-h').value = f.icon_fg_colour;
-    }
-    if (f.icon_bg_alpha !== undefined) {
-      $('opc').value = f.icon_bg_alpha;
-      $('opc-v').textContent = parseFloat(f.icon_bg_alpha).toFixed(2);
-    }
-    if (f.icon_zoom !== undefined) {
-      $('zom').value = f.icon_zoom;
-      $('zom-v').textContent = parseFloat(f.icon_zoom).toFixed(2);
-    }
-    if (f.alt_text !== undefined) $('icon-alt').value = f.alt_text;
-
-    // --- Sync restored icon values into slot 0 for per-slot storage ---
+    // --- Restore all icon data into _slots[0] (single source of truth) ---
     if (App.Screenshots) {
-      App.Screenshots._slots[0] = App.Screenshots._slots[0] || App.Screenshots._defaultSlotValues(0);
-      var s0 = App.Screenshots._slots[0];
+      var s0 = App.Screenshots._defaultSlotValues(0);
+      if (f.icon_format) s0.mime = f.icon_format;
+      if (f.icon_size_kb && f.icon_size_kb !== '\u2014') s0.kb = f.icon_size_kb;
+      if (f.icon_txid && f.icon_txid !== '(pending)') s0.txid = f.icon_txid;
       if (f.icon_bg_enabled !== undefined) s0.bgOn = f.icon_bg_enabled === 'true' || f.icon_bg_enabled === true;
+      else if (f.icon_bg_colour && f.icon_bg_colour !== '\u2014') s0.bgOn = true;
       if (f.icon_fg_enabled !== undefined) s0.fgOn = f.icon_fg_enabled === 'true' || f.icon_fg_enabled === true;
+      else if (f.icon_fg_colour && f.icon_fg_colour !== '\u2014') s0.fgOn = true;
       if (f.icon_bg_colour && /^#[0-9a-fA-F]{6}$/.test(f.icon_bg_colour)) s0.bg = f.icon_bg_colour;
       if (f.icon_fg_colour && /^#[0-9a-fA-F]{6}$/.test(f.icon_fg_colour)) s0.fg = f.icon_fg_colour;
       if (f.icon_bg_alpha !== undefined) s0.alpha = f.icon_bg_alpha;
       if (f.icon_zoom !== undefined) s0.zoom = f.icon_zoom;
       if (f.alt_text !== undefined) s0.altText = f.alt_text;
+
+      // Image data: embedded B64 or chain fetch
+      if (f._icon_data_b64) {
+        s0.dataB64 = f._icon_data_b64; s0.chainUrl = null;
+      }
+      App.Screenshots._slots[0] = s0;
     }
 
-    // --- Icon mode and data ---
+    // --- Populate icon UI controls from slot 0 ---
+    if (f.icon_bg_enabled !== undefined) {
+      $('cbg-on').checked = f.icon_bg_enabled === 'true' || f.icon_bg_enabled === true;
+    } else if (f.icon_bg_colour && f.icon_bg_colour !== '\u2014') {
+      $('cbg-on').checked = true;
+    }
+    if (f.icon_fg_enabled !== undefined) {
+      $('cfg-on').checked = f.icon_fg_enabled === 'true' || f.icon_fg_enabled === true;
+    } else if (f.icon_fg_colour && f.icon_fg_colour !== '\u2014') {
+      $('cfg-on').checked = true;
+    }
+    if (f.icon_bg_colour && /^#[0-9a-fA-F]{6}$/.test(f.icon_bg_colour)) {
+      $('cbg').value = f.icon_bg_colour; $('cbg-h').value = f.icon_bg_colour;
+    }
+    if (f.icon_fg_colour && /^#[0-9a-fA-F]{6}$/.test(f.icon_fg_colour)) {
+      $('cfg').value = f.icon_fg_colour; $('cfg-h').value = f.icon_fg_colour;
+    }
+    if (f.icon_bg_alpha !== undefined) {
+      $('opc').value = f.icon_bg_alpha; $('opc-v').textContent = parseFloat(f.icon_bg_alpha).toFixed(2);
+    }
+    if (f.icon_zoom !== undefined) {
+      $('zom').value = f.icon_zoom; $('zom-v').textContent = parseFloat(f.icon_zoom).toFixed(2);
+    }
+    if (f.alt_text !== undefined) $('icon-alt').value = f.alt_text;
+
+    // --- Icon mode and preview ---
     if (f.icon_txid && f.icon_txid !== '(pending)' && App.Utils.isValidTxid(f.icon_txid)) {
       var txidRadio = document.querySelector('input[name=isrc][value=txid]');
       txidRadio.checked = true;
       App.Icon.switchMode('txid');
       $('icon-txid').value = f.icon_txid;
     }
-
-    // Restore icon preview from embedded B:// data or fetch from chain
     if (f._icon_data_b64) {
-      App.State.iconDataB64 = f._icon_data_b64;
-      App.State.iconChainUrl = null;
       App.Icon._loadIntoPreview(f._icon_data_b64);
+      App.Screenshots.setIconThumb(f._icon_data_b64);
     } else if (f.icon_txid && f.icon_txid !== '(pending)' && App.Utils.isValidTxid(f.icon_txid)) {
-      // Try to fetch icon from chain and display it
-      App.State.iconDataB64 = null;
-      App.State.iconChainUrl = null;
       if (App.Icon.fetchFromBlockchain) {
         $('icon-txid').value = f.icon_txid;
         App.Icon.fetchFromBlockchain();
       }
     } else {
-      App.State.iconDataB64 = null;
-      App.State.iconChainUrl = null;
       var prev = $('icon-preview');
       prev.innerHTML = '<div class="bg-layer" id="preview-bg"></div><span class="no-img">NO IMAGE</span>';
     }
