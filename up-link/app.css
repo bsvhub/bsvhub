@@ -624,6 +624,8 @@ input[type=text], input[type=url], select, textarea { font-size: 1em; }
 .map-table .changed td { background: rgba(234,179,0,0.08); }
 .map-table .added td { background: rgba(0,204,68,0.08); }
 .map-table .removed td { background: rgba(255,87,51,0.08); text-decoration: line-through; }
+.map-old { text-decoration: line-through; opacity: 0.45; }
+.map-new { color: var(--gold); }
 
 /* ── S2 MAP panel — scroll when content overflows ──────────── */
 #p2-map { overflow-y: auto; overflow-x: auto; }
