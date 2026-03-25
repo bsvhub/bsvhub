@@ -42,6 +42,7 @@ App.Panels.S1.icon = {
           '<div class="radio-row">' +
             '<label class="radio-opt"><input type="radio" name="isrc" value="upload" checked><div class="rbox"></div><span>UPLOAD</span></label>' +
             '<label class="radio-opt"><input type="radio" name="isrc" value="txid"><div class="rbox"></div><span>ON-CHAIN</span></label>' +
+            '<button class="ce-btn" id="ce-slot-btn" title="Clear this slot">CE</button>' +
           '</div>' +
         '</div>' +
         '<div id="mode-upload" class="mode-container">' +
@@ -598,6 +599,40 @@ App.Screenshots = {
       : 'SCREENSHOT ' + idx + ' CLEARED', 'ok');
   },
 
+  /* Clear only the active slot's image data (CE button) */
+  clearEntry: function() {
+    var $ = App.Utils.$;
+    var idx = this._active;
+    if (idx === 0) {
+      this._slots[0] = this._defaultSlotValues(0);
+      this.setIconThumb(null);
+      /* Reset icon preview */
+      var prev = $('icon-preview');
+      if (prev) {
+        var img = prev.querySelector('img'); if (img) img.remove();
+        var ssImg = prev.querySelector('.ss-preview-img'); if (ssImg) ssImg.remove();
+        var noImg = $('preview-no-img');
+        if (noImg) { noImg.style.display = ''; noImg.textContent = 'NO IMAGE'; }
+      }
+      $('preview-bg').style.background = '';
+      if ($('fname')) $('fname').textContent = 'SVG \u00B7 PNG \u00B7 WEBP \u00B7 AVIF';
+      if ($('fsize')) { $('fsize').textContent = 'MAX ' + Math.round(SETTINGS.MAX_ICON_BYTES / 1024) + 'kb'; $('fsize').className = 'file-info file-size-gold'; }
+      if ($('icon-file-input')) $('icon-file-input').value = '';
+    } else {
+      this._slots[idx] = null;
+      this._showSlotPreview(idx);
+      if ($('ss-file-input')) $('ss-file-input').value = '';
+    }
+    /* Clear shared controls */
+    if ($('icon-txid')) $('icon-txid').value = '';
+    if ($('txid-st')) { $('txid-st').textContent = ''; $('txid-st').className = 'status txid-status'; }
+    this._updateStripThumb(idx);
+    this._loadSlotControls(idx);
+    this._updateSlotStates();
+    var label = idx === 0 ? 'ICON' : 'SCREENSHOT ' + idx;
+    App.StatusBar.set(label + ' CLEARED', 'ok');
+  },
+
   setIconThumb: function(dataB64) {
     var sq = App.Utils.$('slot-0'); if (!sq) return;
     var img = sq.querySelector('img');
@@ -648,6 +683,9 @@ App.Screenshots = {
     }
     var ssInput = App.Utils.$('ss-file-input');
     if (ssInput) ssInput.addEventListener('change', function(e) { self.handleSSUpload(e.target.files[0]); });
+    /* CE button — clear active slot */
+    var ceBtn = App.Utils.$('ce-slot-btn');
+    if (ceBtn) ceBtn.addEventListener('click', function() { self.clearEntry(); });
     /* Initialise slot 0 (icon) with default control values */
     this._slots[0] = this._defaultSlotValues(0);
     this.selectSlot(0);
