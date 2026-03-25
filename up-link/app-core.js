@@ -50,9 +50,7 @@ App.Config = {
   get: function(key) { return SETTINGS[key]; },
 
   getAllCdnUrls: function(txid) {
-    var withSuffix = SETTINGS.CDN_URLS_WITH_SUFFIX.map(function(u) { return u.replace('{txid}', txid); });
-    var noSuffix   = SETTINGS.CDN_URLS_NO_SUFFIX.map(function(u) { return u.replace('{txid}', txid); });
-    return withSuffix.concat(noSuffix);
+    return SETTINGS.CDN_URLS.map(function(u) { return u.replace('{txid}', txid); });
   },
 
   getStatusColour: function(statusValue) {
@@ -72,13 +70,9 @@ App.State = {
   mode:            'submit',  // 'submit' or 'update'
   onChain:         false,     // set in app-init.js after capabilities detected
   walletConnected: false,
-  iconDataB64:     null,
-  iconChainUrl:    null,
-  iconMime:        '',
-  iconFilename:    '',
-  iconKb:          0,
   selectedTip:     0,
   loadedRecord:    null       // Stores the original loaded MAP data for diff comparison
+  // Icon image data now stored in App.Screenshots._slots[0] (single source of truth)
 };
 
 
@@ -108,8 +102,16 @@ App.Utils = {
     return 'linear-gradient(' + SETTINGS.BG_GRADIENT_ANGLE + 'deg,' + this.hexToRgba(bg,alpha) + ',' + this.hexToRgba(fg,alpha) + ')';
   },
 
+  /* Accepts bare 64-hex txid or txid_suffix (e.g. abc...def_0) */
   isValidTxid: function(str) {
-    return str.length === 64 && /^[0-9a-fA-F]{64}$/.test(str);
+    return /^[0-9a-fA-F]{64}(_[0-9a-zA-Z]+)?$/.test(str);
+  },
+
+  /* Normalize txid: bare 64-hex gets _0 appended, already-suffixed stays as-is */
+  parseTxid: function(str) {
+    str = (str || '').trim();
+    if (/^[0-9a-fA-F]{64}$/.test(str)) return str + '_0';
+    return str;
   }
 };
 

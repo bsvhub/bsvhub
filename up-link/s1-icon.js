@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   s1-icon.js — Icon Design Panel (Screen 1, #p1-icon) (v7.1)
+   s1-icon.js — Icon Design Panel (Screen 1, #p1-icon) (v7.2)
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  Self-contained panel: HTML template, icon upload/fetch,
@@ -7,11 +7,11 @@
              5-slot screenshot strip. Everything for #p1-icon in
              one file.
              Each slot stores its own values independently:
-               ico:  upload, txid, bg, fg, alpha, zoom, alt text
+               ico:  upload, chainUrl, txid, bg, fg, alpha, zoom, alt text
                ss1-4: upload, txid, zoom, alt text
 
    INPUTS:   SETTINGS (from settings.js).
-             App.Utils, App.State, App.StatusBar, App.Config,
+             App.Utils, App.StatusBar, App.Config,
              App.Gauge, App.WordGuard (from app-core.js).
 
    OUTPUTS:  App.Panels.S1.icon — { render(), mount() }
@@ -50,7 +50,7 @@ App.Panels.S1.icon = {
           '<div class="file-info file-size-gold" id="fsize"></div>' +
         '</div>' +
         '<div id="mode-txid" class="mode-container" style="display:none;">' +
-          '<input type="text" id="icon-txid" placeholder="64-char txid" style="letter-spacing:0.3px;width:100%;">' +
+          '<input type="text" id="icon-txid" placeholder="txid or txid_0" style="letter-spacing:0.3px;width:100%;">' +
           '<button class="file-btn" id="fetch-btn">\u25b8 FETCH FROM CHAIN</button>' +
           '<div id="txid-st" class="status txid-status"></div>' +
         '</div>' +
@@ -94,29 +94,33 @@ App.Icon = {
 
   handleFileUpload: function(file) {
     if (!file) return;
-    var st = App.State;
-    st.iconFilename = file.name; st.iconMime = file.type; st.iconKb = (file.size / 1024).toFixed(1);
+    var slot = App.Screenshots._slots[0] || App.Screenshots._defaultSlotValues(0);
+    App.Screenshots._slots[0] = slot;
+    slot.filename = file.name; slot.mime = file.type; slot.kb = (file.size / 1024).toFixed(1);
     App.Utils.$('fname').textContent = file.name;
     var szEl = App.Utils.$('fsize');
 
     if (file.size > SETTINGS.MAX_ICON_BYTES) {
-      szEl.textContent = st.iconKb + 'kb \u2014 OVER LIMIT'; szEl.className = 'file-info file-size-err';
+      szEl.textContent = slot.kb + 'kb \u2014 OVER LIMIT'; szEl.className = 'file-info file-size-err';
       App.StatusBar.set('FILE TOO LARGE \u2014 MAX ' + Math.round(SETTINGS.MAX_ICON_BYTES / 1024) + 'KB', 'err');
-      st.iconDataB64 = null; return;
+      slot.dataB64 = null; return;
     }
-    szEl.textContent = st.iconKb + 'kb \u2713'; szEl.className = 'file-info file-size-green';
+    szEl.textContent = slot.kb + 'kb \u2713'; szEl.className = 'file-info file-size-green';
     App.StatusBar.set('ICON LOADED // ' + file.name, 'ok');
 
     var self = this;
     var reader = new FileReader();
-    reader.onload = function(e) { st.iconDataB64 = e.target.result; st.iconChainUrl = null; self._loadIntoPreview(e.target.result); self.updatePreviewStyles(); };
+    reader.onload = function(e) { slot.dataB64 = e.target.result; slot.chainUrl = null; slot.txid = ''; self._loadIntoPreview(e.target.result); self.updatePreviewStyles(); App.Screenshots.setIconThumb(e.target.result); };
     reader.readAsDataURL(file);
   },
 
   fetchFromBlockchain: async function() {
-    var txid = App.Utils.$('icon-txid').value.trim();
+    var raw = App.Utils.$('icon-txid').value.trim();
     var el = App.Utils.$('txid-st');
-    if (!App.Utils.isValidTxid(txid)) { el.textContent = '\u2717 INVALID \u2014 MUST BE 64 HEX CHARS'; el.className = 'status txid-status err'; return; }
+    if (!App.Utils.isValidTxid(raw)) { el.textContent = '\u2717 INVALID \u2014 MUST BE 64 HEX CHARS (optional _suffix)'; el.className = 'status txid-status err'; return; }
+    var txid = App.Utils.parseTxid(raw);
+    /* Write normalized txid back into input so user sees what was stored */
+    App.Utils.$('icon-txid').value = txid;
 
     var activeSlot = App.Screenshots ? App.Screenshots._active : 0;
     var isScreenshot = activeSlot >= 1 && activeSlot <= 4;
@@ -148,7 +152,9 @@ App.Icon = {
 
       el.textContent = '\u2713 TXID RECORDED // No local preview (CORS) \u2014 will display on chain'; el.className = 'status txid-status warn';
       App.StatusBar.set('TXID STORED // Preview unavailable locally \u2014 image loads fine on chain', 'warn');
-      App.State.iconDataB64 = null; App.State.iconMime = 'image/unknown'; App.State.iconFilename = txid.slice(0, 8); App.State.iconKb = '?';
+      var slot0 = App.Screenshots._slots[0] || App.Screenshots._defaultSlotValues(0);
+      App.Screenshots._slots[0] = slot0;
+      slot0.dataB64 = null; slot0.chainUrl = null; slot0.mime = 'image/unknown'; slot0.filename = txid.slice(0, 8); slot0.kb = '?'; slot0.txid = txid;
     }
   },
 
@@ -176,13 +182,15 @@ App.Icon = {
   },
 
   _applyFetchedImage: function(result, txid, statusEl) {
-    var st = App.State;
-    st.iconDataB64 = result.dataUrl; st.iconChainUrl = null; st.iconMime = result.mime;
-    st.iconFilename = txid.slice(0, 8) + '.' + (result.mime.split('/')[1] || 'png').replace('jpeg', 'jpg');
-    st.iconKb = (result.bytes / 1024).toFixed(1);
-    statusEl.textContent = '\u2713 LOADED FROM CHAIN (' + st.iconKb + 'kb)'; statusEl.className = 'status txid-status ok';
+    var slot = App.Screenshots._slots[0] || App.Screenshots._defaultSlotValues(0);
+    App.Screenshots._slots[0] = slot;
+    slot.dataB64 = result.dataUrl; slot.chainUrl = null; slot.mime = result.mime;
+    slot.filename = txid.slice(0, 8) + '.' + (result.mime.split('/')[1] || 'png').replace('jpeg', 'jpg');
+    slot.kb = (result.bytes / 1024).toFixed(1); slot.txid = txid;
+    statusEl.textContent = '\u2713 LOADED FROM CHAIN (' + slot.kb + 'kb)'; statusEl.className = 'status txid-status ok';
     App.StatusBar.set('ON-CHAIN ICON FETCHED // ' + txid.slice(0, 12) + '...', 'ok');
-    this._loadIntoPreview(st.iconDataB64); this.updatePreviewStyles();
+    this._loadIntoPreview(slot.dataB64); this.updatePreviewStyles();
+    App.Screenshots.setIconThumb(slot.dataB64);
   },
 
   _showChainImageDisplayOnly: function(url, txid, statusEl) {
@@ -190,7 +198,9 @@ App.Icon = {
     var noImg = prev.querySelector('.no-img'); if (noImg) noImg.remove();
     var img = prev.querySelector('img'); if (!img) { img = document.createElement('img'); prev.appendChild(img); }
     img.removeAttribute('crossorigin'); img.src = url;
-    App.State.iconChainUrl = url; App.State.iconDataB64 = null; App.State.iconMime = 'image/unknown'; App.State.iconFilename = txid.slice(0, 8); App.State.iconKb = '?';
+    var slot = App.Screenshots._slots[0] || App.Screenshots._defaultSlotValues(0);
+    App.Screenshots._slots[0] = slot;
+    slot.chainUrl = url; slot.dataB64 = null; slot.mime = 'image/unknown'; slot.filename = txid.slice(0, 8); slot.kb = '?'; slot.txid = txid;
     this.enforceSquare();
     statusEl.textContent = '\u2713 LOADED FROM CHAIN \u2014 PREVIEW ACTIVE'; statusEl.className = 'status txid-status ok';
     App.StatusBar.set('ON-CHAIN ICON LOADED // ' + txid.slice(0, 12) + '...', 'ok');
@@ -346,7 +356,7 @@ App.Icon = {
    Slot 0 = icon. Slots 1-4 = screenshots SS1-SS4.
 
    Each slot independently stores its own values:
-     ico  (slot 0): dataB64, filename, kb, mime, txid, bg, fg, alpha, zoom, altText
+     ico  (slot 0): dataB64, chainUrl, filename, kb, mime, txid, bgOn, fgOn, bg, fg, alpha, zoom, altText
      ss1-4 (1-4):   dataB64, filename, kb, mime, txid, zoom, altText
 
    The UI controls (zoom slider, alt text input, bg/fg/alpha for ico)
@@ -360,8 +370,9 @@ App.Screenshots = {
 
   /* ── Per-slot value defaults ────────────────────────────── */
   _defaultSlotValues: function(idx) {
-    var v = { zoom: SETTINGS.ICON_DEFAULT_ZOOM || 1, altText: '' };
+    var v = { dataB64: null, filename: '', kb: 0, mime: '', txid: '', zoom: SETTINGS.ICON_DEFAULT_ZOOM || 1, altText: '' };
     if (idx === 0) {
+      v.chainUrl = null;
       v.bgOn = SETTINGS.ICON_BG_ENABLED !== undefined ? SETTINGS.ICON_BG_ENABLED : true;
       v.fgOn = SETTINGS.ICON_FG_ENABLED !== undefined ? SETTINGS.ICON_FG_ENABLED : false;
       v.bg = SETTINGS.ICON_DEFAULT_BG || '#1a1440';
@@ -384,6 +395,9 @@ App.Screenshots = {
     }
     slot.zoom = $('zom') ? $('zom').value : (slot.zoom || 1);
     slot.altText = $('icon-alt') ? $('icon-alt').value.trim() : (slot.altText || '');
+    /* Save txid from the shared input if user typed/pasted one */
+    var txIn = $('icon-txid');
+    if (txIn && txIn.value.trim()) slot.txid = txIn.value.trim();
     if (idx === 0) {
       slot.bgOn  = $('cbg-on') ? $('cbg-on').checked : slot.bgOn;
       slot.fgOn  = $('cfg-on') ? $('cfg-on').checked : slot.fgOn;
@@ -449,12 +463,16 @@ App.Screenshots = {
       if (panel) panel.classList.remove('ss-active');
       this._rewireBrowse('icon');
       if (txidInput) {
-        var iconMode = document.querySelector('input[name=isrc]:checked');
-        if (iconMode && iconMode.value === 'txid') txidInput.value = txidInput.dataset.iconTxid || '';
+        var s0 = this._slots[0];
+        txidInput.value = (s0 && s0.txid) ? s0.txid : '';
       }
       var fn = App.Utils.$('fname'), fs = App.Utils.$('fsize');
-      if (fn) fn.textContent = 'SVG \u00B7 PNG \u00B7 WEBP \u00B7 AVIF';
-      if (fs) { fs.textContent = 'MAX ' + Math.round(SETTINGS.MAX_ICON_BYTES / 1024) + 'kb'; fs.className = 'file-info file-size-gold'; }
+      var s0d = this._slots[0];
+      if (fn) fn.textContent = (s0d && s0d.filename) ? s0d.filename : 'SVG \u00B7 PNG \u00B7 WEBP \u00B7 AVIF';
+      if (fs) {
+        if (s0d && s0d.dataB64) { fs.textContent = s0d.kb + 'kb \u2713'; fs.className = 'file-info file-size-green'; }
+        else { fs.textContent = 'MAX ' + Math.round(SETTINGS.MAX_ICON_BYTES / 1024) + 'kb'; fs.className = 'file-info file-size-gold'; }
+      }
       /* Restore BG/FG gradient layer — only applies to icon */
       var bgLayer = App.Utils.$('preview-bg');
       if (bgLayer) bgLayer.style.display = '';
@@ -473,7 +491,6 @@ App.Screenshots = {
       if (panel) panel.classList.add('ss-active');
       this._rewireBrowse('ss');
       if (txidInput) {
-        if (this._prevActive === 0 && txidInput.value) txidInput.dataset.iconTxid = txidInput.value;
         var slot = this._slots[idx];
         txidInput.value = (slot && slot.txid) ? slot.txid : '';
       }

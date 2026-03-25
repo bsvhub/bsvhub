@@ -280,14 +280,8 @@ App.Viewer = {
           BSVCard.injectCSS();
         }
 
-        /* Build CDN URLs from config */
-        var cdnUrls = App.Config.getAllCdnUrls('{txid}');
-        /* getAllCdnUrls replaces {txid} with the param, but we need template URLs for BSVCard */
-        var cdnUrlTemplates = [];
-        var withSuffix = SETTINGS.CDN_URLS_WITH_SUFFIX || [];
-        var noSuffix = SETTINGS.CDN_URLS_NO_SUFFIX || [];
-        for (var u = 0; u < withSuffix.length; u++) { cdnUrlTemplates.push(withSuffix[u]); }
-        for (var v = 0; v < noSuffix.length; v++) { cdnUrlTemplates.push(noSuffix[v]); }
+        /* Build CDN URL templates from config */
+        var cdnUrlTemplates = SETTINGS.CDN_URLS || [];
 
         /* Render card using shared BSVCard module */
         if (cardEl) {

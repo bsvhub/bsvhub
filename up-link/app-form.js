@@ -38,12 +38,11 @@ App.Form = {
   },
 
   collectData: function() {
-    var $ = App.Utils.$, st = App.State;
-    var iconMode = document.querySelector('input[name=isrc]:checked').value;
+    var $ = App.Utils.$;
     var ssData = App.Screenshots ? App.Screenshots.getData() : { icon: null, screenshots: [null, null, null, null] };
-    var iconSlot = ssData.icon; /* slot 0 — contains per-slot bg/fg/alpha/zoom/altText */
+    var ico = ssData.icon || {}; /* slot 0 — single source of truth for all icon data */
 
-    // Build screenshot txid fields from slot data — each slot stores its own zoom + altText
+    // Build screenshot fields from slot data
     var ssFields = {};
     var ss = ssData.screenshots || [null, null, null, null];
     for (var si = 0; si < 4; si++) {
@@ -57,15 +56,6 @@ App.Form = {
         ssFields['ss' + n + '_alt_text'] = slot.altText || '';
       }
     }
-
-    // Icon values: prefer per-slot stored values, fall back to UI controls
-    var icoZoom  = (iconSlot && iconSlot.zoom !== undefined)    ? iconSlot.zoom     : ($('zom') ? $('zom').value : 1);
-    var icoAlt   = (iconSlot && iconSlot.altText !== undefined) ? iconSlot.altText   : ($('icon-alt') ? $('icon-alt').value.trim() : '');
-    var icoBgOn  = (iconSlot && iconSlot.bgOn !== undefined)    ? iconSlot.bgOn      : ($('cbg-on') ? $('cbg-on').checked : true);
-    var icoFgOn  = (iconSlot && iconSlot.fgOn !== undefined)    ? iconSlot.fgOn      : ($('cfg-on') ? $('cfg-on').checked : false);
-    var icoBg    = (iconSlot && iconSlot.bg)                    ? iconSlot.bg        : ($('cbg') ? $('cbg').value : '#1a1440');
-    var icoFg    = (iconSlot && iconSlot.fg)                    ? iconSlot.fg        : ($('cfg') ? $('cfg').value : '#EAB300');
-    var icoAlpha = (iconSlot && iconSlot.alpha !== undefined)   ? iconSlot.alpha     : ($('opc') ? $('opc').value : 1);
 
     var base = {
       protocol: SETTINGS.PROTOCOL_PREFIX, protocol_version: SETTINGS.PROTOCOL_VERSION,
@@ -81,16 +71,18 @@ App.Form = {
       accepts_bsv: $('flag-accepts-bsv').checked,
       open_source: $('flag-open-source').checked,
       version: $('app-ver').value.trim(), release_date: App.ReleaseDate.toISO($('app-rel').value.trim()), description: $('desc').value.trim(), features: App.Features.getValues(),
-      icon_source: iconMode, icon_txid: iconMode === 'txid' ? $('icon-txid').value.trim() : '(pending)',
-      icon_format: st.iconMime || '\u2014', icon_filename: st.iconFilename || '\u2014', icon_size_kb: st.iconKb || '\u2014',
-      icon_bg_enabled: icoBgOn, icon_fg_enabled: icoFgOn,
-      icon_bg_colour: icoBg, icon_fg_colour: icoFg, icon_bg_alpha: icoAlpha,
-      icon_zoom: icoZoom, alt_text: icoAlt,
+      icon_source: (ico.txid && ico.txid.length >= 64) ? 'txid' : 'upload',
+      icon_txid: ico.txid || '(pending)',
+      icon_format: ico.mime || '\u2014', icon_filename: ico.filename || '\u2014', icon_size_kb: ico.kb || '\u2014',
+      icon_bg_enabled: ico.bgOn !== undefined ? ico.bgOn : true,
+      icon_fg_enabled: ico.fgOn !== undefined ? ico.fgOn : false,
+      icon_bg_colour: ico.bg || '', icon_fg_colour: ico.fg || '', icon_bg_alpha: ico.alpha !== undefined ? ico.alpha : 1,
+      icon_zoom: ico.zoom !== undefined ? ico.zoom : 1, alt_text: ico.altText || '',
       developer_paymail: $('dev-paymail').value.trim(), developer_twitter: $('dev-tw').value.trim(),
       developer_github: $('dev-gh').value.trim(), developer_bio: $('dev-bio').value.trim(),
-      icon_data_b64: st.iconDataB64, icon_chain_url: st.iconChainUrl, icon_width: null, icon_height: null,
+      icon_data_b64: ico.dataB64 || null, icon_chain_url: ico.chainUrl || null, icon_width: null, icon_height: null,
       screenshots: ssData.screenshots,
-      tip_bsv: st.selectedTip
+      tip_bsv: App.State.selectedTip
     };
     return Object.assign(base, ssFields);
   },
@@ -138,7 +130,8 @@ App.Form = {
     if ($('dev-bio').value.trim()) return true;
     if (this.getCategory()) return true;
     if ($('app-status').value) return true;
-    if (App.State.iconDataB64 || App.State.iconChainUrl) return true;
+    var ico0 = App.Screenshots ? App.Screenshots._slots[0] : null;
+    if (ico0 && (ico0.dataB64 || ico0.chainUrl || ico0.txid)) return true;
     for (var i = 1; i <= SETTINGS.MAX_FEATURES; i++) {
       if ($('f' + i) && $('f' + i).value.trim()) return true;
     }
@@ -339,13 +332,6 @@ App.Form = {
       if (fe) fe.value = '';
     }
     if (App.Features && App.Features._updateTotal) App.Features._updateTotal();
-
-    /* Icon state — wipe everything */
-    st.iconDataB64 = null;
-    st.iconChainUrl = null;
-    st.iconMime = '';
-    st.iconFilename = '';
-    st.iconKb = 0;
 
     /* Reset icon radio to "upload" */
     var uploadRadio = document.querySelector('input[name=isrc][value=upload]');

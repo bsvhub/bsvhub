@@ -169,7 +169,7 @@ var BSVCard = (function() {
     for (var _si = 0; _si < 4; _si++) {
       if (!ss[_si]) {
         var _txid = f['ss' + (_si+1) + '_txid'];
-        if (_txid && _txid !== '(pending)' && _txid.length === 64) {
+        if (_txid && _txid !== '(pending)' && _txid.length >= 64) {
           ss[_si] = { src: '', txid: _txid, format: f['ss'+(_si+1)+'_format'] || '', kb: f['ss'+(_si+1)+'_size_kb'] || '' };
         }
       }
@@ -452,7 +452,7 @@ var BSVCard = (function() {
 
     // Icon
     var iconTxid = fields.icon_txid;
-    if (iconTxid && iconTxid !== '(pending)' && iconTxid.length === 64) {
+    if (iconTxid && iconTxid !== '(pending)' && iconTxid.length >= 64) {
       var iconImg = container.querySelector('#ccimg');
       var currentSrc = iconImg ? iconImg.getAttribute('src') : '';
       if (iconImg && (!currentSrc || currentSrc === '')) {
@@ -475,7 +475,7 @@ var BSVCard = (function() {
     // Screenshots
     for (var si = 1; si <= 4; si++) {
       var ssTxid = fields['ss' + si + '_txid'];
-      if (ssTxid && ssTxid !== '(pending)' && ssTxid.length === 64) {
+      if (ssTxid && ssTxid !== '(pending)' && ssTxid.length >= 64) {
         // Side tile images
         var sideImgs = container.querySelectorAll('[data-ss-txid="'+ssTxid+'"]');
         for (var j = 0; j < sideImgs.length; j++) {
