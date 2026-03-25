@@ -63,7 +63,7 @@ App.Init = function() {
   /* 10b. Register Screen 2 mount hook (lazy — renders on navigate) */
   window._onScreenMount[2] = function() {
     App.CoreS2.mount();
-    var sv2 = $('sb-version-2');
+    var sv2 = document.getElementById('sb-version-2');
     if (sv2) sv2.textContent = SETTINGS.STATUSBAR_LABEL_S2;
   };
 
@@ -71,7 +71,7 @@ App.Init = function() {
   window._onScreenMount[3] = function() {
     var clearBtns = document.querySelectorAll('.clear-btn');
     for (var i = 0; i < clearBtns.length; i++) clearBtns[i].disabled = true;
-    var sv3 = $('sb-version-3');
+    var sv3 = document.getElementById('sb-version-3');
     if (sv3) sv3.textContent = SETTINGS.STATUSBAR_LABEL_S3;
   };
 
