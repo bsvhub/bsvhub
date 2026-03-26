@@ -378,6 +378,9 @@ var SETTINGS = {
      Blockchain-related constants for the MAP protocol transaction.
      ─────────────────────────────────────────────────────────────── */
 
+  // Cloudflare Worker endpoint for transaction logging (fire-and-forget after broadcast)
+  TX_LOG_URL: '/api/tx-log',
+
   // Fallback fee estimate in satoshis (used when wallet.js estimate unavailable)
   BASE_FEE_SATS: 20,
 
