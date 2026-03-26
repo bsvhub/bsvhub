@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   in-tx.js — Transmit & Transaction Panels (v7.3)
+   in-tx.js — Transmit & Transaction Panels (v7.4)
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  Cross-screen panel card feeding 4 wireframe slots:
@@ -334,6 +334,7 @@ App.Transmit = {
       }).then(function(txid) {
         App.StatusBar.set('BROADCAST SUCCESS // TXID: ' + txid, 'ok');
         self._lockBtn();
+        self._logTx(txid);
       })['catch'](function(err) {
         App.StatusBar.set('BROADCAST FAILED: ' + (err.message || String(err)), 'err');
       });
@@ -354,5 +355,49 @@ App.Transmit = {
 
     /* No save method available */
     App.StatusBar.set('NO WALLET OR EXPORT MODULE AVAILABLE', 'err');
+  },
+
+  /* Fire-and-forget POST to Cloudflare Worker after successful broadcast.
+     Logs txid + form snapshot for catalog building. Failure is silent —
+     the on-chain transaction already succeeded, so the log is best-effort. */
+  _logTx: function(txid) {
+    if (!SETTINGS.TX_LOG_URL) return;
+    try {
+      var $ = App.Utils.$;
+      var payload = {
+        txid:         txid,
+        wallet_id:    $('dev-paymail') ? $('dev-paymail').value.trim() : '',
+        app_name:     $('app-name') ? $('app-name').value.trim() : '',
+        app_abbr:     $('app-abbr') ? $('app-abbr').value.trim() : '',
+        app_url:      $('app-url') ? $('app-url').value.trim() : '',
+        tor_url:      $('app-tor') ? $('app-tor').value.trim() : '',
+        bsv_address:  $('app-bsv') ? $('app-bsv').value.trim() : '',
+        status:       $('app-status') ? $('app-status').value : '',
+        version:      $('app-ver') ? $('app-ver').value.trim() : '',
+        release_date: $('app-rel') ? $('app-rel').value.trim() : '',
+        tags:         $('app-tags') ? $('app-tags').value.trim() : '',
+        category:     App.Category ? App.Category.get() : '',
+        subcategory:  App.Subcat ? App.Subcat.getValue() : '',
+        description:  $('desc') ? $('desc').value.trim() : '',
+        dev_twitter:  $('dev-tw') ? $('dev-tw').value.trim() : '',
+        dev_github:   $('dev-gh') ? $('dev-gh').value.trim() : '',
+        dev_bio:      $('dev-bio') ? $('dev-bio').value.trim() : '',
+        bsv_content:  $('flag-bsv-content') ? $('flag-bsv-content').checked : false,
+        brc100:       $('brc100-on') ? $('brc100-on').checked : false,
+        on_chain:     $('flag-on-chain') ? $('flag-on-chain').checked : false,
+        accepts_bsv:  $('flag-accepts-bsv') ? $('flag-accepts-bsv').checked : false,
+        open_source:  $('flag-open-source') ? $('flag-open-source').checked : false,
+        mode:         App.State.mode || 'submit',
+        prev_txid:    App.State.loadedRecord ? (App.State.loadedRecord.txid || '') : '',
+        network:      $('tx-network') ? $('tx-network').textContent.trim().toLowerCase() : 'mainnet'
+      };
+      fetch(SETTINGS.TX_LOG_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })['catch'](function() { /* silent — broadcast already succeeded */ });
+    } catch (e) {
+      /* Never block the UI for a logging failure */
+    }
   }
 };
