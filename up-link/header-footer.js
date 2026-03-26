@@ -42,9 +42,8 @@ App.HeaderFooter = {
     s.id = 'hf-css';
     s.textContent =
 
-      /* ── LINK colour: matches Up- (gold) by default, blood orange when BSVhub active ── */
-      '.logo span.logo-link{color:var(--gold);}' +
-      '.logo span.logo-link.bsvhub-active{color:var(--mandatory);}' +
+      /* ── LINK colour: always blood orange ── */
+      '.logo span.logo-link{color:var(--mandatory);}' +
 
       /* ── CLEAR button: uses .mode-toggle for sizing, only overrides colour ── */
       '.clear-btn{font-family:var(--font);font-size:0.72em;font-weight:700;letter-spacing:2px;color:var(--red);border:1px solid var(--red);margin:0 0 0 6px;background:transparent;padding:0 2px;cursor:pointer;text-transform:uppercase;line-height:1;appearance:none;-webkit-appearance:none;box-sizing:border-box;}' +

@@ -484,7 +484,7 @@ var WalletManager = {
           var n = idx + 1;
           var existingTxid = data['ss' + n + '_txid'];
           // If the slot already has a valid 64-char txid, skip upload
-          if (existingTxid && existingTxid !== '(pending)' && /^[0-9a-fA-F]{64}$/.test(existingTxid)) {
+          if (existingTxid && existingTxid !== '(pending)' && /^[0-9a-fA-F]{64}(_\w+)?$/.test(existingTxid)) {
             ssTxids[idx] = existingTxid;
             return;
           }
@@ -633,6 +633,8 @@ if (!App.MAPExport) {
         ['name',              d.name || ''],
         ['abbreviation',      d.abbreviation || ''],
         ['url',               d.url || ''],
+        ['tor_url',           d.tor_url || ''],
+        ['bsv_address',       d.bsv_address || ''],
         ['category',          d.category || ''],
         ['subcategory',       d.subcategory || ''],
         ['status',            d.status || ''],

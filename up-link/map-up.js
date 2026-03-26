@@ -37,9 +37,9 @@ App.Panels.S2.map = {
     var rows = [
       ['protocol',         d.protocol],
       ['protocol_version', d.protocol_version],
-      ['name',             d.name || '\u2014'],
-      ['abbreviation',     d.abbreviation || '\u2014'],
-      ['url',              d.url || '\u2014'],
+      ['name',             d.name || ''],
+      ['abbreviation',     d.abbreviation || ''],
+      ['url',              d.url || ''],
       ['tor_url',          d.tor_url || ''],
       ['bsv_address',      d.bsv_address || ''],
       ['category',         d.category || ''],
@@ -51,10 +51,10 @@ App.Panels.S2.map = {
       ['on_chain',         String(!!d.on_chain)],
       ['accepts_bsv',      String(!!d.accepts_bsv)],
       ['open_source',      String(!!d.open_source)],
-      ['release_date',     d.release_date || '\u2014'],
-      ['version',          d.version || '\u2014'],
-      ['tags',             d.tags || '\u2014'],
-      ['description',      d.description || '\u2014']
+      ['release_date',     d.release_date || ''],
+      ['version',          d.version || ''],
+      ['tags',             d.tags || ''],
+      ['description',      d.description || '']
     ];
 
     /* Features */
@@ -74,11 +74,11 @@ App.Panels.S2.map = {
       ['icon_fg_colour',  d.icon_fg_colour || ''],
       ['icon_bg_alpha',   String(d.icon_bg_alpha)],
       ['icon_zoom',       String(d.icon_zoom)],
-      ['alt_text',        d.alt_text || '\u2014'],
-      ['developer_paymail',  d.developer_paymail || '\u2014'],
-      ['developer_twitter',  d.developer_twitter || '\u2014'],
-      ['developer_github',   d.developer_github || '\u2014'],
-      ['developer_bio',      d.developer_bio || '\u2014']
+      ['alt_text',        d.alt_text || ''],
+      ['developer_paymail',  d.developer_paymail || ''],
+      ['developer_twitter',  d.developer_twitter || ''],
+      ['developer_github',   d.developer_github || ''],
+      ['developer_bio',      d.developer_bio || '']
     );
 
     /* Screenshot fields — per-slot zoom + alt_text */
@@ -91,7 +91,7 @@ App.Panels.S2.map = {
         rows.push(['ss' + n + '_format',   (slot && slot.mime) || d['ss' + n + '_format'] || '']);
         rows.push(['ss' + n + '_size_kb',  (slot && String(slot.kb)) || d['ss' + n + '_size_kb'] || '']);
         rows.push(['ss' + n + '_zoom',     d['ss' + n + '_zoom'] || (slot && String(slot.zoom)) || '1']);
-        rows.push(['ss' + n + '_alt_text', d['ss' + n + '_alt_text'] || (slot && slot.altText) || '\u2014']);
+        rows.push(['ss' + n + '_alt_text', d['ss' + n + '_alt_text'] || (slot && slot.altText) || '']);
       }
     }
 

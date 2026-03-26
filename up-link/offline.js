@@ -49,6 +49,8 @@ App.MAPExport = Object.assign(App.MAPExport || {}, {
       ['name',              d.name || ''],
       ['abbreviation',      d.abbreviation || ''],
       ['url',               d.url || ''],
+      ['tor_url',           d.tor_url || ''],
+      ['bsv_address',       d.bsv_address || ''],
       ['category',          d.category || ''],
       ['subcategory',       d.subcategory || ''],
       ['status',            d.status || ''],
@@ -137,7 +139,9 @@ App.MAPExport = Object.assign(App.MAPExport || {}, {
       lines.push('# TIP: ' + d.tip_bsv + ' BSV (included in transaction output)');
     }
 
-    if (d.icon_data_b64) {
+    // Only embed icon data if it's not already on-chain
+    var iconOnChain = d.icon_txid && App.Utils.isValidTxid(d.icon_txid);
+    if (d.icon_data_b64 && !iconOnChain) {
       lines.push('');
       lines.push('# ═══════════════════════════════════════════════════════════════');
       lines.push('# B:// ICON DATA');
@@ -146,13 +150,16 @@ App.MAPExport = Object.assign(App.MAPExport || {}, {
       lines.push('B_ICON_DATA | ' + d.icon_data_b64);
     }
 
-    // Embed screenshot data for local testing
+    // Only embed screenshot data if not already on-chain
     var ss = d.screenshots || [null, null, null, null];
     for (var si = 0; si < 4; si++) {
-      if (ss[si] && ss[si].dataB64) {
+      var ssn = si + 1;
+      var ssTxid = d['ss' + ssn + '_txid'];
+      var ssOnChain = ssTxid && App.Utils.isValidTxid(ssTxid);
+      if (ss[si] && ss[si].dataB64 && !ssOnChain) {
         lines.push('');
-        lines.push('# B:// SCREENSHOT ' + (si + 1) + ' DATA');
-        lines.push('B_SS' + (si + 1) + '_DATA | ' + ss[si].dataB64);
+        lines.push('# B:// SCREENSHOT ' + ssn + ' DATA');
+        lines.push('B_SS' + ssn + '_DATA | ' + ss[si].dataB64);
       }
     }
 
@@ -305,12 +312,7 @@ App.MAPImport = {
     var $ = App.Utils.$;
 
     // Store original loaded data for diff comparison in preview
-    var normalized = Object.assign({}, f);
-    ['name','url','version','tags','description','alt_text',
-     'developer_paymail','developer_twitter','developer_github','developer_bio'].forEach(function(k) {
-      if (normalized[k] !== undefined && !normalized[k]) normalized[k] = '—';
-    });
-    App.State.loadedRecord = normalized;
+    App.State.loadedRecord = Object.assign({}, f);
 
     // Auto-switch to UPDATE mode
     App.Mode.set('update', true);
@@ -319,10 +321,16 @@ App.MAPImport = {
     if (f.name !== undefined)    $('app-name').value = f.name;
     if (f.abbreviation !== undefined) $('app-abbr').value = f.abbreviation;
     if (f.url !== undefined)     $('app-url').value = f.url;
+    if (f.tor_url !== undefined) $('app-tor').value = f.tor_url;
+    if (f.bsv_address !== undefined) $('app-bsv').value = f.bsv_address;
     if (f.tags !== undefined)    $('app-tags').value = f.tags;
     if (f.version !== undefined) $('app-ver').value = f.version;
     if (f.release_date !== undefined) { $('app-rel').value = f.release_date; $('rel-today').checked = false; $('app-rel').disabled = false; }
     if (f.brc100 !== undefined) $('brc100-on').checked = f.brc100 === 'true' || f.brc100 === true;
+    if (f.bsv_content !== undefined) $('flag-bsv-content').checked = f.bsv_content === 'true' || f.bsv_content === true;
+    if (f.on_chain !== undefined) $('flag-on-chain').checked = f.on_chain === 'true' || f.on_chain === true;
+    if (f.accepts_bsv !== undefined) $('flag-accepts-bsv').checked = f.accepts_bsv === 'true' || f.accepts_bsv === true;
+    if (f.open_source !== undefined) $('flag-open-source').checked = f.open_source === 'true' || f.open_source === true;
 
     // --- Selects ---
     if (f.status) $('app-status').value = f.status;
@@ -336,12 +344,9 @@ App.MAPImport = {
       App.Lang.updatePills();
     }
 
-    // --- Categories ---
-    if (f.category) {
-      var cats = f.category.split(';').map(function(c) { return c.trim(); }).filter(Boolean);
-      document.querySelectorAll('.cat-btn-new').forEach(function(btn) {
-        btn.classList.toggle('active', cats.includes(btn.dataset.val));
-      });
+    // --- Categories + Subcategories (via App.Category single source of truth) ---
+    if (App.Category) {
+      App.Category.restore(f.category || '', f.subcategory || '');
     }
 
     // --- Description ---

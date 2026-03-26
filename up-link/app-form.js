@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   app-form.js — Form Validation + Data Collection + Word Filter
+   app-form.js (v7.2) — Form Validation + Data Collection + Word Filter
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  Cross-cutting form logic: category click handling,
@@ -31,10 +31,7 @@
    ───────────────────────────────────────────────────────────── */
 App.Form = {
   getCategory: function() {
-    var bsvhub = document.getElementById('bsvhub-cb');
-    if (bsvhub && bsvhub.checked) return 'bsvhub';
-    var active = document.querySelector('.cat-btn-new.active');
-    return active ? active.dataset.val : '';
+    return App.Category ? App.Category.get() : '';
   },
 
   collectData: function() {
@@ -128,8 +125,6 @@ App.Form = {
     if ($('app-bsv').value.trim()) return true;
     if ($('app-abbr').value.trim()) return true;
     if ($('dev-bio').value.trim()) return true;
-    if (this.getCategory()) return true;
-    if ($('app-status').value) return true;
     var ico0 = App.Screenshots ? App.Screenshots._slots[0] : null;
     if (ico0 && (ico0.dataB64 || ico0.chainUrl || ico0.txid)) return true;
     for (var i = 1; i <= SETTINGS.MAX_FEATURES; i++) {
@@ -140,46 +135,39 @@ App.Form = {
 
   validate: function() {
     var $ = App.Utils.$;
-    var isBsvhub = this.getCategory() === 'bsvhub';
+    var mandatory = App.Category ? App.Category.getMandatoryFields() : [];
 
-    /* Non-BSVhub: no mandatory fields, but must have some data */
-    if (!isBsvhub) {
+    if (mandatory.length === 0) {
+      /* No mandatory fields — just need some data */
       if (!this._hasAnyData()) {
         App.StatusBar.set('NO DATA TO UPLOAD', 'err');
         this._flashField($('app-name'), document.getElementById('lbl-name'));
         return false;
       }
-    } else if (this._isAppIdea()) {
-      /* BSVhub "app idea" — only DESCRIPTION is mandatory */
-      if (!$('desc').value.trim()) {
-        App.StatusBar.set('DESCRIPTION IS REQUIRED FOR APP IDEA', 'err');
-        this._flashField($('desc'), document.getElementById('lbl-desc'));
-        return false;
-      }
     } else {
-      /* BSVhub (non-app-idea) — flash ALL missing mandatory fields at once */
+      /* Config-driven mandatory field checks */
+      var fieldMap = {
+        name:        { el: $('app-name'),    label: 'lbl-name',   display: 'NAME',        ok: function() { return !!$('app-name').value.trim(); } },
+        url:         { el: $('app-url'),     label: 'lbl-url',    display: 'URL',         ok: function() { return !!$('app-url').value.trim(); } },
+        status:      { el: $('app-status'),  label: 'lbl-status', display: 'STATUS',      ok: function() { return !!$('app-status').value; } },
+        description: { el: $('desc'),        label: 'lbl-desc',   display: 'DESCRIPTION', ok: function() { return !!$('desc').value.trim(); } },
+        subcategory: { el: document.getElementById('subcat-btn'), label: 'lbl-sub', display: 'SUBCATEGORY', ok: function() { return !!(App.Subcat && App.Subcat.getValue()); } }
+      };
       var missing = [];
-      var checks = [
-        { ok: !!$('app-name').value.trim(),       field: $('app-name'),                          label: 'lbl-name',   name: 'NAME' },
-        { ok: !!$('app-url').value.trim(),         field: $('app-url'),                           label: 'lbl-url',    name: 'URL' },
-        { ok: !!$('app-status').value,             field: $('app-status'),                        label: 'lbl-status', name: 'STATUS' },
-        { ok: !!$('desc').value.trim(),            field: $('desc'),                              label: 'lbl-desc',   name: 'DESCRIPTION' },
-        { ok: !!(App.Subcat && App.Subcat.getValue()), field: document.getElementById('subcat-btn'), label: 'lbl-sub',    name: 'SUBCATEGORY' }
-      ];
-      for (var ci = 0; ci < checks.length; ci++) {
-        if (!checks[ci].ok) {
-          missing.push(checks[ci].name);
-          this._flashField(checks[ci].field, document.getElementById(checks[ci].label));
+      for (var mi = 0; mi < mandatory.length; mi++) {
+        var key = mandatory[mi];
+        var info = fieldMap[key];
+        if (info && !info.ok()) {
+          missing.push(info.display);
+          this._flashField(info.el, document.getElementById(info.label));
         }
       }
       if (missing.length) {
         App.StatusBar.set('MANDATORY FIELDS: ' + missing.join(', '), 'err');
         /* Focus the first missing field */
-        for (var fi = 0; fi < checks.length; fi++) {
-          if (!checks[fi].ok && checks[fi].field && checks[fi].field.focus) {
-            checks[fi].field.focus(); break;
-          }
-        }
+        var firstKey = mandatory[0];
+        var firstInfo = fieldMap[firstKey];
+        if (firstInfo && firstInfo.el && firstInfo.el.focus) firstInfo.el.focus();
         return false;
       }
     }
@@ -211,67 +199,62 @@ App.Form = {
     if (wrap) wrap.style.opacity = enabled ? '' : '0.3';
   },
 
-  /* Enable/disable the cat grid (greyed out when BSVhub is active) */
-  _setCatGridEnabled: function(enabled) {
-    var grid = document.getElementById('cat-grid-new');
-    if (grid) {
-      grid.style.opacity = enabled ? '' : '0.3';
-      grid.style.pointerEvents = enabled ? '' : 'none';
-    }
-  },
-
-  /* Update description char limit — 2048 for "app idea", default otherwise */
+  /* Update description char limit — config-driven per subcategory override */
   _updateDescLimit: function() {
     var $ = App.Utils.$;
     var desc = $('desc');
     if (!desc) return;
-    var bsvhub = $('bsvhub-cb');
-    var isAppIdea = bsvhub && bsvhub.checked && App.Subcat &&
-      App.Subcat._selected && App.Subcat._selected.indexOf('app idea') !== -1;
-    var limit = isAppIdea ? 1024 : SETTINGS.MAX_DESC_CHARS;
+    var limit = App.Category ? App.Category.getDescLimit() : SETTINGS.MAX_DESC_CHARS;
+    var expanded = limit > SETTINGS.MAX_DESC_CHARS;
     desc.maxLength = limit;
     /* Update gauge with new limit */
     App.Gauge.update(desc.value.length, limit, $('desc-c'), $('desc-g'));
     /* Make desc panel scrollable when expanded */
     var descPanel = $('p1-desc');
-    if (descPanel) descPanel.style.overflowY = isAppIdea ? 'auto' : '';
+    if (descPanel) descPanel.style.overflowY = expanded ? 'auto' : '';
   },
 
-  /* Check if "app idea" subcat is currently selected under BSVhub */
-  _isAppIdea: function() {
-    var bsvhub = document.getElementById('bsvhub-cb');
-    return bsvhub && bsvhub.checked && App.Subcat &&
-      App.Subcat._selected && App.Subcat._selected.indexOf('app idea') !== -1;
+  /* Check if active subcategory has its own mandatory/override config */
+  _hasSubcatOverride: function() {
+    if (!App.Category || !App.Subcat) return false;
+    var cfg = App.Category.getConfig();
+    if (!cfg || !cfg.subcategories) return false;
+    var selected = App.Subcat._selected || [];
+    for (var i = 0; i < selected.length; i++) {
+      for (var j = 0; j < cfg.subcategories.length; j++) {
+        var sub = cfg.subcategories[j];
+        if (typeof sub === 'object' && sub.value === selected[i] && (sub.mandatory || sub.overrides)) return true;
+      }
+    }
+    return false;
   },
 
-  /* Toggle mandatory (req) class on BSVhub-required labels.
-     "app idea" mode: only DESCRIPTION is mandatory. */
-  _setMandatory: function(on) {
-    var appIdea = on && this._isAppIdea();
-    var fullIds = ['lbl-name', 'lbl-url', 'lbl-status', 'lbl-sub'];
-    for (var i = 0; i < fullIds.length; i++) {
-      var el = document.getElementById(fullIds[i]);
+  /* Toggle mandatory (req) class on labels — driven by App.Category config */
+  _setMandatory: function() {
+    /* Map field names (from config) to label element IDs */
+    var fieldToLabel = {
+      name: 'lbl-name', url: 'lbl-url', status: 'lbl-status',
+      subcategory: 'lbl-sub', description: 'lbl-desc'
+    };
+    var mandatory = App.Category ? App.Category.getMandatoryFields() : [];
+    var mandatorySet = {};
+    for (var i = 0; i < mandatory.length; i++) mandatorySet[mandatory[i]] = true;
+
+    /* Toggle req class on each known label */
+    var allFields = ['name', 'url', 'status', 'subcategory', 'description'];
+    for (var fi = 0; fi < allFields.length; fi++) {
+      var lblId = fieldToLabel[allFields[fi]];
+      var el = lblId ? document.getElementById(lblId) : null;
       if (el) {
-        if (on && !appIdea) el.classList.add('req');
+        if (mandatorySet[allFields[fi]]) el.classList.add('req');
         else el.classList.remove('req');
       }
     }
-    /* DESCRIPTION is always mandatory when BSVhub is on */
-    var descLbl = document.getElementById('lbl-desc');
-    if (descLbl) {
-      if (on) descLbl.classList.add('req');
-      else descLbl.classList.remove('req');
-    }
-    /* BSVhub flag — blood orange when mandatory */
-    var flag = document.getElementById('bsvhub-flag');
-    if (flag) {
-      if (on) flag.classList.add('bsvhub-mandatory');
-      else flag.classList.remove('bsvhub-mandatory');
-    }
-    /* Subcat button — blood orange when mandatory (not in app idea mode) */
+
+    /* Subcat button — mandatory styling */
     var subcatBtn = document.getElementById('subcat-btn');
     if (subcatBtn) {
-      if (on && !appIdea) subcatBtn.classList.add('req');
+      if (mandatorySet.subcategory) subcatBtn.classList.add('req');
       else subcatBtn.classList.remove('req');
     }
   },
@@ -301,16 +284,8 @@ App.Form = {
       if (cb) cb.checked = false;
     }
 
-    /* Reset BSVhub to checked (default state) */
-    var bsvhub = $('bsvhub-cb');
-    if (bsvhub && !bsvhub.checked) {
-      bsvhub.checked = true;
-      bsvhub.dispatchEvent(new Event('change'));
-    }
-
-    /* Reset category grid — deselect all */
-    var catBtns = Array.prototype.slice.call(document.querySelectorAll('.cat-btn-new'));
-    for (var ci = 0; ci < catBtns.length; ci++) catBtns[ci].classList.remove('active');
+    /* Reset category to default (triggers subcategory, mandatory, logo refresh) */
+    if (App.Category) App.Category.set(App.Category.getDefault());
 
     /* Reset language to default */
     var langCbs = Array.prototype.slice.call(document.querySelectorAll('#lang-dd input[type=checkbox]'));
@@ -400,71 +375,19 @@ App.Form = {
 
   init: function() {
     var self = this;
-    var $ = App.Utils.$;
 
-    /* ── BSVhub.io checkbox — dominant category ── */
-    var bsvhubCb = $('bsvhub-cb');
+    /* Set default category on init — triggers subcategory, mandatory, logo, desc limit */
+    if (App.Category) App.Category.set(App.Category.getDefault());
 
-    /* Toggle LINK colour in logo — blood orange when BSVhub active, gold otherwise */
-    function _syncLogoLink(on) {
-      var links = document.querySelectorAll('.logo-link');
-      for (var li = 0; li < links.length; li++) {
-        links[li].classList.toggle('bsvhub-active', on);
-      }
-    }
-
-    if (bsvhubCb) {
-      /* BSVhub is checked by default — set initial state */
-      self._setCatGridEnabled(false);
-      self._setMandatory(true);
-      _syncLogoLink(true);
-      if (App.Subcat) App.Subcat.updateForCategory('bsvhub');
-
-      bsvhubCb.addEventListener('change', function() {
-        _syncLogoLink(bsvhubCb.checked);
-        if (bsvhubCb.checked) {
-          /* Deselect any active cat-btn */
-          var allBtns = Array.prototype.slice.call(document.querySelectorAll('.cat-btn-new'));
-          for (var j = 0; j < allBtns.length; j++) { allBtns[j].classList.remove('active'); }
-          self._setCatGridEnabled(false);
-          self._setSubcatEnabled(true);
-          self._setMandatory(true);
-          if (App.Subcat) App.Subcat.updateForCategory('bsvhub');
-        } else {
-          self._setCatGridEnabled(true);
-          self._setMandatory(false);
-          /* No category selected yet — disable subcat */
-          self._setSubcatEnabled(false);
-          if (App.Subcat) App.Subcat.updateForCategory('');
-        }
-        self._updateDescLimit();
-      });
-    }
-
-    // 10-button category grid — mutually exclusive, optional
+    /* Category grid — mutually exclusive, one must always be selected */
     var btns = Array.prototype.slice.call(document.querySelectorAll('.cat-btn-new'));
     for (var i = 0; i < btns.length; i++) {
       (function(btn) {
         btn.addEventListener('click', function() {
-          /* Uncheck BSVhub when selecting a regular category */
-          if (bsvhubCb && bsvhubCb.checked) {
-            bsvhubCb.checked = false;
-            self._setCatGridEnabled(true);
-            self._setMandatory(false);
-          }
-          if (btn.classList.contains('active')) {
-            btn.classList.remove('active');
-            self._setSubcatEnabled(false);
-            if (App.Subcat) App.Subcat.updateForCategory('');
-            self._updateDescLimit();
-            return;
-          }
-          var allBtns = Array.prototype.slice.call(document.querySelectorAll('.cat-btn-new'));
-          for (var j = 0; j < allBtns.length; j++) { allBtns[j].classList.remove('active'); }
-          btn.classList.add('active');
-          self._setSubcatEnabled(true);
-          if (App.Subcat) App.Subcat.updateForCategory(btn.dataset.val);
-          self._updateDescLimit();
+          var val = btn.getAttribute('data-val');
+          /* Cannot deselect — only switch to a different category */
+          if (App.Category.get() === val) return;
+          App.Category.set(val);
         });
       })(btns[i]);
     }

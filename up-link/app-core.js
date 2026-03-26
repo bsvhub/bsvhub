@@ -16,6 +16,7 @@
              App.Capabilities    — { offline, onchain } feature flags
              App.Utils           — $(), esc(), hexToRgba(), buildGradient(), isValidTxid()
              App.Config          — getStatusColour(), getAllCdnUrls()
+             App.Category        — single source of truth for category selection
              App.State           — mutable app state (mode, wallet, icon data, etc)
              App.StatusBar       — set(msg, cls) per-screen status messages
              App.Gauge           — update(), init() for character counters
@@ -73,6 +74,127 @@ App.State = {
   selectedTip:     0,
   loadedRecord:    null       // Stores the original loaded MAP data for diff comparison
   // Icon image data now stored in App.Screenshots._slots[0] (single source of truth)
+};
+
+
+/* ─────────────────────────────────────────────────────────────
+   App.Category — Single source of truth for category selection
+   ───────────────────────────────────────────────────────────── */
+App.Category = {
+  _active: '',  // current category value
+
+  /* Returns active category value (string) */
+  get: function() { return this._active; },
+
+  /* Returns SETTINGS.CATEGORIES entry for active category, or null */
+  getConfig: function() {
+    if (!this._active) return null;
+    for (var i = 0; i < SETTINGS.CATEGORIES.length; i++) {
+      if (SETTINGS.CATEGORIES[i].value === this._active) return SETTINGS.CATEGORIES[i];
+    }
+    return null;
+  },
+
+  /* Returns the default category value (the one with default:true) */
+  getDefault: function() {
+    for (var i = 0; i < SETTINGS.CATEGORIES.length; i++) {
+      if (SETTINGS.CATEGORIES[i]['default']) return SETTINGS.CATEGORIES[i].value;
+    }
+    return '';
+  },
+
+  /* Set active category — updates UI, triggers subcategory/mandatory/logo/desc refresh */
+  set: function(val) {
+    var prev = this._active;
+    this._active = val || '';
+
+    /* Update button UI — deselect all, select matching */
+    var btns = document.querySelectorAll('.cat-btn-new');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].classList.toggle('active', btns[i].getAttribute('data-val') === this._active);
+    }
+
+    /* Update subcategories */
+    if (App.Subcat) App.Subcat.updateForCategory(this._active);
+
+    /* Update mandatory field labels */
+    if (App.Form && App.Form._setMandatory) App.Form._setMandatory();
+
+    /* Update description limit */
+    if (App.Form && App.Form._updateDescLimit) App.Form._updateDescLimit();
+
+    /* Enable/disable subcategory row */
+    if (App.Form && App.Form._setSubcatEnabled) {
+      App.Form._setSubcatEnabled(!!this._active);
+    }
+  },
+
+  /* Returns mandatory field names for the active category, considering subcategory overrides */
+  getMandatoryFields: function() {
+    var cfg = this.getConfig();
+    if (!cfg || !cfg.mandatory) return [];
+
+    /* Check if active subcategory has its own mandatory override */
+    if (App.Subcat && cfg.subcategories) {
+      var selected = App.Subcat._selected || [];
+      for (var i = 0; i < selected.length; i++) {
+        var subVal = selected[i];
+        for (var j = 0; j < cfg.subcategories.length; j++) {
+          var sub = cfg.subcategories[j];
+          if (typeof sub === 'object' && sub.value === subVal && sub.mandatory) {
+            return sub.mandatory; // subcategory override replaces parent mandatory
+          }
+        }
+      }
+    }
+    return cfg.mandatory;
+  },
+
+  /* Returns description char limit — subcategory override or SETTINGS default */
+  getDescLimit: function() {
+    var cfg = this.getConfig();
+    if (cfg && cfg.subcategories && App.Subcat) {
+      var selected = App.Subcat._selected || [];
+      for (var i = 0; i < selected.length; i++) {
+        var subVal = selected[i];
+        for (var j = 0; j < cfg.subcategories.length; j++) {
+          var sub = cfg.subcategories[j];
+          if (typeof sub === 'object' && sub.value === subVal && sub.overrides && sub.overrides.MAX_DESC_CHARS) {
+            return sub.overrides.MAX_DESC_CHARS;
+          }
+        }
+      }
+    }
+    return SETTINGS.MAX_DESC_CHARS;
+  },
+
+  /* Restore category + subcategories from loaded record (update mode) */
+  restore: function(catVal, subcatVal) {
+    /* Set the category (triggers subcategory population) */
+    this.set(catVal || '');
+
+    /* Restore subcategory selections */
+    if (subcatVal && App.Subcat) {
+      var subs = subcatVal.split(';').map(function(s) { return s.trim(); }).filter(Boolean);
+      App.Subcat._selected = [];
+      /* Check the matching checkboxes in the dropdown */
+      var checkboxes = document.querySelectorAll('#subcat-dd input[type=checkbox]');
+      for (var ci = 0; ci < checkboxes.length; ci++) {
+        var match = false;
+        for (var si = 0; si < subs.length; si++) {
+          if (checkboxes[ci].value === subs[si]) { match = true; break; }
+        }
+        checkboxes[ci].checked = match;
+        if (match) App.Subcat._selected.push(checkboxes[ci].value);
+      }
+      App.Subcat._renderPills();
+      App.Subcat._updateBtnLabel();
+
+      /* Re-trigger mandatory in case subcategory has overrides */
+      if (App.Form && App.Form._setMandatory) App.Form._setMandatory();
+      if (App.Form && App.Form._updateDescLimit) App.Form._updateDescLimit();
+    }
+  }
 };
 
 
@@ -315,15 +437,26 @@ App.SettingsApplier = {
     var grid = App.Utils.$('cat-grid-new');
     if (!grid) return;
     grid.innerHTML = '';
-    for (var i = 0; i < SETTINGS.CATEGORIES.length; i++) {
-      var cat = SETTINGS.CATEGORIES[i];
+    var cats = SETTINGS.CATEGORIES;
+    var total = cats.length;
+    var topCount = Math.ceil(total / 2);
+    var bottomCount = Math.floor(total / 2);
+    var gap = 2; // matches CSS gap in px
+    var defaultVal = App.Category.getDefault();
+
+    for (var i = 0; i < total; i++) {
+      var cat = cats[i];
+      var isTopRow = i < topCount;
+      var rowCount = isTopRow ? topCount : bottomCount;
       var btn = document.createElement('div');
       btn.className = 'cat-btn-new';
+      if (cat.value === defaultVal) btn.classList.add('active');
       btn.setAttribute('data-val', cat.value);
       btn.textContent = cat.label;
       btn.style.color = cat.color;
       btn.style.background = cat.bg;
       btn.style.borderColor = cat.border;
+      btn.style.width = 'calc((100% - ' + ((rowCount - 1) * gap) + 'px) / ' + rowCount + ')';
       grid.appendChild(btn);
     }
   },

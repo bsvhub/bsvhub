@@ -33,10 +33,7 @@ App.Panels.S1.desc = {
   },
 
   _getDescLimit: function() {
-    var bsvhub = document.getElementById('bsvhub-cb');
-    var isAppIdea = bsvhub && bsvhub.checked && App.Subcat &&
-      App.Subcat._selected && App.Subcat._selected.indexOf('app idea') !== -1;
-    return isAppIdea ? 1024 : SETTINGS.MAX_DESC_CHARS;
+    return App.Category ? App.Category.getDescLimit() : SETTINGS.MAX_DESC_CHARS;
   },
 
   init: function() {

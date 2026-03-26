@@ -167,9 +167,9 @@ var SETTINGS = {
      ─────────────────────────────────────────────────────────────── */
 
   // Right-side label in the status bar (per screen)
-  STATUSBAR_LABEL_S1: 'UP-LINK // SUBMIT v2.3',
-  STATUSBAR_LABEL_S2: 'UP-LINK // SUBMIT v2.3',
-  STATUSBAR_LABEL_S3: 'UP-LINK // VIEW v2.3',
+  STATUSBAR_LABEL_S1: 'UP-LINK // SUBMIT v2.4',
+  STATUSBAR_LABEL_S2: 'UP-LINK // SUBMIT v2.4',
+  STATUSBAR_LABEL_S3: 'UP-LINK // VIEW v2.4',
 
   // Default status message when page first loads
   STATUSBAR_DEFAULT_MSG: 'READY // CONNECT WALLET TO BEGIN',
@@ -188,42 +188,39 @@ var SETTINGS = {
 
 
   /* ─── CONTENT: CATEGORIES ────────────────────────────────────────
-     10-button 2x5 grid — mutually exclusive, exactly 1 required.
-     Row 1: GAME · APP · WEB · MKT · MEDIA
-     Row 2: DEV  · FIN · PUB · INFRA · ADULT
+     Unified category array — mutually exclusive, one selected at a time.
+     Each entry can define: subcategories, mandatory fields, overrides.
+     Add/remove categories here — UI auto-adjusts (always 2 rows).
      ─────────────────────────────────────────────────────────────── */
   CATEGORIES: [
-    { value: 'game',           label: 'GAME',  color: '#F0997B', bg: 'rgba(216,90,48,0.15)',   border: 'rgba(216,90,48,0.6)'   },
-    { value: 'app',            label: 'APP',   color: '#AFA9EC', bg: 'rgba(127,119,221,0.15)', border: 'rgba(127,119,221,0.6)' },
-    { value: 'website',        label: 'WEB',   color: '#85B7EB', bg: 'rgba(55,138,221,0.15)',  border: 'rgba(55,138,221,0.6)'  },
-    { value: 'marketplace',    label: 'MKT',   color: '#EF9F27', bg: 'rgba(186,117,23,0.15)',  border: 'rgba(186,117,23,0.6)'  },
-    { value: 'media',          label: 'MEDIA', color: '#ED93B1', bg: 'rgba(212,83,126,0.15)',  border: 'rgba(212,83,126,0.6)'  },
-    { value: 'developer',      label: 'DEV',   color: '#5DCAA5', bg: 'rgba(29,158,117,0.15)',  border: 'rgba(29,158,117,0.6)'  },
-    { value: 'finance',        label: 'FIN',   color: '#97C459', bg: 'rgba(99,153,34,0.15)',   border: 'rgba(99,153,34,0.6)'   },
-    { value: 'publishing',     label: 'PUB',   color: '#5DCAA5', bg: 'rgba(0,204,68,0.10)',    border: 'rgba(0,204,68,0.45)'   },
-    { value: 'infrastructure', label: 'INFRA', color: 'rgba(0,229,255,0.9)', bg: 'rgba(0,229,255,0.08)', border: 'rgba(0,229,255,0.4)' },
-    { value: 'adult',          label: 'ADULT', color: '#F09595', bg: 'rgba(226,75,74,0.12)',   border: 'rgba(226,75,74,0.6)'   },
+    { value: 'bsvhub', label: 'BSVHUB.IO', color: '#EAB300', bg: 'rgba(234,179,0,0.07)', border: 'rgba(234,179,0,0.4)',
+      default: true,
+      mandatory: ['name', 'url', 'subcategory', 'description'],
+      subcategories: ['tool','app','wallet','exchange','market','info','dev.','social media',
+        { value: 'app idea', mandatory: ['description'], overrides: { MAX_DESC_CHARS: 1024 } }
+      ]
+    },
+    { value: 'game',           label: 'GAME',  color: '#F0997B', bg: 'rgba(216,90,48,0.15)',   border: 'rgba(216,90,48,0.6)',
+      subcategories: ['action','rpg','strategy','puzzle','simulation','sports','adventure','card','casual'] },
+    { value: 'app',            label: 'APP',   color: '#AFA9EC', bg: 'rgba(127,119,221,0.15)', border: 'rgba(127,119,221,0.6)',
+      subcategories: ['productivity','social','utility','education','health','news','travel','lifestyle'] },
+    { value: 'website',        label: 'WEB',   color: '#85B7EB', bg: 'rgba(55,138,221,0.15)',  border: 'rgba(55,138,221,0.6)',
+      subcategories: ['blog','portfolio','news','community','directory','landing','ecommerce'] },
+    { value: 'marketplace',    label: 'MKT',   color: '#EF9F27', bg: 'rgba(186,117,23,0.15)',  border: 'rgba(186,117,23,0.6)',
+      subcategories: ['nft','digital','physical','art','music','collectibles','gaming-items'] },
+    { value: 'media',          label: 'MEDIA', color: '#ED93B1', bg: 'rgba(212,83,126,0.15)',  border: 'rgba(212,83,126,0.6)',
+      subcategories: ['video','audio','podcast','streaming','music','photography','animation'] },
+    { value: 'developer',      label: 'DEV',   color: '#5DCAA5', bg: 'rgba(29,158,117,0.15)',  border: 'rgba(29,158,117,0.6)',
+      subcategories: ['library','api','sdk','tooling','documentation','open-source','testing'] },
+    { value: 'finance',        label: 'FIN',   color: '#97C459', bg: 'rgba(99,153,34,0.15)',   border: 'rgba(99,153,34,0.6)',
+      subcategories: ['wallet','exchange','defi','payments','analytics','trading','lending'] },
+    { value: 'publishing',     label: 'PUB',   color: '#5DCAA5', bg: 'rgba(0,204,68,0.10)',    border: 'rgba(0,204,68,0.45)',
+      subcategories: ['blog','magazine','ebook','newsletter','whitepaper'] },
+    { value: 'infrastructure', label: 'INFRA', color: 'rgba(0,229,255,0.9)', bg: 'rgba(0,229,255,0.08)', border: 'rgba(0,229,255,0.4)',
+      subcategories: ['node','indexer','api','storage','oracle','bridge','monitoring'] },
+    { value: 'adult',          label: 'ADULT', color: '#F09595', bg: 'rgba(226,75,74,0.12)',   border: 'rgba(226,75,74,0.6)',
+      subcategories: ['content','social','gaming'] },
   ],
-
-  // BSVhub.io — dominant category with its own subcategories
-  BSVHUB_COLOUR:        '#EAB300',
-  BSVHUB_BG:            'rgba(234,179,0,0.07)',
-  BSVHUB_BORDER:        'rgba(234,179,0,0.4)',
-  BSVHUB_SUBCATEGORIES: ['tool','app','wallet','exchange','market','info','dev.','social media','app idea'],
-
-  // Subcategory options per main category (max 3 selectable, all optional)
-  SUBCATEGORIES: {
-    game:           ['action','rpg','strategy','puzzle','simulation','sports','adventure','card','casual'],
-    app:            ['productivity','social','utility','education','health','news','travel','lifestyle'],
-    website:        ['blog','portfolio','news','community','directory','landing','ecommerce'],
-    marketplace:    ['nft','digital','physical','art','music','collectibles','gaming-items'],
-    media:          ['video','audio','podcast','streaming','music','photography','animation'],
-    developer:      ['library','api','sdk','tooling','documentation','open-source','testing'],
-    finance:        ['wallet','exchange','defi','payments','analytics','trading','lending'],
-    publishing:     ['blog','magazine','ebook','newsletter','whitepaper'],
-    infrastructure: ['node','indexer','api','storage','oracle','bridge','monitoring'],
-    adult:          ['content','social','gaming'],
-  },
   MAX_SUBCATEGORIES: 3,
 
   /* ─── CONTENT: SCREENSHOTS ───────────────────────────────────────

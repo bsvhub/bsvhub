@@ -91,19 +91,22 @@ App.Panels.S1.txBtn = {
     if (btn && !btn.disabled) { wrap.title = ''; return; }
     var reasons = [];
     if (!App.State.walletConnected) reasons.push('CONNECT WALLET');
-    var isBsvhub = App.Form.getCategory() === 'bsvhub';
-    if (isBsvhub) {
+
+    /* Config-driven mandatory field check */
+    var mandatory = App.Category ? App.Category.getMandatoryFields() : [];
+    if (mandatory.length) {
       var $ = App.Utils.$;
+      var fieldCheck = {
+        name:        function() { return !!$('app-name').value.trim(); },
+        url:         function() { return !!$('app-url').value.trim(); },
+        status:      function() { return !!$('app-status').value; },
+        description: function() { return !!$('desc').value.trim(); },
+        subcategory: function() { return !!(App.Subcat && App.Subcat.getValue()); }
+      };
       var missing = [];
-      var appIdea = App.Form._isAppIdea && App.Form._isAppIdea();
-      if (appIdea) {
-        if (!$('desc').value.trim()) missing.push('DESCRIPTION');
-      } else {
-        if (!$('app-name').value.trim()) missing.push('NAME');
-        if (!$('app-url').value.trim()) missing.push('URL');
-        if (!$('app-status').value) missing.push('STATUS');
-        if (!$('desc').value.trim()) missing.push('DESCRIPTION');
-        if (!App.Subcat || !App.Subcat.getValue()) missing.push('SUBCATEGORY');
+      for (var i = 0; i < mandatory.length; i++) {
+        var check = fieldCheck[mandatory[i]];
+        if (check && !check()) missing.push(mandatory[i].toUpperCase());
       }
       if (missing.length) reasons.push('MANDATORY: ' + missing.join(', '));
     }

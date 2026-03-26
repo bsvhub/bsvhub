@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   app.css — Component + Panel Styles
+   app.css (v7.6) — Component + Panel Styles
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  All visual styles for form components, inputs, buttons,
@@ -46,9 +46,6 @@ lbl.req { color: var(--mandatory); }
 /* APP DETAILS header line — exact 14px to match ICON DESIGN label.
    .plabel.plabel-details beats the generic .plabel override on line 525. */
 .plabel.plabel-details { font-size: 14px; display: flex; align-items: center; }
-.bsvhub-head .tbox { width: 15px !important; height: 15px !important; }
-.bsvhub-head .bflag-lbl { font-size: 1.0em; }
-.bsvhub-head .tbox::after { font-size: 0.8em !important; }
 
 /* Section header — label + counter on one line */
 .section-head {
@@ -104,6 +101,8 @@ lbl.req { color: var(--mandatory); }
   transition: background 0.12s, color 0.12s; white-space: nowrap;
 }
 .btn:hover { background: var(--amber); color: #000; }
+/* ── Wallet button — fixed width for CONNECT / DISCONNECT / spinner ── */
+#wallet-btn { min-width: 10em; text-align: center; }
 
 
 /* ═══════════════════════════════════════════════════════════════
@@ -448,14 +447,14 @@ input[type=range]::-moz-range-thumb { width: 11px; height: 11px; background: var
 /* ── Screenshot controls (slots 2-5) ──────────────────────── */
 .ss-info { font-size: 0.86em; color: var(--dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-/* ── 2x5 category grid ─────────────────────────────────────── */
+/* ── Category grid — flexbox, 2 rows, width set by JS ──────── */
 .cat-grid-new {
-  display: grid; grid-template-columns: repeat(5,1fr); gap: 2px; width: 100%; flex-shrink: 0;
+  display: flex; flex-wrap: wrap; gap: 2px; width: 100%; flex-shrink: 0;
 }
 .cat-btn-new {
   font-family: var(--font); font-size: 0.79em; letter-spacing: 0.4px; font-weight: 700;
   border: 1px solid; padding: 3px 2px; cursor: pointer; text-align: center;
-  user-select: none; transition: filter 0.1s;
+  user-select: none; transition: filter 0.1s; box-sizing: border-box;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .cat-btn-new:hover { filter: brightness(1.35); }
@@ -505,11 +504,7 @@ input[type=range]::-moz-range-thumb { width: 11px; height: 11px; background: var
 .bsv-flag input:checked+.tbox { border-color: var(--amber); background: rgba(234,179,0,0.2); }
 .bsv-flag input:checked+.tbox::after { content: '\2713'; font-size: 0.64em; color: var(--amber); line-height: 1; }
 .bsv-flag input:checked~.bflag-lbl { color: var(--amber); }
-/* BSVhub checkbox — blood orange when checked */
-.bsv-flag.bsvhub-mandatory input:checked+.tbox { border-color: var(--mandatory); background: rgba(232,68,32,0.15); }
-.bsv-flag.bsvhub-mandatory input:checked+.tbox::after { color: var(--mandatory); }
-.bsv-flag.bsvhub-mandatory input:checked~.bflag-lbl { color: var(--mandatory); }
-/* Subcat button — blood orange when BSVhub mandatory */
+/* Subcat button — blood orange when category has mandatory fields */
 .subcat-btn-el.req { border-color: var(--mandatory) !important; color: var(--mandatory) !important; }
 .bflag-lbl { font-size: 0.86em; letter-spacing: 0.3px; }
 .bsv-tbox { width: 12px !important; height: 12px !important; }
@@ -636,6 +631,22 @@ input[type=text], input[type=url], select, textarea { font-size: 1em; }
 .map-table .removed td { background: rgba(255,87,51,0.08); text-decoration: line-through; }
 .map-old { text-decoration: line-through; opacity: 0.45; }
 .map-new { color: var(--gold); }
+
+/* ── No-change warning (update mode) ──────────────────────── */
+.no-change-warn {
+  text-align: center; padding: 12px 8px; margin-bottom: 4px;
+  color: #FF6A00; font-weight: 700; letter-spacing: 2px;
+  animation: pulse-warn 2s ease-in-out infinite;
+}
+.no-change-icon { font-size: 1.2em; }
+.no-change-sub {
+  font-size: 0.85em; font-weight: 400; letter-spacing: 1px;
+  color: rgba(255,106,0,0.6); margin-top: 4px;
+}
+@keyframes pulse-warn {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.15; }
+}
 
 /* ── S2 MAP panel — scroll when content overflows ──────────── */
 #p2-map { overflow-y: auto; overflow-x: auto; }

@@ -30,9 +30,7 @@ App.Panels.S1.det = {
   render: function() {
     var S = SETTINGS;
     return '' +
-      '<div class="plabel plabel-details" id="lbl-details">' + App.Utils.esc(S.LABEL_DETAILS) +
-        '<label class="bsv-flag bsvhub-mandatory bsvhub-head" id="bsvhub-flag" style="border:none;background:none;padding:0;flex-shrink:0;flex:none;margin-left:8px;"><input type="checkbox" id="bsvhub-cb" checked><div class="tbox bsv-tbox"></div><span class="bflag-lbl">BSVhub.io</span></label>' +
-      '</div>' +
+      '<div class="plabel plabel-details" id="lbl-details">' + App.Utils.esc(S.LABEL_DETAILS) + '</div>' +
       '<div class="row row-multi"><lbl id="lbl-name">NAME</lbl><input type="text" id="app-name" placeholder="My BSV App" style="flex:2 1 0;width:0;min-width:0;"><lbl>ABBR</lbl><input type="text" id="app-abbr" placeholder="MBA" style="flex:1 1 0;width:0;min-width:0;"></div>' +
       '<div class="row"><lbl id="lbl-url">URL</lbl><input type="url" id="app-url" placeholder="https://myapp.io"></div>' +
       '<div class="row"><lbl>TOR</lbl><input type="text" id="app-tor" placeholder="http://example.onion" spellcheck="false"></div>' +
@@ -176,15 +174,9 @@ App.Subcat = {
     var self = this;
     this._selected = [];
     this._catVal = catVal;
-    var catDef = null;
-    if (catVal === 'bsvhub') {
-      catDef = { color: SETTINGS.BSVHUB_COLOUR, bg: SETTINGS.BSVHUB_BG, border: SETTINGS.BSVHUB_BORDER };
-    } else {
-      var cats = SETTINGS.CATEGORIES || [];
-      for (var ci = 0; ci < cats.length; ci++) {
-        if (cats[ci].value === catVal) { catDef = cats[ci]; break; }
-      }
-    }
+
+    /* Read colour/subcategories from unified CATEGORIES config */
+    var catDef = App.Category ? App.Category.getConfig() : null;
     if (!catDef) catDef = {};
     this._catColor  = catDef.color  || 'var(--amber)';
     this._catBorder = catDef.border || 'rgba(234,179,0,0.4)';
@@ -203,9 +195,8 @@ App.Subcat = {
     if (!dd) return;
     dd.style.borderColor = this._catBorder;
 
-    var opts = catVal === 'bsvhub'
-      ? (SETTINGS.BSVHUB_SUBCATEGORIES || [])
-      : ((SETTINGS.SUBCATEGORIES || {})[catVal] || []);
+    /* Read subcategories from category config (strings or objects with overrides) */
+    var opts = catDef.subcategories || [];
     dd.innerHTML = '';
     if (!opts.length) {
       var item = document.createElement('div');
@@ -214,9 +205,11 @@ App.Subcat = {
     }
     for (var oi = 0; oi < opts.length; oi++) {
       (function(opt) {
+        /* Subcategory can be a string or an object { value, mandatory, overrides } */
+        var val = typeof opt === 'object' ? opt.value : opt;
         var item = document.createElement('label');
         item.className = 'subcat-dd-item';
-        item.innerHTML = '<input type="checkbox" value="' + opt + '"><div class="tbox"></div><span>' + opt + '</span>';
+        item.innerHTML = '<input type="checkbox" value="' + val + '"><div class="tbox"></div><span>' + val + '</span>';
         var tbox = item.querySelector('.tbox');
         tbox.style.borderColor = self._catBorder;
         var cb = item.querySelector('input');
@@ -245,10 +238,7 @@ App.Subcat = {
     this._renderPills(); this._updateBtnLabel();
     /* Notify form of subcat change (for desc char limit + mandatory update) */
     if (App.Form && App.Form._updateDescLimit) App.Form._updateDescLimit();
-    if (App.Form && App.Form._setMandatory) {
-      var bsvhub = document.getElementById('bsvhub-cb');
-      App.Form._setMandatory(!!(bsvhub && bsvhub.checked));
-    }
+    if (App.Form && App.Form._setMandatory) App.Form._setMandatory();
   },
 
   _renderPills: function() {
@@ -278,10 +268,7 @@ App.Subcat = {
           }
           self._renderPills(); self._updateBtnLabel();
           if (App.Form && App.Form._updateDescLimit) App.Form._updateDescLimit();
-          if (App.Form && App.Form._setMandatory) {
-            var bsvhub = document.getElementById('bsvhub-cb');
-            App.Form._setMandatory(!!(bsvhub && bsvhub.checked));
-          }
+          if (App.Form && App.Form._setMandatory) App.Form._setMandatory();
         });
         c.appendChild(pill);
       })(this._selected[i]);
