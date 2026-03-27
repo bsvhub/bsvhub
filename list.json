@@ -436,6 +436,36 @@
       "info": ";;;"
     },
     {
+      "tab": "tool;dev",
+      "href": "https://test.whatsonchain.com/",
+      "tooltip": "The main BSV blockchain explorer",
+      "img": "icon/whatsonchain.svg",
+      "zoom": "1.0",
+      "alt": "tool explorer",
+      "text": "testnet whatsonchain",
+      "info": ";;;"
+    },
+    {
+      "tab": "tool;dev",
+      "href": "https://test.whatsonchain.com/",
+      "tooltip": "Testnet BSV blockchain explorer",
+      "img": "icon/whatsonchain.svg",
+      "zoom": "1.0",
+      "alt": "tool explorer",
+      "text": "testnet whatsonchain",
+      "info": ";;;"
+    },
+    {
+      "tab": "dev",
+      "href": "https://witnessonchain.com/faucet/tbsv",
+      "tooltip": "BSV Testnet Faucet ",
+      "img": "icon/whatsonchain.svg",
+      "zoom": "1.0",
+      "alt": "tbsv testnet",
+      "text": "Get Testnet tBSV",
+      "info": ";;;"
+    },
+    {
       "tab": "tool",
       "href": "https://gaia-explorer.com",
       "tooltip": "BSV image blockchain explorer",
