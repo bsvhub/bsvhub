@@ -1054,3 +1054,23 @@ body.mobile-mode ul.icon-grid li a:hover {
 body.mobile-mode [data-target="up-link"] {
     display: none;
 }
+
+/* ── Daily-Link overlay — reuses .up-link-wrap / .up-link-close ─
+   WHY separate ID rule: needs the same fixed full-viewport slot
+   as #up-link but is injected by daily-link.js, not tab buttons. */
+#daily-link-overlay.tab-content.active {
+    position: fixed;
+    inset: 0;
+    z-index: 1001;
+    padding: 0;
+    margin: 0;
+}
+
+/* ── Broken-log overlay — same slot, injected by json.js ──────── */
+#broken-log-overlay.tab-content.active {
+    position: fixed;
+    inset: 0;
+    z-index: 1001;
+    padding: 0;
+    margin: 0;
+}
