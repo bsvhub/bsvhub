@@ -87,6 +87,62 @@ Promise.all([
         container.appendChild(sec);
     });
 
+    /* ── Broken-log overlay — same Section 13 pattern as up-link ─
+       WHY here: #broken-log-link only exists after about.json HTML
+       is injected above, so the overlay must be built at this point. */
+    (function () {
+        var logLink = document.getElementById("broken-log-link");
+        if (!logLink) return;
+
+        var logUrl = logLink.href;   // already set in about.json HTML
+
+        /* Build overlay DOM */
+        var overlay = document.createElement("section");
+        overlay.id        = "broken-log-overlay";
+        overlay.className = "tab-content";
+
+        var wrap = document.createElement("div");
+        wrap.className = "up-link-wrap";
+
+        var closeBtn = document.createElement("img");
+        closeBtn.className = "up-link-close";
+        closeBtn.src       = "icon/close.svg";
+        closeBtn.alt       = "Close";
+        closeBtn.title     = "Close";
+
+        var frame = document.createElement("iframe");
+        frame.src   = "about:blank";
+        frame.title = "Broken Link Log";
+        frame.setAttribute("sandbox", "allow-scripts allow-same-origin allow-forms allow-popups");
+
+        wrap.appendChild(closeBtn);
+        wrap.appendChild(frame);
+        overlay.appendChild(wrap);
+
+        /* Insert after #up-link — outside #content-area so z-index works */
+        var upLink = document.getElementById("up-link");
+        if (upLink && upLink.parentNode) {
+            upLink.parentNode.insertBefore(overlay, upLink.nextSibling);
+        } else {
+            document.body.appendChild(overlay);
+        }
+
+        /* Intercept the view log link */
+        var loaded = false;
+        logLink.addEventListener("click", function (e) {
+            e.preventDefault();
+            if (!loaded) {
+                loaded = true;
+                frame.src = logUrl;
+            }
+            overlay.classList.add("active");
+        });
+
+        closeBtn.addEventListener("click", function () {
+            overlay.classList.remove("active");
+        });
+    })();
+
     /* ── Counters — spans now exist in the DOM ───────────────── */
     /* Link count: data already loaded above, no extra fetch needed */
     var lcEl = document.getElementById("link-counter");
