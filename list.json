@@ -260,14 +260,11 @@
       "tab": "wallet",
       "href": "https://getmetanet.com/",
       "tooltip": "Metanet wallet; setting the BRC-100 standard created by Project Babbage",
-      "img": "icon/metanet.svg",
-      "zoom": "1.0",
+      "img": "icon/metanet.jpg",
+      "zoom": "1.4",
       "alt": "apps wallet",
       "text": "Metanet Wallet",
-      "info": ";;;",
-      "colour1": "skyblue",
-      "colour2": "pink",
-      "opacity": "0.5"
+      "info": ";;;"
     },
     {
       "tab": "wallet",
