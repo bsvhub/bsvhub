@@ -112,7 +112,8 @@ var BSVCard = (function() {
       '.bsvcard-info-tbl .box{display:inline-block;background:rgba(234,179,0,0.12);color:var(--amber);border:1px solid rgba(234,179,0,0.35);padding:1px 4px;font-size:10px;letter-spacing:1px;margin:1px;}',
       '.bsvcard-info-tbl .box-status{display:inline-block;padding:1px 6px;font-size:10px;letter-spacing:1px;border-width:1px;border-style:solid;margin:1px;}',
 
-      '.bsvcard-plabel{font-size:12px;color:var(--amber);letter-spacing:3px;font-weight:700;padding-bottom:4px;border-bottom:1px solid var(--accent);margin-bottom:6px;flex-shrink:0;}',
+      /* font-size:1em matches .plabel in app.css — both scale with the shell font */
+      '.bsvcard-plabel{font-size:1em;color:var(--amber);letter-spacing:3px;font-weight:700;padding-bottom:4px;border-bottom:1px solid var(--accent);margin-bottom:1px;flex-shrink:0;}',
     ].join('\n');
     document.head.appendChild(style);
   }
@@ -526,7 +527,7 @@ if (typeof window !== 'undefined') window.BSVCard = BSVCard;
 
 
 /* ═══════════════════════════════════════════════════════════════
-   S2/S3 Panel Wrappers (v7.0)
+   S2/S3 Panel Wrappers (v7.1)
 
    Thin wrappers that plug BSVCard into wireframe panel slots.
    App.Panels.S2.card — preview card from form data (#p2-card)

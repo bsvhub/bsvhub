@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   app-core-s2.js — Screen 2 Orchestrator (v7.0)
+   app-core-s2.js — Screen 2 Orchestrator (v7.1)
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  Assembles Screen 2 (Chain Preview) on demand. Called via
@@ -63,9 +63,12 @@ App.CoreS2 = {
       badge.textContent = App.State.mode === 'update' ? 'UPDATE PREVIEW' : 'NOT YET ON CHAIN';
     }
 
-    /* 8. Disable CLEAR button — nothing to clear on preview screen */
-    var clearBtns = document.querySelectorAll('.clear-btn');
-    for (var i = 0; i < clearBtns.length; i++) clearBtns[i].disabled = true;
+    /* 8. Disable S2 CLEAR button — nothing to clear on the preview screen */
+    var s2 = document.getElementById('screen-2');
+    if (s2) {
+      var clearBtn = s2.querySelector('.clear-btn');
+      if (clearBtn) clearBtn.disabled = true;
+    }
 
     App.StatusBar.set('PREVIEW LOADED', 'ok');
   }

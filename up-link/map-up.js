@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   map-up.js — S2 MAP Record Table (v7.1)
+   map-up.js — S2 MAP Record Table (v7.2)
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  Builds the MAP record table for Screen 2 (#p2-map).
@@ -129,7 +129,8 @@ App.Panels.S2.map = {
           html += '<tr><td>' + esc(k) + '</td><td class="' + fvClass + '">' + newVal + '</td></tr>';
         }
       } else if (old) {
-        /* New field not in original record */
+        /* New field not in original record — counts as a change */
+        hasChanges = true;
         html += '<tr class="added"><td>' + esc(k) + '</td><td class="' + fvClass + '">' + newVal + '</td></tr>';
       } else {
         /* Submit mode — no diff */

@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   app-init.js — Bootstrap Orchestrator (v7.0)
+   app-init.js — Bootstrap Orchestrator (v7.1)
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  Master initialisation sequence. Delegates screen assembly
@@ -54,10 +54,13 @@ App.Init = function() {
     BSVCard.injectCSS();
   }
 
-  /* 10a. Register Screen 1 mount hook — re-enable CLEAR button */
+  /* 10a. Register Screen 1 mount hook — re-enable S1 CLEAR button only */
   window._onScreenMount[1] = function() {
-    var clearBtns = document.querySelectorAll('.clear-btn');
-    for (var i = 0; i < clearBtns.length; i++) clearBtns[i].disabled = false;
+    var s1 = document.getElementById('screen-1');
+    if (s1) {
+      var clearBtn = s1.querySelector('.clear-btn');
+      if (clearBtn) clearBtn.disabled = false;
+    }
   };
 
   /* 10b. Register Screen 2 mount hook (lazy — renders on navigate) */
@@ -67,12 +70,44 @@ App.Init = function() {
     if (sv2) sv2.textContent = SETTINGS.STATUSBAR_LABEL_S2;
   };
 
-  /* 10c. Register Screen 3 mount hook — disable CLEAR button, set version label */
+  /* 10c. Register Screen 3 mount hook — wire CLEAR to txid field, set version label.
+     S3 clear button clears only #txid-input (and resets viewer state).
+     It is enabled only when the txid field has content, grayed out otherwise. */
   window._onScreenMount[3] = function() {
-    var clearBtns = document.querySelectorAll('.clear-btn');
-    for (var i = 0; i < clearBtns.length; i++) clearBtns[i].disabled = true;
     var sv3 = document.getElementById('sb-version-3');
     if (sv3) sv3.textContent = SETTINGS.STATUSBAR_LABEL_S3;
+
+    var s3 = document.getElementById('screen-3');
+    if (!s3) return;
+    var clearBtn  = s3.querySelector('.clear-btn');
+    var txidInput = document.getElementById('txid-input');
+    if (!clearBtn || !txidInput) return;
+
+    /* Helper: enable/disable based on whether the txid field has content */
+    function _syncClearBtn() {
+      clearBtn.disabled = !txidInput.value.trim();
+    }
+
+    /* Wire the clear action — wipe txid field + reset viewer panels */
+    clearBtn.onclick = function() {
+      txidInput.value = '';
+      var tableEl = document.getElementById('p3-table');
+      var cardEl  = document.getElementById('p3-card');
+      var badge   = document.getElementById('viewer-badge');
+      if (tableEl) tableEl.innerHTML = App.Panels.S3.table.render();
+      if (cardEl)  cardEl.innerHTML  = App.Panels.S3.card.render();
+      if (badge)   { badge.textContent = ''; badge.className = 'badge'; }
+      App.StatusBar.set('VIEWER CLEARED', 'ok');
+      _syncClearBtn();
+      /* Remove ?tx= param from URL so a refresh doesn't auto-reload */
+      if (history.replaceState) history.replaceState(null, '', window.location.pathname);
+    };
+
+    /* Keep button state in sync as user types in the txid field */
+    txidInput.addEventListener('input', _syncClearBtn);
+
+    /* Set initial state for this mount */
+    _syncClearBtn();
   };
 
   /* 11. Legacy bridge — window.saveMAP dispatches to onchain or offline */

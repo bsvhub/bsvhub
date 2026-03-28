@@ -614,8 +614,10 @@ input[type=text], input[type=url], select, textarea { font-size: 1em; }
   height: 100%; gap: 12px; text-align: center;
 }
 .loading-msg .spinner {
-  font-size: 28px; animation: spin 1.2s linear infinite; color: var(--amber);
+  font-size: 28px; color: var(--amber);
 }
+/* Shared spin — applies to any .spinner, including the wallet button connecting state */
+.spinner { animation: spin 1.2s linear infinite; display: inline-block; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .loading-msg .text { font-size: 14px; color: var(--dim); letter-spacing: 2px; }
 .err-msg { color: var(--accent); font-size: 14px; letter-spacing: 1px; line-height: 1.6; }

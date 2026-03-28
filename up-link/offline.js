@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════
-   offline.js — Offline/Local Testing Module for BSV Directory Portal
+   offline.js (v7.3) — Offline/Local Testing Module for BSV Directory Portal
    ═══════════════════════════════════════════════════════════════════════
 
    Provides .txt file export/import for MAP protocol records.
@@ -311,10 +311,21 @@ App.MAPImport = {
   _populateForm: function(f) {
     var $ = App.Utils.$;
 
+    // Clear all fields first so no stale data from a previous record lingers.
+    // skipPicker=true prevents clearAll from triggering the record picker again.
+    if (App.Form && App.Form.clearAll) App.Form.clearAll();
+
+    // Normalize icon_txid to canonical txid_suffix form before storing.
+    // parseTxid() appends _0 to bare 64-hex, leaves already-suffixed values alone.
+    // This prevents a false diff when fetchFromBlockchain() normalises the same way.
+    if (f.icon_txid && App.Utils.isValidTxid(f.icon_txid)) {
+      f = Object.assign({}, f, { icon_txid: App.Utils.parseTxid(f.icon_txid) });
+    }
+
     // Store original loaded data for diff comparison in preview
     App.State.loadedRecord = Object.assign({}, f);
 
-    // Auto-switch to UPDATE mode
+    // Auto-switch to UPDATE mode (skipPicker=true — record already being loaded)
     App.Mode.set('update', true);
 
     // --- Text inputs ---

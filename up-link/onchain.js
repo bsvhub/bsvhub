@@ -572,12 +572,19 @@ var WalletManager = {
       var iconScript = BSVScript.buildBProtocolScript(iconBytes, 'image/png', 'icon');
       iconEst = this.estimateFee([iconScript]);
     }
-    // Estimate screenshot upload fees
+    // Estimate screenshot upload fees.
+    // Mirror the submitFull() guard: skip slots that already have a valid on-chain
+    // txid — those will NOT be re-uploaded, so they cost nothing here.
+    // Without this guard, slots restored from an on-chain record have both a txid
+    // AND dataB64 (loaded for preview), causing buildBProtocolScript to throw on
+    // large images, which is caught silently and collapses the estimate to 20 sats.
     var ssFeeSats = 0;
     var ssTotalBytes = 0;
     if (ssSlots) {
       for (var i = 0; i < ssSlots.length; i++) {
-        if (ssSlots[i] && ssSlots[i].dataB64) {
+        var ssTxid = ssSlots[i] && ssSlots[i].txid;
+        var ssOnChain = ssTxid && ssTxid !== '(pending)' && /^[0-9a-fA-F]{64}(_\w+)?$/.test(ssTxid);
+        if (ssSlots[i] && ssSlots[i].dataB64 && !ssOnChain) {
           var ssBytes = this._base64ToBytes(ssSlots[i].dataB64);
           var ssScript = BSVScript.buildBProtocolScript(ssBytes, ssSlots[i].mime || 'image/png', 'ss' + (i+1));
           var ssEst = this.estimateFee([ssScript]);

@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   s1-icon.js — Icon Design Panel (Screen 1, #p1-icon) (v7.2)
+   s1-icon.js — Icon Design Panel (Screen 1, #p1-icon) (v7.3)
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  Self-contained panel: HTML template, icon upload/fetch,
@@ -117,6 +117,8 @@ App.Icon = {
       var txIn = App.Utils.$('icon-txid');
       if (txIn) txIn.value = '';
       self._loadIntoPreview(e.target.result); self.updatePreviewStyles(); App.Screenshots.setIconThumb(e.target.result);
+      /* Refresh S1 fee estimate — icon upload cost now applies */
+      if (App.Tips && App.Tips.updateFeeDisplay) App.Tips.updateFeeDisplay();
     };
     reader.readAsDataURL(file);
   },
@@ -577,6 +579,8 @@ App.Screenshots = {
       self._showSlotPreview(idx);
       self._updateSlotStates();
       App.StatusBar.set('SCREENSHOT ' + idx + ' LOADED \u2014 ' + file.name, 'ok');
+      /* Refresh S1 fee estimate — screenshot upload cost now applies */
+      if (App.Tips && App.Tips.updateFeeDisplay) App.Tips.updateFeeDisplay();
     };
     reader.readAsDataURL(file);
   },

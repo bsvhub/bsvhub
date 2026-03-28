@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   s1-details.js — App Details Panel (Screen 1, #p1-det) (v7.0)
+   s1-details.js — App Details Panel (Screen 1, #p1-det) (v7.1)
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  Self-contained panel: HTML template, language selector,
@@ -137,8 +137,20 @@ App.Lang = {
   },
 
   getValue: function() {
-    var sel = this.getSelected();
-    return sel.length ? sel.join(';') : 'en';
+    /* Return languages in the order they appear in SETTINGS.LANGUAGES — not click
+       order. Prevents false diffs in update mode when the user selects them in a
+       different order than they are defined in config. */
+    var sel = this.getSelected(); // array of checked values in DOM order
+    if (!sel.length) return 'en';
+    var ordered = [];
+    for (var i = 0; i < SETTINGS.LANGUAGES.length; i++) {
+      if (sel.indexOf(SETTINGS.LANGUAGES[i].value) !== -1) ordered.push(SETTINGS.LANGUAGES[i].value);
+    }
+    /* Append any selected not in SETTINGS (safety fallback) */
+    for (var j = 0; j < sel.length; j++) {
+      if (ordered.indexOf(sel[j]) === -1) ordered.push(sel[j]);
+    }
+    return ordered.join(';');
   },
 
   init: function() {
@@ -291,7 +303,23 @@ App.Subcat = {
     var dd = App.Utils.$('subcat-dd'); if (dd) dd.classList.remove('open');
   },
 
-  getValue: function() { return this._selected.join(';'); },
+  getValue: function() {
+    /* Return subcategories in the order they appear in SETTINGS — not click order.
+       This prevents false diffs in update mode when the user selected them
+       in a different order than they are listed in the config. */
+    var cfg = App.Category ? App.Category.getConfig() : null;
+    var opts = (cfg && cfg.subcategories) ? cfg.subcategories : [];
+    var ordered = [];
+    for (var i = 0; i < opts.length; i++) {
+      var v = typeof opts[i] === 'object' ? opts[i].value : opts[i];
+      if (this._selected.indexOf(v) !== -1) ordered.push(v);
+    }
+    /* Append any selected values not found in opts (safety fallback) */
+    for (var j = 0; j < this._selected.length; j++) {
+      if (ordered.indexOf(this._selected[j]) === -1) ordered.push(this._selected[j]);
+    }
+    return ordered.join(';');
+  },
 
   init: function() {
     var self = this;
