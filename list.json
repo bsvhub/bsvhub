@@ -1540,6 +1540,16 @@
       "alt": "read brodcast transmit api",
       "text": "WhatsonChain Docs",
       "info": ";;;"
+    },
+    {
+      "tab": "sm",
+      "href": "https://lamint.io",
+      "tooltip": "A social media platform to monitise your exclusive content and connect with fans on Web3",
+      "img": "icon/lamint.webp",
+      "zoom": "1.0",
+      "alt": "",
+      "text": "La Mint",
+      "info": ";;;"
     }
   ]
 }
