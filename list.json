@@ -128,6 +128,16 @@
     },
     {
       "tab": "wallet",
+      "href": "https://github.com/TruthMachine/ElectrumSVP/releases/tag/v0.0.1-beta",
+      "tooltip": "The successor to the established Electrum SV wallet for Windows/Mac/Linux",
+      "img": "icon/electrum_spv.svg",
+      "zoom": "1.0",
+      "alt": "classic old legacy",
+      "text": "SPV Wallet",
+      "info": ";;beta.svg;"
+    },
+    {
+      "tab": "wallet",
       "href": "https://docs.gorillapool.io/electrumsv/",
       "tooltip": "Electrum SV Server for blockchain syncing",
       "img": "icon/electrum-server.svg",
