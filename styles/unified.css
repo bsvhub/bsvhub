@@ -1,6 +1,6 @@
 /*index*/
 /* ------------------------------------------------------------
-   1  – ANIMATIONS (blink, fadeIn, marquee scroll-text)
+   1  – ANIMATIONS (blink, fadeIn, marquee scroll-text, heart-pulse)
    2  – GLOBAL / RESET / BASE FONTS / VARIABLES
    3  – PAGE WRAPPER (full-height container + mode-switch fade)
    4  – BACKGROUND LAYERS [LAYER 0]
@@ -16,8 +16,17 @@
 ------------------------------------------------------------ */
 
 /* =====================================================
-   1 – ANIMATIONS (blink, fadeIn, marquee scroll-text)
+   1 – ANIMATIONS (blink, fadeIn, marquee scroll-text, heart-pulse)
 ===================================================== */
+@keyframes heart-pulse {
+    0%   { transform: scale(1); }
+    14%  { transform: scale(1.18); }   /* strong beat */
+    28%  { transform: scale(1); }
+    42%  { transform: scale(1.1); }    /* softer echo beat */
+    56%  { transform: scale(1); }
+    100% { transform: scale(1); }      /* pause before next cycle */
+}
+
 @keyframes toggle-blink {
     0%   { opacity: 1; }
     50%  { opacity: 0.3; }
@@ -302,6 +311,11 @@ body.mobile-mode .mobile-mode-icon {
 .tab-bar button span {
     display: inline-block;
     transition: transform 0.25s;
+}
+
+/* Heartbeat pulse — draws attention to Up-LINK without colour change */
+.tab-bar button[data-target="up-link"] span {
+    animation: heart-pulse 2.5s ease-in-out infinite;
 }
 
 .tab-bar button:hover {
