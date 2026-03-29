@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   map-up.js — S2 MAP Record Table (v7.2)
+   map-up.js — S2 MAP Record Table (v7.3)
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  Builds the MAP record table for Screen 2 (#p2-map).
@@ -74,6 +74,8 @@ App.Panels.S2.map = {
       ['icon_fg_colour',  d.icon_fg_colour || ''],
       ['icon_bg_alpha',   String(d.icon_bg_alpha)],
       ['icon_zoom',       String(d.icon_zoom)],
+      ['icon_pan_x',      String(d.icon_pan_x !== undefined ? d.icon_pan_x : 0)],
+      ['icon_pan_y',      String(d.icon_pan_y !== undefined ? d.icon_pan_y : 0)],
       ['alt_text',        d.alt_text || ''],
       ['developer_paymail',  d.developer_paymail || ''],
       ['developer_twitter',  d.developer_twitter || ''],
@@ -91,6 +93,8 @@ App.Panels.S2.map = {
         rows.push(['ss' + n + '_format',   (slot && slot.mime) || d['ss' + n + '_format'] || '']);
         rows.push(['ss' + n + '_size_kb',  (slot && String(slot.kb)) || d['ss' + n + '_size_kb'] || '']);
         rows.push(['ss' + n + '_zoom',     d['ss' + n + '_zoom'] || (slot && String(slot.zoom)) || '1']);
+        rows.push(['ss' + n + '_pan_x',    d['ss' + n + '_pan_x'] !== undefined ? String(d['ss' + n + '_pan_x']) : '0']);
+        rows.push(['ss' + n + '_pan_y',    d['ss' + n + '_pan_y'] !== undefined ? String(d['ss' + n + '_pan_y']) : '0']);
         rows.push(['ss' + n + '_alt_text', d['ss' + n + '_alt_text'] || (slot && slot.altText) || '']);
       }
     }

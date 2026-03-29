@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════
-   offline.js (v7.3) — Offline/Local Testing Module for BSV Directory Portal
+   offline.js (v7.4) — Offline/Local Testing Module for BSV Directory Portal
    ═══════════════════════════════════════════════════════════════════════
 
    Provides .txt file export/import for MAP protocol records.
@@ -81,6 +81,8 @@ App.MAPExport = Object.assign(App.MAPExport || {}, {
       ['icon_fg_colour',    d.icon_fg_colour || ''],
       ['icon_bg_alpha',     String(d.icon_bg_alpha)],
       ['icon_zoom',         String(d.icon_zoom)],
+      ['icon_pan_x',        String(d.icon_pan_x !== undefined ? d.icon_pan_x : 0)],
+      ['icon_pan_y',        String(d.icon_pan_y !== undefined ? d.icon_pan_y : 0)],
       ['alt_text',          d.alt_text || ''],
       ['developer_paymail', d.developer_paymail || ''],
       ['developer_twitter', d.developer_twitter || ''],
@@ -98,6 +100,8 @@ App.MAPExport = Object.assign(App.MAPExport || {}, {
         fields.push(['ss' + n + '_format',   (slot && slot.mime) || d['ss' + n + '_format'] || '']);
         fields.push(['ss' + n + '_size_kb',  (slot && String(slot.kb)) || d['ss' + n + '_size_kb'] || '']);
         fields.push(['ss' + n + '_zoom',     d['ss' + n + '_zoom'] || (slot && String(slot.zoom)) || '1']);
+        fields.push(['ss' + n + '_pan_x',    d['ss' + n + '_pan_x'] !== undefined ? String(d['ss' + n + '_pan_x']) : '0']);
+        fields.push(['ss' + n + '_pan_y',    d['ss' + n + '_pan_y'] !== undefined ? String(d['ss' + n + '_pan_y']) : '0']);
         fields.push(['ss' + n + '_alt_text', d['ss' + n + '_alt_text'] || (slot && slot.altText) || '']);
       }
     }
@@ -401,6 +405,9 @@ App.MAPImport = {
       if (f.icon_fg_colour && /^#[0-9a-fA-F]{6}$/.test(f.icon_fg_colour)) s0.fg = f.icon_fg_colour;
       if (f.icon_bg_alpha !== undefined) s0.alpha = f.icon_bg_alpha;
       if (f.icon_zoom !== undefined) s0.zoom = f.icon_zoom;
+      /* parseFloat with || '0' so OP_0 decoded as '' maps to 0, not a false diff */
+      s0.panX = parseFloat(f.icon_pan_x || '0') || 0;
+      s0.panY = parseFloat(f.icon_pan_y || '0') || 0;
       if (f.alt_text !== undefined) s0.altText = f.alt_text;
 
       // Image data: embedded B64 or chain fetch
@@ -468,6 +475,9 @@ App.MAPImport = {
         var ssZoom = f['ss' + sj + '_zoom'] || '1';
         var ssAlt  = f['ss' + sj + '_alt_text'] || '';
 
+        /* parseFloat with || '0' so OP_0 decoded as '' maps to 0, not a false diff */
+        var ssPanX = parseFloat(f['ss' + sj + '_pan_x'] || '0') || 0;
+        var ssPanY = parseFloat(f['ss' + sj + '_pan_y'] || '0') || 0;
         if (ssEmbedded) {
           // Offline file with embedded B64 data
           App.Screenshots._slots[sj] = {
@@ -475,7 +485,7 @@ App.MAPImport = {
             filename: 'ss' + sj,
             kb: f['ss' + sj + '_size_kb'] || '?',
             mime: f['ss' + sj + '_format'] || 'image/png',
-            zoom: ssZoom, altText: ssAlt
+            zoom: ssZoom, panX: ssPanX, panY: ssPanY, altText: ssAlt
           };
           App.Screenshots._updateStripThumb(sj);
         } else if (ssTxid && ssTxid !== '(pending)') {
@@ -486,7 +496,7 @@ App.MAPImport = {
             kb: f['ss' + sj + '_size_kb'] || '?',
             mime: f['ss' + sj + '_format'] || 'image/png',
             txid: ssTxid,
-            zoom: ssZoom, altText: ssAlt
+            zoom: ssZoom, panX: ssPanX, panY: ssPanY, altText: ssAlt
           };
           App.Screenshots._slots[sj] = ssSlot;
           App.Screenshots._updateStripThumb(sj);

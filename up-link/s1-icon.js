@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   s1-icon.js — Icon Design Panel (Screen 1, #p1-icon) (v7.3)
+   s1-icon.js — Icon Design Panel (Screen 1, #p1-icon) (v7.7)
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  Self-contained panel: HTML template, icon upload/fetch,
@@ -47,17 +47,34 @@ App.Panels.S1.icon = {
         '</div>' +
         '<div id="mode-upload" class="mode-container">' +
           '<div class="row"><button class="file-btn" id="browse-btn">\u25b8 BROWSE</button></div>' +
-          '<div class="file-info" id="fname">SVG \u00b7 PNG \u00b7 WEBP \u00b7 AVIF</div>' +
-          '<div class="file-info file-size-gold" id="fsize"></div>' +
         '</div>' +
         '<div id="mode-txid" class="mode-container" style="display:none;">' +
-          '<input type="text" id="icon-txid" placeholder="txid or txid_0" style="letter-spacing:0.3px;width:100%;">' +
-          '<button class="file-btn" id="fetch-btn">\u25b8 FETCH FROM CHAIN</button>' +
+          '<div class="row">' +
+            /* Input takes remaining width; button fixed at 16% of row — RHS */
+            '<input type="text" id="icon-txid" placeholder="txid or txid_0" style="letter-spacing:0.3px;flex:1;min-width:0;font-size:1.0em;">' +
+            '<button class="file-btn" id="fetch-btn" style="flex:0 0 20%;width:auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:clip;">\u25b8FETCH</button>' +
+          '</div>' +
           '<div id="txid-st" class="status txid-status"></div>' +
         '</div>' +
-        '<div class="clr-row icon-only"><label class="clr-toggle"><input type="checkbox" id="cbg-on" checked><div class="tbox"></div></label><lbl>BG</lbl><input type="color" id="cbg"><input type="text" id="cbg-h" class="hex-in"></div>' +
-        '<div class="clr-row icon-only"><label class="clr-toggle"><input type="checkbox" id="cfg-on"><div class="tbox"></div></label><lbl>FG</lbl><input type="color" id="cfg"><input type="text" id="cfg-h" class="hex-in"></div>' +
-        '<div class="gradient-hint icon-only" id="gradient-hint">BG ONLY \u2014 SOLID COLOUR</div>' +
+        '<div class="icon-mid-row">' +
+          '<div class="icon-sub-controls icon-only">' +
+            '<div class="file-info" id="fname">GIF \u00b7 SVG \u00b7 PNG \u00b7 WEBP \u00b7 AVIF</div>' +
+            '<div class="file-info file-size-gold" id="fsize"></div>' +
+            '<div class="clr-row"><label class="clr-toggle"><input type="checkbox" id="cbg-on" checked><div class="tbox"></div></label><lbl>BG</lbl><input type="color" id="cbg"><input type="text" id="cbg-h" class="hex-in"></div>' +
+            '<div class="clr-row"><label class="clr-toggle"><input type="checkbox" id="cfg-on"><div class="tbox"></div></label><lbl>FG</lbl><input type="color" id="cfg"><input type="text" id="cfg-h" class="hex-in"></div>' +
+            '<div class="gradient-hint" id="gradient-hint">BG ONLY \u2014 SOLID COLOUR</div>' +
+          '</div>' +
+          '<div class="pan-box">' +
+            '<div class="pan-cross">' +
+              '<button class="pan-btn" id="pan-up"    title="Pan up">\u25b2</button>' +
+              '<div class="pan-mid">' +
+                '<button class="pan-btn" id="pan-left"  title="Pan left">\u25c4</button>' +
+                '<button class="pan-btn" id="pan-right" title="Pan right">\u25ba</button>' +
+              '</div>' +
+              '<button class="pan-btn" id="pan-down"  title="Pan down">\u25bc</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
         '<div class="srow srow-compact icon-only"><lbl>ALPHA</lbl><input type="range" id="opc"><span class="sval" id="opc-v"></span></div>' +
         '<div class="srow srow-compact"><lbl>ZOOM</lbl><input type="range" id="zom"><span class="sval" id="zom-v"></span></div>' +
         '<div class="row srow-compact" style="flex-shrink:0;"><lbl>ALT</lbl><input type="text" id="icon-alt" placeholder="alt text"></div>' +
@@ -322,10 +339,15 @@ App.Icon = {
     else                    bg = 'transparent';
     $('preview-bg').style.background = bg;
     this._updateGradientHint();
+    /* Read pan from the active slot — pan + zoom compose into one transform */
+    var activeSlotForPan = App.Screenshots ? App.Screenshots._slots[App.Screenshots._active] : null;
+    var panX = (activeSlotForPan && activeSlotForPan.panX) ? activeSlotForPan.panX : 0;
+    var panY = (activeSlotForPan && activeSlotForPan.panY) ? activeSlotForPan.panY : 0;
+    var translatePfx = 'translate(' + (panX * 100) + '%, ' + (panY * 100) + '%) ';
     var img = $('icon-preview').querySelector('img:not(.ss-preview-img)');
-    if (img) { img.style.opacity = '1'; img.style.transform = 'scale(' + $('zom').value + ')'; }
+    if (img) { img.style.opacity = '1'; img.style.transform = translatePfx + 'scale(' + $('zom').value + ')'; }
     var ssZImg = $('icon-preview').querySelector('.ss-preview-img');
-    if (ssZImg) { ssZImg.style.transform = 'scale(' + $('zom').value + ')'; ssZImg.style.transformOrigin = 'center'; }
+    if (ssZImg) { ssZImg.style.transform = translatePfx + 'scale(' + $('zom').value + ')'; ssZImg.style.transformOrigin = 'center'; }
     /* Persist control values into the active slot on every change */
     if (App.Screenshots) App.Screenshots._saveActiveControls();
     this.enforceSquare();
@@ -379,7 +401,9 @@ App.Screenshots = {
 
   /* ── Per-slot value defaults ────────────────────────────── */
   _defaultSlotValues: function(idx) {
-    var v = { dataB64: null, filename: '', kb: 0, mime: '', txid: '', zoom: SETTINGS.ICON_DEFAULT_ZOOM || 1, altText: '' };
+    var v = { dataB64: null, filename: '', kb: 0, mime: '', txid: '', zoom: SETTINGS.ICON_DEFAULT_ZOOM || 1, altText: '',
+              panX: 0, panY: 0,  /* fractional pan offset — 0 = centred; clamped to ±(zoom-1)/2 */
+              mode: 'upload'     /* per-slot upload/on-chain radio state */ };
     if (idx === 0) {
       v.chainUrl = null;
       v.bgOn = SETTINGS.ICON_BG_ENABLED !== undefined ? SETTINGS.ICON_BG_ENABLED : true;
@@ -407,6 +431,9 @@ App.Screenshots = {
     /* Save txid from the shared input if user typed/pasted one */
     var txIn = $('icon-txid');
     if (txIn && txIn.value.trim()) slot.txid = txIn.value.trim();
+    /* Save upload/on-chain radio state — each slot tracks its own mode */
+    var activeRadio = document.querySelector('input[name=isrc]:checked');
+    if (activeRadio) slot.mode = activeRadio.value;
     if (idx === 0) {
       slot.bgOn  = $('cbg-on') ? $('cbg-on').checked : slot.bgOn;
       slot.fgOn  = $('cfg-on') ? $('cfg-on').checked : slot.fgOn;
@@ -425,6 +452,11 @@ App.Screenshots = {
     var alt  = (slot && slot.altText !== undefined) ? slot.altText : defs.altText;
     if ($('zom'))   { $('zom').value = zoom; $('zom-v').textContent = parseFloat(zoom).toFixed(2); }
     if ($('icon-alt')) $('icon-alt').value = alt;
+    /* Restore upload/on-chain radio state for this slot — each slot is independent */
+    var slotMode = (slot && slot.mode) ? slot.mode : 'upload';
+    var radioToCheck = document.querySelector('input[name=isrc][value="' + slotMode + '"]');
+    if (radioToCheck) radioToCheck.checked = true;
+    App.Icon.switchMode(slotMode);
     if (idx === 0) {
       var bgOn  = (slot && slot.bgOn !== undefined)  ? slot.bgOn  : defs.bgOn;
       var fgOn  = (slot && slot.fgOn !== undefined)  ? slot.fgOn  : defs.fgOn;
@@ -477,7 +509,7 @@ App.Screenshots = {
       }
       var fn = App.Utils.$('fname'), fs = App.Utils.$('fsize');
       var s0d = this._slots[0];
-      if (fn) fn.textContent = (s0d && s0d.filename) ? s0d.filename : 'SVG \u00B7 PNG \u00B7 WEBP \u00B7 AVIF';
+      if (fn) fn.textContent = (s0d && s0d.filename) ? s0d.filename : 'GIF \u00B7 SVG \u00B7 PNG \u00B7 WEBP \u00B7 AVIF';
       if (fs) {
         if (s0d && s0d.dataB64) { fs.textContent = s0d.kb + 'kb \u2713'; fs.className = 'file-info file-size-green'; }
         else { fs.textContent = 'MAX ' + Math.round(SETTINGS.MAX_ICON_BYTES / 1024) + 'kb'; fs.className = 'file-info file-size-gold'; }
@@ -528,13 +560,16 @@ App.Screenshots = {
       ssImg = document.createElement('img');
       ssImg.className = 'ss-preview-img';
       ssImg.src = slot.dataB64;
-      ssImg.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transform-origin:center;z-index:2;transform:scale(' + parseFloat(slotZoom) + ');';
+      /* Pan + zoom compose into one transform — pan stored as fraction, translated to % */
+      var slotPanX = (slot && slot.panX) ? slot.panX : 0;
+      var slotPanY = (slot && slot.panY) ? slot.panY : 0;
+      ssImg.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transform-origin:center;z-index:2;transform:translate(' + (slotPanX * 100) + '%, ' + (slotPanY * 100) + '%) scale(' + parseFloat(slotZoom) + ');';
       preview.appendChild(ssImg);
       if (fnEl) fnEl.textContent = slot.filename || '';
       if (fsEl) { fsEl.textContent = slot.kb + 'kb'; fsEl.className = 'file-info ' + (slot.kb > Math.round(SETTINGS.MAX_SCREENSHOT_BYTES / 1024) ? 'file-size-err' : 'file-size-gold'); }
     } else {
       if (noImg) { noImg.style.display = ''; noImg.textContent = 'NO SCREENSHOT'; }
-      if (fnEl) fnEl.textContent = 'PNG \u00B7 JPG \u00B7 WEBP \u00B7 AVIF';
+      if (fnEl) fnEl.textContent = 'GIF \u00B7 PNG \u00B7 JPG \u00B7 WEBP \u00B7 AVIF';
       if (fsEl) { fsEl.textContent = 'MAX ' + Math.round(SETTINGS.MAX_SCREENSHOT_BYTES / 1024) + 'kb'; fsEl.className = 'file-info file-size-gold'; }
     }
   },
@@ -619,7 +654,7 @@ App.Screenshots = {
         if (noImg) { noImg.style.display = ''; noImg.textContent = 'NO IMAGE'; }
       }
       $('preview-bg').style.background = '';
-      if ($('fname')) $('fname').textContent = 'SVG \u00B7 PNG \u00B7 WEBP \u00B7 AVIF';
+      if ($('fname')) $('fname').textContent = 'GIF \u00B7 SVG \u00B7 PNG \u00B7 WEBP \u00B7 AVIF';
       if ($('fsize')) { $('fsize').textContent = 'MAX ' + Math.round(SETTINGS.MAX_ICON_BYTES / 1024) + 'kb'; $('fsize').className = 'file-info file-size-gold'; }
       if ($('icon-file-input')) $('icon-file-input').value = '';
     } else {
@@ -679,6 +714,10 @@ App.Screenshots = {
 
   init: function() {
     var self = this;
+
+    /* ── Pan config — reads from SETTINGS, falls back to 2% safe default ── */
+    var PAN_STEP = (SETTINGS && SETTINGS.ICON_PAN_STEP) || 0.02;
+
     for (var i = 0; i <= 4; i++) {
       (function(idx) {
         var sq = App.Utils.$('slot-' + idx);
@@ -690,6 +729,34 @@ App.Screenshots = {
     /* CE button — clear active slot */
     var ceBtn = App.Utils.$('ce-slot-btn');
     if (ceBtn) ceBtn.addEventListener('click', function() { self.clearEntry(); });
+
+    /* Pan buttons — shift active slot image by PAN_STEP per press.
+       Clamped to ±(zoom-1)/2 so the image edge never passes the preview edge. */
+    function _applyPan(dx, dy) {
+      var idx = self._active;
+      var slot = self._slots[idx];
+      /* Inert when no image loaded in this slot */
+      if (!slot || (!slot.dataB64 && !slot.chainUrl && !slot.txid)) return;
+      var zoom = parseFloat(slot.zoom) || 1;
+      var maxPan = Math.max(0, (zoom - 1) / 2);
+      slot.panX = Math.min(maxPan, Math.max(-maxPan, (slot.panX || 0) + dx));
+      slot.panY = Math.min(maxPan, Math.max(-maxPan, (slot.panY || 0) + dy));
+      /* Refresh preview with updated pan */
+      if (idx === 0) {
+        App.Icon.updatePreviewStyles();
+      } else {
+        self._showSlotPreview(idx);
+      }
+    }
+    var panUp    = App.Utils.$('pan-up');
+    var panDown  = App.Utils.$('pan-down');
+    var panLeft  = App.Utils.$('pan-left');
+    var panRight = App.Utils.$('pan-right');
+    if (panUp)    panUp.addEventListener('click',    function() { _applyPan(0,         -PAN_STEP); });
+    if (panDown)  panDown.addEventListener('click',  function() { _applyPan(0,          PAN_STEP); });
+    if (panLeft)  panLeft.addEventListener('click',  function() { _applyPan(-PAN_STEP,  0);        });
+    if (panRight) panRight.addEventListener('click', function() { _applyPan( PAN_STEP,  0);        });
+
     /* Initialise slot 0 (icon) with default control values */
     this._slots[0] = this._defaultSlotValues(0);
     this.selectSlot(0);

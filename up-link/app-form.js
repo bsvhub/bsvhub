@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   app-form.js (v7.2) — Form Validation + Data Collection + Word Filter
+   app-form.js (v7.3) — Form Validation + Data Collection + Word Filter
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  Cross-cutting form logic: category click handling,
@@ -50,6 +50,8 @@ App.Form = {
         ssFields['ss' + n + '_format'] = slot.mime || '';
         ssFields['ss' + n + '_size_kb'] = String(slot.kb || '');
         ssFields['ss' + n + '_zoom'] = String(slot.zoom || 1);
+        ssFields['ss' + n + '_pan_x'] = slot.panX !== undefined ? slot.panX : 0;
+        ssFields['ss' + n + '_pan_y'] = slot.panY !== undefined ? slot.panY : 0;
         ssFields['ss' + n + '_alt_text'] = slot.altText || '';
       }
     }
@@ -74,7 +76,10 @@ App.Form = {
       icon_bg_enabled: ico.bgOn !== undefined ? ico.bgOn : true,
       icon_fg_enabled: ico.fgOn !== undefined ? ico.fgOn : false,
       icon_bg_colour: ico.bg || '', icon_fg_colour: ico.fg || '', icon_bg_alpha: ico.alpha !== undefined ? ico.alpha : 1,
-      icon_zoom: ico.zoom !== undefined ? ico.zoom : 1, alt_text: ico.altText || '',
+      icon_zoom: ico.zoom !== undefined ? ico.zoom : 1,
+      icon_pan_x: ico.panX !== undefined ? ico.panX : 0,
+      icon_pan_y: ico.panY !== undefined ? ico.panY : 0,
+      alt_text: ico.altText || '',
       developer_paymail: $('dev-paymail').value.trim(), developer_twitter: $('dev-tw').value.trim(),
       developer_github: $('dev-gh').value.trim(), developer_bio: $('dev-bio').value.trim(),
       icon_data_b64: ico.dataB64 || null, icon_chain_url: ico.chainUrl || null, icon_width: null, icon_height: null,

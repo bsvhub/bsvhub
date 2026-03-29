@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   app.css (v7.6) — Component + Panel Styles
+   app.css (v7.7) — Component + Panel Styles
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  All visual styles for form components, inputs, buttons,
@@ -280,14 +280,60 @@ input[type=range]::-moz-range-thumb { width: 11px; height: 11px; background: var
 .icon-preview-sq .no-img { position: relative; z-index: 1; }
 
 /* ── Icon panel layout ─────────────────────────────────────── */
-.panel-icon { flex-direction: row; gap: 8px; padding: 7px 10px; }
+.panel-icon { flex-direction: row; gap: 8px; padding: 7px 6px 7px 10px; }
 .icon-controls { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 0; overflow: hidden; }
-.icon-well { flex-basis: 50%; flex-shrink: 0; display: flex; align-items: stretch; justify-content: center; align-self: stretch; min-width: 0; }
+.icon-well { flex-basis: 44%; flex-shrink: 0; display: flex; align-items: stretch; justify-content: center; align-self: stretch; min-width: 0; }
 .mode-container { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; }
 .gradient-hint { font-size: 0.93em; color: var(--dim); letter-spacing: 0.5px; flex-shrink: 0; white-space: nowrap; }
-/* Icon-only rows greyed when a screenshot slot is active */
+/* Icon-only block greyed when a screenshot slot is active */
 #p1-icon.ss-active .icon-only { opacity: 0.3; pointer-events: none; }
 .txid-status { font-size: 0.93em; white-space: normal; word-break: break-word; }
+/* Collapse when empty — prevents layout shift when switching upload/on-chain mode */
+.txid-status:empty { display: none; }
+
+/* ── Mid-row: sub-controls box + pan box ───────────────────── */
+.icon-mid-row {
+  display: flex; flex-direction: row; gap: 4px;
+  align-items: stretch; flex-shrink: 0; min-height: 0;
+}
+/* SVG/MAX/BG/FG/hint — 40% of full panel width.
+   icon-controls is ~56% of panel (panel 100% - well 44%), so
+   40% of panel = 40/56 ≈ 71.4% of icon-controls column. */
+.icon-sub-controls {
+  display: flex; flex-direction: column; gap: 4px;
+  flex: 0 0 71.4%; min-width: 0; overflow: hidden;
+  border: 1px dashed rgba(116,185,255,0.25); padding: 3px 4px;
+}
+/* Pan arrows box — remaining width, full height of mid-row */
+.pan-box {
+  flex: 1; align-self: stretch;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px dashed rgba(234,179,0,0.35); overflow: hidden;
+  padding: 3px; box-sizing: border-box;
+}
+/* 3-col grid, no row definition — rows size to column width via
+   aspect-ratio on buttons, making every button a perfect square.
+   Grid is width:100% so it fills the pan-box width, and height:auto
+   so it's as tall as the square buttons need. Pan-box centres it. */
+.pan-cross {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2px; width: 100%; height: auto;
+}
+#pan-up    { grid-column: 2; grid-row: 1; }
+#pan-left  { grid-column: 1; grid-row: 2; }
+#pan-right { grid-column: 3; grid-row: 2; }
+#pan-down  { grid-column: 2; grid-row: 3; }
+.pan-mid   { display: contents; } /* unwrap into grid */
+.pan-btn {
+  font-family: var(--font); font-size: clamp(7px, 1.2vw, 13px); line-height: 1;
+  background: var(--panel); color: var(--amber-dim);
+  border: 1px solid var(--border-blue);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  padding: 0; width: 100%; aspect-ratio: 1 / 1; /* perfect square */
+}
+.pan-btn:hover { color: var(--amber); border-color: var(--amber); background: rgba(234,179,0,0.08); }
+.pan-btn:active { background: rgba(234,179,0,0.18); }
 
 /* ── Feature rows ───────────────────────────────────────────── */
 .feat-row { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }

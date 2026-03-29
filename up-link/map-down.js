@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   map-down.js — S3 Viewer + MAP Table (v7.0)
+   map-down.js — S3 Viewer + MAP Table (v7.4)
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  Fetches transactions from WhatsOnChain, decodes MAP
@@ -12,7 +12,9 @@
              BSVCard (from card.js).
 
    OUTPUTS:  App.Viewer           — { decodeScript, extractMAP, fetchTx,
-                                      buildMAPHTML, loadTx, init }
+                                      buildMAPHTML, loadTx, init,
+                                      _buildImageMeta, _fetchImageMeta,
+                                      _loadImageDirect }
              App.Panels.S3.table  — { render(), mount() }
 
    DEPENDS:  settings.js, app-core.js (Utils, StatusBar, Config),
@@ -170,14 +172,14 @@ App.Viewer = {
     ordered = ordered.concat([
       'icon_txid', 'icon_format', 'icon_size_kb',
       'icon_bg_enabled', 'icon_fg_enabled', 'icon_bg_colour', 'icon_fg_colour', 'icon_bg_alpha',
-      'icon_zoom', 'alt_text',
+      'icon_zoom', 'icon_pan_x', 'icon_pan_y', 'alt_text',
       'developer_paymail', 'developer_twitter', 'developer_github', 'developer_bio'
     ]);
 
     /* Add screenshot fields — per-slot zoom + alt_text */
     for (var si = 1; si <= 4; si++) {
       if (fields['ss' + si + '_txid']) {
-        ordered.push('ss' + si + '_txid', 'ss' + si + '_format', 'ss' + si + '_size_kb', 'ss' + si + '_zoom', 'ss' + si + '_alt_text');
+        ordered.push('ss' + si + '_txid', 'ss' + si + '_format', 'ss' + si + '_size_kb', 'ss' + si + '_zoom', 'ss' + si + '_pan_x', 'ss' + si + '_pan_y', 'ss' + si + '_alt_text');
       }
     }
 
@@ -224,6 +226,12 @@ App.Viewer = {
         badge.textContent = 'INVALID TXID';
         badge.className = 'badge err';
       }
+      return;
+    }
+
+    /* Branch: txid_suffix format → image-direct mode, skip MAP fetch */
+    if (txid.indexOf('_') !== -1) {
+      self._loadImageDirect(txid);
       return;
     }
 
@@ -332,6 +340,243 @@ App.Viewer = {
 
 
   /* ─────────────────────────────────────────────────────────
+     _buildImageMeta(info) — Pure function. Builds image metadata
+     table HTML from a plain data object. Each field is only
+     rendered if the value is present — no stale placeholders.
+
+     info fields (all optional):
+       txHash    {string}  — bare 64-hex transaction ID
+       slot      {string}  — output index suffix (e.g. "0")
+       type      {string}  — MIME type from CDN header
+       sizeKb    {string}  — file size in KB (e.g. "42.3 KB")
+       width     {number}  — naturalWidth in pixels
+       height    {number}  — naturalHeight in pixels
+       block     {number}  — block height
+       date      {string}  — ISO date string (YYYY-MM-DD)
+       network   {string}  — "MAINNET" or "TESTNET"
+       cdn       {string}  — CDN hostname that served the image
+     ───────────────────────────────────────────────────────── */
+  _buildImageMeta: function(info) {
+    var esc = App.Utils.esc;
+    var rows = '';
+
+    /* Helper: append a row only when value is truthy */
+    function row(label, value) {
+      if (!value && value !== 0) return;
+      rows += '<tr><td>' + esc(label) + '</td><td>' + esc(String(value)) + '</td></tr>';
+    }
+
+    row('TXID',       info.txHash);
+    row('SLOT',       info.slot !== undefined ? info.slot : null);
+    row('TYPE',       info.type);
+    row('SIZE',       info.sizeKb);
+
+    /* Resolution + aspect ratio — only when both dimensions known */
+    if (info.width && info.height) {
+      row('RESOLUTION', info.width + ' \u00d7 ' + info.height + ' px');
+      /* Simplify ratio via GCD */
+      var gcd = (function(a, b) { return b ? arguments.callee(b, a % b) : a; })(info.width, info.height);
+      row('ASPECT',   (info.width / gcd) + ':' + (info.height / gcd));
+    }
+
+    row('BLOCK',      info.block);
+    row('DATE',       info.date);
+    row('NETWORK',    info.network);
+    row('CDN',        info.cdn);
+
+    return '<div class="plabel">IMAGE INFO</div>' +
+      '<table class="map-table"><tbody>' + rows + '</tbody></table>';
+  },
+
+
+  /* ─────────────────────────────────────────────────────────
+     _fetchImageMeta(url, txHash) — Fetches CDN response headers
+     and WoC tx data in parallel. Returns a Promise that resolves
+     to a plain metadata object compatible with _buildImageMeta().
+     ───────────────────────────────────────────────────────── */
+  _fetchImageMeta: function(url, txHash) {
+    var self = this;
+    var timeout = (SETTINGS.FETCH_TIMEOUT_MS || 6000);
+
+    /* CDN fetch — Content-Type + file size.
+       Strategy: HEAD first (fast, no body transfer). If Content-Length is
+       absent or zero (common for SVG — CDNs gzip text on the fly and can't
+       pre-declare size), fall back to a GET and measure blob.size instead. */
+    var cdnPromise = (function() {
+      var ctrl = new AbortController();
+      var timer = setTimeout(function() { ctrl.abort(); }, timeout);
+
+      function parseType(r) {
+        var t = (r.headers.get('Content-Type') || '').split(';')[0].trim().toUpperCase();
+        return t || null;
+      }
+
+      return fetch(url, { method: 'HEAD', signal: ctrl.signal })
+        .then(function(r) {
+          clearTimeout(timer);
+          var type   = parseType(r);
+          var bytes  = parseInt(r.headers.get('Content-Length') || '0', 10);
+          if (bytes > 0) {
+            return { type: type, sizeKb: (bytes / 1024).toFixed(1) + ' KB' };
+          }
+          /* Content-Length missing — GET the body and measure blob size */
+          var ctrl2  = new AbortController();
+          var timer2 = setTimeout(function() { ctrl2.abort(); }, timeout);
+          return fetch(url, { signal: ctrl2.signal })
+            .then(function(r2) {
+              clearTimeout(timer2);
+              /* Re-read type from GET response in case HEAD omitted it */
+              var type2 = parseType(r2) || type;
+              return r2.blob().then(function(blob) {
+                var sizeKb = blob.size > 0 ? (blob.size / 1024).toFixed(1) + ' KB' : null;
+                return { type: type2, sizeKb: sizeKb };
+              });
+            })
+            .catch(function() { return { type: type, sizeKb: null }; });
+        })
+        .catch(function() { return { type: null, sizeKb: null }; });
+    })();
+
+    /* WoC tx fetch — block height + timestamp */
+    var wocPromise = self.fetchTx(txHash)
+      .then(function(tx) {
+        var date = tx.time
+          ? new Date(tx.time * 1000).toISOString().slice(0, 10)
+          : null;
+        return {
+          block: tx.blockheight || null,
+          date:  date
+        };
+      })
+      .catch(function() { return { block: null, date: null }; });
+
+    return Promise.all([cdnPromise, wocPromise]).then(function(results) {
+      return {
+        type:  results[0].type,
+        sizeKb: results[0].sizeKb,
+        block: results[1].block,
+        date:  results[1].date
+      };
+    });
+  },
+
+
+  /* ─────────────────────────────────────────────────────────
+     _loadImageDirect(txid) — Load a single on-chain image by
+     txid_suffix. Bypasses WhatsOnChain MAP fetch. Populates
+     the table panel with image metadata via _buildImageMeta(),
+     fills the card panel with a full-fit <img>.
+     Called by loadTx() when the txid contains '_'.
+     ───────────────────────────────────────────────────────── */
+  _loadImageDirect: function(txid) {
+    var self = this;
+    var $ = App.Utils.$;
+
+    /* Split "abc...123_0" → txHash="abc...123", slot="0" */
+    var parts   = txid.split('_');
+    var txHash  = parts[0];
+    var slot    = parts.slice(1).join('_');   /* preserve multi-part suffixes */
+    var network = (function() {
+      var cb = document.getElementById('testnet-cb');
+      return (cb && cb.checked) ? 'TESTNET' : 'MAINNET';
+    })();
+
+    /* Update URL without reload */
+    if (history.replaceState) {
+      history.replaceState(null, '', '?tx=' + txid);
+    }
+
+    /* Populate input */
+    var txInput = $('txid-input');
+    if (txInput) txInput.value = txid;
+
+    /* Loading badge */
+    var badge = $('viewer-badge');
+    if (badge) {
+      badge.textContent = 'LOADING...';
+      badge.className = 'badge loading';
+    }
+
+    /* Table panel: loading state while metadata fetches */
+    var tableEl = $('p3-table');
+    if (tableEl) {
+      tableEl.innerHTML =
+        '<div class="plabel">IMAGE INFO</div>' +
+        '<div class="loading-msg" style="height:auto;padding:12px 0;">' +
+          '<div class="spinner">\u27f3</div>' +
+          '<div class="text">FETCHING METADATA...</div>' +
+        '</div>';
+    }
+
+    /* Card panel: bare <img> sized to fill container */
+    var cardEl = $('p3-card');
+    if (!cardEl) return;
+
+    var img = document.createElement('img');
+    img.style.cssText = 'width:100%;height:100%;object-fit:contain;display:block;';
+    img.alt = txid;
+    cardEl.innerHTML = '';
+    cardEl.appendChild(img);
+
+    /* CDN try-loop — tracks which URL succeeds for metadata display */
+    var cdnUrls = SETTINGS.CDN_URLS || [];
+    var urls    = cdnUrls.map(function(u) { return u.replace('{txid}', txid); });
+    var idx     = 0;
+
+    /* Shared metadata accumulator — updated as each async source resolves */
+    var meta = { txHash: txHash, slot: slot, network: network };
+
+    function renderMeta() {
+      if (tableEl) tableEl.innerHTML = self._buildImageMeta(meta);
+    }
+
+    /* Image load handler — resolution known + record which CDN served it */
+    img.addEventListener('load', function() {
+      if (badge) {
+        badge.textContent = '\u2713 IMAGE';
+        badge.className = 'badge';
+      }
+      meta.width  = img.naturalWidth;
+      meta.height = img.naturalHeight;
+      /* img.src at this point is the resolved URL that actually loaded */
+      try { meta.cdn = new URL(img.src).hostname; } catch (e) {}
+      renderMeta();
+      BSVCard.scaleCard(cardEl);
+    }, { once: true });
+
+    /* Start image loading via CDN try-loop */
+    function tryNext() {
+      if (idx >= urls.length) {
+        /* All CDNs failed */
+        if (badge) { badge.textContent = 'NOT FOUND'; badge.className = 'badge err'; }
+        if (cardEl) {
+          cardEl.innerHTML =
+            '<div class="loading-msg"><div class="err-msg">' +
+            '\u2717 Image not found on any CDN.' +
+            '<br><br><span style="color:var(--dim);font-size:12px;">Check the TXID suffix and try again.</span>' +
+            '</div></div>';
+        }
+        if (tableEl) tableEl.innerHTML = self._buildImageMeta(meta);
+        return;
+      }
+      img.src = urls[idx];
+      img.style.display = '';
+      img.onerror = function() { idx++; tryNext(); };
+    }
+    tryNext();
+
+    /* Fetch CDN headers + WoC tx in parallel — update table when ready */
+    self._fetchImageMeta(urls[0], txHash).then(function(fetched) {
+      meta.type   = fetched.type;
+      meta.sizeKb = fetched.sizeKb;
+      meta.block  = fetched.block;
+      meta.date   = fetched.date;
+      renderMeta();
+    });
+  },
+
+
+  /* ─────────────────────────────────────────────────────────
      init() — Initialize viewer
      Wires Enter key, checks ?tx= URL param, wires resize.
      ───────────────────────────────────────────────────────── */
@@ -358,7 +603,7 @@ App.Viewer = {
     /* Check ?tx= URL parameter for auto-load */
     var search = window.location.search || '';
     if (search) {
-      var match = search.match(/[?&]tx=([0-9a-fA-F]{64})/);
+      var match = search.match(/[?&]tx=([0-9a-fA-F]{64}(?:_[0-9a-zA-Z]+)?)/);
       if (match) {
         var txid = match[1];
         if (txInput) txInput.value = txid;

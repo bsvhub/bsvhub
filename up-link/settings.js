@@ -367,6 +367,9 @@ var SETTINGS = {
   ICON_ZOOM_MIN: 0.5,
   ICON_ZOOM_MAX: 2,
   ICON_ZOOM_STEP: 0.05,
+  ICON_PAN_STEP: 0.02,   // fractional pan per button press (2% of image size)
+  ICON_PAN_MIN: -0.5,    // absolute clamp bound — actual limit is (zoom-1)/2 at runtime
+  ICON_PAN_MAX: 0.5,     // absolute clamp bound — actual limit is (zoom-1)/2 at runtime
 
   // Alpha slider range
   ICON_ALPHA_MIN: 0,

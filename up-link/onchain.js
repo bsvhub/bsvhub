@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════
-   onchain.js — BRC-100 On-Chain Integration for BSV Directory Portal
+   onchain.js — BRC-100 On-Chain Integration for BSV Directory Portal (v7.6)
    ═══════════════════════════════════════════════════════════════════════
 
    Contains all BRC-100 wallet communication and on-chain transaction
@@ -308,14 +308,14 @@ var WalletManager = {
     var script = BSVScript.buildBProtocolScript(fileBytes, mimeType, filename);
     return BRC100Provider.createAction({
       description: 'Upload icon to BSV chain',
-      outputs: [{ lockingScript: script, satoshis: 0, outputDescription: 'Icon file via B protocol' }],
+      outputs: [{ lockingScript: script, satoshis: 1, outputDescription: 'Icon file via B protocol' }],
       labels: ['up-link', 'icon'],
     }).then(function(res) { return { txid: res.txid }; });
   },
 
   submitRecord: function(fields, tipSatoshis, tipAddress) {
     var script = BSVScript.buildMAPScript(fields);
-    var outputs = [{ lockingScript: script, satoshis: 0, outputDescription: 'MAP app listing record' }];
+    var outputs = [{ lockingScript: script, satoshis: 1, outputDescription: 'MAP app listing record' }];
     if (tipSatoshis && tipSatoshis > 0 && tipAddress) {
       outputs.push({
         lockingScript: this._buildP2PKHScript(tipAddress),
@@ -332,7 +332,7 @@ var WalletManager = {
 
   updateRecord: function(fields, tipSatoshis, tipAddress) {
     var script = BSVScript.buildMAPScript(fields);
-    var outputs = [{ lockingScript: script, satoshis: 0, outputDescription: 'MAP app update record' }];
+    var outputs = [{ lockingScript: script, satoshis: 1, outputDescription: 'MAP app update record' }];
     if (tipSatoshis && tipSatoshis > 0 && tipAddress) {
       outputs.push({
         lockingScript: this._buildP2PKHScript(tipAddress),
@@ -669,6 +669,8 @@ if (!App.MAPExport) {
         ['icon_fg_colour',    d.icon_fg_colour || ''],
         ['icon_bg_alpha',     String(d.icon_bg_alpha)],
         ['icon_zoom',         String(d.icon_zoom)],
+        ['icon_pan_x',        String(d.icon_pan_x !== undefined ? d.icon_pan_x : 0)],
+        ['icon_pan_y',        String(d.icon_pan_y !== undefined ? d.icon_pan_y : 0)],
         ['alt_text',          d.alt_text || ''],
         ['developer_paymail', d.developer_paymail || ''],
         ['developer_twitter', d.developer_twitter || ''],
@@ -686,6 +688,8 @@ if (!App.MAPExport) {
           fields.push(['ss' + n + '_format',   (slot && slot.mime) || d['ss' + n + '_format'] || '']);
           fields.push(['ss' + n + '_size_kb',  (slot && String(slot.kb)) || d['ss' + n + '_size_kb'] || '']);
           fields.push(['ss' + n + '_zoom',     d['ss' + n + '_zoom'] || (slot && String(slot.zoom)) || '1']);
+          fields.push(['ss' + n + '_pan_x',    d['ss' + n + '_pan_x'] !== undefined ? String(d['ss' + n + '_pan_x']) : '0']);
+          fields.push(['ss' + n + '_pan_y',    d['ss' + n + '_pan_y'] !== undefined ? String(d['ss' + n + '_pan_y']) : '0']);
           fields.push(['ss' + n + '_alt_text', d['ss' + n + '_alt_text'] || (slot && slot.altText) || '']);
         }
       }

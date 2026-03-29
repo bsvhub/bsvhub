@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   app-wallet.js — Wallet UI + Mode Toggle + Record Picker (v7.1)
+   app-wallet.js — Wallet UI + Mode Toggle + Record Picker (v7.2)
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  Session management layer — controls what mode the app
@@ -114,26 +114,38 @@ App.Wallet = {
 
   // Heartbeat interval ID (for periodic wallet reachability checks)
   _heartbeatId: null,
+  _heartbeatFailures: 0,   /* consecutive failed beats — disconnect only after 3 */
 
-  // Start periodic heartbeat to detect wallet going away
+  // Start periodic heartbeat to detect wallet going away.
+  // 10 s interval — requires 3 consecutive failures before disconnecting
+  // so transient localhost blips don't trigger a false disconnect.
   _startHeartbeat: function() {
     var self = this;
     this._stopHeartbeat();
+    this._heartbeatFailures = 0;
     this._heartbeatId = setInterval(function() {
       if (!App.State.walletConnected || !App.State.onChain || !App.Capabilities.onchain) {
         self._stopHeartbeat();
         return;
       }
       BRC100Provider.isAuthenticated()
+        .then(function() {
+          /* Beat succeeded — reset failure counter */
+          self._heartbeatFailures = 0;
+        })
         .catch(function() {
-          // Wallet is no longer reachable
-          WalletManager.disconnect();
-          App.State.walletConnected = false;
-          self._updateUI(false, '');
-          self._stopHeartbeat();
-          App.StatusBar.set('WALLET DISCONNECTED \u2014 CONNECTION LOST', 'err');
+          self._heartbeatFailures++;
+          /* Only disconnect after 3 consecutive failures — ignore transient blips */
+          if (self._heartbeatFailures >= 3) {
+            WalletManager.disconnect();
+            App.State.walletConnected = false;
+            self._heartbeatFailures = 0;
+            self._updateUI(false, '');
+            self._stopHeartbeat();
+            App.StatusBar.set('WALLET DISCONNECTED \u2014 CONNECTION LOST', 'err');
+          }
         });
-    }, 5000);
+    }, 10000);   /* 10 s interval — genuine disconnect caught within 30 s */
   },
 
   _stopHeartbeat: function() {
@@ -141,6 +153,7 @@ App.Wallet = {
       clearInterval(this._heartbeatId);
       this._heartbeatId = null;
     }
+    this._heartbeatFailures = 0;   /* clean slate for next connect */
   },
 
   // Real BRC-100 connect — async, talks to localhost:2121

@@ -62,6 +62,10 @@ var BSVCard = (function() {
 
   // ── CSS (injected once) ────────────────────────────────────────
   var _cssInjected = false;
+  /* Module-level state — set by build() so initTabs() can use them
+     without needing parameters. Safe defaults keep public API unchanged. */
+  var _cdnUrls = DEFAULTS.cdnUrls;
+  var _f = {};
   function injectCSS() {
     if (_cssInjected) return;
     _cssInjected = true;
@@ -136,7 +140,10 @@ var BSVCard = (function() {
   function build(fields, opts) {
     injectCSS();
     opts = opts || {};
-    var f = fields;
+    /* Update module-level state so initTabs() uses the same data as build() */
+    _cdnUrls = opts.cdnUrls || DEFAULTS.cdnUrls;
+    _f = fields;
+    var f = _f;
     var ts = opts.tileSize || DEFAULTS.tileSize;
     var tr = opts.tileRadius || DEFAULTS.tileRadius;
     var tb = opts.tileBorder || DEFAULTS.tileBorder;
@@ -162,6 +169,8 @@ var BSVCard = (function() {
     else if (fgOn) tileBg = rgba(fgCol, alpha);
 
     var zoom = parseFloat(f.icon_zoom) || 1;
+    var iconPanX = parseFloat(f.icon_pan_x || '0') || 0;
+    var iconPanY = parseFloat(f.icon_pan_y || '0') || 0;
     var iconSrc = opts.iconSrc || '';
 
     // Screenshot sources — either dataB64/src or will be loaded from CDN later.
@@ -238,7 +247,7 @@ var BSVCard = (function() {
       + '<div id="ccbg" class="bsvcard-tile-bg" style="background:'+tileBg+';"></div>'
       + '<img id="ccimg" class="bsvcard-tile-img"'
       + (iconSrc ? ' src="'+esc(iconSrc)+'"' : '')
-      + ' style="transform:scale('+zoom+');display:'+(iconSrc?'block':'none')+';">'
+      + ' style="transform:translate('+(iconPanX*100)+'%, '+(iconPanY*100)+'%) scale('+zoom+');display:'+(iconSrc?'block':'none')+';">'
       + (iconSrc ? '' : '<span id="ccnoimg" class="bsvcard-no-img">NO IMAGE</span>')
       + '<div class="bsvcard-tile-name"><span>'+name+'</span></div>'
       + '</div>';
@@ -361,15 +370,14 @@ var BSVCard = (function() {
         el.classList.add('tab-active');
 
         var tabIdx = parseInt(el.getAttribute('data-tab'));
-        var src = el.getAttribute('data-src');
+        var src    = el.getAttribute('data-src') || '';
         var isIcon = el.getAttribute('data-is-icon') === '1';
 
-        var tile = container.querySelector('#cctile');
-        var img = container.querySelector('#ccimg');
-        var bg = container.querySelector('#ccbg');
+        var img   = container.querySelector('#ccimg');
+        var bg    = container.querySelector('#ccbg');
         var noimg = container.querySelector('#ccnoimg');
-        var tipS = container.querySelector('.tip-static');
-        var tipD = container.querySelector('.tip-desc');
+        var tipS  = container.querySelector('.tip-static');
+        var tipD  = container.querySelector('.tip-desc');
 
         // Hide all info panels
         var infoIco = container.querySelector('#info-icon');
@@ -379,36 +387,75 @@ var BSVCard = (function() {
           if (sp) sp.style.display = 'none';
         }
 
+        /* ── Slot-specific UI (bg, tips, info panels) ── */
         if (isIcon) {
-          // Show icon info panel
           if (infoIco) infoIco.style.display = '';
-          var orig = tile ? tile.getAttribute('data-isrc') : '';
-          var ibg = tile ? tile.getAttribute('data-ibg') : '';
-          var _z = tile ? tile.getAttribute('data-zoom') : '1';
-          if (img) {
-            img.src = orig || '';
-            img.style.cssText = 'position:absolute;top:0;left:0;right:0;bottom:28px;margin:auto;z-index:1;max-width:80%;max-height:70%;object-fit:contain;transform:scale('+_z+');display:'+(orig?'block':'none')+';';
-          }
-          if (bg) { bg.style.background = ibg; bg.style.visibility = ''; }
-          if (noimg) noimg.style.display = orig ? 'none' : '';
+          var _bgOn = _f.icon_bg_enabled === 'true' || _f.icon_bg_enabled === true;
+          var _fgOn = _f.icon_fg_enabled === 'true' || _f.icon_fg_enabled === true;
+          var _bgC  = _f.icon_bg_colour  || '#1a1440';
+          var _fgC  = _f.icon_fg_colour  || '#EAB300';
+          var _al   = parseFloat(_f.icon_bg_alpha) || 1;
+          var _ibg  = 'transparent';
+          if (_bgOn && _fgOn) _ibg = 'linear-gradient(135deg,'+rgba(_bgC,_al)+','+rgba(_fgC,_al)+')';
+          else if (_bgOn)     _ibg = rgba(_bgC, _al);
+          else if (_fgOn)     _ibg = rgba(_fgC, _al);
+          if (bg) { bg.style.background = _ibg; bg.style.visibility = ''; }
           if (tipS) tipS.style.opacity = '0';
           if (tipD) tipD.style.opacity = '1';
         } else {
-          // Show screenshot info panel
           var ssPanel = container.querySelector('#info-ss'+tabIdx);
           if (ssPanel) ssPanel.style.display = '';
-          if (src && img) {
-            img.src = src;
-            img.style.cssText = 'position:absolute;top:0;left:0;right:0;bottom:28px;margin:auto;z-index:1;max-width:92%;max-height:calc(100% - 34px);object-fit:contain;display:block;transform:scale(1);';
-          } else if (img) {
-            img.style.display = 'none';
-          }
           if (bg) bg.style.visibility = 'hidden';
-          if (noimg) noimg.style.display = src ? 'none' : '';
           if (tipS) { tipS.textContent = src ? 'SCREENSHOT '+tabIdx+' PREVIEW' : 'NO SCREENSHOT LOADED'; tipS.style.opacity = '1'; }
           if (tipD) tipD.style.opacity = '0';
         }
+
+        /* ── Shared image rendering — identical for all 5 slots ── */
+        /* src from data-src is the same value used to build the info table */
+        var _key     = isIcon ? 'icon' : 'ss' + tabIdx;
+        var _zoom    = parseFloat(_f[_key + '_zoom']  || '1') || 1;
+        var _panX    = parseFloat(_f[_key + '_pan_x'] || '0') || 0;
+        var _panY    = parseFloat(_f[_key + '_pan_y'] || '0') || 0;
+        var _txid    = _f[isIcon ? 'icon_txid' : 'ss' + tabIdx + '_txid'] || '';
+        var _hasTxid = _txid && _txid !== '(pending)' && _txid.length >= 64;
+        var _hasSrc  = src.length > 0;
+        var _maxW    = isIcon ? '80%' : '92%';
+        var _maxH    = isIcon ? '70%' : 'calc(100% - 34px)';
+
+        if (img) {
+          if (_hasSrc || _hasTxid) {
+            img.style.cssText = 'position:absolute;top:0;left:0;right:0;bottom:28px;margin:auto;z-index:1;'
+              + 'max-width:'+_maxW+';max-height:'+_maxH+';object-fit:contain;display:block;'
+              + 'transform:translate('+(_panX*100)+'%, '+(_panY*100)+'%) scale('+_zoom+');';
+            if (_hasSrc) {
+              img.src = src;
+            } else {
+              img.src = '';
+              loadImage(_txid, img, _cdnUrls);
+            }
+          } else {
+            img.style.display = 'none';
+            img.src = '';
+          }
+        }
+        if (noimg) noimg.style.display = (isIcon && !_hasSrc && !_hasTxid) ? '' : 'none';
         setTimeout(function() { scaleCard(container); }, 10);
+      });
+    });
+
+    /* Wire side tile clicks — clicking a side tile triggers its
+       corresponding tab button so all display logic runs once, in
+       one place, with no duplication. data-ss-idx on the <img>
+       child maps 1:1 to data-tab on the .bsvcard-tab buttons. */
+    var sideTiles = container.querySelectorAll('.bsvcard-side-tile');
+    sideTiles.forEach(function(tile) {
+      tile.style.cursor = 'pointer';
+      tile.addEventListener('click', function() {
+        var ssImg = tile.querySelector('[data-ss-idx]');
+        if (!ssImg) return;
+        var ssIdx = ssImg.getAttribute('data-ss-idx');
+        var matchingTab = container.querySelector('.bsvcard-tab[data-tab="' + ssIdx + '"]');
+        if (matchingTab) matchingTab.click();
       });
     });
   }
@@ -527,7 +574,7 @@ if (typeof window !== 'undefined') window.BSVCard = BSVCard;
 
 
 /* ═══════════════════════════════════════════════════════════════
-   S2/S3 Panel Wrappers (v7.1)
+   S2/S3 Panel Wrappers (v7.6)
 
    Thin wrappers that plug BSVCard into wireframe panel slots.
    App.Panels.S2.card — preview card from form data (#p2-card)
