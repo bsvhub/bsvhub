@@ -1573,11 +1573,44 @@
       "iframe": true,
       "tab": "on-ch",
       "href": "https://bico.media/3fa9621d70172c6e984fbb7a7ba6cf7dc4be3d4fd5bcc7e94c7971e2af1dfc0f",
-      "tooltip": "Billioard game on chain",
-      "img": "icon/lamint.webp",
+      "tooltip": "Billioard game on-chain",
+      "img": "on-chain/billiards.webp",
       "zoom": "1.0",
       "alt": "",
       "text": "Billiards",
+      "info": ";;;"
+    },
+    {
+      "iframe": true,
+      "tab": "on-ch",
+      "href": "https://bico.media/bb98efaa2044b0fd23bf76a5f8ce54573e07db268bc0e23e77d14d9d8955d5e4",
+      "tooltip": "The original Bitcoin whitepaper (pdf)",
+      "img": "on-chain/doc.svg",
+      "zoom": "1.0",
+      "alt": "",
+      "text": "Bitcoin Whitepaper",
+      "info": ";;;"
+    },
+    {
+      "iframe": true,
+      "tab": "on-ch",
+      "href": "https://bico.media/f2951f4f7e4e8518d98dd0aa377e2504761962fbff58d791276d6496d0827548",
+      "tooltip": "2048 game on-chain",
+      "img": "on-chain/2024.svg",
+      "zoom": "1.0",
+      "alt": "",
+      "text": "2048",
+      "info": ";;;"
+    },
+    {
+      "iframe": true,
+      "tab": "on-ch",
+      "href": "https://bico.media/8d77f786696b926e311d5a179bb8516e0a5cff18268e5c5f12ce98df309943c9",
+      "tooltip": "On-chain game where you defend against a missile attack",
+      "img": "on-chain/missiles.svg",
+      "zoom": "1.0",
+      "alt": "",
+      "text": "Missiles",
       "info": ";;;"
     }
   ]
