@@ -1088,3 +1088,12 @@ body.mobile-mode [data-target="up-link"] {
     padding: 0;
     margin: 0;
 }
+
+/* ── Tile iframe overlay — same slot, injected by iframe-overlay.js */
+#iframe-overlay.tab-content.active {
+    position: fixed;
+    inset: 0;
+    z-index: 1001;
+    padding: 0;
+    margin: 0;
+}
