@@ -218,7 +218,14 @@ Promise.all([
             var li   = document.createElement("li");
             var a    = document.createElement("a");
             a.href   = item.href || "#";
-            a.target = "_blank";
+
+            /* iframe:true in list.json → open in overlay instead of new tab.
+               data-iframe="true" is picked up by iframe-overlay.js plugin. */
+            if (item.iframe === true) {
+                a.dataset.iframe = "true";
+            } else {
+                a.target = "_blank";
+            }
 
             var wrap      = document.createElement("div");
             wrap.className = "icon-wrapper";
