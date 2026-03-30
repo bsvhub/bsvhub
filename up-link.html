@@ -25,7 +25,7 @@
     <style>
       body > div:not(#page-wrapper) { z-index: 1 !important; }
     </style>
-        
+
     <!-- MAIN STYLES -->
     <link rel="stylesheet" href="styles/unified.css">
 
@@ -34,14 +34,14 @@
 
     <!-- BACKGROUND ANIMATION -->
     <script defer src="script/mandala-bg.js"></script>
-    
+
     <!-- EARLY MOBILE DETECTION - Prevents flash of desktop content -->
     <script>
     (function() {
         const savedMode = localStorage.getItem("ui-mode");
-        const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+        const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
                               || (window.innerWidth <= 768);
-        
+
         // Apply mobile-mode class immediately if needed
         if (savedMode === "mobile" || (!savedMode && isMobileDevice)) {
             document.documentElement.classList.add('mobile-mode-loading');
@@ -109,7 +109,6 @@
         <button class="tab-btn" data-target="dev"><span>Dev.</span></button>
         <button class="tab-btn" data-target="sm"><span>SM</span></button>
         <button class="tab-btn" data-target="video"><span>Videos</span></button>
-        <button class="tab-btn" data-target="on-ch"><span>On-Chain</span></button>
         <button class="tab-btn" data-target="ideas"><span>App Ideas</span></button>
         <button class="tab-btn" data-target="up-link"><span>Up-LINK</span></button>
         <div class="search-container">
@@ -146,20 +145,21 @@
 <section id="up-link" class="tab-content">
     <div id="up-link-wrap" class="up-link-wrap">
         <img id="up-link-close" class="up-link-close" src="icon/close.svg" alt="Close" title="Close Up-Link">
+        <!-- Iframe src set directly — Up-Link is the default tab on this page -->
         <iframe id="up-link-frame"
-                src="about:blank"
+                src="up-link/index.html"
                 title="Up-Link Portal"
                 allowfullscreen
-                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads">
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
         </iframe>
     </div>
 </section>
 
 <script src="script/daily-link.js"></script>
-    
+
 <!-- JS SECTION 1 — SCROLL, TOOLTIP, BSV PRICE & MOBILE DOUBLE-TAP -->
 <script src="script/scroll.js"></script>
-    
+
 <!-- ============================================================
      JS — BACKGROUND GRADIENT
 ============================================================ -->
@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function () {
 <!-- JS SECTION 7 — UP-LINK IFRAME OVERLAY (lazy load + close button) -->
 <script>
 (function () {
-    var loaded = false;
+    var loaded = true; // iframe src already set — no lazy load needed on this page
     var lastTab = null;
     var lastBtn = null;
     var btn = document.querySelector('[data-target="up-link"]');
@@ -251,6 +251,37 @@ document.addEventListener('DOMContentLoaded', function () {
                 activateTab('app', document.querySelector('[data-target="app"]'));
             }
         });
+    }
+})();
+
+/* UP-LINK DEFAULT — keep Up-Link as the active tab on this page.
+   json.js fires activateTab('app') after its fetch resolves, which would
+   overwrite our selection. We intercept by watching for that switch and
+   immediately redirecting back to up-link. The observer disconnects after
+   first use so it doesn't interfere with normal tab navigation. */
+(function () {
+    var appSec = document.getElementById('app');
+    if (!appSec) {
+        /* app section is built dynamically by json.js — wait for it */
+        var bodyObserver = new MutationObserver(function () {
+            var s = document.getElementById('app');
+            if (s) { bodyObserver.disconnect(); watchForAppActivation(s); }
+        });
+        bodyObserver.observe(document.body, { childList: true, subtree: true });
+    } else {
+        watchForAppActivation(appSec);
+    }
+
+    function watchForAppActivation(appSec) {
+        var guard = new MutationObserver(function (mutations) {
+            mutations.forEach(function (m) {
+                if (m.attributeName === 'class' && appSec.classList.contains('active')) {
+                    guard.disconnect();
+                    activateTab('up-link', document.querySelector('[data-target="up-link"]'));
+                }
+            });
+        });
+        guard.observe(appSec, { attributes: true, attributeFilter: ['class'] });
     }
 })();
 </script>

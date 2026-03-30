@@ -1557,6 +1557,28 @@
       "alt": "",
       "text": "La Mint",
       "info": ";;;"
+    },
+    {
+      "iframe": true,
+      "tab": "tool;dev",
+      "href": "https://bico.media",
+      "tooltip": "A gateway to data stored in a Bitcoin SV transaction.",
+      "img": "icon/bico.webp",
+      "zoom": "1.0",
+      "alt": "script programming load",
+      "text": "Bico.Media",
+      "info": ";;;"
+    },
+    {
+      "iframe": true,
+      "tab": "on-ch",
+      "href": "https://bico.media/3fa9621d70172c6e984fbb7a7ba6cf7dc4be3d4fd5bcc7e94c7971e2af1dfc0f",
+      "tooltip": "Billioard game on chain",
+      "img": "icon/lamint.webp",
+      "zoom": "1.0",
+      "alt": "",
+      "text": "Billiards",
+      "info": ";;;"
     }
   ]
 }
