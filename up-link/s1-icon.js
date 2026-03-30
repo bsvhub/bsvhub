@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   s1-icon.js — Icon Design Panel (Screen 1, #p1-icon) (v7.8)
+   s1-icon.js — Icon Design Panel (Screen 1, #p1-icon) (v7.9)
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  Self-contained panel: HTML template, icon upload/fetch,
@@ -166,27 +166,25 @@ App.Icon = {
     if (isScreenshot) {
       for (i = 0; i < allUrls.length; i++) { r = await this._tryFetchAsDataUrl(allUrls[i]); if (r) return this._applyFetchedScreenshot(r, txid, el, activeSlot); }
       for (i = 0; i < allUrls.length; i++) { r = await this._tryImgToBase64(allUrls[i]); if (r) return this._applyFetchedScreenshot(r, txid, el, activeSlot); }
-      el.textContent = '\u2713 SS' + activeSlot + ' TXID RECORDED // No local preview (CORS)'; el.className = 'status txid-status warn';
-      App.StatusBar.set('SS' + activeSlot + ' TXID STORED // Preview unavailable locally', 'warn');
-      if (App.Screenshots) {
-        var existing2 = App.Screenshots._slots[activeSlot] || App.Screenshots._defaultSlotValues(activeSlot);
-        App.Screenshots._slots[activeSlot] = {
-          dataB64: null, filename: 'ss' + activeSlot, kb: '?', mime: 'image/unknown', txid: txid,
-          zoom: existing2.zoom, altText: existing2.altText
-        };
-        App.Screenshots._updateStripThumb(activeSlot);
-        App.Screenshots._updateSlotStates();
-      }
+      /* Fallback: direct img.src CDN approach (no CORS) — same as S3 card.js loadImage() */
+      var existing2 = App.Screenshots._slots[activeSlot] || App.Screenshots._defaultSlotValues(activeSlot);
+      App.Screenshots._slots[activeSlot] = {
+        dataB64: null, chainUrl: null, filename: 'ss' + activeSlot, kb: '?',
+        mime: 'image/unknown', txid: txid, zoom: existing2.zoom, altText: existing2.altText, mode: 'txid'
+      };
+      this._loadFromCdn(txid, activeSlot);
+      el.textContent = '\u2713 SS' + activeSlot + ' LOADING FROM CHAIN...'; el.className = 'status txid-status warn';
+      App.StatusBar.set('SS' + activeSlot + ' LOADING FROM CDN...', 'warn');
     } else {
       for (i = 0; i < allUrls.length; i++) { r = await this._tryFetchAsDataUrl(allUrls[i]); if (r) return this._applyFetchedImage(r, txid, el); }
       for (i = 0; i < allUrls.length; i++) { r = await this._tryImgToBase64(allUrls[i]); if (r) return this._applyFetchedImage(r, txid, el); }
-      for (i = 0; i < allUrls.length; i++) { if (await this._tryImgDisplay(allUrls[i])) return this._showChainImageDisplayOnly(allUrls[i], txid, el); }
-
-      el.textContent = '\u2713 TXID RECORDED // No local preview (CORS) \u2014 will display on chain'; el.className = 'status txid-status warn';
-      App.StatusBar.set('TXID STORED // Preview unavailable locally \u2014 image loads fine on chain', 'warn');
+      /* Fallback: direct img.src CDN approach (no CORS) — same as S3 card.js loadImage() */
       var slot0 = App.Screenshots._slots[0] || App.Screenshots._defaultSlotValues(0);
       App.Screenshots._slots[0] = slot0;
       slot0.dataB64 = null; slot0.chainUrl = null; slot0.mime = 'image/unknown'; slot0.filename = txid.slice(0, 8); slot0.kb = '?'; slot0.txid = txid;
+      this._loadFromCdn(txid, 0);
+      el.textContent = '\u2713 ICON LOADING FROM CHAIN...'; el.className = 'status txid-status warn';
+      App.StatusBar.set('ICON LOADING FROM CDN...', 'warn');
     }
   },
 
@@ -223,6 +221,38 @@ App.Icon = {
     App.StatusBar.set('ON-CHAIN ICON FETCHED // ' + txid.slice(0, 12) + '...', 'ok');
     this._loadIntoPreview(slot.dataB64); this.updatePreviewStyles();
     App.Screenshots.setIconThumb(slot.dataB64);
+  },
+
+  /* Shared CDN image loader for all 5 slots — direct img.src approach (no fetch, no CORS,
+     no canvas). Same method S3 uses in card.js loadImage(). Tries CDN URLs in order via
+     onerror. On success updates the slot, strip thumb, and preview for the active slot. */
+  _loadFromCdn: function(txid, idx) {
+    var urls = App.Config.getAllCdnUrls(txid);
+    var attempt = 0;
+    var slot = App.Screenshots._slots[idx];
+    if (!slot) return;
+    function tryNext() {
+      if (attempt >= urls.length) return;
+      var img = new Image();
+      img.onload = function() {
+        /* Guard: naturalWidth === 0 means browser got non-image bytes (e.g. raw script data) */
+        if (img.naturalWidth === 0) { attempt++; tryNext(); return; }
+        /* Store CDN URL in both — dataB64 is what _updateStripThumb/_showSlotPreview read */
+        slot.chainUrl = img.src; slot.dataB64 = img.src;
+        if (idx === 0) {
+          App.Icon._loadIntoPreview(img.src);
+          App.Icon.updatePreviewStyles();
+          App.Screenshots.setIconThumb(img.src);
+        } else {
+          App.Screenshots._updateStripThumb(idx);
+          if (App.Screenshots._active === idx) App.Screenshots._showSlotPreview(idx);
+          App.Screenshots._updateSlotStates();
+        }
+      };
+      img.onerror = function() { attempt++; tryNext(); };
+      img.src = urls[attempt];
+    }
+    tryNext();
   },
 
   _showChainImageDisplayOnly: function(url, txid, statusEl) {

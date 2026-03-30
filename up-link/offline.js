@@ -453,10 +453,8 @@ App.MAPImport = {
       App.Icon._loadIntoPreview(f._icon_data_b64);
       App.Screenshots.setIconThumb(f._icon_data_b64);
     } else if (f.icon_txid && f.icon_txid !== '(pending)' && App.Utils.isValidTxid(f.icon_txid)) {
-      if (App.Icon.fetchFromBlockchain) {
-        $('icon-txid').value = f.icon_txid;
-        App.Icon.fetchFromBlockchain();
-      }
+      /* Use direct CDN approach — same as S3 (card.js loadImage), no CORS/fetch/canvas */
+      App.Icon._loadFromCdn(f.icon_txid, 0);
     } else {
       var prev = $('icon-preview');
       /* Hide image only — do NOT overwrite innerHTML or ico-padding-guide / ico-preview-name-bar are destroyed */
@@ -499,36 +497,13 @@ App.MAPImport = {
             kb: f['ss' + sj + '_size_kb'] || '?',
             mime: f['ss' + sj + '_format'] || 'image/png',
             txid: ssTxid,
-            zoom: ssZoom, panX: ssPanX, panY: ssPanY, altText: ssAlt
+            zoom: ssZoom, panX: ssPanX, panY: ssPanY, altText: ssAlt,
+            mode: 'txid'   /* on-chain record — show txid radio, not upload */
           };
           App.Screenshots._slots[sj] = ssSlot;
           App.Screenshots._updateStripThumb(sj);
-          // Try to fetch screenshot image from chain CDN
-          (function(idx, txid, slot) {
-            if (App.Config && App.Config.getAllCdnUrls) {
-              var urls = App.Config.getAllCdnUrls(txid);
-              var attempt = 0;
-              function tryNext() {
-                if (attempt >= urls.length) return;
-                var img = new Image();
-                img.crossOrigin = 'anonymous';
-                img.onload = function() {
-                  var canvas = document.createElement('canvas');
-                  canvas.width = img.naturalWidth;
-                  canvas.height = img.naturalHeight;
-                  canvas.getContext('2d').drawImage(img, 0, 0);
-                  try {
-                    slot.dataB64 = canvas.toDataURL(slot.mime);
-                    App.Screenshots._updateStripThumb(idx);
-                    if (App.Screenshots._updateSlotStates) App.Screenshots._updateSlotStates();
-                  } catch(e) { /* CORS blocked — thumbnail stays empty */ }
-                };
-                img.onerror = function() { attempt++; tryNext(); };
-                img.src = urls[attempt];
-              }
-              tryNext();
-            }
-          })(sj, ssTxid, ssSlot);
+          /* Direct CDN approach — same as S3 (card.js loadImage), no CORS/fetch/canvas */
+          App.Icon._loadFromCdn(ssTxid, sj);
         }
       }
       // Update slot disabled states after restoring
