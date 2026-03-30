@@ -605,7 +605,7 @@ ul.icon-grid li a:hover .icon-wrapper img:not([class*="icon-badge-pos"]) {
     white-space: normal;
     overflow-wrap: break-word;
     word-break: break-word;
-    padding: 0 16px;
+    padding: 0 10px;
     line-height: 1.2;
     font-family: var(--font-icon-grid);
     color: #ffffff;
