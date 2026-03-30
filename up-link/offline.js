@@ -333,7 +333,7 @@ App.MAPImport = {
     App.Mode.set('update', true);
 
     // --- Text inputs ---
-    if (f.name !== undefined)    $('app-name').value = f.name;
+    if (f.name !== undefined)    { $('app-name').value = f.name; if (App.Icon && App.Icon._syncNameBar) App.Icon._syncNameBar(); }
     if (f.abbreviation !== undefined) $('app-abbr').value = f.abbreviation;
     if (f.url !== undefined)     $('app-url').value = f.url;
     if (f.tor_url !== undefined) $('app-tor').value = f.tor_url;
@@ -459,7 +459,10 @@ App.MAPImport = {
       }
     } else {
       var prev = $('icon-preview');
-      prev.innerHTML = '<div class="bg-layer" id="preview-bg"></div><span class="no-img">NO IMAGE</span>';
+      /* Hide image only — do NOT overwrite innerHTML or ico-padding-guide / ico-preview-name-bar are destroyed */
+      var existingImg = prev.querySelector('img:not(.ss-preview-img)');
+      if (existingImg) existingImg.style.display = 'none';
+      var noImgEl = prev.querySelector('.no-img'); if (noImgEl) noImgEl.style.display = '';
     }
 
     // --- Restore screenshots from embedded data or on-chain txids ---

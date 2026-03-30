@@ -347,7 +347,9 @@ var WalletManager = {
     }).then(function(res) { return { txid: res.txid }; });
   },
 
-  WOC_API: 'https://api.whatsonchain.com/v1/bsv/main',
+  WOC_API_MAIN: 'https://api.whatsonchain.com/v1/bsv/main',
+  WOC_API_TEST: 'https://api.whatsonchain.com/v1/bsv/test',
+  get WOC_API() { return this.network === 'testnet' ? this.WOC_API_TEST : this.WOC_API_MAIN; },
 
   scanRecords: function() {
     var self = this;
@@ -361,15 +363,17 @@ var WalletManager = {
       var mapActions = res.actions.filter(function(a) {
         return a.description && a.description.indexOf('icon') === -1;
       });
-      var fetchPromises = mapActions.map(function(action) {
-        return self._fetchAndParseRecord(action.txid).catch(function() {
-          return {
-            txid: action.txid,
-            fields: { _txid: action.txid, _description: action.description || '', protocol: 'up-link' },
-          };
+      /* WHY sequential: WoC rate-limits concurrent requests (429).
+       * Fetch one at a time with a 150ms gap to stay under the limit. */
+      var results = [];
+      return mapActions.reduce(function(chain, action) {
+        return chain.then(function() {
+          return new Promise(function(resolve) { setTimeout(resolve, 150); })
+            .then(function() { return self._fetchAndParseRecord(action.txid); })
+            .then(function(r) { results.push(r); })
+            .catch(function() { /* skip — tx not indexed yet or fetch failed */ });
         });
-      });
-      return Promise.all(fetchPromises);
+      }, Promise.resolve()).then(function() { return results; });
     });
   },
 

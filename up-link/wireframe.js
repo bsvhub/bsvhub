@@ -29,7 +29,7 @@
    ═══════════════════════════════════════════════════════════════ */
 
 /* ── CONFIG ────────────────────────────────────────────────────── */
-var VERSION       = 9;
+var VERSION       = 12;
 
 var UNIT_DEFAULT  = 55;    /* px — starting base unit size                */
 var UNIT_MIN      = 20;    /* px — minimum (smaller = more compact shell) */
@@ -210,9 +210,11 @@ function applyGeometry() {
   var colWrap = active.querySelector('.col-wrap');
   var is1col  = mode === '1col';
 
-  /* Shell dimensions — the fixed-pixel canvas */
+  /* Shell dimensions — the fixed-pixel canvas.
+   * WHY + 4: shell has padding:2px top+bottom (wireframe.css). Adding 4px ensures
+   * the inner content area is exactly H_2COL×unit, preventing column overflow. */
   shell.style.width  = (is1col ? W_1COL : W_2COL) * unit + 'px';
-  shell.style.height = is1col ? 'auto' : H_2COL * unit + 'px';
+  shell.style.height = is1col ? 'auto' : (H_2COL * unit + 8) + 'px';
 
   /* Toggle mode class — activates CSS overrides for .col and .col-wrap */
   shell.classList.toggle('mode-1col', is1col);
@@ -245,12 +247,13 @@ function applyGeometry() {
     if (colWrap) { colWrap.style.flex = ''; colWrap.style.height = 'auto'; }
 
   } else {
-    /* Proportional flex within each column; shell's fixed height governs totals */
+    /* Explicit heights absorb the gap below each panel: panel + gap = h×unit exactly.
+     * This keeps both columns on the same unit grid regardless of panel count per col. */
     colPanels.forEach(function(p) {
       var el = _wfById(p.id);
       if (!el) return;
-      el.style.flex   = String(p.h);
-      el.style.height = '';
+      el.style.flex   = '';
+      el.style.height = (p.h * unit - GAP_PX) + 'px';
       el.style.order  = '';
     });
     /* flex:1 fills main-area space below any full-width panel (e.g. S3 TXID) */

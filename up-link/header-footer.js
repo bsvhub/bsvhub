@@ -127,7 +127,7 @@ App.HeaderFooter = {
         '<label class="onchain-toggle" id="offline-toggle" title="When checked, runs local simulation without wallet. Uncheck to use real BRC-100 wallet.">' +
           '<input type="checkbox" id="offline-cb">' +
           '<div class="onchain-box"></div>' +
-          '<span class="onchain-label">TEST OFFLINE</span>' +
+          '<span class="onchain-label">TEST OFF-CHAIN</span>' +
         '</label>' +
         '<div class="led" id="led"></div>' +
         '<span class="wallet-label" id="wallet-label">NOT CONNECTED</span>' +

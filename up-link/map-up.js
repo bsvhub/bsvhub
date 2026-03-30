@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   map-up.js — S2 MAP Record Table (v7.3)
+   map-up.js — S2 MAP Record Table (v7.4)
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  Builds the MAP record table for Screen 2 (#p2-map).
@@ -12,7 +12,7 @@
              SETTINGS (from settings.js).
              Form data object from App.Form.collectData().
 
-   OUTPUTS:  App.Panels.S2.map — { _buildRows(data), render(data, loadedRecord) }
+   OUTPUTS:  App.Panels.S2.map — { _buildRows(data), render(data, loadedRecord), buildFields(data) }
 
    DEPENDS:  settings.js, app-core.js.
 
@@ -154,5 +154,22 @@ App.Panels.S2.map = {
     return '<div class="plabel">ON-CHAIN MAP RECORD</div>' +
       warnHtml +
       '<table class="map-table"><tbody>' + html + '</tbody></table>';
+  },
+
+  /**
+   * Convert _buildRows(data) output to a flat {key: value} object.
+   * Shape is identical to App.Viewer.extractMAP() output so BSVCard.build()
+   * receives structurally identical fields from both S2 (pre-broadcast)
+   * and S3 (decoded on-chain) — guaranteeing the card previews match.
+   * @param {Object} data — collected form data
+   * @returns {Object} flat MAP field object
+   */
+  buildFields: function(data) {
+    var rows = this._buildRows(data);
+    var fields = {};
+    for (var i = 0; i < rows.length; i++) {
+      fields[rows[i][0]] = rows[i][1];
+    }
+    return fields;
   }
 };

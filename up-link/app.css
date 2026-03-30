@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   app.css (v7.7) — Component + Panel Styles
+   app.css (v7.9) — Component + Panel Styles
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  All visual styles for form components, inputs, buttons,
@@ -276,8 +276,47 @@ input[type=range]::-moz-range-thumb { width: 11px; height: 11px; background: var
   font-size: 1.0em; color: var(--dim); text-align: center; flex-shrink: 0; flex-grow: 0;
 }
 .icon-preview-sq .bg-layer { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
-.icon-preview-sq img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: contain; }
+/* Base img rule — position:absolute so JS-controlled positioning works for both slot 0 and ss slots */
+.icon-preview-sq img { position: absolute; z-index: 1; }
 .icon-preview-sq .no-img { position: relative; z-index: 1; }
+
+/* ── Ico preview name label — mirrors .icon-text from BSVhub grid (slot 0 only) ── */
+/* WHY: label floats bottom:4px, wraps to 2 lines, background covers text only — no fixed bar */
+#ico-preview-name-bar {
+  position: absolute;
+  bottom: 4px; left: 0;               /* matches .icon-text bottom:4px */
+  width: 100%;
+  display: block;                      /* block required — matches .icon-text (flex breaks wrapping) */
+  text-align: center;
+  white-space: normal;                 /* allows 2-line wrap for long names */
+  overflow-wrap: break-word;
+  word-break: break-word;
+  padding: 0 12%;                   /* proportional to tile width — matches grid's 16px on 120-200px tiles */
+  line-height: 1.2;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 12;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+#ico-preview-name-txt {
+  color: #fff;
+  font-size: 1.3em;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  transition: opacity 0.15s;
+}
+
+/* ── Ico preview padding guide — dashed rect showing exact image zone ── */
+/* WHY: image zone = top 6%, height 80%, left/right 9.375% inset (BSVhub grid doc §7.2) */
+#ico-padding-guide {
+  position: absolute;
+  left: 9.375%; right: 9.375%;        /* matches --horizontal-padding from grid */
+  top: 6%;                            /* matches 6% top offset from grid */
+  height: 80%;                        /* image zone is exactly 80% tall */
+  border: 1px dashed rgba(100, 140, 200, 0.4);
+  pointer-events: none;
+  z-index: 3;
+}
 
 /* ── Icon panel layout ─────────────────────────────────────── */
 .panel-icon { flex-direction: row; gap: 8px; padding: 7px 6px 7px 10px; }
@@ -295,6 +334,12 @@ input[type=range]::-moz-range-thumb { width: 11px; height: 11px; background: var
 .icon-mid-row {
   display: flex; flex-direction: row; gap: 4px;
   align-items: stretch; flex-shrink: 0; min-height: 0;
+  margin-top: auto;
+}
+/* ── Bottom box: ALPHA + ZOOM + ALT ────────────────────────── */
+.icon-bottom-box {
+  display: flex; flex-direction: column; gap: 3px; flex-shrink: 0;
+  border: 1px dashed rgba(116,185,255,0.25); padding: 3px 4px;
 }
 /* SVG/MAX/BG/FG/hint — 40% of full panel width.
    icon-controls is ~56% of panel (panel 100% - well 44%), so
@@ -344,12 +389,13 @@ input[type=range]::-moz-range-thumb { width: 11px; height: 11px; background: var
 .feat-list { display: flex; flex-direction: column; gap: 2px; flex: 1; justify-content: space-around; min-height: 0; }
 
 /* ── Submit button ──────────────────────────────────────────── */
-.btn-submit-wrap { display:block; width:100%; flex:none; flex-shrink:0; margin-top:auto; }
+#p1-tx-btn, #p2-tx-btn { padding: 0; align-items: stretch; }
+.btn-submit-wrap { display:contents; }
 .btn-submit {
-  font-family: var(--font); font-size: 1.64em; letter-spacing: 5px; font-weight: 700;
-  background: var(--accent); color: #fff; border: 1px solid var(--accent);
+  font-family: var(--font); font-size: 22px; letter-spacing: 5px; font-weight: 700;
+  background: var(--accent); color: #fff; border: none;
   padding: 0; cursor: pointer; text-transform: uppercase; transition: background 0.12s;
-  width: 100%; height: 48px;
+  width: 100%; height: 100%; align-self: stretch;
 }
 .btn-submit:hover:not(:disabled) { background: #ff7a5a; border-color: #ff7a5a; }
 .btn-submit:disabled { background: rgba(255,87,51,0.2); color: var(--dim); border-color: rgba(255,87,51,0.25); cursor: not-allowed; }
@@ -487,7 +533,7 @@ input[type=range]::-moz-range-thumb { width: 11px; height: 11px; background: var
 .slot-sq.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--amber); }
 .slot-sq.has-img { border-color: rgba(0,229,255,0.4); }
 .slot-sq.slot-disabled { opacity: 0.25; pointer-events: none; cursor: default; }
-.slot-sq img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+.slot-sq img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 1; }
 .slot-inner-lbl { font-size: 0.64em; color: var(--amber-dim); letter-spacing: 0.2px; position: relative; z-index: 0; pointer-events: none; line-height: 1; }
 .slot-sq.has-img .slot-inner-lbl { display: none; }
 /* ── Screenshot controls (slots 2-5) ──────────────────────── */
@@ -589,7 +635,6 @@ input[type=text], input[type=url], select, textarea { font-size: 1em; }
 .feat-num      { font-size: 1em; }
 .feat-count    { font-size: 0.93em; }
 .feat-hint     { font-size: 0.78em; }
-.btn-submit    { font-size: 1.64em; }
 .tip-opt       { font-size: 1em; }
 .tip-label     { font-size: 1em; }
 .status        { font-size: 1em; }
@@ -714,4 +759,6 @@ input[type=text], input[type=url], select, textarea { font-size: 1em; }
 
 /* ── Inputs stretch to full width ─────────────────────────── */
 .row input[type=text], .row input[type=url], .row select, .row textarea { flex: 1; min-width: 0; width: 100%; }
+/* When an input shares a .row with a button, width:100% fights flex — override to auto */
+#icon-txid { width: auto; }
 textarea { width: 100%; }

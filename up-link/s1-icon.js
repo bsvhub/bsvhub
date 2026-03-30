@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   s1-icon.js — Icon Design Panel (Screen 1, #p1-icon) (v7.7)
+   s1-icon.js — Icon Design Panel (Screen 1, #p1-icon) (v7.8)
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  Self-contained panel: HTML template, icon upload/fetch,
@@ -75,14 +75,20 @@ App.Panels.S1.icon = {
             '</div>' +
           '</div>' +
         '</div>' +
-        '<div class="srow srow-compact icon-only"><lbl>ALPHA</lbl><input type="range" id="opc"><span class="sval" id="opc-v"></span></div>' +
-        '<div class="srow srow-compact"><lbl>ZOOM</lbl><input type="range" id="zom"><span class="sval" id="zom-v"></span></div>' +
-        '<div class="row srow-compact" style="flex-shrink:0;"><lbl>ALT</lbl><input type="text" id="icon-alt" placeholder="alt text"></div>' +
+        '<div class="icon-bottom-box">' +
+          '<div class="srow srow-compact icon-only"><lbl>ALPHA</lbl><input type="range" id="opc"><span class="sval" id="opc-v"></span></div>' +
+          '<div class="srow srow-compact"><lbl>ZOOM</lbl><input type="range" id="zom"><span class="sval" id="zom-v"></span></div>' +
+          '<div class="row srow-compact"><lbl>ALT</lbl><input type="text" id="icon-alt" placeholder="alt text"></div>' +
+        '</div>' +
       '</div>' +
       '<div class="icon-well icon-well-col" id="preview-well">' +
         '<div class="icon-preview-sq" id="icon-preview">' +
           '<div class="bg-layer" id="preview-bg"></div>' +
+          /* Dashed inset rectangle — shows the image boundary (80% wide, above name bar) */
+          '<div id="ico-padding-guide" aria-hidden="true"></div>' +
           '<span class="no-img" id="preview-no-img">NO IMAGE</span>' +
+          /* Name bar — mirrors the card tile name bar; text linked to #app-name input */
+          '<div id="ico-preview-name-bar"><span id="ico-preview-name-txt">APP NAME</span></div>' +
         '</div>' +
         '<div class="slot-strip" id="slot-strip">' +
           '<div class="slot-sq active" data-slot="0" id="slot-0"><span class="slot-inner-lbl">ico</span></div>' +
@@ -223,6 +229,8 @@ App.Icon = {
     var prev = App.Utils.$('icon-preview');
     var noImg = prev.querySelector('.no-img'); if (noImg) noImg.remove();
     var img = prev.querySelector('img'); if (!img) { img = document.createElement('img'); prev.appendChild(img); }
+    /* Position to match real BSVhub grid geometry (top:46%, left:50%, translate(-50%,-50%)) */
+    img.style.cssText = 'position:absolute;top:46%;left:50%;transform:translate(-50%,-50%);max-width:81.25%;max-height:80%;object-fit:contain;z-index:1;';
     img.removeAttribute('crossorigin'); img.src = url;
     var slot = App.Screenshots._slots[0] || App.Screenshots._defaultSlotValues(0);
     App.Screenshots._slots[0] = slot;
@@ -296,6 +304,10 @@ App.Icon = {
     var prev = App.Utils.$('icon-preview');
     var noImg = prev.querySelector('.no-img'); if (noImg) noImg.style.display = 'none';
     var img = prev.querySelector('img:not(.ss-preview-img)'); if (!img) { img = document.createElement('img'); prev.appendChild(img); }
+    /* Position icon image to match real BSVhub grid geometry:
+       centre point = top:46% (6% top gap + 80% image zone / 2), left:50%,
+       max-width:81.25% (9.375% padding each side), max-height:80%      */
+    img.style.cssText = 'position:absolute;top:46%;left:50%;transform:translate(-50%,-50%);max-width:81.25%;max-height:80%;object-fit:contain;z-index:1;';
     img.src = src; this.enforceSquare();
     if (App.Screenshots) App.Screenshots.setIconThumb(src);
   },
@@ -345,7 +357,12 @@ App.Icon = {
     var panY = (activeSlotForPan && activeSlotForPan.panY) ? activeSlotForPan.panY : 0;
     var translatePfx = 'translate(' + (panX * 100) + '%, ' + (panY * 100) + '%) ';
     var img = $('icon-preview').querySelector('img:not(.ss-preview-img)');
-    if (img) { img.style.opacity = '1'; img.style.transform = translatePfx + 'scale(' + $('zom').value + ')'; }
+    /* Icon image: base position is top:46%/left:50% (grid geometry); pan + zoom stack on top.
+       translate(-50%,-50%) centres it at that point, then pan offset + zoom apply. */
+    if (img) {
+      img.style.opacity = '1';
+      img.style.transform = 'translate(calc(-50% + ' + (panX * 100) + '%), calc(-50% + ' + (panY * 100) + '%)) scale(' + $('zom').value + ')';
+    }
     var ssZImg = $('icon-preview').querySelector('.ss-preview-img');
     if (ssZImg) { ssZImg.style.transform = translatePfx + 'scale(' + $('zom').value + ')'; ssZImg.style.transformOrigin = 'center'; }
     /* Persist control values into the active slot on every change */
@@ -355,6 +372,22 @@ App.Icon = {
 
   syncColour: function(which) { App.Utils.$('c' + which + '-h').value = App.Utils.$('c' + which).value; this.updatePreviewStyles(); },
   syncHex: function(which, val) { if (/^#[0-9a-fA-F]{6}$/.test(val)) { App.Utils.$('c' + which).value = val; this.updatePreviewStyles(); } },
+
+  /* Update the ico preview name bar text from the #app-name input.
+     Called on init and on every keystroke in the name field. */
+  _syncNameBar: function() {
+    var nameBar = document.getElementById('ico-preview-name-txt');
+    if (!nameBar) return;
+    var appNameEl = document.getElementById('app-name');
+    var val = appNameEl ? appNameEl.value.trim() : '';
+    if (val) {
+      nameBar.textContent = val;
+      nameBar.style.opacity = '1';
+    } else {
+      nameBar.textContent = 'APP NAME';
+      nameBar.style.opacity = '0.3';
+    }
+  },
 
   init: function() {
     var $ = App.Utils.$;
@@ -378,6 +411,14 @@ App.Icon = {
     $('zom').addEventListener('input', function() { $('zom-v').textContent = parseFloat($('zom').value).toFixed(2); self.updatePreviewStyles(); });
     window.addEventListener('resize', function() { self.enforceSquare(); });
     requestAnimationFrame(function() { self.enforceSquare(); setTimeout(function() { self.enforceSquare(); }, 200); });
+    /* Sync name bar from #app-name — the field lives in a different panel (s1-details.js)
+       so we wire it here with getElementById rather than assuming load order */
+    var appNameInput = document.getElementById('app-name');
+    if (appNameInput) {
+      appNameInput.addEventListener('input', function() { self._syncNameBar(); });
+    }
+    /* Initialise name bar text from whatever is already in the field on load */
+    this._syncNameBar();
   }
 };
 
@@ -502,6 +543,11 @@ App.Screenshots = {
 
     if (idx === 0) {
       if (panel) panel.classList.remove('ss-active');
+      /* Show ico-only overlays: name bar + padding guide */
+      var nameBar = document.getElementById('ico-preview-name-bar');
+      var padGuide = document.getElementById('ico-padding-guide');
+      if (nameBar)  nameBar.style.display  = '';
+      if (padGuide) padGuide.style.display = '';
       this._rewireBrowse('icon');
       if (txidInput) {
         var s0 = this._slots[0];
@@ -530,6 +576,11 @@ App.Screenshots = {
       }
     } else {
       if (panel) panel.classList.add('ss-active');
+      /* Hide ico-only overlays: name bar + padding guide */
+      var nameBar2 = document.getElementById('ico-preview-name-bar');
+      var padGuide2 = document.getElementById('ico-padding-guide');
+      if (nameBar2)  nameBar2.style.display  = 'none';
+      if (padGuide2) padGuide2.style.display = 'none';
       this._rewireBrowse('ss');
       if (txidInput) {
         var slot = this._slots[idx];
@@ -563,7 +614,14 @@ App.Screenshots = {
       /* Pan + zoom compose into one transform — pan stored as fraction, translated to % */
       var slotPanX = (slot && slot.panX) ? slot.panX : 0;
       var slotPanY = (slot && slot.panY) ? slot.panY : 0;
-      ssImg.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transform-origin:center;z-index:2;transform:translate(' + (slotPanX * 100) + '%, ' + (slotPanY * 100) + '%) scale(' + parseFloat(slotZoom) + ');';
+      if (idx === 0) {
+        /* Slot 0 (ico): match real BSVhub grid geometry — top:46%, left:50%, translate(-50%,-50%)
+           Pan offsets compose into the translate so the image pans within its centre point. */
+        ssImg.style.cssText = 'position:absolute;top:46%;left:50%;max-width:81.25%;max-height:80%;object-fit:contain;transform-origin:center;z-index:2;transform:translate(calc(-50% + ' + (slotPanX * 100) + '%), calc(-50% + ' + (slotPanY * 100) + '%)) scale(' + parseFloat(slotZoom) + ');';
+      } else {
+        /* Slots 1-4 (screenshots): fill full preview area */
+        ssImg.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transform-origin:center;z-index:2;transform:translate(' + (slotPanX * 100) + '%, ' + (slotPanY * 100) + '%) scale(' + parseFloat(slotZoom) + ');';
+      }
       preview.appendChild(ssImg);
       if (fnEl) fnEl.textContent = slot.filename || '';
       if (fsEl) { fsEl.textContent = slot.kb + 'kb'; fsEl.className = 'file-info ' + (slot.kb > Math.round(SETTINGS.MAX_SCREENSHOT_BYTES / 1024) ? 'file-size-err' : 'file-size-gold'); }
@@ -643,7 +701,10 @@ App.Screenshots = {
     var $ = App.Utils.$;
     var idx = this._active;
     if (idx === 0) {
+      var activeRadio = document.querySelector('input[name=isrc]:checked');
+      var currentMode = activeRadio ? activeRadio.value : 'upload';
       this._slots[0] = this._defaultSlotValues(0);
+      this._slots[0].mode = currentMode;
       this.setIconThumb(null);
       /* Reset icon preview */
       var prev = $('icon-preview');
@@ -658,7 +719,10 @@ App.Screenshots = {
       if ($('fsize')) { $('fsize').textContent = 'MAX ' + Math.round(SETTINGS.MAX_ICON_BYTES / 1024) + 'kb'; $('fsize').className = 'file-info file-size-gold'; }
       if ($('icon-file-input')) $('icon-file-input').value = '';
     } else {
-      this._slots[idx] = null;
+      var activeRadio2 = document.querySelector('input[name=isrc]:checked');
+      var currentMode2 = activeRadio2 ? activeRadio2.value : 'upload';
+      this._slots[idx] = this._defaultSlotValues(idx);
+      this._slots[idx].mode = currentMode2;
       this._showSlotPreview(idx);
       if ($('ss-file-input')) $('ss-file-input').value = '';
     }

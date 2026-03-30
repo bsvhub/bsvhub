@@ -92,9 +92,11 @@ var BSVCard = (function() {
 
       '.bsvcard-tile{position:relative;overflow:hidden;flex-shrink:0;background:rgba(90,110,165,0.5);}',
       '.bsvcard-tile-bg{position:absolute;inset:0;z-index:0;}',
-      '.bsvcard-tile-img{position:absolute;top:0;left:0;right:0;bottom:28px;margin:auto;z-index:1;max-width:80%;max-height:70%;object-fit:contain;}',
-      '.bsvcard-tile-name{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.5);z-index:11;text-align:center;padding:6px 4px;}',
-      '.bsvcard-tile-name span{color:#fff;font-size:13px;font-weight:500;letter-spacing:1px;}',
+      /* Icon image: top:46% = 6% top gap + 80% image zone / 2 (matches BSVhub grid §7.2) */
+      '.bsvcard-tile-img{position:absolute;top:46%;left:50%;transform:translate(-50%,-50%);z-index:1;max-width:81.25%;max-height:80%;object-fit:contain;}',
+      /* Name label: floats bottom:4px, wraps to 2 lines — mirrors .icon-text from BSVhub grid */
+      '.bsvcard-tile-name{position:absolute;bottom:4px;left:0;width:100%;display:block;text-align:center;white-space:normal;overflow-wrap:break-word;word-break:break-word;padding:0 10px;line-height:1.2;background:rgba(0,0,0,0.5);z-index:11;pointer-events:none;box-sizing:border-box;}',
+      '.bsvcard-tile-name span{color:#fff;font-size:0.85em;font-weight:500;letter-spacing:1px;}',
       '.bsvcard-no-img{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:1;color:rgba(255,255,255,0.25);font-size:13px;margin-bottom:20px;}',
 
       '.bsvcard-side-tile{position:relative;overflow:hidden;box-sizing:border-box;flex:1;min-height:0;border-radius:4px;background:rgba(0,229,255,0.03);}',
@@ -245,9 +247,13 @@ var BSVCard = (function() {
       + ' class="bsvcard-tile"'
       + ' style="width:'+ts+'px;height:'+ts+'px;border-radius:'+tr+'px;border:'+tb+'px solid var(--border);">'
       + '<div id="ccbg" class="bsvcard-tile-bg" style="background:'+tileBg+';"></div>'
-      + '<img id="ccimg" class="bsvcard-tile-img"'
+      + '<img id="ccimg"'
       + (iconSrc ? ' src="'+esc(iconSrc)+'"' : '')
-      + ' style="transform:translate('+(iconPanX*100)+'%, '+(iconPanY*100)+'%) scale('+zoom+');display:'+(iconSrc?'block':'none')+';">'
+      /* Full icon layout as inline style — no class so screenshot tab clicks can
+         override completely via cssText without the class fighting back */
+      /* Icon image: top:46% = 6% top gap + 80% image zone / 2; pan composes into translate */
+      + ' style="position:absolute;top:46%;left:50%;z-index:1;max-width:81.25%;max-height:80%;object-fit:contain;'
+      + 'transform:translate(calc(-50% + '+(iconPanX*100)+'%), calc(-50% + '+(iconPanY*100)+'%)) scale('+zoom+');display:'+(iconSrc?'block':'none')+';">'
       + (iconSrc ? '' : '<span id="ccnoimg" class="bsvcard-no-img">NO IMAGE</span>')
       + '<div class="bsvcard-tile-name"><span>'+name+'</span></div>'
       + '</div>';
@@ -373,11 +379,12 @@ var BSVCard = (function() {
         var src    = el.getAttribute('data-src') || '';
         var isIcon = el.getAttribute('data-is-icon') === '1';
 
-        var img   = container.querySelector('#ccimg');
-        var bg    = container.querySelector('#ccbg');
-        var noimg = container.querySelector('#ccnoimg');
-        var tipS  = container.querySelector('.tip-static');
-        var tipD  = container.querySelector('.tip-desc');
+        var img     = container.querySelector('#ccimg');
+        var bg      = container.querySelector('#ccbg');
+        var noimg   = container.querySelector('#ccnoimg');
+        var tipS    = container.querySelector('.tip-static');
+        var tipD    = container.querySelector('.tip-desc');
+        var nameBar = container.querySelector('.bsvcard-tile-name');
 
         // Hide all info panels
         var infoIco = container.querySelector('#info-icon');
@@ -402,12 +409,16 @@ var BSVCard = (function() {
           if (bg) { bg.style.background = _ibg; bg.style.visibility = ''; }
           if (tipS) tipS.style.opacity = '0';
           if (tipD) tipD.style.opacity = '1';
+          /* Icon: name bar visible */
+          if (nameBar) nameBar.style.display = '';
         } else {
           var ssPanel = container.querySelector('#info-ss'+tabIdx);
           if (ssPanel) ssPanel.style.display = '';
           if (bg) bg.style.visibility = 'hidden';
           if (tipS) { tipS.textContent = src ? 'SCREENSHOT '+tabIdx+' PREVIEW' : 'NO SCREENSHOT LOADED'; tipS.style.opacity = '1'; }
           if (tipD) tipD.style.opacity = '0';
+          /* Screenshots: hide name bar so it doesn't obscure the image */
+          if (nameBar) nameBar.style.display = 'none';
         }
 
         /* ── Shared image rendering — identical for all 5 slots ── */
@@ -419,14 +430,19 @@ var BSVCard = (function() {
         var _txid    = _f[isIcon ? 'icon_txid' : 'ss' + tabIdx + '_txid'] || '';
         var _hasTxid = _txid && _txid !== '(pending)' && _txid.length >= 64;
         var _hasSrc  = src.length > 0;
-        var _maxW    = isIcon ? '80%' : '92%';
-        var _maxH    = isIcon ? '70%' : 'calc(100% - 34px)';
-
         if (img) {
           if (_hasSrc || _hasTxid) {
-            img.style.cssText = 'position:absolute;top:0;left:0;right:0;bottom:28px;margin:auto;z-index:1;'
-              + 'max-width:'+_maxW+';max-height:'+_maxH+';object-fit:contain;display:block;'
-              + 'transform:translate('+(_panX*100)+'%, '+(_panY*100)+'%) scale('+_zoom+');';
+            if (isIcon) {
+              /* Icon: top:46%/left:50% grid geometry; pan composes into translate */
+              img.style.cssText = 'position:absolute;top:46%;left:50%;z-index:1;'
+                + 'max-width:81.25%;max-height:80%;object-fit:contain;display:block;'
+                + 'transform:translate(calc(-50% + '+(_panX*100)+'%), calc(-50% + '+(_panY*100)+'%)) scale('+_zoom+');';
+            } else {
+              /* Screenshot: fills full tile — matches _showSlotPreview in s1-icon.js */
+              img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;'
+                + 'z-index:1;display:block;'
+                + 'transform:translate('+(_panX*100)+'%, '+(_panY*100)+'%) scale('+_zoom+');';
+            }
             if (_hasSrc) {
               img.src = src;
             } else {
@@ -574,7 +590,7 @@ if (typeof window !== 'undefined') window.BSVCard = BSVCard;
 
 
 /* ═══════════════════════════════════════════════════════════════
-   S2/S3 Panel Wrappers (v7.6)
+   S2/S3 Panel Wrappers (v7.8)
 
    Thin wrappers that plug BSVCard into wireframe panel slots.
    App.Panels.S2.card — preview card from form data (#p2-card)
@@ -600,40 +616,11 @@ App.Panels.S2.card = {
     var d = data;
     var ss = d.screenshots || [null, null, null, null];
 
-    var cardFields = {
-      name:            d.name,
-      description:     d.description,
-      category:        d.category,
-      status:          d.status,
-      language:        d.language,
-      brc100:          String(d.brc100),
-      on_chain:        String(!!d.on_chain),
-      accepts_bsv:     String(!!d.accepts_bsv),
-      open_source:     String(!!d.open_source),
-      icon_txid:       d.icon_txid,
-      icon_format:     d.icon_format,
-      icon_size_kb:    d.icon_size_kb,
-      icon_bg_enabled: String(d.icon_bg_enabled),
-      icon_fg_enabled: String(d.icon_fg_enabled),
-      icon_bg_colour:  d.icon_bg_colour,
-      icon_fg_colour:  d.icon_fg_colour,
-      icon_bg_alpha:   d.icon_bg_alpha,
-      icon_zoom:       d.icon_zoom,
-      version:         d.version,
-      release_date:    d.release_date
-    };
-
-    /* Screenshot txid fields for card rendering — per-slot zoom + alt */
-    for (var si = 0; si < 4; si++) {
-      var n = si + 1;
-      if (ss[si] || d['ss' + n + '_txid']) {
-        cardFields['ss' + n + '_txid']     = d['ss' + n + '_txid'] || '(pending)';
-        cardFields['ss' + n + '_format']   = (ss[si] && ss[si].mime) || d['ss' + n + '_format'] || '';
-        cardFields['ss' + n + '_size_kb']  = (ss[si] && String(ss[si].kb)) || d['ss' + n + '_size_kb'] || '';
-        cardFields['ss' + n + '_zoom']     = d['ss' + n + '_zoom'] || (ss[si] && String(ss[si].zoom)) || '1';
-        cardFields['ss' + n + '_alt_text'] = d['ss' + n + '_alt_text'] || (ss[si] && ss[si].altText) || '';
-      }
-    }
+    /* Delegate to map-up.js buildFields() — produces the canonical flat MAP
+       key-value object, identical in shape to App.Viewer.extractMAP() output.
+       This guarantees S2 card preview feeds BSVCard.build() with structurally
+       identical fields to those S3 decodes from the on-chain broadcast. */
+    var cardFields = App.Panels.S2.map.buildFields(d);
 
     /* Icon source: prefer base64 data, fall back to chain URL */
     var iconSrc = d.icon_data_b64 || d.icon_chain_url || '';
