@@ -113,7 +113,7 @@ Promise.all([
         var frame = document.createElement("iframe");
         frame.src   = "about:blank";
         frame.title = "Broken Link Log";
-        frame.setAttribute("sandbox", "allow-scripts allow-same-origin allow-forms allow-popups");
+        frame.setAttribute("sandbox", "allow-scripts allow-same-origin allow-forms allow-popups allow-downloads");
 
         wrap.appendChild(closeBtn);
         wrap.appendChild(frame);
