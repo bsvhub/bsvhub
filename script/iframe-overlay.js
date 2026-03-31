@@ -11,10 +11,11 @@
    DEPENDS : unified.css Section 13 (.up-link-wrap, .up-link-close);
              #up-link section must exist for correct DOM insertion;
              window.activateTab() from tabs.js.
-   NOTES   : Follows the daily-link.js / broken-log overlay pattern.
+   NOTES   : daily-link.js delegates to this module via data-iframe="true".
              Lazy-loads iframe src on first click per unique URL.
              A second click on a different tile swaps the src.
-   VERSION : 101
+             Per-tile bg colour override via data-iframe-bg attribute.
+   VERSION : 105
    ============================================================ */
 
 (function () {
@@ -22,6 +23,9 @@
     /* ── CONFIG ─────────────────────────────────────────────── */
     var CLOSE_ICON    = "icon/close.svg";
     var FRAME_SANDBOX = "allow-scripts allow-same-origin allow-forms allow-popups allow-presentation allow-downloads";
+    /* DEFAULT_BG: .up-link-wrap CSS default is rgba(0,0,0,0.8).
+       Reset via wrap.style.background = "" so the stylesheet rule wins —
+       no need to redeclare the value here. */
 
     /* ── Build overlay DOM ───────────────────────────────────── */
     var overlay = document.createElement("section");
@@ -62,8 +66,12 @@
     }
 
     /* ── State ───────────────────────────────────────────────── */
-    var lastTab = "app";   // tab to restore when overlay is closed
-    var lastBtn = null;
+    /* WHY read from DOM: active at load may not be "app". WHY check both
+       selectors: about/tip/contact are header-text-links, not tab buttons —
+       checking only .tab-btn.active misses them and falls back to "app". */
+    var _initBtn = document.querySelector(".tab-btn.active, .header-text-link.active");
+    var lastTab  = _initBtn ? (_initBtn.dataset.target || "app") : "app";
+    var lastBtn  = _initBtn || null;
 
     /* ── Helper — close the overlay ─────────────────────────── */
     function closeOverlay() {
@@ -81,18 +89,33 @@
 
         e.preventDefault();
 
-        /* Remember the current active tab so close can restore it.
-           WHY: activateTab stores no history itself; we must track it. */
-        var activeTab = document.querySelector(".tab-btn.active");
-        if (activeTab) {
-            lastTab = activeTab.dataset.target || "app";
-            lastBtn = activeTab;
+        /* Remember the current active section so close can restore it.
+           WHY check both: about/tip/contact use header-text-links not tab
+           buttons — .tab-btn.active alone misses them, returning wrong tab. */
+        var activeEl = document.querySelector(".tab-btn.active, .header-text-link.active");
+        if (activeEl) {
+            lastTab = activeEl.dataset.target || "app";
+            lastBtn = activeEl;
         }
 
         var url = a.href;
 
+        /* WHY always reset: same overlay reused across tiles. Tile A (custom bg)
+           then tile B (no bg) must revert to CSS default — "" removes the inline
+           style so .up-link-wrap background takes over automatically. */
+        var bgColour = a.dataset.iframeBg || "";
+        wrap.style.background = bgColour;
+
         /* Swap src only when opening a different URL — avoids reload */
         if (frame.src !== url) {
+            /* WHY hide before src change: iframe briefly shows previous page
+               while new src loads — hiding it prevents the flash. Shown again
+               on load event. Same-URL reopens skip this (no src change). */
+            frame.style.visibility = "hidden";
+            frame.addEventListener("load", function onLoad() {
+                frame.removeEventListener("load", onLoad);
+                frame.style.visibility = "";
+            });
             frame.src = url;
         }
 

@@ -111,7 +111,7 @@ window.addEventListener("load", () => {
     }
 
     const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
-                           .test(navigator.userAgent) || (window.innerWidth <= 768);
+                           .test(navigator.userAgent) || (window.innerWidth <= 1024);
     const savedMode = localStorage.getItem("ui-mode");
 
     if (!savedMode) {

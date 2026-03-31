@@ -1,17 +1,16 @@
 /* ============================================================
-   daily-link.js — Daily header link + overlay
+   daily-link.js — Daily header link
    ------------------------------------------------------------
-   PURPOSE : Sets the BSVhub.io logo link to today's daily URL
-             and opens it inside a full-viewport iframe overlay
-             (reuses Section 13 / up-link CSS pattern).
+   PURPOSE : Sets the BSVhub.io logo link to today's daily URL.
+             Overlay handling is delegated to iframe-overlay.js.
    INPUTS  : DOM element #daily-link must exist in the HTML.
-   OUTPUTS : Sets #daily-link href; injects #daily-link-overlay
-             section into the DOM; wires click + close handlers.
-   DEPENDS : unified.css Section 13 (.up-link-wrap, .up-link-close);
-             #up-link section must exist for correct DOM insertion.
-   NOTES   : Overlay DOM is built here — index.html stays clean.
-             Lazy-loads the iframe on first click only.
-   VERSION : 200
+   OUTPUTS : Sets #daily-link href, data-iframe, and target.
+   DEPENDS : iframe-overlay.js (optional — if absent the link
+             opens in a new tab via target="_blank" fallback).
+   NOTES   : Overlay DOM, lazy-load, close, and Escape key are
+             all handled by iframe-overlay.js. This file only
+             owns the date logic and the link attributes.
+   VERSION : 201
    ============================================================ */
 
 (function () {
@@ -33,64 +32,20 @@
 
     var dailyUrl = BASE_URL + yyyy + "-" + mm + "-" + dd;
 
-    /* Set href — keeps right-click "open in new tab" working */
     var link = document.getElementById("daily-link");
+
+    /* Set href — keeps right-click "open in new tab" working */
     if (link) link.href = dailyUrl;
 
-    /* ── Build overlay DOM ───────────────────────────────────── */
-    var overlay = document.createElement("section");
-    overlay.id        = "daily-link-overlay";
-    overlay.className = "tab-content";
-
-    var wrap = document.createElement("div");
-    wrap.className = "up-link-wrap";
-
-    /* Close button — reuses .up-link-close style from Section 13 */
-    var closeBtn = document.createElement("img");
-    closeBtn.id        = "daily-link-close";
-    closeBtn.className = "up-link-close";
-    closeBtn.src       = "icon/close.svg";
-    closeBtn.alt       = "Close";
-    closeBtn.title     = "Close";
-
-    /* Iframe — lazy: src stays about:blank until first click */
-    var frame = document.createElement("iframe");
-    frame.id              = "daily-link-frame";
-    frame.src             = "about:blank";
-    frame.title           = "Daily Link";
-    frame.allowFullscreen = true;
-    frame.setAttribute("sandbox", "allow-scripts allow-same-origin allow-forms allow-popups");
-
-    wrap.appendChild(closeBtn);
-    wrap.appendChild(frame);
-    overlay.appendChild(wrap);
-
-    /* Insert after #up-link so z-index stacking context is correct
-       (must be outside #content-area, same as #up-link) */
-    var upLink = document.getElementById("up-link");
-    if (upLink && upLink.parentNode) {
-        upLink.parentNode.insertBefore(overlay, upLink.nextSibling);
-    } else {
-        /* WHY fallback: defensive in case DOM order changes */
-        document.body.appendChild(overlay);
-    }
-
-    /* ── Click handler — intercept logo click ───────────────── */
-    var loaded = false;
+    /* WHY data-iframe="true": delegates overlay handling to iframe-overlay.js
+       so the logo click uses the same overlay as all other iframe tiles.
+       WHY target="_blank": fallback if iframe-overlay.js is absent — link
+       opens in a new tab instead of doing nothing. iframe-overlay.js
+       intercepts the click with e.preventDefault() so target never fires
+       when the overlay script is present. */
     if (link) {
-        link.addEventListener("click", function (e) {
-            e.preventDefault();
-            /* Lazy-load iframe on first click only */
-            if (!loaded) {
-                loaded = true;
-                frame.src = dailyUrl;
-            }
-            overlay.classList.add("active");
-        });
+        link.dataset.iframe = "true";
+        link.target         = "_blank";
     }
 
-    /* ── Close button ───────────────────────────────────────── */
-    closeBtn.addEventListener("click", function () {
-        overlay.classList.remove("active");
-    });
 })();

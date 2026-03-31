@@ -87,60 +87,15 @@ Promise.all([
         container.appendChild(sec);
     });
 
-    /* ── Broken-log overlay — same Section 13 pattern as up-link ─
+    /* ── Broken-log overlay — delegated to iframe-overlay.js ─────
        WHY here: #broken-log-link only exists after about.json HTML
-       is injected above, so the overlay must be built at this point. */
+       is injected above, so attributes must be set at this point.
+       WHY target="_blank": fallback if iframe-overlay.js is absent. */
     (function () {
         var logLink = document.getElementById("broken-log-link");
         if (!logLink) return;
-
-        var logUrl = logLink.href;   // already set in about.json HTML
-
-        /* Build overlay DOM */
-        var overlay = document.createElement("section");
-        overlay.id        = "broken-log-overlay";
-        overlay.className = "tab-content";
-
-        var wrap = document.createElement("div");
-        wrap.className = "up-link-wrap";
-
-        var closeBtn = document.createElement("img");
-        closeBtn.className = "up-link-close";
-        closeBtn.src       = "icon/close.svg";
-        closeBtn.alt       = "Close";
-        closeBtn.title     = "Close";
-
-        var frame = document.createElement("iframe");
-        frame.src   = "about:blank";
-        frame.title = "Broken Link Log";
-        frame.setAttribute("sandbox", "allow-scripts allow-same-origin allow-forms allow-popups allow-downloads");
-
-        wrap.appendChild(closeBtn);
-        wrap.appendChild(frame);
-        overlay.appendChild(wrap);
-
-        /* Insert after #up-link — outside #content-area so z-index works */
-        var upLink = document.getElementById("up-link");
-        if (upLink && upLink.parentNode) {
-            upLink.parentNode.insertBefore(overlay, upLink.nextSibling);
-        } else {
-            document.body.appendChild(overlay);
-        }
-
-        /* Intercept the view log link */
-        var loaded = false;
-        logLink.addEventListener("click", function (e) {
-            e.preventDefault();
-            if (!loaded) {
-                loaded = true;
-                frame.src = logUrl;
-            }
-            overlay.classList.add("active");
-        });
-
-        closeBtn.addEventListener("click", function () {
-            overlay.classList.remove("active");
-        });
+        logLink.dataset.iframe = "true";
+        logLink.target         = "_blank";
     })();
 
     /* ── Counters — spans now exist in the DOM ───────────────── */
@@ -219,10 +174,33 @@ Promise.all([
             var a    = document.createElement("a");
             a.href   = item.href || "#";
 
-            /* iframe:true in list.json → open in overlay instead of new tab.
-               data-iframe="true" is picked up by iframe-overlay.js plugin. */
+            /* iframe:true → open in overlay; popup:true → open in popup window;
+               else → new tab. iframe takes priority if both are set. */
             if (item.iframe === true) {
                 a.dataset.iframe = "true";
+                a.target = "_blank";  // WHY: fallback if iframe-overlay.js absent — opens normally
+                /* WHY: pass per-entry bg colour to overlay; read on click in iframe-overlay.js.
+                   Absent = no attribute set = overlay resets to CSS default automatically. */
+                if (item.iframe_bg) {
+                    a.dataset.iframeBg = item.iframe_bg;
+                }
+            } else if (item.popup === true) {
+                /* WHY intercept here: window.open() must be called in the click
+                   handler to avoid popup blockers — wiring it on the <a> directly
+                   keeps it as a direct user-gesture response. */
+                (function (url, w, h) {
+                    /* CONFIG defaults — used when popup_w / popup_h are absent */
+                    var POP_W = 900;
+                    var POP_H = 700;
+                    var pw = w || POP_W;
+                    var ph = h || POP_H;
+                    a.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        window.open(url, "_blank",
+                            "width=" + pw + ",height=" + ph +
+                            ",toolbar=no,menubar=no,location=no,status=no,resizable=yes");
+                    });
+                }(item.href, item.popup_w, item.popup_h));
             } else {
                 a.target = "_blank";
             }
