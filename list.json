@@ -356,7 +356,7 @@
       "img": "social/sirtoshi.webp",
       "zoom": "1.0",
       "alt": "BSV Bitcoin",
-      "text": "$SirToshi",
+      "text": "@SirToshiTV",
       "info": ";;twitter.svg;"
     },
     {
@@ -1621,7 +1621,17 @@
       "img": "icon/bsv.svg",
       "zoom": "1.0",
       "alt": "",
-      "text": "Cellular automata",
+      "text": "Cellular Automata",
+      "info": ";;;"
+    },
+    {
+      "tab": "tool;dev",
+      "href": "https://bopen.ai",
+      "tooltip": "Collection of AI agents, trained to work on BSV projects.",
+      "img": "icon/bsv.svg",
+      "zoom": "1.0",
+      "alt": "",
+      "text": "bOpen.ai",
       "info": ";;;"
     }
   ]
