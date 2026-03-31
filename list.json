@@ -1611,6 +1611,18 @@
       "alt": "",
       "text": "Missiles",
       "info": ";;;"
+    },
+    {
+      "iframe": true,
+      "iframe_bg": "rgba(40, 0, 40, 1)",
+      "tab": "on-ch",
+      "href": "https://bico.media/f830cad9c888f1715b7af7350aeff24676a5c00295928da631a71fb965fb58e8#",
+      "tooltip": "On-chain pattern generator based on number input between 0-255",
+      "img": "icon/bsv.svg",
+      "zoom": "1.0",
+      "alt": "",
+      "text": "Cellular automata",
+      "info": ";;;"
     }
   ]
 }
