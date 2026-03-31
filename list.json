@@ -1559,7 +1559,6 @@
       "info": ";;;"
     },
     {
-      "iframe": true,
       "tab": "tool;dev",
       "href": "https://bico.media",
       "tooltip": "A gateway to data stored in a Bitcoin SV transaction.",
@@ -1581,7 +1580,6 @@
       "info": ";;;"
     },
     {
-      "iframe": true,
       "tab": "on-ch",
       "href": "https://bico.media/bb98efaa2044b0fd23bf76a5f8ce54573e07db268bc0e23e77d14d9d8955d5e4",
       "tooltip": "The original Bitcoin whitepaper (pdf)",
@@ -1604,6 +1602,7 @@
     },
     {
       "iframe": true,
+      "iframe_bg": "rgba(128, 128, 128, 0.8)",
       "tab": "on-ch",
       "href": "https://bico.media/8d77f786696b926e311d5a179bb8516e0a5cff18268e5c5f12ce98df309943c9",
       "tooltip": "On-chain game where you defend against a missile attack",
