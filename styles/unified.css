@@ -1069,6 +1069,11 @@ body.mobile-mode [data-target="up-link"] {
     display: none;
 }
 
+/* WHY hidden: On-Chain content is desktop-only */
+body.mobile-mode [data-target="on-ch"] {
+    display: none;
+}
+
 /* ── Daily-Link overlay — reuses .up-link-wrap / .up-link-close ─
    WHY separate ID rule: needs the same fixed full-viewport slot
    as #up-link but is injected by daily-link.js, not tab buttons. */
