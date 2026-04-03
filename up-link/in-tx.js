@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   in-tx.js — Transmit & Transaction Panels (v7.4)
+   in-tx.js — Transmit & Transaction Panels (v7.5)
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  Cross-screen panel card feeding 4 wireframe slots:
@@ -389,7 +389,21 @@ App.Transmit = {
         open_source:  $('flag-open-source') ? $('flag-open-source').checked : false,
         mode:         App.State.mode || 'submit',
         prev_txid:    App.State.loadedRecord ? (App.State.loadedRecord.txid || '') : '',
-        network:      $('tx-network') ? $('tx-network').textContent.trim().toLowerCase() : 'mainnet'
+        network:      $('tx-network') ? $('tx-network').textContent.trim().toLowerCase() : 'mainnet',
+
+        /* Icon display fields — read from slot 0 of the screenshot/icon module.
+           WHY: these are needed by /api/catalog to render the tile on BSVhub.io.
+           App.Screenshots.getData() snapshots current UI controls before returning. */
+        icon_txid:       (function() { var d = App.Screenshots && App.Screenshots.getData(); return (d && d.icon && d.icon.txid) ? d.icon.txid : ''; }()),
+        icon_zoom:       (function() { var d = App.Screenshots && App.Screenshots.getData(); return String((d && d.icon && d.icon.zoom  !== undefined) ? d.icon.zoom  : '1.0'); }()),
+        icon_pan_x:      (function() { var d = App.Screenshots && App.Screenshots.getData(); return String((d && d.icon && d.icon.panX  !== undefined) ? d.icon.panX  : '0'); }()),
+        icon_pan_y:      (function() { var d = App.Screenshots && App.Screenshots.getData(); return String((d && d.icon && d.icon.panY  !== undefined) ? d.icon.panY  : '0'); }()),
+        alt_text:        (function() { var d = App.Screenshots && App.Screenshots.getData(); return (d && d.icon && d.icon.altText) ? d.icon.altText : ''; }()),
+        icon_bg_colour:  (function() { var d = App.Screenshots && App.Screenshots.getData(); return (d && d.icon && d.icon.bg)  ? d.icon.bg  : ''; }()),
+        icon_fg_colour:  (function() { var d = App.Screenshots && App.Screenshots.getData(); return (d && d.icon && d.icon.fg)  ? d.icon.fg  : ''; }()),
+        icon_bg_alpha:   (function() { var d = App.Screenshots && App.Screenshots.getData(); return String((d && d.icon && d.icon.alpha !== undefined) ? d.icon.alpha : '1'); }()),
+        icon_bg_enabled: (function() { var d = App.Screenshots && App.Screenshots.getData(); return !!(d && d.icon && d.icon.bgOn); }()),
+        icon_fg_enabled: (function() { var d = App.Screenshots && App.Screenshots.getData(); return !!(d && d.icon && d.icon.fgOn); }())
       };
       fetch(SETTINGS.TX_LOG_URL, {
         method: 'POST',

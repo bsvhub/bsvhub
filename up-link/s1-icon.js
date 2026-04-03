@@ -260,7 +260,7 @@ App.Icon = {
     var noImg = prev.querySelector('.no-img'); if (noImg) noImg.remove();
     var img = prev.querySelector('img'); if (!img) { img = document.createElement('img'); prev.appendChild(img); }
     /* Position to match real BSVhub grid geometry (top:46%, left:50%, translate(-50%,-50%)) */
-    img.style.cssText = 'position:absolute;top:46%;left:50%;transform:translate(-50%,-50%);max-width:81.25%;max-height:80%;object-fit:contain;z-index:1;';
+    img.style.cssText = 'position:absolute;top:46%;left:50%;transform:translate(-50%,-50%);max-width:80%;max-height:80%;object-fit:contain;z-index:1;';
     img.removeAttribute('crossorigin'); img.src = url;
     var slot = App.Screenshots._slots[0] || App.Screenshots._defaultSlotValues(0);
     App.Screenshots._slots[0] = slot;
@@ -336,8 +336,8 @@ App.Icon = {
     var img = prev.querySelector('img:not(.ss-preview-img)'); if (!img) { img = document.createElement('img'); prev.appendChild(img); }
     /* Position icon image to match real BSVhub grid geometry:
        centre point = top:46% (6% top gap + 80% image zone / 2), left:50%,
-       max-width:81.25% (9.375% padding each side), max-height:80%      */
-    img.style.cssText = 'position:absolute;top:46%;left:50%;transform:translate(-50%,-50%);max-width:81.25%;max-height:80%;object-fit:contain;z-index:1;';
+       max-width:80% (matches unified.css grid cap), max-height:80%      */
+    img.style.cssText = 'position:absolute;top:46%;left:50%;transform:translate(-50%,-50%);max-width:80%;max-height:80%;object-fit:contain;z-index:1;';
     img.src = src; this.enforceSquare();
     if (App.Screenshots) App.Screenshots.setIconThumb(src);
   },
@@ -647,7 +647,7 @@ App.Screenshots = {
       if (idx === 0) {
         /* Slot 0 (ico): match real BSVhub grid geometry — top:46%, left:50%, translate(-50%,-50%)
            Pan offsets compose into the translate so the image pans within its centre point. */
-        ssImg.style.cssText = 'position:absolute;top:46%;left:50%;max-width:81.25%;max-height:80%;object-fit:contain;transform-origin:center;z-index:2;transform:translate(calc(-50% + ' + (slotPanX * 100) + '%), calc(-50% + ' + (slotPanY * 100) + '%)) scale(' + parseFloat(slotZoom) + ');';
+        ssImg.style.cssText = 'position:absolute;top:46%;left:50%;max-width:80%;max-height:80%;object-fit:contain;transform-origin:center;z-index:2;transform:translate(calc(-50% + ' + (slotPanX * 100) + '%), calc(-50% + ' + (slotPanY * 100) + '%)) scale(' + parseFloat(slotZoom) + ');';
       } else {
         /* Slots 1-4 (screenshots): fill full preview area */
         ssImg.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transform-origin:center;z-index:2;transform:translate(' + (slotPanX * 100) + '%, ' + (slotPanY * 100) + '%) scale(' + parseFloat(slotZoom) + ');';

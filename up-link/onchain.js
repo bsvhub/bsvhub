@@ -515,6 +515,14 @@ var WalletManager = {
 
     // --- Step 3: Broadcast MAP record ---
     return ssPromise.then(function() {
+      // Strip any _txid fields that still have no real txid before broadcast.
+      // Uploads overwrite the empty placeholder with real 64-char hex txids.
+      // Any that remain empty must not be broadcast.
+      for (var fi = fields.length - 1; fi >= 0; fi--) {
+        if (/_txid$/.test(fields[fi][0]) && !fields[fi][1]) {
+          fields.splice(fi, 1);
+        }
+      }
       onStatus('CONSTRUCTING MAP TRANSACTION...');
       var tipSats = data.tip_bsv ? Math.round(data.tip_bsv * 1e8) : 0;
       var isUpdate = data._isUpdate || false;
@@ -664,7 +672,7 @@ if (!App.MAPExport) {
         if (f) fields.push(['feature_' + (i + 1), f]);
       });
       fields.push(
-        ['icon_txid',         d.icon_txid || '(pending)'],
+        ['icon_txid',         d.icon_txid || ''],
         ['icon_format',       d.icon_format || ''],
         ['icon_size_kb',      String(d.icon_size_kb || '')],
         ['icon_bg_enabled',   String(d.icon_bg_enabled)],
@@ -688,7 +696,7 @@ if (!App.MAPExport) {
         var n = si + 1;
         var slot = ss[si];
         if (slot || d['ss' + n + '_txid']) {
-          fields.push(['ss' + n + '_txid',     d['ss' + n + '_txid'] || '(pending)']);
+          fields.push(['ss' + n + '_txid',     d['ss' + n + '_txid'] || '']);
           fields.push(['ss' + n + '_format',   (slot && slot.mime) || d['ss' + n + '_format'] || '']);
           fields.push(['ss' + n + '_size_kb',  (slot && String(slot.kb)) || d['ss' + n + '_size_kb'] || '']);
           fields.push(['ss' + n + '_zoom',     d['ss' + n + '_zoom'] || (slot && String(slot.zoom)) || '1']);

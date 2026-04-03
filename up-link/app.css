@@ -307,10 +307,10 @@ input[type=range]::-moz-range-thumb { width: 11px; height: 11px; background: var
 }
 
 /* ── Ico preview padding guide — dashed rect showing exact image zone ── */
-/* WHY: image zone = top 6%, height 80%, left/right 9.375% inset (BSVhub grid doc §7.2) */
+/* WHY: image zone = top 6%, height 80%, left/right 10% inset (matches unified.css max-width:80%) */
 #ico-padding-guide {
   position: absolute;
-  left: 9.375%; right: 9.375%;        /* matches --horizontal-padding from grid */
+  left: 10%; right: 10%;              /* matches unified.css max-width:80% cap */
   top: 6%;                            /* matches 6% top offset from grid */
   height: 80%;                        /* image zone is exactly 80% tall */
   border: 1px dashed rgba(100, 140, 200, 0.4);
@@ -612,7 +612,7 @@ input[type=range]::-moz-range-thumb { width: 11px; height: 11px; background: var
 #p1-desc                               { font-size: 14px; }
 #p1-dev                                { font-size: 12px; }
 #p1-feat                               { font-size: 14px; }
-#p1-tx                                 { font-size: 16px; }
+#p1-tx                                 { font-size: 14px; }
 .titlebar                              { font-size: 14px; }
 .statusbar                             { font-size: 14px; }
 
