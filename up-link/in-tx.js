@@ -358,12 +358,15 @@ App.Transmit = {
   },
 
   /* Fire-and-forget POST to Cloudflare Worker after successful broadcast.
-     Logs txid + form snapshot for catalog building. Failure is silent —
+     Logs txid + form snapshot for catalog building. Failure is non-blocking —
      the on-chain transaction already succeeded, so the log is best-effort. */
   _logTx: function(txid) {
-    if (!SETTINGS.TX_LOG_URL) return;
+    if (!SETTINGS.TX_LOG_URL) { console.warn('[logTx] TX_LOG_URL not set — skipping log'); return; }
     try {
       var $ = App.Utils.$;
+      /* Snapshot icon data once — avoids calling getData() 10 times */
+      var iconData = App.Screenshots && App.Screenshots.getData();
+      var icon = (iconData && iconData.icon) ? iconData.icon : {};
       var payload = {
         txid:         txid,
         wallet_id:    $('dev-paymail') ? $('dev-paymail').value.trim() : '',
@@ -391,25 +394,25 @@ App.Transmit = {
         prev_txid:    App.State.loadedRecord ? (App.State.loadedRecord.txid || '') : '',
         network:      $('tx-network') ? $('tx-network').textContent.trim().toLowerCase() : 'mainnet',
 
-        /* Icon display fields — read from slot 0 of the screenshot/icon module.
-           WHY: these are needed by /api/catalog to render the tile on BSVhub.io.
-           App.Screenshots.getData() snapshots current UI controls before returning. */
-        icon_txid:       (function() { var d = App.Screenshots && App.Screenshots.getData(); return (d && d.icon && d.icon.txid) ? d.icon.txid : ''; }()),
-        icon_zoom:       (function() { var d = App.Screenshots && App.Screenshots.getData(); return String((d && d.icon && d.icon.zoom  !== undefined) ? d.icon.zoom  : '1.0'); }()),
-        icon_pan_x:      (function() { var d = App.Screenshots && App.Screenshots.getData(); return String((d && d.icon && d.icon.panX  !== undefined) ? d.icon.panX  : '0'); }()),
-        icon_pan_y:      (function() { var d = App.Screenshots && App.Screenshots.getData(); return String((d && d.icon && d.icon.panY  !== undefined) ? d.icon.panY  : '0'); }()),
-        alt_text:        (function() { var d = App.Screenshots && App.Screenshots.getData(); return (d && d.icon && d.icon.altText) ? d.icon.altText : ''; }()),
-        icon_bg_colour:  (function() { var d = App.Screenshots && App.Screenshots.getData(); return (d && d.icon && d.icon.bg)  ? d.icon.bg  : ''; }()),
-        icon_fg_colour:  (function() { var d = App.Screenshots && App.Screenshots.getData(); return (d && d.icon && d.icon.fg)  ? d.icon.fg  : ''; }()),
-        icon_bg_alpha:   (function() { var d = App.Screenshots && App.Screenshots.getData(); return String((d && d.icon && d.icon.alpha !== undefined) ? d.icon.alpha : '1'); }()),
-        icon_bg_enabled: (function() { var d = App.Screenshots && App.Screenshots.getData(); return !!(d && d.icon && d.icon.bgOn); }()),
-        icon_fg_enabled: (function() { var d = App.Screenshots && App.Screenshots.getData(); return !!(d && d.icon && d.icon.fgOn); }())
+        /* Icon display fields — read from single getData() snapshot above.
+           WHY: these are needed by /api/catalog to render the tile on BSVhub.io. */
+        icon_txid:       icon.txid || '',
+        icon_zoom:       String(icon.zoom  !== undefined ? icon.zoom  : '1.0'),
+        icon_pan_x:      String(icon.panX  !== undefined ? icon.panX  : '0'),
+        icon_pan_y:      String(icon.panY  !== undefined ? icon.panY  : '0'),
+        alt_text:        icon.altText || '',
+        icon_bg_colour:  icon.bg  || '',
+        icon_fg_colour:  icon.fg  || '',
+        icon_bg_alpha:   String(icon.alpha !== undefined ? icon.alpha : '1'),
+        icon_bg_enabled: !!icon.bgOn,
+        icon_fg_enabled: !!icon.fgOn
       };
       fetch(SETTINGS.TX_LOG_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      })['catch'](function() { /* silent — broadcast already succeeded */ });
+        body: JSON.stringify(payload),
+        keepalive: true
+      })['catch'](function(err) { console.warn('[logTx] POST failed:', err); });
     } catch (e) {
       /* Never block the UI for a logging failure */
     }
