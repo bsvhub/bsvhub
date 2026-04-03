@@ -1,11 +1,13 @@
 /* ============================================================
-   json.js — Unified JSON loader
+   json.js — Unified JSON loader (v1.1)
    ------------------------------------------------------------
-   Fetches all three data files in parallel and builds every
+   Fetches all data sources in parallel and builds every
    dynamic section of the page:
-     1. about.json  → About / Tip / Contact header sections
-     2. list.json   → Icon-grid tab sections
-     3. ideas.json  → App Ideas accordion cards
+     1. about.json      → About / Tip / Contact header sections
+     2. list.json       → Curated icon-grid tab sections
+     3. ideas.json      → App Ideas accordion cards
+     4. /api/catalog    → On-chain entries (trusted wallets only);
+                          merged with list.json — static entries win on dedup.
    ============================================================ */
 
 /* ============================================================
@@ -64,12 +66,47 @@ Promise.all([
         }
         return r.json();
     }),
-    fetch("ideas.json").then(function (r) { return r.json(); })
+    fetch("ideas.json").then(function (r) { return r.json(); }),
+    /* On-chain catalog — fails silently so a worker outage never breaks the page */
+    fetch("/api/catalog").then(function (r) { return r.json(); }).catch(function () { return { items: [] }; })
 ])
 .then(function (results) {
-    var about     = results[0];
-    var data      = results[1];
-    var ideasData = results[2];
+    var about       = results[0];
+    var data        = results[1];
+    var ideasData   = results[2];
+    var catalogData = results[3];   /* { items: [...] } — pre-mapped by /api/catalog */
+
+    /* ── Merge on-chain catalog entries into static list.json items ────
+       Dedup by href — static list.json always wins so curated entries are
+       never displaced by an on-chain submission for the same URL.
+       On-chain items come pre-shaped by the worker (same schema as list.json)
+       so the tab-building loop below requires no special handling.          */
+    var staticHrefs = new Set(data.items.map(function (i) {
+        return (i.href || '').toLowerCase();
+    }));
+    var onChainItems = (catalogData.items || []).filter(function (item) {
+        return item && item.href && !staticHrefs.has(item.href.toLowerCase());
+    });
+    data.items = data.items.concat(onChainItems);
+
+    /* ── Dynamic 'Chain' tab button ─────────────────────────────────────
+       WHY: the tab-bar is static HTML; we only inject this button when
+       there are entries that need it, so it never appears empty.
+       tabs.js has already bound existing buttons — we wire this one manually. */
+    var hasChain = onChainItems.some(function (i) { return i.tab === 'chain'; });
+    if (hasChain) {
+        var tabBar = document.querySelector('nav.tab-bar');
+        if (tabBar && !document.querySelector('[data-target="chain"]')) {
+            var chainBtn = document.createElement('button');
+            chainBtn.className = 'tab-btn';
+            chainBtn.dataset.target = 'chain';
+            chainBtn.innerHTML = '<span>Chain</span>';
+            chainBtn.addEventListener('click', function () { activateTab('chain', chainBtn); });
+            /* Insert before the search container — keeps it with the other tab buttons */
+            var searchContainer = tabBar.querySelector('.search-container');
+            tabBar.insertBefore(chainBtn, searchContainer || null);
+        }
+    }
 
     var container = document.getElementById("content-scale");
 
@@ -217,6 +254,17 @@ Promise.all([
             // Named colours, hex, rgb, rgba all work natively.
             // No-op when nothing is set — CSS default applies.
             setTileColour(a, item.colour1, item.colour2, item.opacity);
+
+            // Pan offset — only set when non-zero so static list.json tiles
+            // inherit the CSS default (0) and are completely unaffected.
+            // WHY on wrap not on <a>: the transform lives on the <img> inside
+            // .icon-wrapper, and CSS custom properties are inherited downward.
+            if (item.pan_x && item.pan_x !== '0') {
+                wrap.style.setProperty('--icon-pan-x', item.pan_x);
+            }
+            if (item.pan_y && item.pan_y !== '0') {
+                wrap.style.setProperty('--icon-pan-y', item.pan_y);
+            }
 
             // Main icon image
             var img = document.createElement("img");
