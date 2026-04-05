@@ -196,7 +196,7 @@ var SETTINGS = {
     { value: 'bsvhub', label: 'BSVHUB.IO', color: '#EAB300', bg: 'rgba(234,179,0,0.07)', border: 'rgba(234,179,0,0.4)',
       default: true,
       mandatory: ['name', 'url', 'subcategory', 'description'],
-      subcategories: ['tool','app','wallet','exchange','market','info','dev.','social media','on-chain',
+      subcategories: ['tool','app','wallet','exchange','market','info','dev.','social media',
         { value: 'app idea', mandatory: ['description'], overrides: { MAX_DESC_CHARS: 1024 } }
       ]
     },
