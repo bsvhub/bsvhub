@@ -51,7 +51,12 @@ App.Config = {
   get: function(key) { return SETTINGS[key]; },
 
   getAllCdnUrls: function(txid) {
-    return SETTINGS.CDN_URLS.map(function(u) { return u.replace('{txid}', txid); });
+    var cb = document.getElementById('testnet-cb');
+    var isTestnet = cb && cb.checked;
+    var urls = isTestnet
+      ? (SETTINGS.CDN_URLS_TESTNET || []).concat(SETTINGS.CDN_URLS)
+      : SETTINGS.CDN_URLS;
+    return urls.map(function(u) { return u.replace('{txid}', txid); });
   },
 
   getStatusColour: function(statusValue) {

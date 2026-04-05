@@ -465,7 +465,7 @@ var WalletManager = {
       var fileBytes = this._base64ToBytes(data.icon_data_b64);
       iconPromise = this.uploadIcon(fileBytes, data.icon_format, data.icon_filename)
         .then(function(res) {
-          iconTxid = res.txid;
+          iconTxid = App.Utils.parseTxid(res.txid);
           onStatus('ICON UPLOADED // TXID: ' + res.txid.substring(0, 12) + '...');
           for (var i = 0; i < fields.length; i++) {
             if (fields[i][0] === 'icon_txid') { fields[i][1] = iconTxid; break; }
@@ -489,7 +489,7 @@ var WalletManager = {
           var existingTxid = data['ss' + n + '_txid'];
           // If the slot already has a valid 64-char txid, skip upload
           if (existingTxid && existingTxid !== '(pending)' && /^[0-9a-fA-F]{64}(_\w+)?$/.test(existingTxid)) {
-            ssTxids[idx] = existingTxid;
+            ssTxids[idx] = App.Utils.parseTxid(existingTxid);
             return;
           }
           if (slot.dataB64) {
@@ -499,7 +499,7 @@ var WalletManager = {
               var ssMime = slot.mime || 'image/png';
               var ssFilename = slot.filename || ('ss' + n);
               return self.uploadIcon(ssBytes, ssMime, ssFilename).then(function(res) {
-                ssTxids[idx] = res.txid;
+                ssTxids[idx] = App.Utils.parseTxid(res.txid);
                 onStatus('SS' + n + ' UPLOADED // TXID: ' + res.txid.substring(0, 12) + '...');
                 // Write txid into MAP fields
                 for (var fi = 0; fi < fields.length; fi++) {

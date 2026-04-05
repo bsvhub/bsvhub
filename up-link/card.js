@@ -26,11 +26,13 @@ var BSVCard = (function() {
     tabGap: 2,
     tabRadius: 4,
     cdnUrls: [
-      'https://ordinals.gorillapool.io/content/{txid}_0',
-      'https://ordfs.network/{txid}_0',
-      'https://1satordinals.com/content/{txid}_0',
-      'https://ordfs.network/{txid}',
       'https://ordinals.gorillapool.io/content/{txid}',
+      'https://ordfs.network/{txid}',
+      'https://1satordinals.com/content/{txid}',
+    ],
+    cdnUrlsTestnet: [
+      'https://testnet.gorillapool.io/content/{txid}',
+      'https://ordfs.network/{txid}',
     ],
     statusColours: {
       alpha: '#ff5733', beta: '#ffcc66', live: '#00cc44',
@@ -497,7 +499,11 @@ var BSVCard = (function() {
   //
   function loadImage(txid, imgEl, cdnUrls) {
     if (!txid || !imgEl) return;
-    cdnUrls = cdnUrls || DEFAULTS.cdnUrls;
+    var cb = document.getElementById('testnet-cb');
+    var isTestnet = cb && cb.checked;
+    cdnUrls = isTestnet
+      ? (DEFAULTS.cdnUrlsTestnet || []).concat(cdnUrls || DEFAULTS.cdnUrls)
+      : (cdnUrls || DEFAULTS.cdnUrls);
     var urls = cdnUrls.map(function(u) { return u.replace('{txid}', txid); });
     var idx = 0;
     function tryNext() {

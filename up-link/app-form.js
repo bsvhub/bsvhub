@@ -156,7 +156,8 @@ App.Form = {
         url:         { el: $('app-url'),     label: 'lbl-url',    display: 'URL',         ok: function() { return !!$('app-url').value.trim(); } },
         status:      { el: $('app-status'),  label: 'lbl-status', display: 'STATUS',      ok: function() { return !!$('app-status').value; } },
         description: { el: $('desc'),        label: 'lbl-desc',   display: 'DESCRIPTION', ok: function() { return !!$('desc').value.trim(); } },
-        subcategory: { el: document.getElementById('subcat-btn'), label: 'lbl-sub', display: 'SUBCATEGORY', ok: function() { return !!(App.Subcat && App.Subcat.getValue()); } }
+        subcategory: { el: document.getElementById('subcat-btn'), label: 'lbl-sub', display: 'SUBCATEGORY', ok: function() { return !!(App.Subcat && App.Subcat.getValue()); } },
+        icon:        { el: $('icon-preview'), label: 'lbl-icon',  display: 'ICON',        ok: function() { var s = App.Screenshots && App.Screenshots._slots[0]; return !!(s && (s.dataB64 || s.chainUrl || s.txid)); } }
       };
       var missing = [];
       for (var mi = 0; mi < mandatory.length; mi++) {
@@ -168,7 +169,15 @@ App.Form = {
         }
       }
       if (missing.length) {
-        App.StatusBar.set('MANDATORY FIELDS: ' + missing.join(', '), 'err');
+        App.StatusBar.set('MISSING: ' + missing.join(', '), 'err');
+        /* Flash the status bar message too */
+        var sbEl = document.querySelector('.screen.active .sb-l');
+        if (sbEl) {
+          sbEl.classList.remove('flash-label');
+          void sbEl.offsetWidth;
+          sbEl.classList.add('flash-label');
+          sbEl.addEventListener('animationend', function() { sbEl.classList.remove('flash-label'); }, { once: true });
+        }
         /* Focus the first missing field */
         var firstKey = mandatory[0];
         var firstInfo = fieldMap[firstKey];
@@ -239,14 +248,14 @@ App.Form = {
     /* Map field names (from config) to label element IDs */
     var fieldToLabel = {
       name: 'lbl-name', url: 'lbl-url', status: 'lbl-status',
-      subcategory: 'lbl-sub', description: 'lbl-desc'
+      subcategory: 'lbl-sub', description: 'lbl-desc', icon: 'lbl-icon'
     };
     var mandatory = App.Category ? App.Category.getMandatoryFields() : [];
     var mandatorySet = {};
     for (var i = 0; i < mandatory.length; i++) mandatorySet[mandatory[i]] = true;
 
     /* Toggle req class on each known label */
-    var allFields = ['name', 'url', 'status', 'subcategory', 'description'];
+    var allFields = ['name', 'url', 'status', 'subcategory', 'description', 'icon'];
     for (var fi = 0; fi < allFields.length; fi++) {
       var lblId = fieldToLabel[allFields[fi]];
       var el = lblId ? document.getElementById(lblId) : null;
@@ -254,6 +263,13 @@ App.Form = {
         if (mandatorySet[allFields[fi]]) el.classList.add('req');
         else el.classList.remove('req');
       }
+    }
+
+    /* Toggle ico-req on slot-0 only — keeps ss1-ss4 labels amber */
+    var slot0 = document.getElementById('slot-0');
+    if (slot0) {
+      if (mandatorySet.icon) slot0.classList.add('ico-req');
+      else slot0.classList.remove('ico-req');
     }
 
     /* Subcat button — mandatory styling */

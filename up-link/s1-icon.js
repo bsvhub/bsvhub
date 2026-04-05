@@ -562,7 +562,13 @@ App.Screenshots = {
     }
 
     var lbl = App.Utils.$('lbl-icon');
-    if (lbl) lbl.textContent = this._LABELS[idx];
+    if (lbl) {
+      lbl.textContent = this._LABELS[idx];
+      /* Only show mandatory (req) styling on slot 0 (icon), not screenshots */
+      var iconMandatory = idx === 0 && App.Category && App.Category.getMandatoryFields().indexOf('icon') !== -1;
+      if (iconMandatory) lbl.classList.add('req');
+      else lbl.classList.remove('req');
+    }
 
     var txidInput = App.Utils.$('icon-txid');
     var txidSt = App.Utils.$('txid-st');

@@ -195,7 +195,7 @@ var SETTINGS = {
   CATEGORIES: [
     { value: 'bsvhub', label: 'BSVHUB.IO', color: '#EAB300', bg: 'rgba(234,179,0,0.07)', border: 'rgba(234,179,0,0.4)',
       default: true,
-      mandatory: ['name', 'url', 'subcategory', 'description'],
+      mandatory: ['name', 'url', 'subcategory', 'description', 'icon'],
       subcategories: ['tool','app','wallet','exchange','market','info','dev.','social media',
         { value: 'app idea', mandatory: ['description'], overrides: { MAX_DESC_CHARS: 1024 } }
       ]
@@ -414,6 +414,11 @@ var SETTINGS = {
     'https://ordinals.gorillapool.io/content/{txid}',
     'https://ordfs.network/{txid}',
     'https://1satordinals.com/content/{txid}',
+  ],
+
+  CDN_URLS_TESTNET: [
+    'https://testnet.gorillapool.io/content/{txid}',
+    'https://ordfs.network/{txid}',
   ],
 
   // Timeout for fetch attempts in milliseconds

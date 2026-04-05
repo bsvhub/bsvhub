@@ -420,6 +420,8 @@ App.MAPImport = {
           };
           App.Screenshots._updateStripThumb(sj);
         } else if (ssTxid && ssTxid !== '(pending)') {
+          // Normalize to canonical txid_suffix form (handles old records missing _0)
+          ssTxid = App.Utils.parseTxid(ssTxid);
           // On-chain record — restore metadata and try to fetch from CDN
           var ssSlot = {
             dataB64: null,

@@ -288,8 +288,11 @@ App.Viewer = {
           BSVCard.injectCSS();
         }
 
-        /* Build CDN URL templates from config */
-        var cdnUrlTemplates = SETTINGS.CDN_URLS || [];
+        /* Build CDN URL templates — testnet-first when toggle is on */
+        var _cb = document.getElementById('testnet-cb');
+        var cdnUrlTemplates = (_cb && _cb.checked)
+          ? (SETTINGS.CDN_URLS_TESTNET || []).concat(SETTINGS.CDN_URLS || [])
+          : (SETTINGS.CDN_URLS || []);
 
         /* Render card using shared BSVCard module */
         if (cardEl) {
@@ -518,8 +521,10 @@ App.Viewer = {
     cardEl.innerHTML = '';
     cardEl.appendChild(img);
 
-    /* CDN try-loop — tracks which URL succeeds for metadata display */
-    var cdnUrls = SETTINGS.CDN_URLS || [];
+    /* CDN try-loop — testnet-first when toggle is on, mainnet fallback */
+    var cdnUrls = (network === 'TESTNET')
+      ? (SETTINGS.CDN_URLS_TESTNET || []).concat(SETTINGS.CDN_URLS || [])
+      : (SETTINGS.CDN_URLS || []);
     var urls    = cdnUrls.map(function(u) { return u.replace('{txid}', txid); });
     var idx     = 0;
 
