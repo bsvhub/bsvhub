@@ -1643,6 +1643,16 @@
       "alt": "",
       "text": "bOpen.ai",
       "info": ";;;"
+    },
+    {
+      "tab": "wallet;get",
+      "href": "https://craigscard.com",
+      "tooltip": "A business card people send money to.",
+      "img": "icon/craigscard.webp",
+      "zoom": "1.0",
+      "alt": "",
+      "text": "Craigscard",
+      "info": ";;;"
     }
   ]
 }
