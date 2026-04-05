@@ -196,7 +196,7 @@ var SETTINGS = {
     { value: 'bsvhub', label: 'BSVHUB.IO', color: '#EAB300', bg: 'rgba(234,179,0,0.07)', border: 'rgba(234,179,0,0.4)',
       default: true,
       mandatory: ['name', 'url', 'subcategory', 'description'],
-      subcategories: ['tool','app','wallet','exchange','market','info','dev.','social media',
+      subcategories: ['tool','app','wallet','exchange','market','info','dev.','social media','on-chain',
         { value: 'app idea', mandatory: ['description'], overrides: { MAX_DESC_CHARS: 1024 } }
       ]
     },
@@ -382,7 +382,8 @@ var SETTINGS = {
      ─────────────────────────────────────────────────────────────── */
 
   // Cloudflare Worker endpoint for transaction logging (fire-and-forget after broadcast)
-  TX_LOG_URL: '/api/tx-log',
+  // WHY: full URL required — relative path fails when app is served from GitHub Pages or any non-worker origin
+  TX_LOG_URL: 'https://bsvhub.io/api/tx-log',
 
   // Fallback fee estimate in satoshis (used when wallet.js estimate unavailable)
   BASE_FEE_SATS: 20,
