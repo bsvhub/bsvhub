@@ -1334,7 +1334,7 @@
       "opacity": "0.7"
     },
     {
-      "tab": "app;marker",
+      "tab": "app;market",
       "href": "https://bsvbsv.com/museum.html",
       "tooltip": "Historical NFT collections and digital artifacts preserved on blockchain. Browse, collect, and trade unique pieces.",
       "img": "app/bsvmuseum.svg",
@@ -1655,7 +1655,7 @@
       "info": ";;;"
     },
     {
-      "tab": "app;marker",
+      "tab": "app;market",
       "href": "https://www.bitcoinapps.store",
       "tooltip": "The World's First Decentralized App Marketplace",
       "img": "app/bitcoin_apps.webp",
