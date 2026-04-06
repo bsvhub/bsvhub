@@ -1653,6 +1653,16 @@
       "alt": "",
       "text": "Craigscard",
       "info": ";;;"
+    },
+    {
+      "tab": "app;marker"
+      "href": "https://www.bitcoinapps.store",
+      "tooltip": "The World's First Decentralized App Marketplace",
+      "img": "app/bitcoin_apps.webp",
+      "zoom": "1.0",
+      "alt": "",
+      "text": "Bitcoin Apps Store",
+      "info": ";;;"
     }
   ]
 }
