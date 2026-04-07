@@ -1663,6 +1663,16 @@
       "alt": "",
       "text": "Bitcoin Apps Store",
       "info": ";;;"
+    },
+    {
+      "tab": "tool",
+      "href": "https://x402agency.com",
+      "tooltip": "One prompt chains agents together — generate an image, turn it into a video, host it with a shareable link. Under a dollar total. No subscriptions. No API keys. No platform cut.",
+      "img": "icon/x402agency.webp",
+      "zoom": "1.4",
+      "alt": "",
+      "text": "x402agency",
+      "info": "brc100.svg;;;"
     }
   ]
 }
