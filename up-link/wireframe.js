@@ -177,6 +177,13 @@ function syncNav(n) {
       t.classList.remove('active');
     }
   }
+  /* Sync S1/S2 sheet indicators (multiple instances across screen titlebars) */
+  var s1All = document.querySelectorAll('.sheet-ind');
+  for (var k = 0; k < s1All.length; k++) {
+    var ind = s1All[k];
+    var isS1 = ind.textContent === 'S1';
+    ind.classList.toggle('active', isS1 ? n === 1 : n === 2);
+  }
 }
 
 /* ── Geometry engine ───────────────────────────────────────────── */
@@ -404,6 +411,12 @@ document.addEventListener('click', function(e) {
   if (modeBtn) {
     var n2 = parseInt(modeBtn.getAttribute('data-screen'), 10);
     if (!isNaN(n2)) goTo(n2);
+    return;
+  }
+  var sheetBtn = e.target.closest('.sheet-ind[data-screen]');
+  if (sheetBtn) {
+    var n3 = parseInt(sheetBtn.getAttribute('data-screen'), 10);
+    if (!isNaN(n3)) goTo(n3);
   }
 });
 

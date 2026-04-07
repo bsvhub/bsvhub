@@ -110,7 +110,9 @@ App.HeaderFooter = {
           '<button class="unit-btn" data-delta="5">+</button>' +
         '</div>' +
         '<div class="logo">Up-<span class="logo-link">LINK</span> // ' +
-          '<a class="mode-toggle' + s + '" id="mode-submit" data-screen="1">SUBMIT</a> ' +
+          '<a class="mode-toggle' + s + '" id="mode-submit" data-screen="1">SUBMIT</a>' +
+          '<a class="sheet-ind active" id="ind-s1" data-screen="1">S1</a>' +
+          '<a class="sheet-ind" id="ind-s2">S2</a> ' +
           '<span style="color:var(--dim);font-size:0.7em;">|</span> ' +
           '<a class="mode-toggle' + u + '" id="mode-update" data-screen="1">UPDATE</a> ' +
           '<span style="color:var(--dim);font-size:0.7em;">|</span> ' +

@@ -59,6 +59,9 @@ lbl.req { color: var(--mandatory); }
 .mode-toggle { cursor: pointer; color: var(--dim); text-decoration: none; transition: color 0.2s; }
 .mode-toggle:hover { color: var(--amber); }
 .mode-toggle.active { color: var(--amber); text-decoration: underline; text-underline-offset: 3px; }
+.sheet-ind { color: var(--dim); font-size: 0.86em; margin-left: 12px; text-decoration: none; transition: color 0.2s; letter-spacing: 0.5px; cursor: default; }
+.sheet-ind[data-screen] { cursor: pointer; }
+.sheet-ind.active { color: var(--amber); text-decoration: underline; text-underline-offset: 3px; }
 
 /* ── Wallet indicator ───────────────────────────────────────── */
 .wallet-bar { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
@@ -324,8 +327,12 @@ input[type=range]::-moz-range-thumb { width: 11px; height: 11px; background: var
 .icon-well { flex-basis: 44%; flex-shrink: 0; display: flex; align-items: stretch; justify-content: center; align-self: stretch; min-width: 0; }
 .mode-container { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; }
 .gradient-hint { font-size: 0.93em; color: var(--dim); letter-spacing: 0.5px; flex-shrink: 0; white-space: nowrap; }
-/* Icon-only block greyed when a screenshot slot is active */
-#p1-icon.ss-active .icon-only { opacity: 0.3; pointer-events: none; }
+/* Icon-only block greyed when a screenshot slot is active —
+   use per-child opacity so #fname / #fsize can opt out */
+#p1-icon.ss-active .icon-only { pointer-events: none; }
+#p1-icon.ss-active .icon-only > * { opacity: 0.3; }
+#p1-icon.ss-active #fname,
+#p1-icon.ss-active #fsize { opacity: 1; pointer-events: auto; }
 .txid-status { font-size: 0.93em; white-space: normal; word-break: break-word; }
 /* Collapse when empty — prevents layout shift when switching upload/on-chain mode */
 .txid-status:empty { display: none; }

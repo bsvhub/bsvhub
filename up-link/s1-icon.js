@@ -663,7 +663,7 @@ App.Screenshots = {
       if (fsEl) { fsEl.textContent = slot.kb + 'kb'; fsEl.className = 'file-info ' + (slot.kb > Math.round(SETTINGS.MAX_SCREENSHOT_BYTES / 1024) ? 'file-size-err' : 'file-size-gold'); }
     } else {
       if (noImg) { noImg.style.display = ''; noImg.textContent = 'NO SCREENSHOT'; }
-      if (fnEl) fnEl.textContent = 'GIF \u00B7 PNG \u00B7 JPG \u00B7 WEBP \u00B7 AVIF';
+      if (fnEl) fnEl.textContent = 'GIF \u00B7 JPG \u00B7 PNG \u00B7 WEBP \u00B7 AVIF';
       if (fsEl) { fsEl.textContent = 'MAX ' + Math.round(SETTINGS.MAX_SCREENSHOT_BYTES / 1024) + 'kb'; fsEl.className = 'file-info file-size-gold'; }
     }
   },
