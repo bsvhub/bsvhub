@@ -1,0 +1,84 @@
+<svg
+  width="460"
+  height="460"
+  viewBox="-5 -5 460 460"
+  xmlns="http://www.w3.org/2000/svg"
+  aria-label="BSV Browser network icon"
+  pointer-events="none"
+>
+  <defs>
+    <!-- Soft radial glow -->
+    <radialGradient id="glowGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#7fb3ff" stop-opacity="0.22"/>
+      <stop offset="70%" stop-color="#7fb3ff" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="glowBlur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="40"/>
+    </filter>
+  </defs>
+
+  <!-- Glow layer -->
+  <circle
+    cx="225"
+    cy="225"
+    r="180"
+    fill="url(#glowGradient)"
+    filter="url(#glowBlur)"
+  />
+
+  <!-- Rotating network -->
+  <g stroke="#7fb3ff" fill="#7fb3ff" stroke-width="1.5">
+    <animateTransform
+      attributeName="transform"
+      type="rotate"
+      from="0 225 225"
+      to="360 225 225"
+      dur="100s"
+      repeatCount="indefinite"
+    />
+
+    <!-- ALL original lines (restored, unmodified) -->
+    <line x1="405" y1="225" x2="352.279" y2="352.279" stroke-opacity="0.35"/>
+    <line x1="405" y1="225" x2="225" y2="405" stroke-opacity="0.35"/>
+    <line x1="405" y1="225" x2="97.721" y2="352.279" stroke-opacity="0.35"/>
+    <line x1="405" y1="225" x2="97.721" y2="97.721" stroke-opacity="0.35"/>
+    <line x1="405" y1="225" x2="225" y2="45" stroke-opacity="0.35"/>
+    <line x1="405" y1="225" x2="352.279" y2="97.721" stroke-opacity="0.35"/>
+
+    <line x1="352.279" y1="352.279" x2="225" y2="405" stroke-opacity="0.35"/>
+    <line x1="352.279" y1="352.279" x2="97.721" y2="352.279" stroke-opacity="0.35"/>
+    <line x1="352.279" y1="352.279" x2="45" y2="225" stroke-opacity="0.35"/>
+    <line x1="352.279" y1="352.279" x2="97.721" y2="97.721" stroke-opacity="0.35"/>
+    <line x1="352.279" y1="352.279" x2="225" y2="45" stroke-opacity="0.35"/>
+    <line x1="352.279" y1="352.279" x2="352.279" y2="97.721" stroke-opacity="0.35"/>
+
+    <line x1="225" y1="405" x2="97.721" y2="352.279" stroke-opacity="0.35"/>
+    <line x1="225" y1="405" x2="45" y2="225" stroke-opacity="0.35"/>
+    <line x1="225" y1="405" x2="97.721" y2="97.721" stroke-opacity="0.35"/>
+    <line x1="225" y1="405" x2="352.279" y2="97.721" stroke-opacity="0.35"/>
+
+    <line x1="97.721" y1="352.279" x2="45" y2="225" stroke-opacity="0.35"/>
+    <line x1="97.721" y1="352.279" x2="97.721" y2="97.721" stroke-opacity="0.35"/>
+    <line x1="97.721" y1="352.279" x2="225" y2="45" stroke-opacity="0.35"/>
+    <line x1="97.721" y1="352.279" x2="352.279" y2="97.721" stroke-opacity="0.35"/>
+
+    <line x1="45" y1="225" x2="97.721" y2="97.721" stroke-opacity="0.35"/>
+    <line x1="45" y1="225" x2="225" y2="45" stroke-opacity="0.35"/>
+    <line x1="45" y1="225" x2="352.279" y2="97.721" stroke-opacity="0.35"/>
+
+    <line x1="97.721" y1="97.721" x2="225" y2="45" stroke-opacity="0.35"/>
+    <line x1="97.721" y1="97.721" x2="352.279" y2="97.721" stroke-opacity="0.35"/>
+    <line x1="225" y1="45" x2="352.279" y2="97.721" stroke-opacity="0.35"/>
+
+    <!-- nodes -->
+    <circle cx="405" cy="225" r="6"/>
+    <circle cx="352.279" cy="352.279" r="6"/>
+    <circle cx="225" cy="405" r="6"/>
+    <circle cx="97.721" cy="352.279" r="6"/>
+    <circle cx="45" cy="225" r="6"/>
+    <circle cx="97.721" cy="97.721" r="6"/>
+    <circle cx="225" cy="45" r="6"/>
+    <circle cx="352.279" cy="97.721" r="6"/>
+  </g>
+</svg>
