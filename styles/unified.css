@@ -428,6 +428,7 @@ body.mobile-mode .mobile-mode-icon {
 
 #content-scale {
     width: 100%;
+    zoom: 0.9;
     /* padding-bottom moved to content-area in mobile, stays here in desktop */
 }
 
@@ -575,8 +576,13 @@ ul.icon-grid li a:hover::after {
     /* Center point is 6% down + half of image area height */
     top: calc(6% + var(--image-max-height) / 2);
     left: 50%;
-    /* Apply JSON zoom value (default 1.0 if not specified) */
-    transform: translate(-50%, -50%) scale(var(--icon-zoom, 1.0));
+    /* Pan + zoom compose into one transform. --icon-pan-x/y are set by json.js on
+       .icon-wrapper only for on-chain tiles — defaults to 0 so all static list.json
+       tiles remain pixel-identical to before. Formula matches s1-icon.js live preview. */
+    transform: translate(
+        calc(-50% + calc(var(--icon-pan-x, 0) * 100%)),
+        calc(-50% + calc(var(--icon-pan-y, 0) * 100%))
+    ) scale(var(--icon-zoom, 1.0));
     /* Max dimensions ensure zoom: 1.0 fits perfectly */
     max-width: var(--image-max-height);
     max-height: var(--image-max-height);  /* 80% of wrapper height */
@@ -584,9 +590,12 @@ ul.icon-grid li a:hover::after {
     transition: transform 0.25s;
 }
 
-/* Hover zoom - multiplies the JSON zoom by 1.15 */
+/* Hover zoom - multiplies the JSON zoom by 1.15, pan is preserved */
 ul.icon-grid li a:hover .icon-wrapper img:not([class*="icon-badge-pos"]) {
-    transform: translate(-50%, -50%) scale(calc(var(--icon-zoom, 1.0) * 1.15));
+    transform: translate(
+        calc(-50% + calc(var(--icon-pan-x, 0) * 100%)),
+        calc(-50% + calc(var(--icon-pan-y, 0) * 100%))
+    ) scale(calc(var(--icon-zoom, 1.0) * 1.15));
 }
 
 /* ============================================================
