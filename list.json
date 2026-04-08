@@ -270,7 +270,7 @@
       "tab": "wallet",
       "href": "https://desktop.bsvb.tech",
       "tooltip": "Another BRC-100 wallet",
-      "img": "icon/bsv.svg",
+      "img": "app/bsv_desktop.svg",
       "zoom": "1.0",
       "alt": "apps wallet",
       "text": "BSV Desktop",
