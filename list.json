@@ -268,15 +268,15 @@
     },
     {
       "tab": "wallet",
-      "href": "https://desktop.bsvb.tech",
+      "href": "https://mobile.bsvb.tech",
       "tooltip": "Another BRC-100 wallet",
       "img": "app/bsv_desktop.svg",
       "zoom": "1.2",
       "alt": "apps wallet",
-      "text": "BSV Desktop",
+      "text": "BSV Mobile",
       "info": ";;;",
-      "colour1": "blue",
-      "opacity": "0.5"
+      "colour1": "#33334D",
+      "opacity": "0.8"
     },
     {
       "tab": "bsv",
