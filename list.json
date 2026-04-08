@@ -271,12 +271,11 @@
       "href": "https://desktop.bsvb.tech",
       "tooltip": "Another BRC-100 wallet",
       "img": "app/bsv_desktop.svg",
-      "zoom": "1.0",
+      "zoom": "1.2",
       "alt": "apps wallet",
       "text": "BSV Desktop",
       "info": ";;;",
       "colour1": "blue",
-      "colour2": "black",
       "opacity": "0.5"
     },
     {
