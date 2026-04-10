@@ -68,13 +68,16 @@ Promise.all([
     }),
     fetch("ideas.json").then(function (r) { return r.json(); }),
     /* On-chain catalog — fails silently so a worker outage never breaks the page */
-    fetch("/api/catalog").then(function (r) { return r.json(); }).catch(function () { return { items: [] }; })
+    fetch("/api/catalog").then(function (r) { return r.json(); }).catch(function () { return { items: [] }; }),
+    /* Link click stats — single fetch, used to stamp count badges on tiles */
+    fetch("/api/link-stats").then(function (r) { return r.json(); }).catch(function () { return { stats: {} }; })
 ])
 .then(function (results) {
     var about       = results[0];
     var data        = results[1];
     var ideasData   = results[2];
     var catalogData = results[3];   /* { items: [...] } — pre-mapped by /api/catalog */
+    var clickStats  = results[4].stats || {};  /* { url: count } map for badge display */
 
     /* ── Merge on-chain catalog entries into static list.json items ────
        Dedup by href — static list.json always wins so curated entries are
@@ -291,6 +294,15 @@ Promise.all([
             txt.textContent = item.text || "";
             wrap.appendChild(txt);
 
+            // Click-count badge — stamped from pre-fetched stats
+            var clickCount = clickStats[item.href] || 0;
+            if (clickCount > 0) {
+                var counter       = document.createElement("div");
+                counter.className = "click-count";
+                counter.textContent = clickCount;
+                wrap.appendChild(counter);
+            }
+
             a.appendChild(wrap);
             li.appendChild(a);
             ul.appendChild(li);
@@ -311,6 +323,24 @@ Promise.all([
 
         var href = a.href;
         var text = (a.querySelector(".icon-text") || {}).textContent || href;
+
+        /* ── Click counter — fire-and-forget POST + live badge update ── */
+        fetch("/api/link-click", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url: href }),
+        }).catch(function () {});
+
+        var countEl = a.querySelector(".click-count");
+        if (countEl) {
+            countEl.textContent = parseInt(countEl.textContent) + 1;
+        } else {
+            var c = document.createElement("div");
+            c.className = "click-count";
+            c.textContent = "1";
+            var w = a.querySelector(".icon-wrapper");
+            if (w) w.appendChild(c);
+        }
 
         fetch("/api/check-link", {
             method: "POST",
