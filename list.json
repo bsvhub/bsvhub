@@ -11,7 +11,7 @@
       "info": ";;;"
     },
     {
-      "tab": "basics",
+      "tab": "info",
       "href": "https://bsvassociation.org/",
       "tooltip": "Guardians of the BSV protocol",
       "img": "icon/association.svg",
@@ -24,7 +24,7 @@
       "opacity": "0.7"
     },
     {
-      "tab": "basics",
+      "tab": "info",
       "href": "https://hub.bsvblockchain.org/",
       "tooltip": "BSV Blockchain Hub: wide array of resources to meet diverse needs, from technical details to real-world uses.",
       "img": "icon/hub.svg",
@@ -34,7 +34,7 @@
       "info": ";;;"
     },
     {
-      "tab": "basics",
+      "tab": "info",
       "href": "https://bsv-case-studies.bsvblockchain.org",
       "tooltip": "Real-World Adoption Across Industries, Regions, and Applications",
       "img": "icon/bsv_industry.svg",
@@ -54,7 +54,7 @@
       "info": ";;;YT;"
     },
     {
-      "tab": "basics",
+      "tab": "info",
       "href": "https://bsvblockchain.org/",
       "tooltip": "Official BSV pages",
       "img": "icon/bsv-blockchain.svg",
@@ -77,7 +77,7 @@
       "info": ";;;"
     },
     {
-      "tab": "basics",
+      "tab": "info",
       "href": "https://wiki.bitcoinsv.io/index.php/Main_Page",
       "tooltip": "Bitcoin Wiki",
       "img": "icon/bitcoin_sv.svg",
@@ -177,7 +177,7 @@
       "info": ";;;"
     },
     {
-      "tab": "basics",
+      "tab": "info",
       "href": "https://gorillapool.com/",
       "tooltip": "Gorilla Pool Mining",
       "img": "icon/gorillapool.svg",
@@ -187,7 +187,7 @@
       "info": ";;;"
     },
     {
-      "tab": "basics",
+      "tab": "info",
       "href": "https://gorillapool.io/",
       "tooltip": "Join Gorilla Pool",
       "img": "icon/gorillaminer.svg",
@@ -564,7 +564,7 @@
       "info": "BRC-100;;;;"
     },
     {
-      "tab": "basics;dev",
+      "tab": "info;dev",
       "href": "https://bsvhackathon.com/",
       "tooltip": "Hackathon info, events, registration",
       "img": "icon/hackathon.svg",
@@ -664,7 +664,7 @@
       "info": ";;;"
     },
     {
-      "tab": "basics;dev",
+      "tab": "info;dev",
       "href": "https://1satordinals.com/",
       "tooltip": "Website provides resources and links in relation to Ordinals/NFTs on BSV",
       "img": "icon/ordinals.svg",
@@ -724,7 +724,7 @@
       "info": ";;;"
     },
     {
-      "tab": "basics",
+      "tab": "info",
       "href": "https://thatsbtcnotbitcoin.com/",
       "tooltip": "Site explains why BTC is not Bitcoin",
       "img": "icon/not_bitcoin.svg",
@@ -899,7 +899,7 @@
       "opacity": "0.5"
     },
     {
-      "tab": "basics",
+      "tab": "info",
       "href": "https://bsvbetter.org/",
       "tooltip": "BSV Better is dedicated to exploring, and educating others about the revolutionary potential of Bitcoin SV (BSV).",
       "img": "icon/bsvbetter.svg",
@@ -1165,7 +1165,7 @@
       "info": ";;;"
     },
     {
-      "tab": "tool;basics",
+      "tab": "tool;info",
       "href": "https://nodeless.network",
       "tooltip": "deploy blockchain-powered services that scale globaly",
       "img": "icon/bsv.svg",
@@ -1463,7 +1463,7 @@
       "info": ";;;BETA;"
     },
     {
-      "tab": "basics",
+      "tab": "info",
       "href": "https://bitschool.online",
       "tooltip": "Learn Bitcoin SV from the ground up with hands-on simulations, clear explanations, and interactive assessments. Perfect for complete beginners.",
       "img": "app/bitschool.svg",
@@ -1494,7 +1494,7 @@
       "colour1": "#3ebfba"
     },
     {
-      "tab": "basics;dev",
+      "tab": "info;dev",
       "href": "https://www.boostbsv.com",
       "tooltip": "Everything you need to know about BSV, cryptocurrency, and the future of digital money",
       "img": "icon/boostbsv.svg",
@@ -1504,7 +1504,7 @@
       "info": ";;;CODE;"  
     },
     {
-      "tab": "basics",
+      "tab": "info",
       "href": "https://igamingbsv.com",
       "tooltip": "iGamingBSV.com shows why BSV crypto and blockchain is a great asset for the iGaming industry.",
       "img": "icon/igamingbsv.png",
@@ -1547,7 +1547,7 @@
       "info": ";;;"
     },
     {
-      "tab": "basics;dev",
+      "tab": "info;dev",
       "href": "https://docs.whatsonchain.com",
       "tooltip": "WhatsonChain documentation for how to transmit and read information of chain",
       "img": "icon/whatsonchain.svg",
@@ -1588,7 +1588,7 @@
       "info": ";;;"
     },
     {
-      "tab": "basics",
+      "tab": "info",
       "href": "https://bico.media/bb98efaa2044b0fd23bf76a5f8ce54573e07db268bc0e23e77d14d9d8955d5e4",
       "tooltip": "The original Bitcoin whitepaper (pdf)",
       "img": "on-chain/doc.svg",
