@@ -640,6 +640,22 @@ ul.icon-grid li a:hover .icon-text::first-letter {
 }
 
 
+/* ── Click-count badge (top-right corner of icon tiles) ────── */
+.click-count {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #EAB300;
+    font-family: var(--font-icon-grid);
+    font-size: 0.65rem;
+    padding: 1px 4px;
+    border-radius: 3px;
+    z-index: 12;
+    pointer-events: none;
+    line-height: 1.2;
+}
+
 /* ============================================================
    10 – HEADER-TAB SECTIONS (About / Tip / Contact)
    ============================================================ */
