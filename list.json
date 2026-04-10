@@ -51,7 +51,7 @@
       "zoom": "1.0",
       "alt": "BSV Search on YouTube",
       "text": "BSV Search",
-      "info": ";;yt.svg;"
+      "info": ";;;YT;"
     },
     {
       "tab": "info",
@@ -94,7 +94,7 @@
       "zoom": "1.0",
       "alt": "CoinGeek on YouTube",
       "text": "CoinGeek",
-      "info": ";;yt.svg;"
+      "info": ";;;YT;"
     },
     {
       "tab": "get",
@@ -114,7 +114,7 @@
       "zoom": "1.0",
       "alt": "info videos",
       "text": "Crypto is my Retirement",
-      "info": ";;yt.svg;"
+      "info": ";;;YT;"
     },
     {
       "tab": "wallet",
@@ -134,7 +134,7 @@
       "zoom": "1.0",
       "alt": "classic old legacy",
       "text": "SPV Wallet",
-      "info": ";;beta.svg;"
+      "info": ";;;BETA;"
     },
     {
       "tab": "wallet",
@@ -164,7 +164,7 @@
       "zoom": "1.0",
       "alt": "Gavin Mehl",
       "text": "Gavin Mehl",
-      "info": ";;yt.svg;"
+      "info": ";;;YT;"
     },
     {
       "tab": "get",
@@ -224,7 +224,7 @@
       "zoom": "1.0",
       "alt": "Kate Mosso",
       "text": "KryptoKate",
-      "info": ";;yt.svg;"
+      "info": ";;;YT;"
     },
     {
       "tab": "sm",
@@ -305,7 +305,7 @@
       "zoom": "1.0",
       "alt": "BSV BRC 100",
       "text": "@ProjectBabbage",
-      "info": ";;twitter.svg;"
+      "info": ";;;TWITTER;"
     },
     {
       "tab": "sm",
@@ -315,7 +315,7 @@
       "zoom": "1.0",
       "alt": "Kate Mosso",
       "text": "@Kate_L_Mosso",
-      "info": ";;twitter.svg;"
+      "info": ";;;TWITTER;"
     },
     {
       "tab": "video",
@@ -325,7 +325,7 @@
       "zoom": "1.0",
       "alt": "blockchain identity brc 100",
       "text": "Project Babbage",
-      "info": ";;yt.svg;"
+      "info": ";;;YT;"
     },
     {
       "tab": "dev",
@@ -345,7 +345,7 @@
       "zoom": "1.0",
       "alt": "BSV Bitcoin Monero Privacy",
       "text": "Rafael LaVerde",
-      "info": ";;twitter.svg;"
+      "info": ";;;TWITTER;"
     },
     {
       "tab": "sm",
@@ -355,7 +355,7 @@
       "zoom": "1.0",
       "alt": "BSV Bitcoin",
       "text": "@SirToshiTV",
-      "info": ";;twitter.svg;"
+      "info": ";;;TWITTER;"
     },
     {
       "tab": "tool;dev",
@@ -365,7 +365,7 @@
       "zoom": "1.0",
       "alt": "developer tool",
       "text": "React-Onchain",
-      "info": ";;beta.svg;code.svg",
+      "info": ";;;BETA;CODE",
       "colour1": "black",
       "colour2": "gray",
       "opacity": "0.8"
@@ -378,7 +378,7 @@
       "zoom": "1.0",
       "alt": "Satoshi Vision on YouTube",
       "text": "Satoshi Vision",
-      "info": ";;yt.svg;"
+      "info": ";;;YT;"
     },
     {
       "tab": "video",
@@ -388,7 +388,7 @@
       "zoom": "1.0",
       "alt": "SirToshi on YouTube",
       "text": "SirToshi",
-      "info": ";;yt.svg;"
+      "info": ";;;YT;"
     },
     {
       "tab": "video",
@@ -398,7 +398,7 @@
       "zoom": "1.0",
       "alt": "tech onchain",
       "text": "Bridget D",
-      "info": ";;yt.svg;"
+      "info": ";;;YT;"
     },
     {
       "tab": "tool;app",
@@ -499,7 +499,7 @@
       "zoom": "1.0",
       "alt": "sign authanticate",
       "text": "AuthSig",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "app",
@@ -509,7 +509,7 @@
       "zoom": "1.0",
       "alt": "pixel art",
       "text": "Everdraw",
-      "info": "brc100.svg;;;",
+      "info": "BRC-100;;;;",
       "colour1": "black",
       "colour2": "darkblue"
     },
@@ -521,7 +521,7 @@
       "zoom": "1.0",
       "alt": "pixel art",
       "text": "PixelWar",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "dev",
@@ -541,7 +541,7 @@
       "zoom": "1.0",
       "alt": "independent verification",
       "text": "Traceport",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "app;sm",
@@ -551,7 +551,7 @@
       "zoom": "1.0",
       "alt": "decentalised social media",
       "text": "Zanaadu",
-      "info": ";;beta.svg;"
+      "info": ";;;BETA;"
     },
     {
       "tab": "app",
@@ -561,7 +561,7 @@
       "zoom": "1.0",
       "alt": "ai",
       "text": "Genius System",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "info;dev",
@@ -591,7 +591,7 @@
       "zoom": "1.0",
       "alt": "Gavin Mehl",
       "text": "@GavinMehl",
-      "info": ";;twitter.svg;"
+      "info": ";;;TWITTER;"
     },
     {
       "tab": "sm",
@@ -601,7 +601,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "@hbgnostic",
-      "info": ";;twitter.svg;"
+      "info": ";;;TWITTER;"
     },
     {
       "tab": "sm",
@@ -631,7 +631,7 @@
       "zoom": "1.0",
       "alt": "demo",
       "text": "TERAGUN",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "wallet",
@@ -671,7 +671,7 @@
       "zoom": "1.0",
       "alt": "market-place NFT",
       "text": "1Sat Ordinals",
-      "info": ";;code.svg;"
+      "info": ";;;CODE;"
     },
     {
       "tab": "market; tool",
@@ -681,7 +681,7 @@
       "zoom": "1.0",
       "alt": "market place NFT buy",
       "text": "1sat.market",
-      "info": ";;beta.svg;"
+      "info": ";;;BETA;"
     },
     {
       "tab": "get",
@@ -711,7 +711,7 @@
       "zoom": "1.0",
       "alt": "articles flippening",
       "text": "Gavin Mehl",
-      "info": ";;blogspot.svg;"
+      "info": ";;;BLOG;"
     },
     {
       "tab": "tool",
@@ -741,7 +741,7 @@
       "zoom": "1.0",
       "alt": "Electrum SVP",
       "text": "@cryptorebel_SV",
-      "info": ";;twitter.svg;"
+      "info": ";;;TWITTER;"
     },
     {
       "tab": "sm",
@@ -751,7 +751,7 @@
       "zoom": "1.0",
       "alt": "Electrum SVP",
       "text": "Truth Machine",
-      "info": ";;medium.svg;"
+      "info": ";;;MEDIUM;"
     },
     {
       "tab": "video",
@@ -761,7 +761,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "NewsOnChain",
-      "info": ";;bitchute.svg;"
+      "info": ";;;BITCHUTE;"
     },
     {
       "tab": "app",
@@ -771,7 +771,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "TOOL on BSV",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "app",
@@ -781,7 +781,7 @@
       "zoom": "1.0",
       "alt": "transaction send payment",
       "text": "PeerPay",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "app",
@@ -791,7 +791,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Gloss",
-      "info": "brc100.svg;;;",
+      "info": "BRC-100;;;;",
       "colour1": "blue",
       "colour2": "skyblue",
       "opacity": "0.85"
@@ -804,7 +804,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "TrueLink",
-      "info": "brc100.svg;;;",
+      "info": "BRC-100;;;;",
       "colour1": "#1f0d32ff",
       "colour2": "#d7523eff",
       "opacity": "0.85"
@@ -827,7 +827,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "HyperTypist",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "app",
@@ -837,7 +837,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Metanet Microblog",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "app",
@@ -847,7 +847,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "SocialCert",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "app",
@@ -857,7 +857,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Metanet Calendar",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "app",
@@ -867,7 +867,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "ToDo",
-      "info": "brc100.svg;;;",
+      "info": "BRC-100;;;;",
       "colour1": "skyblue",
       "colour2": "white",
       "opacity": "0.5"
@@ -880,7 +880,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Stuff",
-      "info": "brc100.svg;;;",
+      "info": "BRC-100;;;;",
       "colour1": "gray",
       "colour2": "skyblue",
       "opacity": "0.5"
@@ -893,7 +893,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "UHRP Storage",
-      "info": "brc100.svg;;;",
+      "info": "BRC-100;;;;",
       "colour1": "skyblue",
       "colour2": "white",
       "opacity": "0.5"
@@ -916,7 +916,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Coinflip",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "app",
@@ -926,7 +926,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Metanet Highway",
-      "info": "brc100.svg;;;",
+      "info": "BRC-100;;;;",
       "colour1": "gray",
       "colour2": "white",
       "opacity": "0.5"
@@ -939,7 +939,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "MarsCast",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "app",
@@ -949,7 +949,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Legacy Payments",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "app",
@@ -959,7 +959,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "CoolCert",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "app",
@@ -969,7 +969,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Pensona",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "app",
@@ -979,7 +979,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "DropBlocks",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "app",
@@ -989,7 +989,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Pay-QuickR",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "app",
@@ -999,7 +999,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Secure Backup & Recovery",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "app",
@@ -1009,7 +1009,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Quickstart Docs",
-      "info": "brc100.svg;;;",
+      "info": "BRC-100;;;;",
       "colour1": "#5500aaff"
     },
     {
@@ -1020,7 +1020,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Paymail Bridge",
-      "info": "brc100.svg;;;",
+      "info": "BRC-100;;;;",
       "colour1": "#6793b4ff",
       "opacity": "0"
     },
@@ -1032,7 +1032,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Mnemonic",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "sm",
@@ -1042,7 +1042,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "@CsTominaga",
-      "info": ";;twitter.svg;"
+      "info": ";;;TWITTER;"
     },
     {
       "tab": "tool",
@@ -1062,7 +1062,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "@deggen",
-      "info": ";;twitter.svg;"
+      "info": ";;;TWITTER;"
     },
     {
       "tab": "sm",
@@ -1072,7 +1072,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "@Bitcoin_Beyond",
-      "info": ";;twitter.svg;"
+      "info": ";;;TWITTER;"
     },
     {
       "tab": "sm",
@@ -1082,7 +1082,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "@KanoTheTruth",
-      "info": ";;twitter.svg;"
+      "info": ";;;TWITTER;"
     },
     {
       "tab": "app",
@@ -1092,7 +1092,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Pollr",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "video",
@@ -1102,7 +1102,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "SmilaZ",
-      "info": ";;yt.svg;"
+      "info": ";;;YT;"
     },
     {
       "tab": "video",
@@ -1112,7 +1112,7 @@
       "zoom": "1.2",
       "alt": "",
       "text": "Kurt Wuckert Jr",
-      "info": ";;yt.svg;"
+      "info": ";;;YT;"
     },
     {
       "tab": "video",
@@ -1122,7 +1122,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "TODO BITCOIN",
-      "info": ";;yt.svg;spain.webp"
+      "info": ";;;YT;ES"
     },
     {
       "tab": "sm",
@@ -1132,7 +1132,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Craig Wright",
-      "info": ";;substack.svg;"
+      "info": ";;;SUBSTACK;"
     },
     {
       "tab": "tool;dev",
@@ -1142,7 +1142,7 @@
       "zoom": "1.0",
       "alt": "scripting code development programming",
       "text": "sCrypt",
-      "info": ";;code.svg;"
+      "info": ";;;CODE;"
     },
     {
       "tab": "tool;market",
@@ -1182,7 +1182,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Bitcoin Schema",
-      "info": ";;code.svg;"
+      "info": ";;;CODE;"
     },
     {
       "tab": "app;wallet",
@@ -1202,7 +1202,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "PeerJump",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "app;get;market",
@@ -1212,7 +1212,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Beymo",
-      "info": ";;new.svg;"
+      "info": ";;;NEW;"
     },
     {
       "tab": "tool;dev",
@@ -1242,7 +1242,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Bitcoin Mint",
-      "info": "brc100.svg;;new.svg;"
+      "info": "BRC-100;;;NEW;"
     },
     {
       "tab": "market",
@@ -1252,7 +1252,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "MetaMarket buy sell",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "tool;app",
@@ -1262,7 +1262,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Bitcoin OS",
-      "info": "brc100.svg;;new.svg;",
+      "info": "BRC-100;;;NEW;",
       "colour1": "black",
       "opacity": "0.6"
     },
@@ -1274,7 +1274,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Bit Sign",
-      "info": "brc100.svg;;new.svg;",
+      "info": "BRC-100;;;NEW;",
       "colour1": "black",
       "colour2": "gray",
       "opacity": "0.6"
@@ -1287,7 +1287,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Immutify",
-      "info": "brc100.svg;;;",
+      "info": "BRC-100;;;;",
       "colour1": "skyblue",
       "colour2": "purple",
       "opacity": "0.8"
@@ -1378,7 +1378,7 @@
       "zoom": "1.0",
       "alt": "music microplayments",
       "text": "ZedVibe",
-      "info": "brc100.svg;;;",
+      "info": "BRC-100;;;;",
       "colour1": "#000080",
       "colour2": "purple",
       "opacity": "0.7"
@@ -1391,7 +1391,7 @@
       "zoom": "1.0",
       "alt": "AI config personality",
       "text": "AGiD",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "broken",
@@ -1401,7 +1401,7 @@
       "zoom": "1.4",
       "alt": "clasic arcade games",
       "text": "Thryll",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "get",
@@ -1450,7 +1450,7 @@
       "zoom": "1.0",
       "alt": "scrip documentation",
       "text": "Rúnar",
-      "info": ";;code.svg;"
+      "info": ";;;CODE;"
     },
     {
       "tab": "tool;app",
@@ -1460,7 +1460,7 @@
       "zoom": "1.0",
       "alt": "scrip documentation",
       "text": "PeerMark",
-      "info": ";;beta.svg;"
+      "info": ";;;BETA;"
     },
     {
       "tab": "info",
@@ -1501,7 +1501,7 @@
       "zoom": "0.9",
       "alt": "",
       "text": "Boost BSV",
-      "info": ";;code.svg;"  
+      "info": ";;;CODE;"  
     },
     {
       "tab": "info",
@@ -1534,7 +1534,7 @@
       "zoom": "1.4",
       "alt": "private",
       "text": "Crypton",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "get",
@@ -1670,7 +1670,7 @@
       "zoom": "1.4",
       "alt": "",
       "text": "x402agency",
-      "info": "brc100.svg;;;"
+      "info": "BRC-100;;;;"
     }
   ]
 }
