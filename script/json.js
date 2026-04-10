@@ -338,7 +338,7 @@ Promise.all([
             var clickCount = clickStats[item.href] || 0;
             var counterDiv       = document.createElement("div");
             counterDiv.className = "tile-label tile-label-clicks";
-            counterDiv.textContent = clickCount > 0 ? clickCount : '';
+            counterDiv.textContent = clickCount || '0';
             counterDiv.dataset.slot = "clicks";
             rightCol.appendChild(counterDiv);
 
