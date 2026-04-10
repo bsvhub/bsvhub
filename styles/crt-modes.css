@@ -399,3 +399,55 @@ html[data-crt-mode] .copy-btn {
 html[data-crt-mode] .copy-btn:hover {
     background: var(--m-bright);
 }
+
+/* ── OVERLAY TOGGLE MENU (cogwheel dropdown) ─────────────────*/
+html[data-crt-mode] .overlay-menu-btn {
+    color: var(--m-primary);
+}
+
+html[data-crt-mode] .overlay-menu-dropdown {
+    background:   var(--m-page-bg);
+    border-color: var(--m-dim);
+}
+
+html[data-crt-mode] .overlay-menu-item {
+    color: var(--m-bright);
+}
+
+html[data-crt-mode] .overlay-menu-item input {
+    accent-color: var(--m-primary);
+}
+
+/* ── TILE OVERLAY LABELS ─────────────────────────────────────*/
+html[data-crt-mode] .tile-label {
+    color: var(--m-primary);
+}
+
+/* Scanline on dropdown */
+html[data-crt-mode] .overlay-menu-dropdown::after {
+    content:         '';
+    position:        absolute;
+    inset:           0;
+    pointer-events:  none;
+    z-index:         10;
+    opacity:         0.62;
+    background:
+        linear-gradient(
+            rgba(18, 16, 16, 0)    50%,
+            rgba(0,  0,  0,  0.40) 50%
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255, 0,   0,   0.07),
+            rgba(0,   255, 0,   0.03),
+            rgba(0,   0,   255, 0.07)
+        );
+    background-size: 100% 2px, 3px 100%;
+    border-radius:   4px;
+}
+
+/* dropdown already position:fixed in unified.css — scanline needs
+   overflow:hidden so the ::after doesn't bleed outside border-radius */
+html[data-crt-mode] .overlay-menu-dropdown {
+    overflow: hidden;
+}
