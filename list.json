@@ -269,11 +269,11 @@
     {
       "tab": "wallet",
       "href": "https://mobile.bsvb.tech",
-      "tooltip": "Another BRC-100 wallet",
+      "tooltip": "A BRC-100 wallet for both Mobile and Desktop",
       "img": "app/bsv_desktop.svg",
       "zoom": "1.2",
       "alt": "apps wallet",
-      "text": "BSV Mobile",
+      "text": "BSV Mobile/Desktop",
       "info": ";;;",
       "colour1": "#29293D"
     },
@@ -1319,7 +1319,7 @@
       "opacity": "0.7"
     },
     {
-      "tab": "app",
+      "tab": "broken",
       "href": "https://bsvbusiness.com/",
       "tooltip": "White pages, yellow pages, and blue pages for the BSV economy. List your business and connect with communities.",
       "img": "app/bsv_business.svg",
