@@ -11,6 +11,55 @@
    ============================================================ */
 
 /* ============================================================
+   OVERLAY CONFIG — user-togglable tile overlay visibility
+   Persisted to localStorage. Menu rendered after DOM build.
+   ============================================================ */
+var _overlayDefaults = {
+    clicks: true,
+    s0: true,    // slot 0: protocol (BRC-100)
+    s1: true,    // slot 1: source (UP-LINK)
+    s2: true,    // slot 2: open-src (OPEN-SRC)
+    s3: true,    // slot 3: status (ALPHA, BETA, etc.)
+    s4: true     // slot 4: reserved
+};
+var _overlayLabels = {
+    clicks: "Click Count",
+    s0: "Protocol",
+    s1: "Source",
+    s2: "Open Source",
+    s3: "Status",
+    s4: "Reserved"
+};
+var _overlayConfig = (function () {
+    try {
+        var saved = JSON.parse(localStorage.getItem("overlay-config"));
+        if (saved && typeof saved === "object") {
+            // merge with defaults so new keys are always present
+            var cfg = {};
+            for (var k in _overlayDefaults) cfg[k] = saved[k] !== undefined ? saved[k] : _overlayDefaults[k];
+            return cfg;
+        }
+    } catch (e) {}
+    return JSON.parse(JSON.stringify(_overlayDefaults));
+})();
+
+function _saveOverlayConfig() {
+    try { localStorage.setItem("overlay-config", JSON.stringify(_overlayConfig)); } catch (e) {}
+}
+
+function _applyOverlayVisibility() {
+    var keys = Object.keys(_overlayConfig);
+    keys.forEach(function (key) {
+        var show = _overlayConfig[key];
+        var sel = key === "clicks" ? ".tile-label-clicks" : ".tile-label-" + key;
+        var els = document.querySelectorAll(sel);
+        for (var i = 0; i < els.length; i++) {
+            els[i].style.display = show ? "" : "none";
+        }
+    });
+}
+
+/* ============================================================
    HELPER — setTileColour
    Passes colour1, colour2, opacity from list.json down to the
    CSS ::before layer via custom properties on the <a> element.
@@ -275,33 +324,54 @@ Promise.all([
             img.alt = item.alt || "";
             wrap.appendChild(img);
 
-            // 4-position badge system
-            if (item.info) {
-                item.info.split(";").forEach(function (badgeFile, index) {
-                    if (badgeFile.trim()) {
-                        var badge     = document.createElement("img");
-                        badge.src     = "icon/" + badgeFile.trim();
-                        badge.alt     = "";
-                        badge.className = "icon-badge-pos" + (index + 1);
-                        wrap.appendChild(badge);
-                    }
-                });
-            }
+            // 6-slot text overlay grid
+            // LEFT: slots 0,1,2   RIGHT: click-count, slots 3,4
+            var slots = (item.info || '').split(';');
+            while (slots.length < 5) slots.push('');
+
+            var leftCol  = document.createElement("div");
+            leftCol.className = "tile-overlay-left";
+            var rightCol = document.createElement("div");
+            rightCol.className = "tile-overlay-right";
+
+            // Click counter — always first in right column
+            var clickCount = clickStats[item.href] || 0;
+            var counterDiv       = document.createElement("div");
+            counterDiv.className = "tile-label tile-label-clicks";
+            counterDiv.textContent = clickCount > 0 ? clickCount : '';
+            counterDiv.dataset.slot = "clicks";
+            rightCol.appendChild(counterDiv);
+
+            // Left slots: 0, 1, 2
+            [0, 1, 2].forEach(function (i) {
+                var val = (slots[i] || '').trim();
+                var d       = document.createElement("div");
+                d.className = "tile-label tile-label-s" + i;
+                d.textContent = val;
+                d.dataset.slot = String(i);
+                if (!val) d.style.visibility = "hidden";
+                leftCol.appendChild(d);
+            });
+
+            // Right slots: 3, 4 (after click counter)
+            [3, 4].forEach(function (i) {
+                var val = (slots[i] || '').trim();
+                var d       = document.createElement("div");
+                d.className = "tile-label tile-label-s" + i;
+                d.textContent = val;
+                d.dataset.slot = String(i);
+                if (!val) d.style.visibility = "hidden";
+                rightCol.appendChild(d);
+            });
+
+            wrap.appendChild(leftCol);
+            wrap.appendChild(rightCol);
 
             // Icon label
             var txt       = document.createElement("div");
             txt.className = "icon-text";
             txt.textContent = item.text || "";
             wrap.appendChild(txt);
-
-            // Click-count badge — stamped from pre-fetched stats
-            var clickCount = clickStats[item.href] || 0;
-            if (clickCount > 0) {
-                var counter       = document.createElement("div");
-                counter.className = "click-count";
-                counter.textContent = clickCount;
-                wrap.appendChild(counter);
-            }
 
             a.appendChild(wrap);
             li.appendChild(a);
@@ -331,15 +401,10 @@ Promise.all([
             body: JSON.stringify({ url: href }),
         }).catch(function () {});
 
-        var countEl = a.querySelector(".click-count");
+        var countEl = a.querySelector(".tile-label-clicks");
         if (countEl) {
-            countEl.textContent = parseInt(countEl.textContent) + 1;
-        } else {
-            var c = document.createElement("div");
-            c.className = "click-count";
-            c.textContent = "1";
-            var w = a.querySelector(".icon-wrapper");
-            if (w) w.appendChild(c);
+            var cur = parseInt(countEl.textContent) || 0;
+            countEl.textContent = cur + 1;
         }
 
         fetch("/api/check-link", {
@@ -410,7 +475,75 @@ Promise.all([
     }
 
     /* --------------------------------------------------------
-       4. ACTIVATE DEFAULT TAB (Apps)
+       4. OVERLAY TOGGLE MENU
+          Gear emoji inserted between 3rd and 4th CRT swatch.
+          Dropdown opens above tabs/tooltip layer (z>1000).
+    -------------------------------------------------------- */
+    (function () {
+        var crtBar = document.getElementById("crt-mode-bar");
+        if (!crtBar) return;
+
+        var swatches = crtBar.querySelectorAll(".crt-swatch");
+        if (swatches.length < 4) return;
+
+        var menuWrap       = document.createElement("div");
+        menuWrap.className = "overlay-menu-wrap";
+
+        var btn       = document.createElement("button");
+        btn.className = "overlay-menu-btn";
+        btn.title     = "Toggle overlays";
+        btn.textContent = "\u2699"; // ⚙ gear emoji
+        menuWrap.appendChild(btn);
+
+        var dropdown       = document.createElement("div");
+        dropdown.className = "overlay-menu-dropdown";
+
+        Object.keys(_overlayConfig).forEach(function (key) {
+            var label       = document.createElement("label");
+            label.className = "overlay-menu-item";
+            var cb       = document.createElement("input");
+            cb.type      = "checkbox";
+            cb.checked   = _overlayConfig[key];
+            cb.dataset.overlayKey = key;
+            cb.addEventListener("change", function () {
+                _overlayConfig[key] = cb.checked;
+                _saveOverlayConfig();
+                _applyOverlayVisibility();
+            });
+            label.appendChild(cb);
+            label.appendChild(document.createTextNode(" " + _overlayLabels[key]));
+            dropdown.appendChild(label);
+        });
+
+        /* Append dropdown as sibling of #tooltip-display inside #top-ui */
+        var topUi = document.getElementById("tooltip-display");
+        if (topUi && topUi.parentNode) {
+            topUi.parentNode.appendChild(dropdown);
+        } else {
+            document.body.appendChild(dropdown);
+        }
+
+        btn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            var isOpen = dropdown.classList.toggle("open");
+            if (isOpen) {
+                var rect = btn.getBoundingClientRect();
+                dropdown.style.top  = (rect.bottom + 4) + "px";
+                dropdown.style.left = (rect.left + rect.width / 2 - 70) + "px";
+            }
+        });
+        dropdown.addEventListener("mouseleave", function () {
+            dropdown.classList.remove("open");
+        });
+
+        /* Insert between 3rd and 4th swatch: [c1][c2][c3] ⚙ [c4][c5][c6] */
+        crtBar.insertBefore(menuWrap, swatches[3]);
+
+        _applyOverlayVisibility();
+    })();
+
+    /* --------------------------------------------------------
+       5. ACTIVATE DEFAULT TAB (Apps)
     -------------------------------------------------------- */
     requestAnimationFrame(function () {
         requestAnimationFrame(function () {
