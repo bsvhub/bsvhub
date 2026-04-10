@@ -11,7 +11,7 @@
       "info": ";;;"
     },
     {
-      "tab": "info",
+      "tab": "basics",
       "href": "https://bsvassociation.org/",
       "tooltip": "Guardians of the BSV protocol",
       "img": "icon/association.svg",
@@ -24,7 +24,7 @@
       "opacity": "0.7"
     },
     {
-      "tab": "info",
+      "tab": "basics",
       "href": "https://hub.bsvblockchain.org/",
       "tooltip": "BSV Blockchain Hub: wide array of resources to meet diverse needs, from technical details to real-world uses.",
       "img": "icon/hub.svg",
@@ -34,7 +34,7 @@
       "info": ";;;"
     },
     {
-      "tab": "info",
+      "tab": "basics",
       "href": "https://bsv-case-studies.bsvblockchain.org",
       "tooltip": "Real-World Adoption Across Industries, Regions, and Applications",
       "img": "icon/bsv_industry.svg",
@@ -44,7 +44,7 @@
       "info": ";;;"
     },
     {
-      "tab": "video",
+      "tab": "media",
       "href": "https://www.youtube.com/@BSVsearch/videos",
       "tooltip": "Info on how to use BSV in business, everyday life; try out BSV apps, wallets, websites; discuss BSV news and stories, and more...",
       "img": "social/bsvsearch.svg",
@@ -54,7 +54,7 @@
       "info": ";;;YT;"
     },
     {
-      "tab": "info",
+      "tab": "basics",
       "href": "https://bsvblockchain.org/",
       "tooltip": "Official BSV pages",
       "img": "icon/bsv-blockchain.svg",
@@ -77,7 +77,7 @@
       "info": ";;;"
     },
     {
-      "tab": "info",
+      "tab": "basics",
       "href": "https://wiki.bitcoinsv.io/index.php/Main_Page",
       "tooltip": "Bitcoin Wiki",
       "img": "icon/bitcoin_sv.svg",
@@ -87,7 +87,7 @@
       "info": ";;;"
     },
     {
-      "tab": "video",
+      "tab": "media",
       "href": "https://www.youtube.com/@CoinGeek/videos",
       "tooltip": "CoinGeek YouTube channel, all about Bitcoin and blockchain technologies.",
       "img": "social/cg.svg",
@@ -107,7 +107,7 @@
       "info": ";;;"
     },
     {
-      "tab": "video",
+      "tab": "media",
       "href": "https://www.youtube.com/@Cryptoismyretirement/streams",
       "tooltip": "Just some guy on YouTube that talks a lot about BSV and makes some valid points.",
       "img": "social/cimr.svg",
@@ -157,7 +157,7 @@
       "info": ";;;"
     },
     {
-      "tab": "video",
+      "tab": "media",
       "href": "https://www.youtube.com/@GavinMehl/videos",
       "tooltip": "Gavin Mehl talks about Bitcoin SV, health and law",
       "img": "social/gavinm.webp",
@@ -177,7 +177,7 @@
       "info": ";;;"
     },
     {
-      "tab": "info",
+      "tab": "basics",
       "href": "https://gorillapool.com/",
       "tooltip": "Gorilla Pool Mining",
       "img": "icon/gorillapool.svg",
@@ -187,7 +187,7 @@
       "info": ";;;"
     },
     {
-      "tab": "info",
+      "tab": "basics",
       "href": "https://gorillapool.io/",
       "tooltip": "Join Gorilla Pool",
       "img": "icon/gorillaminer.svg",
@@ -197,7 +197,7 @@
       "info": ";;;"
     },
     {
-      "tab": "tool;info;dev",
+      "tab": "tool;dev",
       "href": "https://junglebus.gorillapool.io",
       "tooltip": "JungleBus is an indexing engine for on-chain data developed by GorillaPool. Used to filter and organize blockchain data.",
       "img": "icon/junglebus.svg",
@@ -217,7 +217,7 @@
       "info": ";;;"
     },
     {
-      "tab": "video",
+      "tab": "media",
       "href": "https://www.youtube.com/@Kate_L_Mosso/videos",
       "tooltip": "Kate Mosso providing content about Crypto and BSV",
       "img": "social/kate_mosso.webp",
@@ -318,7 +318,7 @@
       "info": ";;;TWITTER;"
     },
     {
-      "tab": "video",
+      "tab": "media",
       "href": "https://www.youtube.com/@ProjectBabbage/videos",
       "tooltip": "Project Babbage: Our goal is to create a more efficient, scalable, and secure internet by empowering users to own their own identities and data.",
       "img": "icon/babbage.svg",
@@ -371,7 +371,7 @@
       "opacity": "0.8"
     },
     {
-      "tab": "video",
+      "tab": "media",
       "href": "https://www.youtube.com/@Satoshi_VisionTv/videos",
       "tooltip": "Another Youtuber providing some BSV related content.",
       "img": "social/svtv.webp",
@@ -381,7 +381,7 @@
       "info": ";;;YT;"
     },
     {
-      "tab": "video",
+      "tab": "media",
       "href": "https://www.youtube.com/@bsvbitcoin/videos",
       "tooltip": "SirToshi: Defender of Bitcoin.",
       "img": "social/sirtoshi.webp",
@@ -391,7 +391,7 @@
       "info": ";;;YT;"
     },
     {
-      "tab": "video",
+      "tab": "media",
       "href": "https://www.youtube.com/@bridgetdoran/videos",
       "tooltip": "Bridget D talks about Bitcoin and blockchain tech.",
       "img": "social/bridgetd.webp",
@@ -481,7 +481,7 @@
       "info": ";;;"
     },
     {
-      "tab": "app;video",
+      "tab": "app;media",
       "href": "https://bsvtube.com/",
       "tooltip": "Video platform on chain",
       "img": "app/bsvtube.svg",
@@ -564,7 +564,7 @@
       "info": "BRC-100;;;;"
     },
     {
-      "tab": "info;dev",
+      "tab": "basics;dev",
       "href": "https://bsvhackathon.com/",
       "tooltip": "Hackathon info, events, registration",
       "img": "icon/hackathon.svg",
@@ -624,7 +624,7 @@
       "info": ";;;"
     },
     {
-      "tab": "tool;app",
+      "tab": "app",
       "href": "https://teragun.com/",
       "tooltip": "Demo app for simultaneous transactions on BSV.",
       "img": "icon/teragun.svg",
@@ -664,7 +664,7 @@
       "info": ";;;"
     },
     {
-      "tab": "info;dev",
+      "tab": "basics;dev",
       "href": "https://1satordinals.com/",
       "tooltip": "Website provides resources and links in relation to Ordinals/NFTs on BSV",
       "img": "icon/ordinals.svg",
@@ -724,7 +724,7 @@
       "info": ";;;"
     },
     {
-      "tab": "info",
+      "tab": "basics",
       "href": "https://thatsbtcnotbitcoin.com/",
       "tooltip": "Site explains why BTC is not Bitcoin",
       "img": "icon/not_bitcoin.svg",
@@ -754,7 +754,7 @@
       "info": ";;;MEDIUM;"
     },
     {
-      "tab": "video",
+      "tab": "media",
       "href": "https://www.bitchute.com/channel/3hMeJiX7kv5T",
       "tooltip": "BSV and other related topics",
       "img": "social/newsonchain.webp",
@@ -899,7 +899,7 @@
       "opacity": "0.5"
     },
     {
-      "tab": "info",
+      "tab": "basics",
       "href": "https://bsvbetter.org/",
       "tooltip": "BSV Better is dedicated to exploring, and educating others about the revolutionary potential of Bitcoin SV (BSV).",
       "img": "icon/bsvbetter.svg",
@@ -1095,7 +1095,7 @@
       "info": "BRC-100;;;;"
     },
     {
-      "tab": "video",
+      "tab": "media",
       "href": "https://www.youtube.com/@SmilaZ/videos",
       "tooltip": "SmilaZ often covers Bitcoin and CSW content.",
       "img": "social/smilaz.webp",
@@ -1105,7 +1105,7 @@
       "info": ";;;YT;"
     },
     {
-      "tab": "video",
+      "tab": "media",
       "href": "https://www.youtube.com/@Kurtwuckertjr/videos",
       "tooltip": "Kurt Wuckert Jr personal channel where he talks about Bitcoin and more.",
       "img": "social/kurt.webp",
@@ -1115,7 +1115,7 @@
       "info": ";;;YT;"
     },
     {
-      "tab": "video",
+      "tab": "media",
       "href": "https://www.youtube.com/@todobitcoin3167/videos",
       "tooltip": "Bitcoin channel in Spanish",
       "img": "social/todo-sp.webp",
@@ -1165,7 +1165,7 @@
       "info": ";;;"
     },
     {
-      "tab": "tool;info",
+      "tab": "tool;basics",
       "href": "https://nodeless.network",
       "tooltip": "deploy blockchain-powered services that scale globaly",
       "img": "icon/bsv.svg",
@@ -1463,7 +1463,7 @@
       "info": ";;;BETA;"
     },
     {
-      "tab": "info",
+      "tab": "basics",
       "href": "https://bitschool.online",
       "tooltip": "Learn Bitcoin SV from the ground up with hands-on simulations, clear explanations, and interactive assessments. Perfect for complete beginners.",
       "img": "app/bitschool.svg",
@@ -1494,7 +1494,7 @@
       "colour1": "#3ebfba"
     },
     {
-      "tab": "info;dev",
+      "tab": "basics;dev",
       "href": "https://www.boostbsv.com",
       "tooltip": "Everything you need to know about BSV, cryptocurrency, and the future of digital money",
       "img": "icon/boostbsv.svg",
@@ -1504,7 +1504,7 @@
       "info": ";;;CODE;"  
     },
     {
-      "tab": "info",
+      "tab": "basics",
       "href": "https://igamingbsv.com",
       "tooltip": "iGamingBSV.com shows why BSV crypto and blockchain is a great asset for the iGaming industry.",
       "img": "icon/igamingbsv.png",
@@ -1547,7 +1547,7 @@
       "info": ";;;"
     },
     {
-      "tab": "info;dev",
+      "tab": "basics;dev",
       "href": "https://docs.whatsonchain.com",
       "tooltip": "WhatsonChain documentation for how to transmit and read information of chain",
       "img": "icon/whatsonchain.svg",
@@ -1578,7 +1578,7 @@
     },
     {
       "iframe": true,
-      "tab": "on-ch",
+      "tab": "app",
       "href": "https://bico.media/3fa9621d70172c6e984fbb7a7ba6cf7dc4be3d4fd5bcc7e94c7971e2af1dfc0f",
       "tooltip": "Billioard game on-chain",
       "img": "on-chain/billiards.webp",
@@ -1588,7 +1588,7 @@
       "info": ";;;"
     },
     {
-      "tab": "on-ch",
+      "tab": "basics",
       "href": "https://bico.media/bb98efaa2044b0fd23bf76a5f8ce54573e07db268bc0e23e77d14d9d8955d5e4",
       "tooltip": "The original Bitcoin whitepaper (pdf)",
       "img": "on-chain/doc.svg",
@@ -1599,7 +1599,7 @@
     },
     {
       "iframe": true,
-      "tab": "on-ch",
+      "tab": "app",
       "href": "https://bico.media/f2951f4f7e4e8518d98dd0aa377e2504761962fbff58d791276d6496d0827548",
       "tooltip": "2048 game on-chain",
       "img": "on-chain/2048.svg",
@@ -1611,7 +1611,7 @@
     {
       "iframe": true,
       "iframe_bg": "rgba(128, 128, 128, 0.8)",
-      "tab": "on-ch",
+      "tab": "app",
       "href": "https://bico.media/8d77f786696b926e311d5a179bb8516e0a5cff18268e5c5f12ce98df309943c9",
       "tooltip": "On-chain game where you defend against a missile attack",
       "img": "on-chain/missiles.svg",
@@ -1623,7 +1623,7 @@
     {
       "iframe": true,
       "iframe_bg": "rgba(40, 0, 40, 1)",
-      "tab": "on-ch",
+      "tab": "app",
       "href": "https://bico.media/f830cad9c888f1715b7af7350aeff24676a5c00295928da631a71fb965fb58e8#",
       "tooltip": "On-chain pattern generator based on number input between 0-255",
       "img": "icon/bsv.svg",
