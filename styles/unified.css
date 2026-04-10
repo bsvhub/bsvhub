@@ -563,19 +563,22 @@ ul.icon-grid li a:hover::after {
 .tile-overlay-right { right: 2px; align-items: flex-end; }
 
 .tile-label {
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.8);
     color: #EAB300;
     font-family: var(--font-icon-grid);
-    font-size: 0.55rem;
-    padding: 1px 3px;
+    font-size: 0.65rem;
+    padding-top: 0.18rem;
+    padding-bottom: 0.12rem;
+    padding-left: 2px;
+    padding-right: 2px;
     border-radius: 2px;
     line-height: 1;
-    height: 0.75rem;
+    /*height: 0.6rem;*/
     display: flex;
     align-items: center;
     justify-content: center;
     white-space: nowrap;
-    min-width: 4.5em;
+    min-width: 4.0em;
     text-align: center;
     box-sizing: border-box;
 }
