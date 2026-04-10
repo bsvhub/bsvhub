@@ -1212,7 +1212,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Beymo",
-      "info": ";;;NEW;"
+      "info": ";;;;"
     },
     {
       "tab": "tool;dev",
@@ -1242,7 +1242,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Bitcoin Mint",
-      "info": "BRC-100;;;NEW;"
+      "info": "BRC-100;;;;"
     },
     {
       "tab": "market",
@@ -1262,7 +1262,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Bitcoin OS",
-      "info": "BRC-100;;;NEW;",
+      "info": "BRC-100;;;;",
       "colour1": "black",
       "opacity": "0.6"
     },
@@ -1274,7 +1274,7 @@
       "zoom": "1.0",
       "alt": "",
       "text": "Bit Sign",
-      "info": "BRC-100;;;NEW;",
+      "info": "BRC-100;;;;",
       "colour1": "black",
       "colour2": "gray",
       "opacity": "0.6"
