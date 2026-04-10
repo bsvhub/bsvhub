@@ -24,8 +24,8 @@ var _overlayDefaults = {
 };
 var _overlayLabels = {
     clicks: "Click Count",
-    s0: "Protocol",
-    s1: "Source",
+    s0: "BRC-100",
+    s1: "Up-LINK",
     s2: "Open Source",
     s3: "Status",
     s4: "Reserved"
