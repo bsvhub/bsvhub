@@ -1020,7 +1020,7 @@ body.mobile-mode .idea-header {
 /* ---- IMAGE STRIP (on-chain ideas with screenshots) -------- */
 .idea-img-strip {
     display: none;
-    gap: 6px;
+    gap: 12px;
     margin-bottom: 14px;
     justify-content: flex-start;
 }
@@ -1030,12 +1030,12 @@ body.mobile-mode .idea-header {
 }
 
 .idea-img-slot {
-    flex: 0 0 calc(20% - 5px);
+    flex: 0 0 calc(20% - 10px);
     aspect-ratio: 1 / 1;
     cursor: pointer;
-    border-radius: 3px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    padding: 3px;
+    border-radius: 5px;
+    border: 2px solid #2e3f66;
+    overflow: hidden;
     position: relative;
     box-sizing: border-box;
 }
@@ -1050,12 +1050,10 @@ body.mobile-mode .idea-header {
     height: 100%;
     object-fit: cover;
     display: block;
-    border-radius: 2px;
-    overflow: hidden;
     transition: transform 0.18s ease;
 }
 
-/* Zoom image content on hover — slot frame stays fixed */
+/* Zoom image content on hover — clipped by slot overflow:hidden */
 .idea-img-slot:not(.slot-empty):hover img {
     transform: scale(1.15);
 }
