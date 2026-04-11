@@ -527,7 +527,8 @@ Promise.all([
                 slot.className = "idea-img-slot slot-empty";
                 slot.dataset.slot = def.key;
                 if (def.key === "ico") {
-                    /* Reuse icon-wrapper structure identical to regular tiles */
+                    /* Reuse icon-wrapper structure identical to regular tiles.
+                       JS scales it down to fit the slot after layout. */
                     var wrap = document.createElement("div");
                     wrap.className = "icon-wrapper";
                     var icoImg = document.createElement("img");
@@ -538,6 +539,17 @@ Promise.all([
                     lbl.textContent = idea.name || "";
                     wrap.appendChild(lbl);
                     slot.appendChild(wrap);
+                    /* Scale after layout so offsetWidth is available */
+                    (function (s, w) {
+                        requestAnimationFrame(function () {
+                            var slotW = s.offsetWidth;
+                            var wrapW = w.offsetWidth;
+                            if (slotW && wrapW) {
+                                w.style.transformOrigin = "top left";
+                                w.style.transform = "scale(" + (slotW / wrapW) + ")";
+                            }
+                        });
+                    }(slot, wrap));
                 }
                 stripWrap.appendChild(slot);
             });
@@ -952,18 +964,35 @@ document.addEventListener("click", function (e) {
     }
 
     /* Build / replace expanded image */
-    var img = slot.querySelector("img");
-    if (!img) return;
-
     expanded.className = "idea-img-expanded";
     expanded.style.marginLeft = "";
     expanded.dataset.activeSlot = slot.dataset.slot;
     expanded.innerHTML = "";
-    var bigImg = document.createElement("img");
-    bigImg.src = img.src;
-    bigImg.alt = img.alt;
-    bigImg.style.objectFit = slot.dataset.slot === "ico" ? "contain" : "cover";
-    expanded.appendChild(bigImg);
+
+    if (slot.dataset.slot === "ico") {
+        /* Clone the full icon-wrapper so expanded looks identical to the tile */
+        var srcWrap = slot.querySelector(".icon-wrapper");
+        if (!srcWrap) return;
+        var clonedWrap = srcWrap.cloneNode(true);
+        clonedWrap.style.transform = "";        /* reset mini scale */
+        clonedWrap.style.transformOrigin = "top left";
+        expanded.appendChild(clonedWrap);
+        requestAnimationFrame(function () {
+            var expW = expanded.offsetWidth;
+            var wrapW = clonedWrap.offsetWidth;
+            if (expW && wrapW) {
+                clonedWrap.style.transform = "scale(" + (expW / wrapW) + ")";
+            }
+        });
+    } else {
+        var img = slot.querySelector("img");
+        if (!img) return;
+        var bigImg = document.createElement("img");
+        bigImg.src = img.src;
+        bigImg.alt = img.alt;
+        bigImg.style.objectFit = "cover";
+        expanded.appendChild(bigImg);
+    }
     expanded.style.display = "";
     expanded.classList.add("is-opening");
     expanded.addEventListener("animationend", function onOpened() {
