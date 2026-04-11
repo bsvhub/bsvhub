@@ -516,17 +516,16 @@ Promise.all([
             var stripWrap = document.createElement("div");
             stripWrap.className = "idea-img-strip";
             var slotDefs = [
-                { key: "ss1", anchor: "left"   },
-                { key: "ss2", anchor: "left"   },
-                { key: "ico", anchor: "center" },
-                { key: "ss3", anchor: "right"  },
-                { key: "ss4", anchor: "right"  }
+                { key: "ico" },
+                { key: "ss1" },
+                { key: "ss2" },
+                { key: "ss3" },
+                { key: "ss4" }
             ];
             slotDefs.forEach(function (def) {
                 var slot = document.createElement("div");
                 slot.className = "idea-img-slot slot-empty";
-                slot.dataset.slot   = def.key;
-                slot.dataset.anchor = def.anchor;
+                slot.dataset.slot = def.key;
                 stripWrap.appendChild(slot);
             });
             /* Expanded image container — injected after the strip when a slot is clicked */
@@ -939,8 +938,8 @@ document.addEventListener("click", function (e) {
     var img = slot.querySelector("img");
     if (!img) return;
 
-    var anchor = slot.dataset.anchor || "left";
-    expanded.className = "idea-img-expanded anchor-" + anchor;
+    expanded.className = "idea-img-expanded";
+    expanded.style.marginLeft = slot.offsetLeft + "px";
     expanded.dataset.activeSlot = slot.dataset.slot;
     expanded.innerHTML = "";
     var bigImg = document.createElement("img");
