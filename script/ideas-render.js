@@ -1,5 +1,5 @@
 /* ============================================================
-   ideas-render.js — App Ideas accordion renderer (v1.0)
+   ideas-render.js — App Ideas accordion renderer (v1.1)
    ------------------------------------------------------------
    Standalone — fetches its own data, no dependency on json.js.
    Requires tile-render.js to be loaded first (setTileColour,
@@ -490,11 +490,10 @@ document.addEventListener('click', function (e) {
     } else {
         var img = slot.querySelector('img');
         if (!img) return;
-        var bigImg = document.createElement('img');
-        bigImg.src = img.src;
-        bigImg.alt = img.alt;
-        bigImg.style.objectFit = 'cover';
-        expanded.appendChild(bigImg);
+        /* Clone preserves inline CSS custom properties (--icon-zoom/pan-x/pan-y)
+           so the expanded image inherits the exact mini configuration —
+           single source of truth, no field re-reading. */
+        expanded.appendChild(img.cloneNode(true));
     }
 
     expanded.style.display = '';
