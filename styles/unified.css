@@ -604,6 +604,7 @@ ul.icon-grid li a:hover::after {
     line-height: 1;
     flex-shrink: 0;
     transition: transform 0.15s;
+    transform-origin: 50% 60%;
 }
 .overlay-menu-btn:hover { transform: scale(1.25); }
 .overlay-menu-dropdown {
@@ -1050,12 +1051,11 @@ body.mobile-mode .idea-header {
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.18s ease;
 }
 
-/* Zoom image content on hover — clipped by slot overflow:hidden */
-.idea-img-slot:not(.slot-empty):hover img {
-    transform: scale(1.15);
+/* Gold border highlight on hover */
+.idea-img-slot:not(.slot-empty):hover {
+    border-color: #EAB300;
 }
 
 /* ico slot: icon-wrapper renders at natural tile size, JS scales it down to fit.
