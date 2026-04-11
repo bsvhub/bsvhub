@@ -207,7 +207,7 @@ var SETTINGS = {
         { value: 'sm',     label: 'sm (Social media)' },
         'media',
         { value: 'ideas',  label: 'ideas (App Ideas)', mandatory: ['description'], overrides: { MAX_DESC_CHARS: 1024 },
-          disabled: ['p1-icon', 'app-abbr', 'app-url', 'app-tor',
+          disabled: ['app-abbr', 'app-url', 'app-tor',
                      'app-bsv', 'app-tags', 'app-status', 'app-rel', 'app-ver', 'lang-pills'] }
       ]
     },
