@@ -604,7 +604,7 @@ ul.icon-grid li a:hover::after {
     line-height: 1;
     flex-shrink: 0;
     transition: transform 0.15s;
-    transform-origin: 50% 60%;
+    transform-origin: 50% 50%;
 }
 .overlay-menu-btn:hover { transform: scale(1.25); }
 .overlay-menu-dropdown {
