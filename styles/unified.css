@@ -1020,8 +1020,9 @@ body.mobile-mode .idea-header {
 /* ---- IMAGE STRIP (on-chain ideas with screenshots) -------- */
 .idea-img-strip {
     display: none;
-    gap: 6px;
+    gap: 0;
     margin-bottom: 14px;
+    justify-content: flex-start;
 }
 
 .idea-img-strip.has-images {
@@ -1029,20 +1030,17 @@ body.mobile-mode .idea-header {
 }
 
 .idea-img-slot {
-    flex: 1;
+    flex: 0 0 20%;
     aspect-ratio: 1 / 1;
     overflow: hidden;
     cursor: pointer;
     border-radius: 6px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 87, 51, 0.18);
     position: relative;
 }
 
 .idea-img-slot.slot-empty {
     cursor: default;
-    border-color: transparent;
-    background: transparent;
+    visibility: hidden;
 }
 
 .idea-img-slot img {
@@ -1051,6 +1049,17 @@ body.mobile-mode .idea-header {
     object-fit: cover;
     display: block;
     border-radius: 5px;
+    transition: transform 0.18s ease;
+}
+
+/* Zoom image content on hover — slot frame stays fixed */
+.idea-img-slot:not(.slot-empty):hover img {
+    transform: scale(1.15);
+}
+
+/* Icon slot: show full image without cropping */
+.idea-img-slot[data-slot="ico"] img {
+    object-fit: contain;
 }
 
 /* ---- EXPANDED IMAGE --------------------------------------- */
@@ -1062,11 +1071,8 @@ body.mobile-mode .idea-header {
     overflow: hidden;
     border: 1px solid rgba(255, 204, 102, 0.4);
     box-shadow: 0 0 18px rgba(255, 204, 102, 0.15);
+    transform-origin: top left;
 }
-
-.idea-img-expanded.anchor-left   { margin-right: auto; transform-origin: top left; }
-.idea-img-expanded.anchor-center { margin: 0 auto 14px; transform-origin: top center; }
-.idea-img-expanded.anchor-right  { margin-left: auto; transform-origin: top right; }
 
 .idea-img-expanded img {
     width: 100%;
