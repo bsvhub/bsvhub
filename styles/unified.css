@@ -1099,11 +1099,18 @@ body.mobile-mode .idea-header {
     transform-origin: top center;
 }
 
+/* ss1-ss4 expanded — same zoom/pan transform as the slot thumbnail */
 .idea-img-expanded img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    display: block;
+    transform: translate(
+        calc(-50% + calc(var(--icon-pan-x, 0) * 100%)),
+        calc(-50% + calc(var(--icon-pan-y, 0) * 100%))
+    ) scale(var(--icon-zoom, 1.0));
 }
 
 /* ---- ANIMATIONS — macOS spring expand/collapse ------------ */
