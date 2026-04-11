@@ -539,17 +539,6 @@ Promise.all([
                     lbl.textContent = idea.name || "";
                     wrap.appendChild(lbl);
                     slot.appendChild(wrap);
-                    /* Scale after layout so offsetWidth is available */
-                    (function (s, w) {
-                        requestAnimationFrame(function () {
-                            var slotW = s.offsetWidth;
-                            var wrapW = w.offsetWidth;
-                            if (slotW && wrapW) {
-                                w.style.transformOrigin = "top left";
-                                w.style.transform = "scale(" + (slotW / wrapW) + ")";
-                            }
-                        });
-                    }(slot, wrap));
                 }
                 stripWrap.appendChild(slot);
             });
@@ -886,6 +875,19 @@ function fetchIdeaFeatures(card) {
                 img.onload = function () {
                     slot.classList.remove("slot-empty");
                     strip.classList.add("has-images");
+                    /* Scale icon-wrapper to fit slot now that it's in the DOM */
+                    if (key === "ico") {
+                        var icoWrap = slot.querySelector(".icon-wrapper");
+                        if (icoWrap) {
+                            icoWrap.style.transform = "";
+                            var slotW = slot.offsetWidth;
+                            var wrapW = icoWrap.offsetWidth;
+                            if (slotW && wrapW) {
+                                icoWrap.style.transformOrigin = "top left";
+                                icoWrap.style.transform = "scale(" + (slotW / wrapW) + ")";
+                            }
+                        }
+                    }
                 };
                 if (key !== "ico") slot.appendChild(img);
             });
