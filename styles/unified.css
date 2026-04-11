@@ -1046,11 +1046,31 @@ body.mobile-mode .idea-header {
     visibility: hidden;
 }
 
-.idea-img-slot img {
+/* ico slot uses .icon-wrapper img transform — this rule covers ss1-ss4 only */
+.idea-img-slot:not([data-slot="ico"]) img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    display: block;
+    transform: translate(
+        calc(-50% + calc(var(--icon-pan-x, 0) * 100%)),
+        calc(-50% + calc(var(--icon-pan-y, 0) * 100%))
+    ) scale(var(--icon-zoom, 1.0));
+    transition: transform 0.25s;
+}
+
+/* ico slot — colour layer reads --tile-bg / --tile-opacity set by setTileColour()
+   on .icon-wrapper. Mirrors ul.icon-grid li a::before for the ideas strip context. */
+.idea-img-slot[data-slot="ico"] .icon-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--tile-bg, transparent);
+    opacity: var(--tile-opacity, 1);
+    pointer-events: none;
+    z-index: 0;
 }
 
 /* Gold border highlight on hover */
