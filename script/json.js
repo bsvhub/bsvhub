@@ -939,12 +939,13 @@ document.addEventListener("click", function (e) {
     if (!img) return;
 
     expanded.className = "idea-img-expanded";
-    expanded.style.marginLeft = slot.offsetLeft + "px";
+    expanded.style.marginLeft = "";
     expanded.dataset.activeSlot = slot.dataset.slot;
     expanded.innerHTML = "";
     var bigImg = document.createElement("img");
     bigImg.src = img.src;
     bigImg.alt = img.alt;
+    bigImg.style.objectFit = slot.dataset.slot === "ico" ? "contain" : "cover";
     expanded.appendChild(bigImg);
     expanded.style.display = "";
     expanded.classList.add("is-opening");
