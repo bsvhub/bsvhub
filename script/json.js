@@ -709,32 +709,106 @@ Promise.all([
 
 
 /* ============================================================
-   LAZY FEATURE FETCH — on-chain ideas
-   Fetches a TXID's raw transaction from WhatsOnChain, decodes
-   OP_RETURN, extracts feature_1..feature_6 MAP keys, and
-   injects them into the card as an ordered list. Cached on
-   the card element so subsequent expands don't refetch.
-   Reuses App.Viewer (decodeScript / extractMAP / fetchTx) if
-   loaded on the page; silently no-ops if the viewer module
-   isn't available.
+   IDEA MEDIA HELPERS — standalone MAP decode (no App.Viewer dep)
+   ============================================================ */
+
+/* Decode a hex OP_RETURN script into an array of string parts */
+function _ideaDecodeScript(hex) {
+    var parts = [], pos = 0;
+    function rb() { var b = parseInt(hex.substr(pos, 2), 16); pos += 2; return b; }
+    function rbs(n) {
+        var a = new Uint8Array(n);
+        for (var i = 0; i < n; i++) a[i] = rb();
+        return a;
+    }
+    while (pos < hex.length) {
+        var op = rb();
+        if (op === 0x6a) { parts.push("OP_RETURN"); }
+        else if (op === 0x00) { parts.push("OP_0"); }
+        else if (op >= 0x01 && op <= 0x4b) {
+            try { parts.push(new TextDecoder().decode(rbs(op))); } catch(e) { parts.push(""); }
+        } else if (op === 0x4c) {
+            var l1 = rb();
+            try { parts.push(new TextDecoder().decode(rbs(l1))); } catch(e) { parts.push(""); }
+        } else if (op === 0x4d) {
+            var lo = rb(), hi = rb(), l2 = lo | (hi << 8);
+            try { parts.push(new TextDecoder().decode(rbs(l2))); } catch(e) { parts.push(""); }
+        } else { parts.push("OP_" + op.toString(16)); }
+    }
+    return parts;
+}
+
+/* Extract MAP key-value fields from decoded script parts */
+var _IDEA_MAP_PREFIX = "1PuQa7K62MiKCtssSLKy1kh56WWU7MtUR5";
+function _ideaExtractMAP(parts) {
+    var idx = -1;
+    for (var i = 0; i < parts.length; i++) {
+        if (parts[i] === _IDEA_MAP_PREFIX) { idx = i; break; }
+    }
+    if (idx === -1 || parts[idx + 1] !== "SET") return null;
+    var fields = {};
+    for (var j = idx + 2; j + 1 < parts.length; j += 2) {
+        var key = parts[j], val = parts[j + 1];
+        if (key === "OP_0") continue;
+        if (val === "OP_0") val = "";
+        fields[key] = val;
+    }
+    return fields;
+}
+
+/* Rate-limited WoC fetch queue — max 3 requests per second */
+var _ideaFetchQueue = [];
+var _ideaFetchInFlight = 0;
+var _IDEA_FETCH_MAX = 3;
+
+function _ideaFetchTx(txid) {
+    return new Promise(function (resolve, reject) {
+        _ideaFetchQueue.push({ txid: txid, resolve: resolve, reject: reject });
+        _ideaDrainQueue();
+    });
+}
+
+function _ideaDrainQueue() {
+    if (_ideaFetchInFlight >= _IDEA_FETCH_MAX || !_ideaFetchQueue.length) return;
+    var item = _ideaFetchQueue.shift();
+    _ideaFetchInFlight++;
+    fetch("https://api.whatsonchain.com/v1/bsv/main/tx/" + item.txid)
+        .then(function (r) {
+            if (!r.ok) throw new Error("HTTP " + r.status);
+            return r.json();
+        })
+        .then(item.resolve, item.reject)
+        .then(function () {
+            _ideaFetchInFlight--;
+            /* Respect the 3 req/s limit — drain after 340 ms */
+            setTimeout(_ideaDrainQueue, 340);
+        });
+}
+
+
+/* ============================================================
+   LAZY FEATURE + IMAGE FETCH — on-chain ideas
+   Fetches the MAP transaction from WhatsOnChain on first expand,
+   extracts features and image txids, and populates the card.
+   Cached on the card element so subsequent expands don't refetch.
+   Rate-limited to 3 requests/second via _ideaFetchTx queue.
    ============================================================ */
 function fetchIdeaFeatures(card) {
     if (!card || card.dataset.featuresLoaded === "true") return;
     if (card.dataset.featuresLoading === "true") return;
     var txid = card.dataset.txid;
     if (!txid) return;
-    if (typeof App === "undefined" || !App.Viewer) return;
 
     card.dataset.featuresLoading = "true";
 
-    App.Viewer.fetchTx(txid).then(function (tx) {
+    _ideaFetchTx(txid).then(function (tx) {
         if (!tx || !tx.vout) return;
         var fields = null;
         for (var i = 0; i < tx.vout.length; i++) {
             var hex = tx.vout[i].scriptPubKey && tx.vout[i].scriptPubKey.hex;
             if (!hex) continue;
-            var parts = App.Viewer.decodeScript(hex);
-            var f = App.Viewer.extractMAP(parts);
+            var parts = _ideaDecodeScript(hex);
+            var f = _ideaExtractMAP(parts);
             if (f) { fields = f; break; }
         }
         if (!fields) return;
