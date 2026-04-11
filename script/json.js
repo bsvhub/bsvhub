@@ -511,6 +511,31 @@ Promise.all([
             var body = document.createElement("div");
             body.className = "idea-body";
 
+            /* Image strip — 5 slots: ss1, ss2, ico, ss3, ss4.
+               Hidden until at least one image loads (filled lazily on first expand). */
+            var stripWrap = document.createElement("div");
+            stripWrap.className = "idea-img-strip";
+            var slotDefs = [
+                { key: "ss1", anchor: "left"   },
+                { key: "ss2", anchor: "left"   },
+                { key: "ico", anchor: "center" },
+                { key: "ss3", anchor: "right"  },
+                { key: "ss4", anchor: "right"  }
+            ];
+            slotDefs.forEach(function (def) {
+                var slot = document.createElement("div");
+                slot.className = "idea-img-slot slot-empty";
+                slot.dataset.slot   = def.key;
+                slot.dataset.anchor = def.anchor;
+                stripWrap.appendChild(slot);
+            });
+            /* Expanded image container — injected after the strip when a slot is clicked */
+            var expandedWrap = document.createElement("div");
+            expandedWrap.className = "idea-img-expanded";
+            expandedWrap.style.display = "none";
+            body.appendChild(stripWrap);
+            body.appendChild(expandedWrap);
+
             /* Description */
             if (idea.description) {
                 var p = document.createElement("p");
@@ -714,31 +739,58 @@ function fetchIdeaFeatures(card) {
         }
         if (!fields) return;
 
+        /* ── Features ────────────────────────────────────────── */
         var feats = [];
         for (var n = 1; n <= 6; n++) {
             var v = fields["feature_" + n];
             if (v) feats.push(v);
         }
-        if (!feats.length) return;
+        if (feats.length) {
+            var wrap = card.querySelector(".idea-features");
+            if (wrap) {
+                wrap.innerHTML = "";
+                var h = document.createElement("h4");
+                h.textContent = "Features";
+                wrap.appendChild(h);
+                var ol = document.createElement("ol");
+                feats.forEach(function (feat) {
+                    var li = document.createElement("li");
+                    li.textContent = feat;
+                    ol.appendChild(li);
+                });
+                wrap.appendChild(ol);
+                wrap.style.display = "";
+            }
+        }
 
-        var wrap = card.querySelector(".idea-features");
-        if (!wrap) return;
-        wrap.innerHTML = "";
-        var h = document.createElement("h4");
-        h.textContent = "Features";
-        wrap.appendChild(h);
-        var ol = document.createElement("ol");
-        feats.forEach(function (f) {
-            var li = document.createElement("li");
-            li.textContent = f;
-            ol.appendChild(li);
-        });
-        wrap.appendChild(ol);
-        wrap.style.display = "";
+        /* ── Image strip — icon + ss1..ss4 from MAP fields ──── */
+        var imgMap = {
+            ico: fields["icon_txid"] || "",
+            ss1: fields["ss1_txid"]  || "",
+            ss2: fields["ss2_txid"]  || "",
+            ss3: fields["ss3_txid"]  || "",
+            ss4: fields["ss4_txid"]  || ""
+        };
+        var strip = card.querySelector(".idea-img-strip");
+        if (strip) {
+            Object.keys(imgMap).forEach(function (key) {
+                var txidVal = imgMap[key];
+                if (!txidVal || txidVal.length < 64) return;
+                var slot = strip.querySelector('[data-slot="' + key + '"]');
+                if (!slot) return;
+                var img = document.createElement("img");
+                img.src = "https://ordfs.network/" + txidVal;
+                img.alt = key;
+                img.onload = function () {
+                    slot.classList.remove("slot-empty");
+                    strip.classList.add("has-images");
+                };
+                slot.appendChild(img);
+            });
+        }
     }).catch(function () {
-        /* WoC fetch failures are non-fatal — the card still shows
-           name, description, dev block, and date. Features simply
-           stay hidden. */
+        /* WoC fetch failures are non-fatal — card still shows
+           name, description, dev block, and date. */
     }).then(function () {
         card.dataset.featuresLoaded  = "true";
         card.dataset.featuresLoading = "false";
@@ -758,8 +810,93 @@ document.addEventListener("click", function (e) {
     if (!header) return;
     var card = header.closest(".idea-card");
     if (!card) return;
+    var body = card.querySelector(".idea-body");
+    var opening = !card.classList.contains("is-open");
     card.classList.toggle("is-open");
-    if (card.classList.contains("is-open") && card.classList.contains("is-on-chain")) {
+    if (body) {
+        if (opening) {
+            /* Measure natural height then animate to it */
+            body.style.maxHeight = body.scrollHeight + "px";
+            /* After transition ends, switch to 'none' so content-driven
+               changes (images loading, expand) never need recalculating */
+            body.addEventListener("transitionend", function onOpen() {
+                body.removeEventListener("transitionend", onOpen);
+                if (card.classList.contains("is-open")) {
+                    body.style.maxHeight = "none";
+                }
+            });
+        } else {
+            /* Snap back from 'none' to a concrete value before animating to 0 */
+            body.style.maxHeight = body.scrollHeight + "px";
+            requestAnimationFrame(function () {
+                body.style.maxHeight = "0";
+            });
+        }
+    }
+    if (opening && card.classList.contains("is-on-chain")) {
         fetchIdeaFeatures(card);
     }
 });
+
+
+/* ============================================================
+   IMAGE EXPAND / COLLAPSE — macOS-style spring animation
+   Delegated from document — works for all dynamically built cards.
+   Clicking a populated slot expands it to 50% card width.
+   Clicking expanded image (or same slot again) collapses it.
+   ============================================================ */
+document.addEventListener("click", function (e) {
+    var slot = e.target.closest(".idea-img-slot");
+    if (!slot || slot.classList.contains("slot-empty")) return;
+
+    var card        = slot.closest(".idea-card");
+    var body        = card && card.querySelector(".idea-body");
+    var strip       = card && card.querySelector(".idea-img-strip");
+    var expanded    = card && card.querySelector(".idea-img-expanded");
+    if (!card || !body || !strip || !expanded) return;
+
+    /* If already showing this slot — collapse */
+    if (expanded.dataset.activeSlot === slot.dataset.slot && expanded.style.display !== "none") {
+        _collapseIdeaImg(expanded);
+        return;
+    }
+
+    /* Build / replace expanded image */
+    var img = slot.querySelector("img");
+    if (!img) return;
+
+    var anchor = slot.dataset.anchor || "left";
+    expanded.className = "idea-img-expanded anchor-" + anchor;
+    expanded.dataset.activeSlot = slot.dataset.slot;
+    expanded.innerHTML = "";
+    var bigImg = document.createElement("img");
+    bigImg.src = img.src;
+    bigImg.alt = img.alt;
+    expanded.appendChild(bigImg);
+    expanded.style.display = "";
+    expanded.classList.add("is-opening");
+    expanded.addEventListener("animationend", function onOpened() {
+        expanded.removeEventListener("animationend", onOpened);
+        expanded.classList.remove("is-opening");
+    });
+});
+
+/* Collapse when clicking outside the strip / expanded area */
+document.addEventListener("click", function (e) {
+    if (e.target.closest(".idea-img-slot") || e.target.closest(".idea-img-expanded")) return;
+    document.querySelectorAll(".idea-img-expanded").forEach(function (expanded) {
+        if (expanded.style.display !== "none") {
+            _collapseIdeaImg(expanded);
+        }
+    });
+});
+
+function _collapseIdeaImg(expanded) {
+    expanded.classList.add("is-closing");
+    expanded.addEventListener("animationend", function onClosed() {
+        expanded.removeEventListener("animationend", onClosed);
+        expanded.classList.remove("is-closing");
+        expanded.style.display = "none";
+        expanded.dataset.activeSlot = "";
+    });
+}
