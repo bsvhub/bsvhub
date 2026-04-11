@@ -892,7 +892,6 @@ ul.icon-grid li a:hover .icon-text::first-letter {
 }
 
 .idea-card.is-open .idea-body {
-    max-height: 1400px;  /* rich on-chain cards need more room than legacy body-only cards */
     padding: 0 20px 18px;
 }
 
@@ -1016,6 +1015,83 @@ body.mobile-mode .idea-body p {
 
 body.mobile-mode .idea-header {
     padding: calc(16px * var(--mobile-scale)) calc(20px * var(--mobile-scale));
+}
+
+/* ---- IMAGE STRIP (on-chain ideas with screenshots) -------- */
+.idea-img-strip {
+    display: none;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.idea-img-strip.has-images {
+    display: flex;
+}
+
+.idea-img-slot {
+    flex: 1;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    cursor: pointer;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 87, 51, 0.18);
+    position: relative;
+}
+
+.idea-img-slot.slot-empty {
+    cursor: default;
+    border-color: transparent;
+    background: transparent;
+}
+
+.idea-img-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 5px;
+}
+
+/* ---- EXPANDED IMAGE --------------------------------------- */
+.idea-img-expanded {
+    width: 50%;
+    aspect-ratio: 1 / 1;
+    margin-bottom: 14px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 204, 102, 0.4);
+    box-shadow: 0 0 18px rgba(255, 204, 102, 0.15);
+}
+
+.idea-img-expanded.anchor-left   { margin-right: auto; transform-origin: top left; }
+.idea-img-expanded.anchor-center { margin: 0 auto 14px; transform-origin: top center; }
+.idea-img-expanded.anchor-right  { margin-left: auto; transform-origin: top right; }
+
+.idea-img-expanded img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* ---- ANIMATIONS — macOS spring expand/collapse ------------ */
+@keyframes idea-img-open {
+    from { transform: scale(0.2); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+}
+
+@keyframes idea-img-close {
+    from { transform: scale(1);   opacity: 1; }
+    to   { transform: scale(0.2); opacity: 0; }
+}
+
+.idea-img-expanded.is-opening {
+    animation: idea-img-open  0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.idea-img-expanded.is-closing {
+    animation: idea-img-close 0.22s ease-in forwards;
 }
 
 /* ============================================================
