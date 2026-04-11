@@ -1064,7 +1064,7 @@ body.mobile-mode .idea-header {
     transform: translate(
         calc(-50% + calc(var(--icon-pan-x, 0) * 100%)),
         calc(-50% + calc(var(--icon-pan-y, 0) * 100%))
-    ) scale(calc(var(--icon-zoom, 1.0) * 1.15));
+    ) scale(var(--icon-zoom, 1.0));
 }
 
 /* ---- EXPANDED IMAGE --------------------------------------- */
