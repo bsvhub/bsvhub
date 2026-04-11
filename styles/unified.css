@@ -1058,22 +1058,13 @@ body.mobile-mode .idea-header {
     transform: scale(1.15);
 }
 
-/* ico slot: reuse .icon-wrapper layout — override size to fill the slot */
-.idea-img-slot[data-slot="ico"] .icon-wrapper {
-    width: 100%;
-    height: 100%;
-    padding: 0 9.375%;
-}
-
-.idea-img-slot[data-slot="ico"] .icon-wrapper img {
-    max-width: 80%;
-    max-height: 80%;
-}
-
-.idea-img-slot[data-slot="ico"] .icon-text {
-    font-size: 0.5em;
-    padding: 0 3px;
-    bottom: 2px;
+/* ico slot: icon-wrapper renders at natural tile size, JS scales it down to fit.
+   Suppress the generic img hover rule — use the icon-wrapper img hover instead. */
+.idea-img-slot[data-slot="ico"]:not(.slot-empty):hover .icon-wrapper img {
+    transform: translate(
+        calc(-50% + calc(var(--icon-pan-x, 0) * 100%)),
+        calc(-50% + calc(var(--icon-pan-y, 0) * 100%))
+    ) scale(calc(var(--icon-zoom, 1.0) * 1.15));
 }
 
 /* ---- EXPANDED IMAGE --------------------------------------- */
