@@ -217,11 +217,13 @@ App.Subcat = {
     }
     for (var oi = 0; oi < opts.length; oi++) {
       (function(opt) {
-        /* Subcategory can be a string or an object { value, mandatory, overrides } */
+        /* Subcategory can be a string or an object { value, label?, mandatory?, overrides? }
+           label is optional display text; value is what gets stored on-chain */
         var val = typeof opt === 'object' ? opt.value : opt;
+        var lbl = (typeof opt === 'object' && opt.label) ? opt.label : val;
         var item = document.createElement('label');
         item.className = 'subcat-dd-item';
-        item.innerHTML = '<input type="checkbox" value="' + val + '"><div class="tbox"></div><span>' + val + '</span>';
+        item.innerHTML = '<input type="checkbox" value="' + val + '"><div class="tbox"></div><span>' + lbl + '</span>';
         var tbox = item.querySelector('.tbox');
         tbox.style.borderColor = self._catBorder;
         var cb = item.querySelector('input');
@@ -239,6 +241,19 @@ App.Subcat = {
 
   _handleCheck: function(cb) {
     if (cb.checked) {
+      /* ideas is exclusive — cannot combine with other subcategories */
+      var IDEAS = 'ideas';
+      if (cb.value === IDEAS && this._selected.length > 0) {
+        /* Selecting ideas: clear everything else first */
+        this._selected = [];
+        document.querySelectorAll('#subcat-dd input[type="checkbox"]').forEach(function(c) {
+          if (c !== cb) { c.checked = false; var t = c.nextElementSibling; if (t) { t.style.borderColor = ''; t.style.background = ''; } }
+        });
+      } else if (cb.value !== IDEAS && this._selected.includes(IDEAS)) {
+        /* Selecting non-ideas while ideas is active: block */
+        cb.checked = false;
+        App.StatusBar.set('DESELECT "ideas" FIRST — it cannot combine with other subcategories', 'warn'); return;
+      }
       if (this._selected.length >= SETTINGS.MAX_SUBCATEGORIES) {
         cb.checked = false;
         App.StatusBar.set('MAX ' + SETTINGS.MAX_SUBCATEGORIES + ' SUBCATEGORIES ALLOWED', 'warn'); return;
@@ -250,7 +265,8 @@ App.Subcat = {
     this._renderPills(); this._updateBtnLabel();
     /* Notify form of subcat change (for desc char limit + mandatory update) */
     if (App.Form && App.Form._updateDescLimit) App.Form._updateDescLimit();
-    if (App.Form && App.Form._setMandatory) App.Form._setMandatory();
+    if (App.Form && App.Form._setMandatory)    App.Form._setMandatory();
+    if (App.Form && App.Form._applyDisabled)   App.Form._applyDisabled();
   },
 
   _renderPills: function() {
@@ -260,6 +276,15 @@ App.Subcat = {
     var color  = this._catColor  || 'rgba(0,229,255,0.85)';
     var border = this._catBorder || 'rgba(0,229,255,0.3)';
     var bg     = this._catBg     || 'rgba(0,229,255,0.07)';
+    /* Build value -> display label map from active category's subcategories */
+    var cfg = App.Category ? App.Category.getConfig() : null;
+    var opts = (cfg && cfg.subcategories) ? cfg.subcategories : [];
+    var labelMap = {};
+    for (var li = 0; li < opts.length; li++) {
+      var o = opts[li];
+      if (typeof o === 'object') labelMap[o.value] = o.label || o.value;
+      else                       labelMap[o]       = o;
+    }
     for (var i = 0; i < this._selected.length; i++) {
       (function(val) {
         var pill = document.createElement('span');
@@ -267,7 +292,8 @@ App.Subcat = {
         pill.style.color       = color;
         pill.style.borderColor = border;
         pill.style.background  = bg;
-        pill.innerHTML = val + '<span class="subcat-x">\u2715</span>';
+        var lbl = labelMap[val] || val;
+        pill.innerHTML = lbl + '<span class="subcat-x">\u2715</span>';
         pill.addEventListener('mouseenter', function() { pill.style.borderColor = 'var(--accent)'; pill.style.color = 'var(--accent)'; });
         pill.addEventListener('mouseleave', function() { pill.style.borderColor = border; pill.style.color = color; });
         pill.addEventListener('click', function() {
@@ -280,7 +306,8 @@ App.Subcat = {
           }
           self._renderPills(); self._updateBtnLabel();
           if (App.Form && App.Form._updateDescLimit) App.Form._updateDescLimit();
-          if (App.Form && App.Form._setMandatory) App.Form._setMandatory();
+          if (App.Form && App.Form._setMandatory)    App.Form._setMandatory();
+          if (App.Form && App.Form._applyDisabled)   App.Form._applyDisabled();
         });
         c.appendChild(pill);
       })(this._selected[i]);

@@ -123,10 +123,13 @@ App.Category = {
     if (App.Subcat) App.Subcat.updateForCategory(this._active);
 
     /* Update mandatory field labels */
-    if (App.Form && App.Form._setMandatory) App.Form._setMandatory();
+    if (App.Form && App.Form._setMandatory)  App.Form._setMandatory();
 
     /* Update description limit */
     if (App.Form && App.Form._updateDescLimit) App.Form._updateDescLimit();
+
+    /* Gray-out fields not applicable to active subcategory */
+    if (App.Form && App.Form._applyDisabled) App.Form._applyDisabled();
 
     /* Enable/disable subcategory row */
     if (App.Form && App.Form._setSubcatEnabled) {
@@ -196,8 +199,9 @@ App.Category = {
       App.Subcat._updateBtnLabel();
 
       /* Re-trigger mandatory in case subcategory has overrides */
-      if (App.Form && App.Form._setMandatory) App.Form._setMandatory();
+      if (App.Form && App.Form._setMandatory)    App.Form._setMandatory();
       if (App.Form && App.Form._updateDescLimit) App.Form._updateDescLimit();
+      if (App.Form && App.Form._applyDisabled)   App.Form._applyDisabled();
     }
   }
 };

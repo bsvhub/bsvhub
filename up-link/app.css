@@ -495,6 +495,8 @@ input[type=range]::-moz-range-thumb { width: 11px; height: 11px; background: var
 .clr-row-disabled lbl, .clr-row-disabled input[type=color], .clr-row-disabled .hex-in {
   opacity: 0.3; pointer-events: none;
 }
+/* Fields/panels grayed out when current subcategory doesn't use them */
+.ideas-disabled { opacity: 0.25; pointer-events: none; user-select: none; }
 
 /* ── Language multi-select ─────────────────────────────────── */
 .lang-wrap { display: flex; flex-direction: row; gap: 4px; flex: 1; min-width: 0; align-items: center; }

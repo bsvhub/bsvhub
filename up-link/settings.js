@@ -196,8 +196,19 @@ var SETTINGS = {
     { value: 'bsvhub', label: 'BSVHUB.IO', color: '#EAB300', bg: 'rgba(234,179,0,0.07)', border: 'rgba(234,179,0,0.4)',
       default: true,
       mandatory: ['name', 'url', 'subcategory', 'description', 'icon'],
-      subcategories: ['tool','app','wallet','exchange','market','info','dev.','social media',
-        { value: 'app idea', mandatory: ['description'], overrides: { MAX_DESC_CHARS: 1024 } }
+      subcategories: [
+        { value: 'get',    label: 'get (BSV)' },
+        'wallet',
+        'market',
+        'app',
+        'tool',
+        { value: 'info',   label: 'info (\u20BF)' },
+        'dev',
+        { value: 'sm',     label: 'sm (Social media)' },
+        'media',
+        { value: 'ideas',  label: 'ideas (App Ideas)', mandatory: ['description'], overrides: { MAX_DESC_CHARS: 1024 },
+          disabled: ['p1-icon', 'app-abbr', 'app-url', 'app-tor',
+                     'app-bsv', 'app-tags', 'app-status', 'app-rel', 'app-ver', 'lang-pills'] }
       ]
     },
     { value: 'game',           label: 'GAME',  color: '#F0997B', bg: 'rgba(216,90,48,0.15)',   border: 'rgba(216,90,48,0.6)',

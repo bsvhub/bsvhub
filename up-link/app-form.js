@@ -280,6 +280,35 @@ App.Form = {
     }
   },
 
+  /* Gray-out fields not applicable to the current subcategory.
+     Follows the same pattern as getMandatoryFields / getDescLimit —
+     iterates App.Subcat._selected against the category's subcategories
+     array looking for a `disabled` array in the subcat config.
+     Clears .ideas-disabled first so switching away re-enables everything. */
+  _applyDisabled: function() {
+    document.querySelectorAll('.ideas-disabled').forEach(function(el) {
+      el.classList.remove('ideas-disabled');
+    });
+    if (!App.Category || !App.Subcat) return;
+    var cfg      = App.Category.getConfig();
+    if (!cfg || !cfg.subcategories) return;
+    var selected = App.Subcat._selected || [];
+    var disabled = [];
+    for (var i = 0; i < selected.length; i++) {
+      var subVal = selected[i];
+      for (var j = 0; j < cfg.subcategories.length; j++) {
+        var sub = cfg.subcategories[j];
+        if (typeof sub === 'object' && sub.value === subVal && sub.disabled) {
+          disabled = disabled.concat(sub.disabled);
+        }
+      }
+    }
+    disabled.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.classList.add('ideas-disabled');
+    });
+  },
+
   /* Wipe all form fields, images, and state back to factory defaults */
   clearAll: function() {
     var $ = App.Utils.$;
