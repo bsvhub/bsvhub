@@ -657,7 +657,7 @@ Promise.all([
             dropdown.classList.remove("open");
         });
         document.addEventListener("click", function (e) {
-            if (!menuWrap.contains(e.target)) {
+            if (!menuWrap.contains(e.target) && !dropdown.contains(e.target)) {
                 dropdown.classList.remove("open");
             }
         });
