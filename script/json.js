@@ -526,6 +526,19 @@ Promise.all([
                 var slot = document.createElement("div");
                 slot.className = "idea-img-slot slot-empty";
                 slot.dataset.slot = def.key;
+                if (def.key === "ico") {
+                    /* Reuse icon-wrapper structure identical to regular tiles */
+                    var wrap = document.createElement("div");
+                    wrap.className = "icon-wrapper";
+                    var icoImg = document.createElement("img");
+                    icoImg.alt = idea.name || "";
+                    wrap.appendChild(icoImg);
+                    var lbl = document.createElement("div");
+                    lbl.className = "icon-text";
+                    lbl.textContent = idea.name || "";
+                    wrap.appendChild(lbl);
+                    slot.appendChild(wrap);
+                }
                 stripWrap.appendChild(slot);
             });
             /* Expanded image container — injected after the strip when a slot is clicked */
@@ -851,14 +864,18 @@ function fetchIdeaFeatures(card) {
                 if (!txidVal || txidVal.length < 64) return;
                 var slot = strip.querySelector('[data-slot="' + key + '"]');
                 if (!slot) return;
-                var img = document.createElement("img");
+                /* ico slot already has icon-wrapper > img — set src on it directly */
+                var img = key === "ico"
+                    ? slot.querySelector(".icon-wrapper img")
+                    : document.createElement("img");
+                if (!img) return;
                 img.src = "https://ordfs.network/" + txidVal;
                 img.alt = key;
                 img.onload = function () {
                     slot.classList.remove("slot-empty");
                     strip.classList.add("has-images");
                 };
-                slot.appendChild(img);
+                if (key !== "ico") slot.appendChild(img);
             });
         }
     }).catch(function () {
