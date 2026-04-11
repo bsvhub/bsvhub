@@ -105,10 +105,10 @@ Promise.all([
                 var wrap = document.createElement('div');
                 wrap.className = 'icon-wrapper';
 
-                /* Colour / opacity on the slot container (mirrors setTileColour
-                   being called on <a> for regular tiles) */
+                /* Colour / opacity on the icon-wrapper — same element the
+                   ::before colour layer targets in unified.css */
                 if (typeof setTileColour === 'function') {
-                    setTileColour(slot, idea.colour1, idea.colour2, idea.opacity);
+                    setTileColour(wrap, idea.colour1, idea.colour2, idea.opacity);
                 }
 
                 /* Pan + zoom */
@@ -365,16 +365,16 @@ function fetchIdeaFeatures(card) {
                 if (!txidVal || txidVal.length < 64) return;
                 var slot = strip.querySelector('[data-slot="' + key + '"]');
                 if (!slot) return;
-                var img = key === 'ico'
-                    ? slot.querySelector('.icon-wrapper img')
-                    : document.createElement('img');
-                if (!img) return;
-                img.src = 'https://ordfs.network/' + txidVal;
-                img.alt = key;
-                img.onload = function () {
-                    slot.classList.remove('slot-empty');
-                    strip.classList.add('has-images');
-                    if (key === 'ico') {
+
+                if (key === 'ico') {
+                    /* ico — src on existing icon-wrapper img; zoom/pan already set
+                       at card build time from /api/ideas fields */
+                    var icoImg = slot.querySelector('.icon-wrapper img');
+                    if (!icoImg) return;
+                    icoImg.src = 'https://ordfs.network/' + txidVal;
+                    icoImg.onload = function () {
+                        slot.classList.remove('slot-empty');
+                        strip.classList.add('has-images');
                         var icoWrap = slot.querySelector('.icon-wrapper');
                         if (icoWrap) {
                             icoWrap.style.transform = '';
@@ -385,9 +385,27 @@ function fetchIdeaFeatures(card) {
                                 icoWrap.style.transform = 'scale(' + (slotW / wrapW) + ')';
                             }
                         }
-                    }
-                };
-                if (key !== 'ico') slot.appendChild(img);
+                    };
+                } else {
+                    /* ss1-ss4 — create img, apply zoom/pan/alt from MAP fields */
+                    var ssNum  = key.slice(2);   /* '1','2','3','4' */
+                    var ssZoom = fields['ss' + ssNum + '_zoom']     || '1';
+                    var ssPanX = fields['ss' + ssNum + '_pan_x']    || '0';
+                    var ssPanY = fields['ss' + ssNum + '_pan_y']    || '0';
+                    var ssAlt  = fields['ss' + ssNum + '_alt_text'] || key;
+
+                    var ssImg = document.createElement('img');
+                    ssImg.src = 'https://ordfs.network/' + txidVal;
+                    ssImg.alt = ssAlt;
+                    if (ssZoom && ssZoom !== '1') ssImg.style.setProperty('--icon-zoom', ssZoom);
+                    if (ssPanX && ssPanX !== '0') ssImg.style.setProperty('--icon-pan-x', ssPanX);
+                    if (ssPanY && ssPanY !== '0') ssImg.style.setProperty('--icon-pan-y', ssPanY);
+                    ssImg.onload = function () {
+                        slot.classList.remove('slot-empty');
+                        strip.classList.add('has-images');
+                    };
+                    slot.appendChild(ssImg);
+                }
             });
         }
     }).catch(function () {

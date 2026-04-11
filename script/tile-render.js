@@ -68,25 +68,25 @@ function buildSlotOverlay(wrap, info, clickStats, href) {
     counterDiv.dataset.slot = 'clicks';
     rightCol.appendChild(counterDiv);
 
-    /* Left slots: 0, 1, 2 */
+    /* Left slots: 0, 1, 2 — only render non-empty so labels stack from top */
     [0, 1, 2].forEach(function (i) {
         var val = (slots[i] || '').trim();
+        if (!val) return;
         var d       = document.createElement('div');
         d.className = 'tile-label tile-label-s' + i;
         d.textContent = val;
         d.dataset.slot = String(i);
-        if (!val) d.style.visibility = 'hidden';
         leftCol.appendChild(d);
     });
 
-    /* Right slots: 3, 4 (after click counter) */
+    /* Right slots: 3, 4 — only render non-empty so labels stack from top */
     [3, 4].forEach(function (i) {
         var val = (slots[i] || '').trim();
+        if (!val) return;
         var d       = document.createElement('div');
         d.className = 'tile-label tile-label-s' + i;
         d.textContent = val;
         d.dataset.slot = String(i);
-        if (!val) d.style.visibility = 'hidden';
         rightCol.appendChild(d);
     });
 
