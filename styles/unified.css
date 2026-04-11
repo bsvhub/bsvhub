@@ -1089,6 +1089,7 @@ body.mobile-mode .idea-header {
 
 /* ---- EXPANDED IMAGE --------------------------------------- */
 .idea-img-expanded {
+    position: relative;        /* contains the absolutely-positioned img */
     width: 50%;
     aspect-ratio: 1 / 1;
     margin: 0 auto 14px auto;
