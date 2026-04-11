@@ -1063,7 +1063,8 @@ body.mobile-mode .idea-header {
 
 /* ico slot — colour layer reads --tile-bg / --tile-opacity set by setTileColour()
    on .icon-wrapper. Mirrors ul.icon-grid li a::before for the ideas strip context. */
-.idea-img-slot[data-slot="ico"] .icon-wrapper::before {
+.idea-img-slot[data-slot="ico"] .icon-wrapper::before,
+.idea-img-expanded .icon-wrapper::before {
     content: '';
     position: absolute;
     inset: 0;
