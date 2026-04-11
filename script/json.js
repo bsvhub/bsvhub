@@ -119,7 +119,9 @@ Promise.all([
     /* On-chain catalog — fails silently so a worker outage never breaks the page */
     fetch("/api/catalog").then(function (r) { return r.json(); }).catch(function () { return { items: [] }; }),
     /* Link click stats — single fetch, used to stamp count badges on tiles */
-    fetch("/api/link-stats").then(function (r) { return r.json(); }).catch(function () { return { stats: {} }; })
+    fetch("/api/link-stats").then(function (r) { return r.json(); }).catch(function () { return { stats: {} }; }),
+    /* On-chain ideas — dedicated endpoint, fails silently so the fallback (ideas.json) still renders */
+    fetch("/api/ideas").then(function (r) { return r.json(); }).catch(function () { return { items: [] }; })
 ])
 .then(function (results) {
     var about       = results[0];
@@ -127,6 +129,7 @@ Promise.all([
     var ideasData   = results[2];
     var catalogData = results[3];   /* { items: [...] } — pre-mapped by /api/catalog */
     var clickStats  = results[4].stats || {};  /* { url: count } map for badge display */
+    var chainIdeas  = results[5] || { items: [] };  /* { items: [...] } — raw shape from /api/ideas */
 
     /* ── Merge on-chain catalog entries into static list.json items ────
        Dedup by href — static list.json always wins so curated entries are
@@ -433,42 +436,160 @@ Promise.all([
 
     /* --------------------------------------------------------
        3. APP IDEAS ACCORDION
-          Source: ideas.json
-          Targets the static <section id="ideas"> already in
-          the HTML — clears the loading placeholder and fills
-          it with accordion cards.
+          Sources (in priority order):
+            1. /api/ideas   — on-chain records via Cloudflare worker
+            2. ideas.json   — static fallback for ideas not yet
+                              re-submitted through up-link
+
+          On-chain ideas render a rich detail view (description,
+          features pulled lazily from WhatsOnChain, developer
+          block, upload date). Fallback ideas keep the original
+          simple <p> body. Merge dedups by name (case-insensitive)
+          so static entries never shadow on-chain entries.
     -------------------------------------------------------- */
     var ideasSec = document.getElementById("ideas");
-    if (ideasSec && ideasData.ideas) {
+    if (ideasSec) {
         ideasSec.innerHTML = "";            // clear "Loading ideas…" placeholder
 
         var wrapper       = document.createElement("div");
         wrapper.className = "ideas-section";
 
-        ideasData.ideas.forEach(function (idea) {
-            var card       = document.createElement("div");
-            card.className = "idea-card";
-
+        /* Helper — build the accordion header (title + chevron) */
+        function buildHeader(title) {
             var header       = document.createElement("div");
             header.className = "idea-header";
+            var titleSpan    = document.createElement("span");
+            titleSpan.className = "idea-title";
+            titleSpan.textContent = title;
             header.innerHTML =
-                '<span class="idea-title">' + idea.title + '</span>' +
                 '<span class="idea-chevron">' +
                   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
                        'stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
                     '<polyline points="6 9 12 15 18 9"/>' +
                   '</svg>' +
                 '</span>';
+            header.insertBefore(titleSpan, header.firstChild);
+            return header;
+        }
 
-            var body       = document.createElement("div");
+        /* Helper — format a D1 created_at timestamp as "DD MMM YYYY" */
+        function formatIdeaDate(ts) {
+            if (!ts) return "";
+            var d = new Date(ts);
+            if (isNaN(d)) return "";
+            var months = ["Jan","Feb","Mar","Apr","May","Jun",
+                          "Jul","Aug","Sep","Oct","Nov","Dec"];
+            return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+        }
+
+        /* Helper — append a dev row to a container only if value is non-empty */
+        function appendDevRow(container, label, value) {
+            if (!value) return;
+            var row = document.createElement("div");
+            row.className = "dev-row";
+            var lbl = document.createElement("span");
+            lbl.className = "dev-label";
+            lbl.textContent = label + ":";
+            var val = document.createElement("span");
+            val.className = "dev-value";
+            val.textContent = value;
+            row.appendChild(lbl);
+            row.appendChild(val);
+            container.appendChild(row);
+        }
+
+        /* Build a rich on-chain idea card with the detail layout.
+           Features are fetched lazily on first expand — see the
+           accordion toggle handler further down. */
+        function buildOnChainCard(idea) {
+            var card = document.createElement("div");
+            card.className = "idea-card is-on-chain";
+            card.dataset.txid = idea.txid || "";
+
+            card.appendChild(buildHeader(idea.name || "(untitled)"));
+
+            var body = document.createElement("div");
             body.className = "idea-body";
-            var p          = document.createElement("p");
-            p.textContent  = idea.body;
-            body.appendChild(p);
 
-            card.appendChild(header);
+            /* Description */
+            if (idea.description) {
+                var p = document.createElement("p");
+                p.textContent = idea.description;
+                body.appendChild(p);
+            }
+
+            /* Features — empty placeholder, filled lazily on first expand */
+            var featsWrap = document.createElement("div");
+            featsWrap.className = "idea-features";
+            featsWrap.style.display = "none";   // hidden until populated
+            body.appendChild(featsWrap);
+
+            /* Developer block — only rendered if at least one field present */
+            var hasDev = idea.wallet_id || idea.dev_twitter || idea.dev_github || idea.dev_bio;
+            if (hasDev) {
+                var devWrap = document.createElement("div");
+                devWrap.className = "idea-developer";
+                var devHead = document.createElement("h4");
+                devHead.textContent = "Developer";
+                devWrap.appendChild(devHead);
+                appendDevRow(devWrap, "Paymail", idea.wallet_id);
+                appendDevRow(devWrap, "Twitter", idea.dev_twitter);
+                appendDevRow(devWrap, "Github",  idea.dev_github);
+                if (idea.dev_bio) {
+                    var bio = document.createElement("p");
+                    bio.className = "dev-bio";
+                    bio.textContent = idea.dev_bio;
+                    devWrap.appendChild(bio);
+                }
+                body.appendChild(devWrap);
+            }
+
+            /* Upload date — from worker created_at */
+            var dateStr = formatIdeaDate(idea.created_at);
+            if (dateStr) {
+                var dateEl = document.createElement("div");
+                dateEl.className = "idea-date";
+                dateEl.textContent = "Uploaded: " + dateStr;
+                body.appendChild(dateEl);
+            }
+
             card.appendChild(body);
-            wrapper.appendChild(card);
+            return card;
+        }
+
+        /* Build the legacy ideas.json fallback card — title + body only. */
+        function buildFallbackCard(idea) {
+            var card = document.createElement("div");
+            card.className = "idea-card";
+            card.appendChild(buildHeader(idea.title));
+            var body = document.createElement("div");
+            body.className = "idea-body";
+            var p = document.createElement("p");
+            p.textContent = idea.body;
+            body.appendChild(p);
+            card.appendChild(body);
+            return card;
+        }
+
+        /* ── Merge on-chain + fallback ────────────────────────
+           On-chain entries take priority. Fallback entries are
+           only appended if their title doesn't match an on-chain
+           name (case-insensitive).                              */
+        var chainItems = (chainIdeas && chainIdeas.items) || [];
+        var chainNames = new Set(chainItems.map(function (i) {
+            return (i.name || "").toLowerCase().trim();
+        }));
+
+        chainItems.forEach(function (idea) {
+            wrapper.appendChild(buildOnChainCard(idea));
+        });
+
+        var fallback = (ideasData && ideasData.ideas) || [];
+        fallback.forEach(function (idea) {
+            var key = (idea.title || "").toLowerCase().trim();
+            if (!chainNames.has(key)) {
+                wrapper.appendChild(buildFallbackCard(idea));
+            }
         });
 
         ideasSec.appendChild(wrapper);
@@ -535,6 +656,11 @@ Promise.all([
         dropdown.addEventListener("mouseleave", function () {
             dropdown.classList.remove("open");
         });
+        document.addEventListener("click", function (e) {
+            if (!menuWrap.contains(e.target)) {
+                dropdown.classList.remove("open");
+            }
+        });
 
         /* Insert between 3rd and 4th swatch: [c1][c2][c3] ⚙ [c4][c5][c6] */
         crtBar.insertBefore(menuWrap, swatches[3]);
@@ -558,13 +684,82 @@ Promise.all([
 
 
 /* ============================================================
+   LAZY FEATURE FETCH — on-chain ideas
+   Fetches a TXID's raw transaction from WhatsOnChain, decodes
+   OP_RETURN, extracts feature_1..feature_6 MAP keys, and
+   injects them into the card as an ordered list. Cached on
+   the card element so subsequent expands don't refetch.
+   Reuses App.Viewer (decodeScript / extractMAP / fetchTx) if
+   loaded on the page; silently no-ops if the viewer module
+   isn't available.
+   ============================================================ */
+function fetchIdeaFeatures(card) {
+    if (!card || card.dataset.featuresLoaded === "true") return;
+    if (card.dataset.featuresLoading === "true") return;
+    var txid = card.dataset.txid;
+    if (!txid) return;
+    if (typeof App === "undefined" || !App.Viewer) return;
+
+    card.dataset.featuresLoading = "true";
+
+    App.Viewer.fetchTx(txid).then(function (tx) {
+        if (!tx || !tx.vout) return;
+        var fields = null;
+        for (var i = 0; i < tx.vout.length; i++) {
+            var hex = tx.vout[i].scriptPubKey && tx.vout[i].scriptPubKey.hex;
+            if (!hex) continue;
+            var parts = App.Viewer.decodeScript(hex);
+            var f = App.Viewer.extractMAP(parts);
+            if (f) { fields = f; break; }
+        }
+        if (!fields) return;
+
+        var feats = [];
+        for (var n = 1; n <= 6; n++) {
+            var v = fields["feature_" + n];
+            if (v) feats.push(v);
+        }
+        if (!feats.length) return;
+
+        var wrap = card.querySelector(".idea-features");
+        if (!wrap) return;
+        wrap.innerHTML = "";
+        var h = document.createElement("h4");
+        h.textContent = "Features";
+        wrap.appendChild(h);
+        var ol = document.createElement("ol");
+        feats.forEach(function (f) {
+            var li = document.createElement("li");
+            li.textContent = f;
+            ol.appendChild(li);
+        });
+        wrap.appendChild(ol);
+        wrap.style.display = "";
+    }).catch(function () {
+        /* WoC fetch failures are non-fatal — the card still shows
+           name, description, dev block, and date. Features simply
+           stay hidden. */
+    }).then(function () {
+        card.dataset.featuresLoaded  = "true";
+        card.dataset.featuresLoading = "false";
+    });
+}
+
+
+/* ============================================================
    ACCORDION TOGGLE — event delegation
    Handles .idea-header clicks on dynamically built cards.
    Registered once here; works regardless of when cards render.
+   On first expand of an on-chain card, triggers the lazy
+   feature fetch.
    ============================================================ */
 document.addEventListener("click", function (e) {
     var header = e.target.closest(".idea-header");
     if (!header) return;
     var card = header.closest(".idea-card");
-    if (card) card.classList.toggle("is-open");
+    if (!card) return;
+    card.classList.toggle("is-open");
+    if (card.classList.contains("is-open") && card.classList.contains("is-on-chain")) {
+        fetchIdeaFeatures(card);
+    }
 });
