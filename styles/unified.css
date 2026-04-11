@@ -892,7 +892,7 @@ ul.icon-grid li a:hover .icon-text::first-letter {
 }
 
 .idea-card.is-open .idea-body {
-    max-height: 600px;
+    max-height: 1400px;  /* rich on-chain cards need more room than legacy body-only cards */
     padding: 0 20px 18px;
 }
 
@@ -903,6 +903,96 @@ ul.icon-grid li a:hover .icon-text::first-letter {
     line-height: 1.7;
     margin: 0;
     letter-spacing: 0.5px;
+}
+
+/* ---- FEATURES LIST (on-chain cards only) ------------------ */
+.idea-features {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px dashed rgba(255, 204, 102, 0.25);
+}
+
+.idea-features h4 {
+    font-family: var(--font-tooltip);
+    font-size: 0.78rem;
+    letter-spacing: 1.2px;
+    color: #fada4e;
+    margin: 0 0 10px;
+    text-transform: uppercase;
+}
+
+.idea-features ol {
+    margin: 0;
+    padding-left: 22px;
+    color: rgba(220, 220, 220, 0.9);
+    font-family: var(--font-icon-grid);
+    font-size: 0.84rem;
+    line-height: 1.6;
+    letter-spacing: 0.3px;
+}
+
+.idea-features ol li {
+    margin-bottom: 4px;
+}
+
+.idea-features ol li:last-child {
+    margin-bottom: 0;
+}
+
+/* ---- DEVELOPER BLOCK (on-chain cards only) ---------------- */
+.idea-developer {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px dashed rgba(255, 204, 102, 0.25);
+}
+
+.idea-developer h4 {
+    font-family: var(--font-tooltip);
+    font-size: 0.78rem;
+    letter-spacing: 1.2px;
+    color: #fada4e;
+    margin: 0 0 10px;
+    text-transform: uppercase;
+}
+
+.dev-row {
+    display: flex;
+    gap: 10px;
+    font-family: var(--font-icon-grid);
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: rgba(220, 220, 220, 0.9);
+    margin-bottom: 3px;
+}
+
+.dev-label {
+    color: rgba(255, 204, 102, 0.7);
+    min-width: 64px;
+    letter-spacing: 0.4px;
+}
+
+.dev-value {
+    color: rgba(220, 220, 220, 0.95);
+    word-break: break-all;
+}
+
+.dev-bio {
+    margin-top: 8px !important;
+    font-style: italic;
+    color: rgba(200, 200, 200, 0.75) !important;
+    font-size: 0.82rem !important;
+}
+
+/* ---- UPLOAD DATE (on-chain cards only) -------------------- */
+.idea-date {
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(255, 204, 102, 0.15);
+    font-family: var(--font-tooltip);
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    color: rgba(255, 204, 102, 0.55);
+    text-transform: uppercase;
 }
 
 /* ---- LOADING / EMPTY STATE -------------------------------- */
