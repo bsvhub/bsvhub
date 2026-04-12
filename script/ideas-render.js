@@ -5,23 +5,19 @@
    Requires tile-render.js to be loaded first (setTileColour,
    buildSlotOverlay on window).
 
-   Sources (merged in priority order):
-     1. /api/ideas   — on-chain records via Cloudflare Worker
-     2. ideas.json   — static fallback
+   Source:
+     /api/ideas — on-chain records via Cloudflare Worker
 
    On-chain cards render a rich layout: ico tile (with colour,
    zoom, pan, overlay slots), description, features (lazy-loaded
    from WhatsOnChain on first expand), developer block, date.
-   Fallback cards render title + body text only.
    ============================================================ */
 
-Promise.all([
-    fetch('ideas.json').then(function (r) { return r.json(); }),
-    fetch('/api/ideas').then(function (r) { return r.json(); }).catch(function () { return { items: [] }; })
-])
-.then(function (results) {
-    var ideasData  = results[0];
-    var chainIdeas = results[1] || { items: [] };
+fetch('/api/ideas')
+    .then(function (r) { return r.json(); })
+    .catch(function () { return { items: [] }; })
+.then(function (chainIdeas) {
+    chainIdeas = chainIdeas || { items: [] };
 
     var ideasSec = document.getElementById('ideas');
     if (!ideasSec) return;
@@ -189,36 +185,10 @@ Promise.all([
         return card;
     }
 
-    /* ── Build legacy fallback card (title + body text only) ── */
-    function buildFallbackCard(idea) {
-        var card = document.createElement('div');
-        card.className = 'idea-card';
-        card.appendChild(buildHeader(idea.title));
-        var body = document.createElement('div');
-        body.className = 'idea-body';
-        var p = document.createElement('p');
-        p.textContent = idea.body;
-        body.appendChild(p);
-        card.appendChild(body);
-        return card;
-    }
-
-    /* ── Merge on-chain + fallback ──────────────────────────── */
+    /* ── Render on-chain ideas ──────────────────────────────── */
     var chainItems = (chainIdeas && chainIdeas.items) || [];
-    var chainNames = new Set(chainItems.map(function (i) {
-        return (i.name || '').toLowerCase().trim();
-    }));
-
     chainItems.forEach(function (idea) {
         wrapper.appendChild(buildOnChainCard(idea));
-    });
-
-    var fallback = (ideasData && ideasData.ideas) || [];
-    fallback.forEach(function (idea) {
-        var key = (idea.title || '').toLowerCase().trim();
-        if (!chainNames.has(key)) {
-            wrapper.appendChild(buildFallbackCard(idea));
-        }
     });
 
     ideasSec.appendChild(wrapper);

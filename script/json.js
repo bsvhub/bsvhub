@@ -5,9 +5,10 @@
    dynamic section of the page:
      1. about.json      → About / Tip / Contact header sections
      2. list.json       → Curated icon-grid tab sections
-     3. ideas.json      → App Ideas accordion cards
-     4. /api/catalog    → On-chain entries (trusted wallets only);
+     3. /api/catalog    → On-chain entries (trusted wallets only);
                           merged with list.json — static entries win on dedup.
+   Note: App Ideas accordion (#ideas) is owned by ideas-render.js
+   and fetched independently from /api/ideas.
    ============================================================ */
 
 /* ============================================================
