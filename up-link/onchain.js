@@ -9,7 +9,7 @@
 
    Architecture:
      BSVScript         — MAP + B:// OP_RETURN script construction
-     BRC100Provider    — fetch() to localhost:2121 (desktop wallet)
+     BRC100Provider    — fetch() to localhost:3321 (desktop wallet)
      WalletManager     — detection, connection, unified API surface
 
    Requires: App object with App.Capabilities to exist (defined in
@@ -97,15 +97,74 @@ var BSVScript = {
     return hex;
   },
 
-  /* 1Sat Ordinal inscription envelope, prepended with a dummy P2PKH
-     (all-zero pubkey hash) so the output is a spendable 1-sat UTXO —
-     required for the content to be indexed by gorillapool/ordfs. The
-     envelope format is: OP_FALSE OP_IF "ord" 0x01 <mime> 0x00 <data> OP_ENDIF
-     appended after the P2PKH locking script. */
-  buildOrdinalInscriptionScript: function(fileBytes, mimeType) {
+  /* RIPEMD-160 — compact pure-JS implementation, no external deps.
+     Used exclusively by _hash160() below. Based on the reference
+     algorithm by Antoon Bosselaers / RIPEMD team. */
+  _ripemd160: function(msg) {
+    function rotl(x, n) { return (x << n) | (x >>> (32 - n)); }
+    function f(j, x, y, z) {
+      if (j < 16) return x ^ y ^ z;
+      if (j < 32) return (x & y) | (~x & z);
+      if (j < 48) return (x | ~y) ^ z;
+      if (j < 64) return (x & z) | (y & ~z);
+      return x ^ (y | ~z);
+    }
+    var K  = [0x00000000, 0x5A827999, 0x6ED9EBA1, 0x8F1BBCDC, 0xA953FD4E];
+    var KK = [0x50A28BE6, 0x5C4DD124, 0x6D703EF3, 0x7A6D76E9, 0x00000000];
+    var r  = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,7,4,13,1,10,6,15,3,12,0,9,5,2,14,11,8,3,10,14,4,9,15,8,1,2,7,0,6,13,11,5,12,1,9,11,10,0,8,12,4,13,3,7,15,14,5,6,2,4,0,5,9,7,12,2,10,14,1,3,8,11,6,15,13];
+    var rr = [5,14,7,0,9,2,11,4,13,6,15,8,1,10,3,12,6,11,3,7,0,13,5,10,14,15,8,12,4,9,1,2,15,5,1,3,7,14,6,9,11,8,12,2,10,0,4,13,8,6,4,1,3,11,15,0,5,12,2,13,9,7,10,14,12,15,10,4,1,5,8,7,6,2,13,14,0,3,9,11];
+    var s  = [11,14,15,12,5,8,7,9,11,13,14,15,6,7,9,8,7,6,8,13,11,9,7,15,7,12,15,9,11,7,13,12,11,13,6,7,14,9,13,15,14,8,13,6,5,12,7,5,11,12,14,15,14,15,9,8,9,14,5,6,8,6,5,12,9,15,5,11,6,8,13,12,5,12,13,14,11,8,5,6];
+    var ss = [8,9,9,11,13,15,15,5,7,7,8,11,14,14,12,6,9,13,15,7,12,8,9,11,7,7,12,7,6,15,13,11,9,7,15,11,8,6,6,14,12,13,5,14,13,13,7,5,15,5,8,11,14,14,6,14,6,9,12,9,12,5,15,8,8,5,12,9,12,5,14,6,8,13,6,5,15,13,11,11];
+    /* pad message */
+    var l = msg.length * 8;
+    msg.push(0x80);
+    while (msg.length % 64 !== 56) msg.push(0);
+    for (var i = 0; i < 8; i++) msg.push((l >>> (i * 8)) & 0xff);
+    var h0 = 0x67452301, h1 = 0xEFCDAB89, h2 = 0x98BADCFE, h3 = 0x10325476, h4 = 0xC3D2E1F0;
+    for (var o = 0; o < msg.length; o += 64) {
+      var X = [];
+      for (var xi = 0; xi < 16; xi++) {
+        X[xi] = msg[o+xi*4] | (msg[o+xi*4+1]<<8) | (msg[o+xi*4+2]<<16) | (msg[o+xi*4+3]<<24);
+      }
+      var a = h0, b = h1, c = h2, d = h3, e = h4;
+      var aa = h0, bb = h1, cc = h2, dd = h3, ee = h4;
+      for (var j = 0; j < 80; j++) {
+        var T = (a + f(j,b,c,d) + X[r[j]] + K[Math.floor(j/16)])|0;
+        T = (rotl(T, s[j]) + e)|0; a=e; e=d; d=rotl(c,10); c=b; b=T;
+        T = (aa + f(79-j,bb,cc,dd) + X[rr[j]] + KK[Math.floor(j/16)])|0;
+        T = (rotl(T, ss[j]) + ee)|0; aa=ee; ee=dd; dd=rotl(cc,10); cc=bb; bb=T;
+      }
+      var T2 = (h1+c+dd)|0; h1=(h2+d+ee)|0; h2=(h3+e+aa)|0; h3=(h4+a+bb)|0; h4=(h0+b+cc)|0; h0=T2;
+    }
+    function le(x) { return [(x)&0xff,(x>>>8)&0xff,(x>>>16)&0xff,(x>>>24)&0xff]; }
+    return le(h0).concat(le(h1),le(h2),le(h3),le(h4));
+  },
+
+  /* HASH160 — SHA256 then RIPEMD160 of a hex-encoded public key.
+     Returns a Promise that resolves to a 40-char hex string (20 bytes).
+     Uses SubtleCrypto (native browser API) for SHA256. */
+  _hash160: function(pubKeyHex) {
+    var self = this;
+    var bytes = [];
+    for (var i = 0; i < pubKeyHex.length; i += 2) {
+      bytes.push(parseInt(pubKeyHex.substr(i, 2), 16));
+    }
+    return crypto.subtle.digest('SHA-256', new Uint8Array(bytes))
+      .then(function(sha256) {
+        var ripe = self._ripemd160(Array.from(new Uint8Array(sha256)));
+        return ripe.map(function(b) { return ('0' + b.toString(16)).slice(-2); }).join('');
+      });
+  },
+
+  /* 1Sat Ordinal inscription envelope, prepended with a P2PKH locking
+     script so the output is a spendable 1-sat UTXO owned by the wallet.
+     pubKeyHash: 40-char hex (20 bytes). Falls back to zero hash if absent.
+     Envelope format: OP_FALSE OP_IF "ord" OP_1 <mime> OP_0 <data> OP_ENDIF */
+  buildOrdinalInscriptionScript: function(fileBytes, mimeType, pubKeyHash) {
     /* P2PKH prefix: OP_DUP OP_HASH160 <20-byte hash> OP_EQUALVERIFY OP_CHECKSIG */
-    var hex = '76a914' + '00'.repeat(20) + '88ac';
-    /* Ord envelope */
+    var pkh = (typeof pubKeyHash === 'string' && pubKeyHash.length === 40)
+      ? pubKeyHash : '00'.repeat(20);
+    var hex = '76a914' + pkh + '88ac';
     hex += '00';  /* OP_FALSE */
     hex += '63';  /* OP_IF */
     hex += this._pushString('ord');
@@ -337,15 +396,38 @@ var WalletManager = {
   uploadIcon: function(fileBytes, mimeType, filename) {
     /* Ord inscription so content is indexed by 1sat CDNs
        (gorillapool, ordfs, 1satordinals). filename is unused by the
-       inscription format — kept in the signature for call-site
-       compatibility. */
+       inscription format — kept in the signature for call-site compatibility.
+
+       Key derivation: we request a per-upload key from the wallet using a
+       unique keyID (timestamp). This is BRC-100 compliant — any conforming
+       wallet can derive the matching private key later using the same
+       protocolID + keyID pair. Falls back to zero hash if getPublicKey fails
+       (inscription still lands on chain, just unspendable). */
     var _unused = filename;
-    var script = BSVScript.buildOrdinalInscriptionScript(fileBytes, mimeType);
-    return BRC100Provider.createAction({
-      description: 'Upload image to BSV chain',
-      outputs: [{ lockingScript: script, satoshis: 1, outputDescription: '1Sat Ordinal inscription' }],
-      labels: ['up-link', 'icon'],
-    }).then(function(res) { return { txid: res.txid }; });
+    var keyID = 'up-link-icon-' + Date.now();
+    return BRC100Provider.getPublicKey({
+      protocolID: [0, 'up-link'],
+      keyID: keyID,
+      counterparty: 'self',
+      forSelf: true,
+    })
+    .then(function(res) {
+      return BSVScript._hash160(res.publicKey);
+    })
+    .catch(function() {
+      /* If wallet doesn't support key derivation, fall back to zero hash.
+         Content still reaches chain and CDNs index it. */
+      return '00'.repeat(20);
+    })
+    .then(function(pubKeyHash) {
+      var script = BSVScript.buildOrdinalInscriptionScript(fileBytes, mimeType, pubKeyHash);
+      return BRC100Provider.createAction({
+        description: 'Upload image to BSV chain',
+        outputs: [{ lockingScript: script, satoshis: 1, outputDescription: '1Sat Ordinal inscription' }],
+        labels: ['up-link', 'icon'],
+      });
+    })
+    .then(function(res) { return { txid: res.txid }; });
   },
 
   submitRecord: function(fields, tipSatoshis, tipAddress) {
@@ -406,7 +488,7 @@ var WalletManager = {
           return new Promise(function(resolve) { setTimeout(resolve, 150); })
             .then(function() { return self._fetchAndParseRecord(action.txid); })
             .then(function(r) { results.push(r); })
-            .catch(function() { /* skip — tx not indexed yet or fetch failed */ });
+            .catch(function(err) { if (typeof console !== 'undefined') { console.error('[scanRecords] fetch/parse failed:', err); } });
         });
       }, Promise.resolve()).then(function() { return results; });
     });
@@ -538,7 +620,7 @@ var WalletManager = {
                 onStatus('SS' + n + ' UPLOADED // TXID: ' + res.txid.substring(0, 12) + '...');
                 // Write txid into MAP fields
                 for (var fi = 0; fi < fields.length; fi++) {
-                  if (fields[fi][0] === 'ss' + n + '_txid') { fields[fi][1] = res.txid; break; }
+                  if (fields[fi][0] === 'ss' + n + '_txid') { fields[fi][1] = App.Utils.parseTxid(res.txid); break; }
                 }
               });
             });
@@ -762,7 +844,7 @@ App.MAPExport.saveOnChain = function(statusCallback) {
   return WalletManager.submitFull(d, fields, tipAddr, statusCallback)
     .then(function(result) {
       App.StatusBar.set('BROADCAST SUCCESS // TXID: ' + result.appTxid, 'ok');
-      return result.appTxid;
+      return result;
     });
 };
 

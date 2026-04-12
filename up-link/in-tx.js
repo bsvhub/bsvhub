@@ -331,10 +331,11 @@ App.Transmit = {
       App.StatusBar.set('SIGNING TRANSACTION...', 'ok');
       App.MAPExport.saveOnChain(function(msg) {
         App.StatusBar.set(msg, 'ok');
-      }).then(function(txid) {
-        App.StatusBar.set('BROADCAST SUCCESS // TXID: ' + txid, 'ok');
+      }).then(function(result) {
+        var appTxid = (result && result.appTxid) ? result.appTxid : result;
+        App.StatusBar.set('BROADCAST SUCCESS // TXID: ' + appTxid, 'ok');
         self._lockBtn();
-        self._logTx(txid);
+        self._logTx(appTxid, result);
       })['catch'](function(err) {
         App.StatusBar.set('BROADCAST FAILED: ' + (err.message || String(err)), 'err');
       });
@@ -360,13 +361,19 @@ App.Transmit = {
   /* Fire-and-forget POST to Cloudflare Worker after successful broadcast.
      Logs txid + form snapshot for catalog building. Failure is non-blocking —
      the on-chain transaction already succeeded, so the log is best-effort. */
-  _logTx: function(txid) {
-    if (!SETTINGS.TX_LOG_URL) { console.warn('[logTx] TX_LOG_URL not set — skipping log'); return; }
+  _logTx: function(txid, broadcastResult) {
+    if (!SETTINGS.TX_LOG_URL) { return; }
     try {
       var $ = App.Utils.$;
       /* Snapshot icon data once — avoids calling getData() 10 times */
       var iconData = App.Screenshots && App.Screenshots.getData();
       var icon = (iconData && iconData.icon) ? iconData.icon : {};
+      /* For local uploads: icon.txid is '' at broadcast time (set pre-upload).
+         Use the iconTxid from the broadcast result, which has _0 appended via
+         parseTxid(). Fall back to icon.txid for on-chain images (already normalized). */
+      var resolvedIconTxid = (broadcastResult && broadcastResult.iconTxid)
+        ? broadcastResult.iconTxid
+        : (icon.txid || '');
       var payload = {
         txid:         txid,
         wallet_id:    $('dev-paymail') ? $('dev-paymail').value.trim() : '',
@@ -396,7 +403,7 @@ App.Transmit = {
 
         /* Icon display fields — read from single getData() snapshot above.
            WHY: these are needed by /api/catalog to render the tile on BSVhub.io. */
-        icon_txid:       icon.txid || '',
+        icon_txid:       resolvedIconTxid,
         icon_zoom:       String(icon.zoom  !== undefined ? icon.zoom  : '1.0'),
         icon_pan_x:      String(icon.panX  !== undefined ? icon.panX  : '0'),
         icon_pan_y:      String(icon.panY  !== undefined ? icon.panY  : '0'),
@@ -412,7 +419,7 @@ App.Transmit = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
         keepalive: true
-      })['catch'](function(err) { console.warn('[logTx] POST failed:', err); });
+      })['catch'](function() { /* non-blocking — log failure is best-effort */ });
     } catch (e) {
       /* Never block the UI for a logging failure */
     }
