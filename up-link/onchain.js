@@ -53,6 +53,16 @@ var BSVScript = {
       var lo = len & 0xff;
       var hi = (len >> 8) & 0xff;
       prefix = '4d' + ('0' + lo.toString(16)).slice(-2) + ('0' + hi.toString(16)).slice(-2);
+    } else if (len >= 65536 && len <= 0xffffffff) {
+      var b0 = len & 0xff;
+      var b1 = (len >> 8) & 0xff;
+      var b2 = (len >> 16) & 0xff;
+      var b3 = (len >>> 24) & 0xff;
+      prefix = '4e'
+        + ('0' + b0.toString(16)).slice(-2)
+        + ('0' + b1.toString(16)).slice(-2)
+        + ('0' + b2.toString(16)).slice(-2)
+        + ('0' + b3.toString(16)).slice(-2);
     } else {
       throw new Error('Push data too large: ' + len + ' bytes');
     }
@@ -84,6 +94,26 @@ var BSVScript = {
     if (filename) {
       hex += this._pushString(filename);
     }
+    return hex;
+  },
+
+  /* 1Sat Ordinal inscription envelope, prepended with a dummy P2PKH
+     (all-zero pubkey hash) so the output is a spendable 1-sat UTXO —
+     required for the content to be indexed by gorillapool/ordfs. The
+     envelope format is: OP_FALSE OP_IF "ord" 0x01 <mime> 0x00 <data> OP_ENDIF
+     appended after the P2PKH locking script. */
+  buildOrdinalInscriptionScript: function(fileBytes, mimeType) {
+    /* P2PKH prefix: OP_DUP OP_HASH160 <20-byte hash> OP_EQUALVERIFY OP_CHECKSIG */
+    var hex = '76a914' + '00'.repeat(20) + '88ac';
+    /* Ord envelope */
+    hex += '00';  /* OP_FALSE */
+    hex += '63';  /* OP_IF */
+    hex += this._pushString('ord');
+    hex += '51';  /* OP_1 */
+    hex += this._pushString(mimeType || 'application/octet-stream');
+    hex += '00';  /* OP_0 — content separator */
+    hex += this._pushData(fileBytes);
+    hex += '68';  /* OP_ENDIF */
     return hex;
   },
 
@@ -305,10 +335,15 @@ var WalletManager = {
   },
 
   uploadIcon: function(fileBytes, mimeType, filename) {
-    var script = BSVScript.buildBProtocolScript(fileBytes, mimeType, filename);
+    /* Ord inscription so content is indexed by 1sat CDNs
+       (gorillapool, ordfs, 1satordinals). filename is unused by the
+       inscription format — kept in the signature for call-site
+       compatibility. */
+    var _unused = filename;
+    var script = BSVScript.buildOrdinalInscriptionScript(fileBytes, mimeType);
     return BRC100Provider.createAction({
-      description: 'Upload icon to BSV chain',
-      outputs: [{ lockingScript: script, satoshis: 1, outputDescription: 'Icon file via B protocol' }],
+      description: 'Upload image to BSV chain',
+      outputs: [{ lockingScript: script, satoshis: 1, outputDescription: '1Sat Ordinal inscription' }],
       labels: ['up-link', 'icon'],
     }).then(function(res) { return { txid: res.txid }; });
   },
@@ -581,7 +616,7 @@ var WalletManager = {
     var mapEst = this.estimateFee(mapOutputs);
     var iconEst = { feeSats: 0, txBytes: 0 };
     if (iconBytes && iconBytes.length > 0) {
-      var iconScript = BSVScript.buildBProtocolScript(iconBytes, 'image/png', 'icon');
+      var iconScript = BSVScript.buildOrdinalInscriptionScript(iconBytes, 'image/png');
       iconEst = this.estimateFee([iconScript]);
     }
     // Estimate screenshot upload fees.
@@ -598,7 +633,7 @@ var WalletManager = {
         var ssOnChain = ssTxid && ssTxid !== '(pending)' && /^[0-9a-fA-F]{64}(_\w+)?$/.test(ssTxid);
         if (ssSlots[i] && ssSlots[i].dataB64 && !ssOnChain) {
           var ssBytes = this._base64ToBytes(ssSlots[i].dataB64);
-          var ssScript = BSVScript.buildBProtocolScript(ssBytes, ssSlots[i].mime || 'image/png', 'ss' + (i+1));
+          var ssScript = BSVScript.buildOrdinalInscriptionScript(ssBytes, ssSlots[i].mime || 'image/png');
           var ssEst = this.estimateFee([ssScript]);
           ssFeeSats += ssEst.feeSats;
           ssTotalBytes += ssEst.txBytes;

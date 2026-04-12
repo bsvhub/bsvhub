@@ -243,6 +243,15 @@ App.Utils = {
     str = (str || '').trim();
     if (/^[0-9a-fA-F]{64}$/.test(str)) return str + '_0';
     return str;
+  },
+
+  /* Returns the 64-hex prefix of a txid or txid_suffix string. Used for
+     CDN endpoints (like bico.media) that expect a bare hash, while
+     keeping the _suffix form as the canonical stored value. */
+  bareTxid: function(str) {
+    str = (str || '').trim();
+    var m = str.match(/^([0-9a-fA-F]{64})(?:_.*)?$/);
+    return m ? m[1] : str;
   }
 };
 
