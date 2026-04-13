@@ -288,10 +288,10 @@ App.Viewer = {
           BSVCard.injectCSS();
         }
 
-        /* Build CDN URL templates — testnet-first when toggle is on */
+        /* Build CDN URL templates — strict network separation */
         var _cb = document.getElementById('testnet-cb');
         var cdnUrlTemplates = (_cb && _cb.checked)
-          ? (SETTINGS.CDN_URLS_TESTNET || []).concat(SETTINGS.CDN_URLS || [])
+          ? (SETTINGS.CDN_URLS_TESTNET || [])
           : (SETTINGS.CDN_URLS || []);
 
         /* Render card using shared BSVCard module */
@@ -330,8 +330,12 @@ App.Viewer = {
           badge.className = 'badge err';
         }
         if (tableEl) {
+          var _tn = document.getElementById('testnet-cb');
+          var tnHint = (_tn && _tn.checked)
+            ? '<br><span style="color:#EAB300;font-size:12px;">TESTNET mode active — transaction not found on testnet.</span>'
+            : '';
           tableEl.innerHTML = '<div class="loading-msg"><div class="err-msg">' +
-            '\u2717 ' + esc(err.message) +
+            '\u2717 ' + esc(err.message) + tnHint +
             '<br><br><span style="color:var(--dim);font-size:12px;">Check the TXID and try again.' +
             '<br>The transaction must contain a MAP protocol OP_RETURN.</span></div></div>';
         }
@@ -521,9 +525,9 @@ App.Viewer = {
     cardEl.innerHTML = '';
     cardEl.appendChild(img);
 
-    /* CDN try-loop — testnet-first when toggle is on, mainnet fallback */
+    /* CDN try-loop — strict network separation, no cross-network fallback */
     var cdnUrls = (network === 'TESTNET')
-      ? (SETTINGS.CDN_URLS_TESTNET || []).concat(SETTINGS.CDN_URLS || [])
+      ? (SETTINGS.CDN_URLS_TESTNET || [])
       : (SETTINGS.CDN_URLS || []);
     var urls    = cdnUrls.map(function(u) { return u.replace('{txid}', txid); });
     var idx     = 0;
@@ -555,9 +559,13 @@ App.Viewer = {
         /* All CDNs failed */
         if (badge) { badge.textContent = 'NOT FOUND'; badge.className = 'badge err'; }
         if (cardEl) {
+          var testnetHint = (network === 'TESTNET')
+            ? '<br><span style="color:#EAB300;font-size:12px;">TESTNET mode active — image not found on testnet CDNs.</span>'
+            : '';
           cardEl.innerHTML =
             '<div class="loading-msg"><div class="err-msg">' +
             '\u2717 Image not found on any CDN.' +
+            testnetHint +
             '<br><br><span style="color:var(--dim);font-size:12px;">Check the TXID suffix and try again.</span>' +
             '</div></div>';
         }

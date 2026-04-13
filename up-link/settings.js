@@ -32,17 +32,17 @@ var SETTINGS = {
      ─────────────────────────────────────────────────────────────── */
 
   // Main background colour (the dark base behind everything)
-  BG_COLOUR: '#0d0a1a',
+  BG_COLOUR: '#281e5a',
 
   // Background gradient — the 3-colour sweep across the whole page
   // Format: "colour1, colour2, colour3" — goes diagonally top-left to bottom-right
-  BG_GRADIENT_COLOURS: '#555555, #6a0dad, #001f54',
+  BG_GRADIENT_COLOURS: '#3a2d6e, #6a0dad, #001f54',
 
   // Gradient direction in degrees (135 = diagonal top-left → bottom-right)
   BG_GRADIENT_ANGLE: 135,
 
   // Panel background — the dark glass behind each box
-  PANEL_BG: 'rgba(25, 25, 25, 0.85)',
+  PANEL_BG: 'rgba(25, 25, 25, 0.8)',
 
   // Primary gold/amber colour — used for labels, buttons, highlights
   AMBER: '#EAB300',
@@ -89,13 +89,13 @@ var SETTINGS = {
      ─────────────────────────────────────────────────────────────── */
 
   // Main font — used everywhere (must be monospace for the terminal look)
-  FONT_FAMILY: "'JetBrains Mono', 'Courier New', monospace",
+  FONT_FAMILY: "'jb', 'Courier New', monospace",
 
   // Base font size in pixels (everything scales from this)
   FONT_SIZE_BASE: 14,
 
   // Global letter spacing in pixels
-  LETTER_SPACING: 1,
+  LETTER_SPACING: 2,
 
 
   /* ─── LAYOUT: SHELL & GRID ──────────────────────────────────────

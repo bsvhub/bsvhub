@@ -1,5 +1,12 @@
+/* ── Local font faces — matches BSVhub main site ────────────── */
+@font-face { font-family: 'jb';   src: url('../styles/assets/jetbrains.ttf') format('truetype'); }
+@font-face { font-family: 'jbm';  src: url('../styles/assets/jetbrainsm.ttf') format('truetype'); }
+@font-face { font-family: 'jbb';  src: url('../styles/assets/jetbrainsb.ttf') format('truetype'); }
+@font-face { font-family: 'dotm'; src: url('../styles/assets/dotm.ttf') format('truetype'); }
+@font-face { font-family: 'dotmb';src: url('../styles/assets/dotmb.ttf') format('truetype'); }
+
 /* ═══════════════════════════════════════════════════════════════
-   app.css (v7.9) — Component + Panel Styles
+   app.css (v8.0) — Component + Panel Styles
    ═══════════════════════════════════════════════════════════════
 
    PURPOSE:  All visual styles for form components, inputs, buttons,
