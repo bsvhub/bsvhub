@@ -156,15 +156,17 @@ var BSVScript = {
       });
   },
 
-  /* 1Sat Ordinal inscription envelope, prepended with a P2PKH locking
-     script so the output is a spendable 1-sat UTXO owned by the wallet.
-     pubKeyHash: 40-char hex (20 bytes). Falls back to zero hash if absent.
-     Envelope format: OP_FALSE OP_IF "ord" OP_1 <mime> OP_0 <data> OP_ENDIF */
+  /* 1Sat Ordinal inscription with P2PKH ownership.
+     Standard format: OP_FALSE OP_IF "ord" OP_1 <mime> OP_0 <data> OP_ENDIF
+     followed by P2PKH (76a914 <pkh> 88ac).
+
+     The envelope comes first, P2PKH after — this is the standard 1Sat
+     Ordinals pattern. The wallet recognises the P2PKH suffix as spendable
+     and places the output at vout 0. */
   buildOrdinalInscriptionScript: function(fileBytes, mimeType, pubKeyHash) {
-    /* P2PKH prefix: OP_DUP OP_HASH160 <20-byte hash> OP_EQUALVERIFY OP_CHECKSIG */
     var pkh = (typeof pubKeyHash === 'string' && pubKeyHash.length === 40)
       ? pubKeyHash : '00'.repeat(20);
-    var hex = '76a914' + pkh + '88ac';
+    var hex = '';
     hex += '00';  /* OP_FALSE */
     hex += '63';  /* OP_IF */
     hex += this._pushString('ord');
@@ -173,6 +175,7 @@ var BSVScript = {
     hex += '00';  /* OP_0 — content separator */
     hex += this._pushData(fileBytes);
     hex += '68';  /* OP_ENDIF */
+    hex += '76a914' + pkh + '88ac';  /* P2PKH — makes output spendable + owned */
     return hex;
   },
 
@@ -423,11 +426,48 @@ var WalletManager = {
       var script = BSVScript.buildOrdinalInscriptionScript(fileBytes, mimeType, pubKeyHash);
       return BRC100Provider.createAction({
         description: 'Upload image to BSV chain',
-        outputs: [{ lockingScript: script, satoshis: 1, outputDescription: '1Sat Ordinal inscription' }],
+        outputs: [{ lockingScript: script, satoshis: 1, outputDescription: '1Sat Ordinal inscription', basket: 'up-link-inscriptions' }],
         labels: ['up-link', 'icon'],
       });
     })
-    .then(function(res) { return { txid: res.txid }; });
+    .then(function(res) {
+      /* Query the wallet for the real vout of the inscription output.
+         listOutputs returns the actual outpoint (txid + vout) so we
+         don't have to guess which suffix the wallet assigned. */
+      console.log('[uploadIcon] createAction returned:', JSON.stringify(res));
+      return BRC100Provider.listOutputs({
+        basket: 'up-link-inscriptions',
+        include: 'locking scripts',
+      }).then(function(list) {
+        console.log('[uploadIcon] listOutputs returned:', JSON.stringify(list));
+        /* listOutputs may return { outputs: [...] } or a flat array */
+        var outputs = Array.isArray(list) ? list : (list && list.outputs ? list.outputs : []);
+        /* Find the most recent output matching this txid.
+           Outpoint format from BRC-100 wallet is "txid.vout" (dot separator).
+           Scan backwards — newest output is most likely the one we just created. */
+        var match = null;
+        for (var i = outputs.length - 1; i >= 0; i--) {
+          var o = outputs[i];
+          var op = o.outpoint || '';
+          var dotIdx = op.lastIndexOf('.');
+          var oTxid = dotIdx !== -1 ? op.substring(0, dotIdx) : (o.txid || '');
+          if (oTxid === res.txid) { match = o; break; }
+        }
+        console.log('[uploadIcon] matched output:', match ? JSON.stringify(match) : 'none');
+        if (match && match.outpoint) {
+          var dotPos = match.outpoint.lastIndexOf('.');
+          if (dotPos !== -1) {
+            var vout = match.outpoint.substring(dotPos + 1);
+            return { txid: res.txid + '_' + vout };
+          }
+        }
+        /* Fallback: use bare txid — parseTxid will append _0 */
+        return { txid: res.txid };
+      }).catch(function(err) {
+        console.warn('[uploadIcon] listOutputs failed:', err);
+        return { txid: res.txid };
+      });
+    });
   },
 
   submitRecord: function(fields, tipSatoshis, tipAddress) {
@@ -468,7 +508,7 @@ var WalletManager = {
   WOC_API_TEST: 'https://api.whatsonchain.com/v1/bsv/test',
   get WOC_API() { return this.network === 'testnet' ? this.WOC_API_TEST : this.WOC_API_MAIN; },
 
-  scanRecords: function() {
+  scanRecords: function(onRecord) {
     var self = this;
     return BRC100Provider.listActions({
       labels: ['up-link'],
@@ -481,13 +521,16 @@ var WalletManager = {
         return a.description && a.description.indexOf('icon') === -1;
       });
       /* WHY sequential: WoC rate-limits concurrent requests (429).
-       * Fetch one at a time with a 150ms gap to stay under the limit. */
+       * Fetch one at a time with a 50ms gap to stay under the limit. */
       var results = [];
       return mapActions.reduce(function(chain, action) {
         return chain.then(function() {
-          return new Promise(function(resolve) { setTimeout(resolve, 150); })
+          return new Promise(function(resolve) { setTimeout(resolve, 50); })
             .then(function() { return self._fetchAndParseRecord(action.txid); })
-            .then(function(r) { results.push(r); })
+            .then(function(r) {
+              results.push(r);
+              if (onRecord) onRecord(r);
+            })
             .catch(function(err) { if (typeof console !== 'undefined') { console.error('[scanRecords] fetch/parse failed:', err); } });
         });
       }, Promise.resolve()).then(function() { return results; });
@@ -849,15 +892,14 @@ App.MAPExport.saveOnChain = function(statusCallback) {
 };
 
 // On-chain wallet scan for RecordPicker
-App._onchainScanRecords = async function() {
-  var results = await WalletManager.scanRecords();
+App._onchainScanRecords = async function(onRecord) {
   var records = [];
-  for (var i = 0; i < results.length; i++) {
-    var rec = results[i];
-    if (rec.fields && rec.fields.protocol === SETTINGS.PROTOCOL_PREFIX) {
-      records.push(rec.fields);
+  await WalletManager.scanRecords(function(r) {
+    if (r.fields && r.fields.protocol === SETTINGS.PROTOCOL_PREFIX) {
+      records.push(r.fields);
+      if (onRecord) onRecord(r.fields);
     }
-  }
+  });
   return records;
 };
 

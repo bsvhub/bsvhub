@@ -305,13 +305,20 @@ App.RecordPicker = {
 
   // Dispatch scan to the appropriate module
   _scanWallet: async function() {
+    var self = this;
     this._records = [];
     var statusEl = document.querySelector('.picker-status');
-    if (statusEl) statusEl.textContent = '\u27F3 SCANNING WALLET FOR RECORDS...';
+    if (statusEl) statusEl.innerHTML = '<span class="spinner">\u27F3</span> SCANNING WALLET FOR RECORDS...';
+
+    var onRecord = function(fields) {
+      self._records.push(fields);
+      self._renderItem(fields, self._records.length - 1);
+      if (statusEl) statusEl.innerHTML = '<span class="spinner">\u27F3</span> LOADING... ' + self._records.length + ' RECORD' + (self._records.length > 1 ? 'S' : '') + ' FOUND';
+    };
 
     try {
       if (App.Capabilities.onchain && App.State.onChain && App._onchainScanRecords) {
-        this._records = await App._onchainScanRecords();
+        await App._onchainScanRecords(onRecord);
       } else if (App.Capabilities.offline && App._offlineScanLocal) {
         this._records = await App._offlineScanLocal();
       }
@@ -326,6 +333,121 @@ App.RecordPicker = {
         ? count + ' RECORD' + (count > 1 ? 'S' : '') + ' FOUND'
         : 'NO RECORDS FOUND';
     }
+
+    // Second pass — lazy-load icon images from CDN without blocking
+    this._loadPickerIcons();
+  },
+
+  _loadPickerIcons: function() {
+    var list = document.querySelector('.picker-list');
+    if (!list) return;
+    var items = list.querySelectorAll('.picker-item');
+    var idx = 0;
+
+    function next() {
+      if (idx >= items.length) return;
+      var item = items[idx++];
+      var iconCell = item.querySelector('.picker-item-icon');
+      if (!iconCell) { next(); return; }
+      // Skip if already has a real image (from _icon_data_b64)
+      var existingImg = iconCell.querySelector('img');
+      if (existingImg) { next(); return; }
+      // Find the matching record's icon_txid
+      var rec = App.RecordPicker._records[idx - 1];
+      if (!rec || !rec.icon_txid || !App.Utils.isValidTxid(rec.icon_txid)) { next(); return; }
+
+      var urls = App.Config.getAllCdnUrls(rec.icon_txid);
+      var attempt = 0;
+
+      function tryUrl() {
+        if (attempt >= urls.length) { next(); return; }
+        var img = new Image();
+        img.onload = function() {
+          if (img.naturalWidth === 0) { attempt++; tryUrl(); return; }
+          // Replace the dash placeholder with the loaded image
+          iconCell.innerHTML = '';
+          img.alt = App.Utils.esc(rec.name || '');
+          iconCell.appendChild(img);
+          next();
+        };
+        img.onerror = function() { attempt++; tryUrl(); };
+        img.src = urls[attempt];
+      }
+      tryUrl();
+    }
+    next();
+  },
+
+  _renderItem: function(rec, idx) {
+    var self = this;
+    var list = document.querySelector('.picker-list');
+    if (!list) return;
+    // Remove empty-state message if present
+    var empty = list.querySelector('.picker-empty');
+    if (empty) empty.remove();
+
+    var statusColour = App.Config.getStatusColour(rec.status || '');
+    var iconSrc = rec._icon_data_b64 || '';
+    var txid = rec._txid || '';
+    var shortTx = txid ? txid.substring(0, 8) + '\u2026' + txid.substring(56) : '';
+    var item = document.createElement('div');
+    item.className = 'picker-item';
+
+    var iconHtml = iconSrc
+      ? '<img src="' + iconSrc + '" alt="' + App.Utils.esc(rec.name || '') + '">'
+      : '<span style="color:var(--dim);font-size:10px;">\u2014</span>';
+
+    var txidHtml = txid
+      ? '<div class="picker-item-txid"><span class="txid-text">' + App.Utils.esc(shortTx) + '</span>' +
+        '<span class="txid-copy" data-txid="' + App.Utils.esc(txid) + '" title="Copy TXID">\uD83D\uDCCB</span></div>'
+      : '';
+
+    var versionHtml = rec.version ? ' \u00B7 v' + App.Utils.esc(rec.version) : '';
+
+    item.innerHTML =
+      '<div class="picker-item-icon">' + iconHtml + '</div>' +
+      '<div class="picker-item-info">' +
+        '<div class="picker-item-name">' + App.Utils.esc(rec.name || 'UNNAMED') + '</div>' +
+        '<div class="picker-item-meta">' + App.Utils.esc(rec.url || '\u2014') + ' \u00B7 ' + App.Utils.esc(rec.category || '\u2014') + versionHtml + '</div>' +
+        txidHtml +
+      '</div>' +
+      '<span class="picker-item-status" style="color:' + statusColour + ';border-color:' + statusColour + '50;background:rgba(0,0,0,0.3);">' +
+        App.Utils.esc((rec.status || '\u2014').toUpperCase()) +
+      '</span>';
+
+    var copyBtn = item.querySelector('.txid-copy');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var btn = this;
+        var tid = btn.getAttribute('data-txid');
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(tid).then(function() {
+            btn.textContent = '\u2713';
+            btn.style.color = 'var(--green)';
+            setTimeout(function() { btn.textContent = '\uD83D\uDCCB'; btn.style.color = ''; }, 1500);
+          }).catch(function() { self._copyFallback(btn, tid); });
+        } else {
+          self._copyFallback(btn, tid);
+        }
+      });
+    }
+
+    item.addEventListener('click', function() { self._select(idx); });
+    list.appendChild(item);
+  },
+
+  _copyFallback: function(btn, tid) {
+    var ta = document.createElement('textarea');
+    ta.value = tid;
+    ta.style.cssText = 'position:fixed;left:-9999px;';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = '\u2713';
+    btn.style.color = 'var(--green)';
+    setTimeout(function() { btn.textContent = '\uD83D\uDCCB'; btn.style.color = ''; }, 1500);
   },
 
   _renderList: function() {
@@ -451,7 +573,10 @@ App.RecordPicker = {
     overlay.addEventListener('click', function(e) { if (e.target === overlay) self.close(); });
 
     await this._scanWallet();
-    this._renderList();
+    // Offline fallback renders all at once (on-chain renders incrementally via _renderItem)
+    if (!(App.Capabilities.onchain && App.State.onChain && App._onchainScanRecords)) {
+      this._renderList();
+    }
   },
 
   close: function() {

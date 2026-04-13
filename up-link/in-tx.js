@@ -335,6 +335,7 @@ App.Transmit = {
         var appTxid = (result && result.appTxid) ? result.appTxid : result;
         App.StatusBar.set('BROADCAST SUCCESS // TXID: ' + appTxid, 'ok');
         self._lockBtn();
+        self._updatePendingFields(result);
         self._logTx(appTxid, result);
       })['catch'](function(err) {
         App.StatusBar.set('BROADCAST FAILED: ' + (err.message || String(err)), 'err');
@@ -356,6 +357,32 @@ App.Transmit = {
 
     /* No save method available */
     App.StatusBar.set('NO WALLET OR EXPORT MODULE AVAILABLE', 'err');
+  },
+
+  /* After broadcast, replace any (pending) placeholders in the MAP preview
+     table with the real txid values returned by the wallet. */
+  _updatePendingFields: function(result) {
+    if (!result) return;
+    var table = document.querySelector('#p2-map .map-table');
+    if (!table) return;
+    var rows = table.querySelectorAll('tr');
+    var map = {};
+    if (result.iconTxid) map['icon_txid'] = result.iconTxid;
+    var ss = result.ssTxids || [];
+    for (var i = 0; i < ss.length; i++) {
+      if (ss[i]) map['ss' + (i + 1) + '_txid'] = ss[i];
+    }
+    for (var r = 0; r < rows.length; r++) {
+      var cells = rows[r].querySelectorAll('td');
+      if (cells.length < 2) continue;
+      var key = cells[0].textContent.trim();
+      if (!map[key]) continue;
+      /* Update the value cell — handle both plain and diff (map-new) layouts */
+      var target = cells[1].querySelector('.map-new') || cells[1];
+      if (target.textContent.indexOf('(pending)') !== -1) {
+        target.textContent = map[key];
+      }
+    }
   },
 
   /* Fire-and-forget POST to Cloudflare Worker after successful broadcast.
