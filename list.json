@@ -1681,6 +1681,16 @@
       "alt": "",
       "text": "bOpen",
       "info": ";;;;"
+    },
+    {
+      "tab": "info;dev",
+      "href": "https://hackathon.bsvb.tech",
+      "tooltip": "Hackathon registration",
+      "img": "icon/openrun.svg",
+      "zoom": "1.0",
+      "alt": "",
+      "text": "//Open Run",
+      "info": ";;;;"
     }
   ]
 }
