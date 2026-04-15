@@ -514,6 +514,8 @@ var sim = {
     blockCooldown: 0,
     speedIdx:     4,           /* index into SPEED_STEPS; 4=1.0x default */
     zoomLevel:    0,           /* -10 to +10; zoom = 2^(zoomLevel/10)    */
+    panX:         0,           /* screen-space horizontal pan offset (px) */
+    panY:         0,           /* screen-space vertical   pan offset (px) */
     fpsLast:      0,           /* timestamp of last fps sample              */
     fpsFrames:    0,           /* frames counted in current second          */
     fps:          0,           /* smoothed FPS value                        */
@@ -2363,6 +2365,7 @@ function engineInit(){
     sim.frame=0; sim.netIdCounter=0; sim.networks=[]; sim.pulses=[];
     sim.coreNets=[]; sim.coreNet=null;
     sim.globalBlocks=0; sim.blockCooldown=0;
+    sim.panX=0; sim.panY=0;
 
     /* Spawn NUM_CORES core networks distributed across screen.
        Geometric positions from _corePositions() are validated
@@ -2374,6 +2377,9 @@ function engineInit(){
         var core=new Network(pos.x,pos.y,true);
         /* Initial cores start alive immediately */
         core.state=ST.ALIVE; core.alpha=1; core.stf=0;
+        /* Prevent startup surge — stagger first WAN send like lanTimer */
+        core.wanPendingFirst=false;
+        core.wanTimer=Math.floor(Math.random()*CFG.WAN_INTERVAL);
         sim.networks.push(core);
         sim.coreNets.push(core);
     }
@@ -2384,6 +2390,9 @@ function engineInit(){
     for(var i=0;i<CFG.MAX_OVERLAYS;i++){
         var pt=_resolvedOverlayPos();
         var net=new Network(pt.x,pt.y,false);
+        /* Prevent startup surge — stagger first WAN send like lanTimer */
+        net.wanPendingFirst=false;
+        net.wanTimer=Math.floor(Math.random()*CFG.WAN_INTERVAL);
         var off=Math.floor((i/CFG.MAX_OVERLAYS)*cycle);
         if(off<=CFG.FADE_FRAMES){
             net.state=ST.FADE_IN; net.stf=off;
@@ -2452,10 +2461,10 @@ function engineDraw(){
     var ctx=scene.ctx;
     var live=sim.networks.filter(function(n){return n.state!==ST.DEAD;});
     ctx.clearRect(0,0,scene.W,scene.H);
-    /* Apply zoom centred on canvas middle */
+    /* Apply zoom + pan centred on canvas middle */
     var z=_zoom();
     ctx.save();
-    ctx.translate(scene.W*0.5,scene.H*0.5);
+    ctx.translate(scene.W*0.5+sim.panX,scene.H*0.5+sim.panY);
     ctx.scale(z,z);
     ctx.translate(-scene.W*0.5,-scene.H*0.5);
 
@@ -2792,6 +2801,56 @@ function _syncRowOrder(panel, rows, ctrlEl){
 }
 
 
+/* ── D-PAD SCROLL CONTROLLER ─────────────────────────────────── */
+/*   4-button cross (▲ ◄ ► ▼) placed at bottom of the right panel.
+     Orange (accent) border/bg tint + blue (primary) arrow symbol.
+     Each click pans the animation by PAN_STEP screen pixels.       */
+function _makeDpad(container){
+    var PAN_STEP=80;
+    var wrap=document.createElement('div');
+    wrap.style.cssText=
+        'display:grid;grid-template-columns:26px 26px 26px;'+
+        'grid-template-rows:26px 26px 26px;'+
+        'column-gap:4px;row-gap:4px;pointer-events:auto;'+
+        'margin-bottom:7px;align-self:flex-end;';
+
+    var dirs=[
+        {label:'\u25b2',col:2,row:1,dx: 0,dy: 1},  /* ▲ up    */
+        {label:'\u25c4',col:1,row:2,dx: 1,dy: 0},  /* ◄ left  */
+        {label:'\u25ba',col:3,row:2,dx:-1,dy: 0},  /* ► right */
+        {label:'\u25bc',col:2,row:3,dx: 0,dy:-1},  /* ▼ down  */
+    ];
+
+    dirs.forEach(function(d){
+        var btn=document.createElement('span');
+        btn.textContent=d.label;
+        btn.dataset.dpad='1';
+        btn.style.cssText=
+            'font:700 11px/1 monospace;cursor:pointer;'+
+            'user-select:none;-webkit-user-select:none;'+
+            'display:inline-flex;align-items:center;justify-content:center;'+
+            'width:26px;height:26px;box-sizing:border-box;pointer-events:auto;'+
+            'border:1.5px solid;border-radius:2px;'+
+            'grid-column:'+d.col+';grid-row:'+d.row+';';
+        btn.addEventListener('click',function(){
+            var maxP=Math.min(scene.W,scene.H)*0.55;
+            sim.panX=Math.max(-maxP,Math.min(maxP,sim.panX+d.dx*PAN_STEP));
+            sim.panY=Math.max(-maxP,Math.min(maxP,sim.panY+d.dy*PAN_STEP));
+        });
+        btn.addEventListener('mouseenter',function(){btn.style.opacity='1';});
+        btn.addEventListener('mouseleave',function(){btn.style.opacity='';});
+        wrap.appendChild(btn);
+    });
+
+    /* Invisible spacer keeps the centre cell in the grid */
+    var sp=document.createElement('span');
+    sp.style.cssText='grid-column:2;grid-row:2;width:26px;height:26px;';
+    wrap.appendChild(sp);
+
+    container.appendChild(wrap);
+}
+
+
 /* ── Inject all panels ──────────────────────────────────────── */
 function injectPanels(){
     var BASE='position:fixed;z-index:9999;pointer-events:none;display:flex;flex-direction:column;gap:2px;';
@@ -2843,7 +2902,7 @@ function injectPanels(){
     ui.rightCtrl.style.justifyContent='center';
     /* Version label — same row as core toggle, right of ► with spacing to edge */
     var verLbl=document.createElement('span');
-    verLbl.textContent='v3.2';
+    verLbl.textContent='v3.3';
     verLbl.dataset.lbl='1';
     verLbl.dataset.accent='1';
     verLbl.style.cssText=
@@ -2851,6 +2910,7 @@ function injectPanels(){
         'border:1px solid currentColor;border-radius:2px;padding:1px 4px;'+
         'box-sizing:border-box;margin-left:4px;';
     ui.rightCtrl.appendChild(verLbl);
+    _makeDpad(ui.right);
     ui.right.appendChild(ui.rightCtrl);
 
     /* CENTRE BOTTOM — speed: two square [−][+] with label between */
@@ -2957,6 +3017,15 @@ function _uiUpdateColour(){
     /* Zoom label */
     var zlbl=document.getElementById('pbg-zoom-lbl');
     if(zlbl) zlbl.style.color=pr+'0.38)';
+
+    /* D-pad: orange (accent) border + subtle bg tint; blue (primary) arrow */
+    if(ui.right){
+        ui.right.querySelectorAll('[data-dpad]').forEach(function(el){
+            el.style.color           = pr+'0.72)';
+            el.style.borderColor     = ac+'0.52)';
+            el.style.backgroundColor = ac+'0.07)';
+        });
+    }
 }
 
 /* ── Breathe animation on arrows ─────────────────────────────── */
@@ -3000,6 +3069,17 @@ function _ctrlAnimatePulse(){
                 el.style.color=c;
                 if(el.style.borderRadius) el.style.borderColor=c;
             }
+        });
+    }
+
+    /* D-pad breathe — arrow (blue) and border (orange) animate together */
+    if(ui.right){
+        var bDarrow=0.52+Math.sin(t*0.018+0.7)*0.22;
+        var bDbord =0.38+Math.sin(t*0.018+0.7)*0.18;
+        ui.right.querySelectorAll('[data-dpad]').forEach(function(el){
+            if(el.matches(':hover')) return;
+            el.style.color       = pr+bDarrow+')';
+            el.style.borderColor = ac+bDbord+')';
         });
     }
 }
@@ -3150,6 +3230,7 @@ function particleBgDestroy(){
     sim.networks=[]; sim.pulses=[]; sim.frame=0;
     sim.coreNets=[]; sim.coreNet=null;
     sim.globalBlocks=0; sim.blockCooldown=0;
+    sim.panX=0; sim.panY=0;
     ui.leftRows=[]; ui.rightRows=[];
     _glowCacheInvalidate();
 }
